@@ -45,6 +45,9 @@ public class Member extends BaseEntity {
     private Set<MemberRole> roleSet = new HashSet<MemberRole>(Arrays.asList(MemberRole.USER));
 
 
+    public void changeImageUrl(String imageUrl){
+        this.imageUrl = imageUrl;
+    }
 
 
 

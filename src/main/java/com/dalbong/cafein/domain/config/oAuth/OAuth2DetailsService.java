@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.dalbong.cafein.domain.member.AuthProvider.KAKAO;
+import static com.dalbong.cafein.domain.member.AuthProvider.NAVER;
 
 
 @RequiredArgsConstructor
@@ -55,14 +56,30 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String password = passwordEncoder.encode(UUID.randomUUID().toString());
 
+            //TODO 1. image 필수,선택  2. email 추가? 3. 데이터 수정 시 로직 추가
             switch (authProvider) {
                 case KAKAO:
                     member = Member.builder()
                             .oauthId(userInfo.getId())
                             .password(password)
                             .username(userInfo.getName())
-                            .imageUrl(userInfo.getImageUrl())
                             .provider(KAKAO)
+                            .build();
+
+                    if(userInfo.getImageUrl() != null){
+                        member.changeImageUrl(userInfo.getImageUrl());
+                    }
+
+                    memberRepository.save(member);
+                    break;
+
+                case NAVER:
+                    member = Member.builder()
+                            .oauthId(userInfo.getId())
+                            .password(password)
+                            .username(userInfo.getName())
+                            .provider(NAVER)
+                            .imageUrl(userInfo.getImageUrl())
                             .build();
 
                     memberRepository.save(member);
