@@ -1,6 +1,10 @@
 package com.dalbong.cafein.domain.config.oAuth;
 
+import com.dalbong.cafein.domain.config.auth.PrincipalDetails;
+import com.dalbong.cafein.domain.config.oAuth.userInfo.OAuth2UserInfo;
+import com.dalbong.cafein.domain.config.oAuth.userInfo.OAuth2UserInfoFactory;
 import com.dalbong.cafein.domain.member.AuthProvider;
+import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,7 +15,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+
+import static com.dalbong.cafein.domain.member.AuthProvider.KAKAO;
 
 
 @RequiredArgsConstructor
@@ -35,6 +42,42 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
                 AuthProvider.valueOf(
                         userRequest.getClientRegistration().getRegistrationId().toUpperCase());
 
-        return null;
+        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(authProvider, attributes);
+
+        //신규,기존 회원 체크
+        Optional<Member> result = memberRepository.findByOauthId(userInfo.getId());
+
+        //신규 회원
+        if(result.isEmpty()){
+            Member member;
+
+            //랜덤값 비밀번호 생성
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String password = passwordEncoder.encode(UUID.randomUUID().toString());
+
+            switch (authProvider) {
+                case KAKAO:
+                    member = Member.builder()
+                            .oauthId(userInfo.getId())
+                            .password(password)
+                            .username(userInfo.getName())
+                            .imageUrl(userInfo.getImageUrl())
+                            .provider(KAKAO)
+                            .build();
+
+                    memberRepository.save(member);
+                    break;
+
+                default:
+                    throw new IllegalStateException("Unexpected value: " + authProvider);
+            }
+
+            return new PrincipalDetails(member, userInfo);
+
+        }
+        // 기존 회원
+        else{
+            return new PrincipalDetails(result.get(), userInfo);
+        }
     }
 }

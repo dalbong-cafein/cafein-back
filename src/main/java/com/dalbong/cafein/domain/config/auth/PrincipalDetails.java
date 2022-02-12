@@ -1,5 +1,6 @@
 package com.dalbong.cafein.domain.config.auth;
 
+import com.dalbong.cafein.domain.config.oAuth.userInfo.OAuth2UserInfo;
 import com.dalbong.cafein.domain.member.Member;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,15 +12,15 @@ import java.util.Collection;
 import java.util.Map;
 
 @Data
-public class PrincipalDetails implements UserDetails{
+public class PrincipalDetails implements UserDetails, OAuth2User{
 
     private Member member;
-    //private OAuth2UserInfo userInfo;
+    private OAuth2UserInfo userInfo;
 
-//    public PrincipalDetails(Member member, OAuth2UserInfo userInfo){
-//        this.member = member;
-//        this.userInfo = userInfo;
-//    }
+    public PrincipalDetails(Member member, OAuth2UserInfo userInfo){
+        this.member = member;
+        this.userInfo = userInfo;
+    }
 
     public PrincipalDetails(Member member){
         this.member = member;
@@ -67,14 +68,14 @@ public class PrincipalDetails implements UserDetails{
         return true;
     }
 
-//    @Override
-//    public Map<String, Object> getAttributes() {
-//
-//        return userInfo.getAttributes();
-//    }
-//
-//    @Override
-//    public String getName() {
-//        return userInfo.getName();
-//    }
+    @Override
+    public Map<String, Object> getAttributes() {
+
+        return userInfo.getAttributes();
+    }
+
+    @Override
+    public String getName() {
+        return userInfo.getName();
+    }
 }

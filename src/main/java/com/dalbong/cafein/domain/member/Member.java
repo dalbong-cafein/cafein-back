@@ -22,14 +22,17 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String nickname;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
-    private Long oauthId;
+    private String oauthId;
+
+    @Builder.Default
+    private String imageUrl = "";
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

@@ -1,7 +1,23 @@
 server:
   port: 5000
 
+
 spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/cafein
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql : true
+    open-in-view: false
+
   security:
     oauth2:
       client:
