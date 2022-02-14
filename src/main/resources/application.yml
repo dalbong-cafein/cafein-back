@@ -58,3 +58,8 @@ spring:
             user_name_attribute: response
 
 
+app:
+  token:
+    secretKey: 1234rhjknsdkjn2kKJnfkjanhdsfkjsdnaflkasjfnksjdfnksjdfs478415616
+  oauth2:
+    authorized-redirect-url: http://localhost:3000
