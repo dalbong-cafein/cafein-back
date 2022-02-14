@@ -1,6 +1,7 @@
-package com.dalbong.cafein.domain.config;
+package com.dalbong.cafein.config;
 
-import com.dalbong.cafein.domain.config.oAuth.OAuth2DetailsService;
+import com.dalbong.cafein.config.oAuth.OAuth2DetailsService;
+import com.dalbong.cafein.config.oAuth.handler.OAuth2AuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final OAuth2DetailsService oAuth2DetailsService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
     @Bean
     public PasswordEncoder encode() {
@@ -37,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userInfoEndpoint()
                 .userService(oAuth2DetailsService)
                 .and()
-                //.successHandler(oAuth2AuthenticationSuccessHandler)
+                .successHandler(oAuth2AuthenticationSuccessHandler)
 
                 .and()
                 .authorizeRequests()

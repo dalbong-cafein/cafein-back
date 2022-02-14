@@ -1,8 +1,8 @@
-package com.dalbong.cafein.domain.config.oAuth;
+package com.dalbong.cafein.config.oAuth;
 
-import com.dalbong.cafein.domain.config.auth.PrincipalDetails;
-import com.dalbong.cafein.domain.config.oAuth.userInfo.OAuth2UserInfo;
-import com.dalbong.cafein.domain.config.oAuth.userInfo.OAuth2UserInfoFactory;
+import com.dalbong.cafein.config.auth.PrincipalDetails;
+import com.dalbong.cafein.config.oAuth.userInfo.OAuth2UserInfo;
+import com.dalbong.cafein.config.oAuth.userInfo.OAuth2UserInfoFactory;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
@@ -56,7 +56,6 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String password = passwordEncoder.encode(UUID.randomUUID().toString());
 
-            //TODO 데이터 수정 시 로직 추가
             switch (authProvider) {
                 case KAKAO:
                     member = Member.builder()

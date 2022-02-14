@@ -1,4 +1,4 @@
-package com.dalbong.cafein.domain.config.oAuth.userInfo;
+package com.dalbong.cafein.config.oAuth.userInfo;
 
 import java.util.Map;
 

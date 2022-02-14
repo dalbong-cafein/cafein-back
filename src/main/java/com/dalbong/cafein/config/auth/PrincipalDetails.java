@@ -1,6 +1,6 @@
-package com.dalbong.cafein.domain.config.auth;
+package com.dalbong.cafein.config.auth;
 
-import com.dalbong.cafein.domain.config.oAuth.userInfo.OAuth2UserInfo;
+import com.dalbong.cafein.config.oAuth.userInfo.OAuth2UserInfo;
 import com.dalbong.cafein.domain.member.Member;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;

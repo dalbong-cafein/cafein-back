@@ -9,6 +9,9 @@ spring:
     password:
     driver-class-name: org.h2.Driver
 
+  redis:
+    host: localhost
+    port: 6379
 
   jpa:
     hibernate:
@@ -62,4 +65,4 @@ app:
   token:
     secretKey: 1234rhjknsdkjn2kKJnfkjanhdsfkjsdnaflkasjfnksjdfnksjdfs478415616
   oauth2:
-    authorized-redirect-url: http://localhost:3000
+    authorized-redirect-url: http://localhost:55773
