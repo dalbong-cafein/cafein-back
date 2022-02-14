@@ -12,7 +12,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql : true
@@ -30,14 +30,18 @@ spring:
             scope:
               - profile_nickname
               - profile_image
+              - account_email
             client-name: Kakao
 
           naver:
-            client-id: aoWPmgn_3NVXnGhs3ksm
-            client-secret: dz99ju1kry
+            client-id: ybDKeWgTb42oM50zK5Q7
+            client-secret: kwn3jI4fwx
             redirect-uri: http://localhost:5000/login/oauth2/code/naver
             authorization-grant-type: authorization_code
-            scope: name, email, profile_image
+            scope:
+              - name
+              - email
+              - profile_image
             client-name: Naver
 
         provider:

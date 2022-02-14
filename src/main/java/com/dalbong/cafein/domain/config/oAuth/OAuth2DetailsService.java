@@ -56,18 +56,19 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String password = passwordEncoder.encode(UUID.randomUUID().toString());
 
-            //TODO 1. image 필수,선택  2. email 추가? 3. 데이터 수정 시 로직 추가
+            //TODO 데이터 수정 시 로직 추가
             switch (authProvider) {
                 case KAKAO:
                     member = Member.builder()
                             .oauthId(userInfo.getId())
                             .password(password)
                             .username(userInfo.getName())
+                            .imageUrl(userInfo.getImageUrl())
                             .provider(KAKAO)
                             .build();
 
-                    if(userInfo.getImageUrl() != null){
-                        member.changeImageUrl(userInfo.getImageUrl());
+                    if(userInfo.getEmail() != null){
+                        member.changeEmail(userInfo.getEmail());
                     }
 
                     memberRepository.save(member);
@@ -78,8 +79,9 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
                             .oauthId(userInfo.getId())
                             .password(password)
                             .username(userInfo.getName())
-                            .provider(NAVER)
+                            .email(userInfo.getEmail())
                             .imageUrl(userInfo.getImageUrl())
+                            .provider(NAVER)
                             .build();
 
                     memberRepository.save(member);
@@ -94,7 +96,40 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
         }
         // 기존 회원
         else{
-            return new PrincipalDetails(result.get(), userInfo);
+            Member findMember = result.get();
+
+            //소셜 제공자 타입이 다를 경우
+            if (authProvider != findMember.getProvider()) {
+                throw new IllegalStateException(
+                        "Looks like you're signed up with " + authProvider +
+                                " account. Please use your " + findMember.getProvider() + " account to login."
+                );
+            }
+
+            //사용자정보에 변경이 있다면 사용자 정보를 업데이트 해준다.
+            updateMember(findMember, userInfo);
+
+            return new PrincipalDetails(findMember, userInfo);
+        }
+
+        
+    }
+
+    private void updateMember(Member member, OAuth2UserInfo userInfo) {
+
+        //이름 변경
+        if (userInfo.getName() != null && !member.getUsername().equals(userInfo.getName())) {
+            member.changeUsername(userInfo.getName());
+        }
+
+        //이메일 변경
+        if (userInfo.getEmail() != null && !member.getEmail().equals(userInfo.getEmail())){
+            member.changeEmail(userInfo.getEmail());
+        }
+
+        //프로필 이미지 변경
+        if (userInfo.getImageUrl() != null && !member.getImageUrl().equals(userInfo.getImageUrl())) {
+            member.changeImageUrl(userInfo.getImageUrl());
         }
     }
 }

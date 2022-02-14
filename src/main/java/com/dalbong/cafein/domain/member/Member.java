@@ -31,6 +31,8 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String oauthId;
 
+    private String email;
+
     @Builder.Default
     private String imageUrl = "";
 
@@ -44,6 +46,14 @@ public class Member extends BaseEntity {
     @Builder.Default
     private Set<MemberRole> roleSet = new HashSet<MemberRole>(Arrays.asList(MemberRole.USER));
 
+
+    public void changeUsername(String username){
+        this.username = username;
+    }
+
+    public void changeEmail(String email){
+        this.email = email;
+    }
 
     public void changeImageUrl(String imageUrl){
         this.imageUrl = imageUrl;
