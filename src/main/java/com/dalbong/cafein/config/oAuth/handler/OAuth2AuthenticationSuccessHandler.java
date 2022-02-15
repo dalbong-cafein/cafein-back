@@ -44,6 +44,6 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
         System.out.println(response.getHeaderNames());
         System.out.println(redirectUrl);
         //redirect
-        getRedirectStrategy().sendRedirect(request,response,redirectUrl);
+        //getRedirectStrategy().sendRedirect(request,response,redirectUrl);
     }
 }
