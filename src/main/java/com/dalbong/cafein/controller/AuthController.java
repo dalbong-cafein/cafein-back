@@ -50,4 +50,9 @@ public class AuthController {
 
         return new ResponseEntity<>(new CMRespDto<>(1,"accessToken 토큰 재발급 완료", null), HttpStatus.OK);
     }
+
+    @GetMapping("/auth/test")
+    public String test(){
+        return "성공했습니다.";
+    }
 }
