@@ -2,6 +2,7 @@ package com.dalbong.cafein.config.oAuth.handler;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.redis.RedisService;
+import com.dalbong.cafein.util.CookieUtil;
 import com.dalbong.cafein.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,7 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
     private final JwtUtil jwtUtil;
     private final RedisService redisService;
+    private final CookieUtil cookieUtil;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -37,12 +39,10 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
         //refreshToken - redis 에 저장
         redisService.setValues(principalDetails.getMember().getMemberId(), refreshToken);
 
-        //TODO header, cookie 고민
-        response.setHeader("accessToken", accessToken);
-        response.setHeader("refreshToken", refreshToken);
+        //TODO deploy - setMax() modify
+        cookieUtil.createCookie(response, jwtUtil.accessTokenName, accessToken, jwtUtil.accessTokenExpire);
+        cookieUtil.createCookie(response, jwtUtil.refreshTokenName, refreshToken,jwtUtil.refreshTokenExpire);
 
-        System.out.println(response.getHeaderNames());
-        System.out.println(redirectUrl);
         //redirect
         getRedirectStrategy().sendRedirect(request,response,redirectUrl);
     }

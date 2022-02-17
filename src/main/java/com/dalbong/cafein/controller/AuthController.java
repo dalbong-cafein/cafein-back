@@ -2,6 +2,7 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.redis.RedisService;
+import com.dalbong.cafein.util.CookieUtil;
 import com.dalbong.cafein.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,9 +20,10 @@ public class AuthController {
 
     private final RedisService redisService;
     private final JwtUtil jwtUtil;
+    private final CookieUtil cookieUtil;
 
     @GetMapping("/auth/refreshToken")
-    public ResponseEntity<?> verifyRefreshToken(@RequestHeader("refreshToken") String refreshToken, HttpServletResponse response){
+    public ResponseEntity<?> verifyRefreshToken(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response){
 
         //refreshToken 검증
         Long memberId = jwtUtil.validateAndExtract(refreshToken);
@@ -34,9 +36,6 @@ public class AuthController {
         //redis 에 등록된 refreshToken 가져오기
         String findRefreshToken = redisService.getValues(memberId);
 
-        System.out.println(refreshToken);
-        System.out.println(findRefreshToken);
-
         //잘못된 refreshToken 일 경우
         if(findRefreshToken == null || !findRefreshToken.equals(refreshToken) || refreshToken == null){
             return new ResponseEntity<>(new CMRespDto<>(1,"UnAuthorized", null),HttpStatus.UNAUTHORIZED);
@@ -45,8 +44,7 @@ public class AuthController {
         //새로운 accessToken 생성
         String newAccessToken = jwtUtil.generateAccessToken(memberId);
 
-        //TODO header, cookie 고민
-        response.setHeader("accessToken", newAccessToken);
+        cookieUtil.createCookie(response, jwtUtil.accessTokenName, newAccessToken, jwtUtil.accessTokenExpire);
 
         return new ResponseEntity<>(new CMRespDto<>(1,"accessToken 토큰 재발급 완료", null), HttpStatus.OK);
     }
