@@ -44,6 +44,7 @@ public class Member extends BaseEntity {
     @CollectionTable(joinColumns = @JoinColumn(name = "member_id"))
     @Enumerated(EnumType.STRING)
     @Builder.Default
+    @Column(name = "role")
     private Set<MemberRole> roleSet = new HashSet<MemberRole>(Arrays.asList(MemberRole.USER));
 
 

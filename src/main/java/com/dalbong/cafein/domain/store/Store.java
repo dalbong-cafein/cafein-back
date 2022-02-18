@@ -6,6 +6,10 @@ import com.dalbong.cafein.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Builder
 @AllArgsConstructor
@@ -30,14 +34,32 @@ public class Store extends BaseEntity {
     @Embedded
     private Address address;
 
-
     private String website;
 
     private String phone;
 
     @Column(nullable = false)
-    private String mapX;
+    private int mapX;
 
     @Column(nullable = false)
-    private String mapY;
+    private int mapY;
+
+    @Column(nullable = false)
+    private Boolean isApproval;
+
+    @Column(nullable = false)
+    private SocketCnt socketCnt;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "hash_tag", joinColumns = @JoinColumn(name = "store_id"))
+    @Builder.Default
+    @Column(name = "hash_tag")
+    private Set<String> hashTagSet = new HashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "feature_store",joinColumns = @JoinColumn(name = "store_id"))
+    @Builder.Default
+    @Column(name = "feature")
+    private List<Feature> featureList = new ArrayList<>();
 }
