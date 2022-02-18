@@ -12,4 +12,9 @@ public class Day {
     private LocalDateTime open;
 
     private LocalDateTime closed;
+
+    protected Day(){}
+
+    public Day(LocalDateTime open, LocalDateTime closed) {
+    }
 }
