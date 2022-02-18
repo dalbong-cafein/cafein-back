@@ -3,18 +3,18 @@ package com.dalbong.cafein.domain.businessHours;
 import lombok.Getter;
 
 import javax.persistence.Embeddable;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Embeddable //jpa 내장타입
 @Getter
 public class Day {
 
-    private LocalDateTime open;
+    private LocalTime open;
 
-    private LocalDateTime closed;
+    private LocalTime closed;
 
     protected Day(){}
 
-    public Day(LocalDateTime open, LocalDateTime closed) {
+    public Day(LocalTime open, LocalTime closed) {
     }
 }

@@ -15,11 +15,13 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql : true
     open-in-view: false
+    show-sql: true
+
 
   security:
     oauth2:

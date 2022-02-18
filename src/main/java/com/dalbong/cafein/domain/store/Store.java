@@ -44,8 +44,9 @@ public class Store extends BaseEntity {
     @Column(nullable = false)
     private int mapY;
 
+    @Builder.Default
     @Column(nullable = false)
-    private Boolean isApproval;
+    private Boolean isApproval = false;
 
     @Column(nullable = false)
     private SocketCnt socketCnt;

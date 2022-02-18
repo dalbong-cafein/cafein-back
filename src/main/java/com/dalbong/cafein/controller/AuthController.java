@@ -1,16 +1,14 @@
 package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.redis.RedisService;
 import com.dalbong.cafein.util.CookieUtil;
 import com.dalbong.cafein.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -52,5 +50,15 @@ public class AuthController {
     @GetMapping("/auth/test")
     public String test(){
         return "성공했습니다.";
+    }
+
+    @PostMapping("/auth/dto")
+    public String dto(@RequestBody StoreRegDto storeRegDto){
+
+        System.out.println("-----------------");
+        System.out.println(storeRegDto);
+        System.out.println("socketCnt: " + storeRegDto.getSocketCnt());
+        System.out.println("hastTagSet: " + storeRegDto.getHashTagSet());
+        return "성공";
     }
 }
