@@ -36,4 +36,22 @@ public class StoreServiceImpl implements StoreService{
 
         return store;
     }
+
+    /**
+     * 카페 승인 수정
+     */
+    @Transactional
+    @Override
+    public void modifyIsApproval(Long storeId) {
+
+        Store store = storeRepository.findById(storeId).orElseThrow(() ->
+                new IllegalArgumentException("존재하는 않는 가게입니다."));
+
+        store.changeIsApproval();
+    }
+
+
+
+
 }
+

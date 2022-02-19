@@ -63,4 +63,14 @@ public class Store extends BaseEntity {
     @Builder.Default
     @Column(name = "feature")
     private List<Feature> featureList = new ArrayList<>();
+
+    public void changeIsApproval(){
+        if (isApproval){
+            isApproval = false;
+        }else{
+            isApproval = true;
+        }
+    }
+
+
 }

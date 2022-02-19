@@ -2,6 +2,7 @@ package com.dalbong.cafein.config;
 
 import com.dalbong.cafein.config.oAuth.OAuth2DetailsService;
 import com.dalbong.cafein.config.oAuth.handler.OAuth2AuthenticationSuccessHandler;
+import com.dalbong.cafein.domain.member.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,8 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
+                .antMatchers("/stores/{storeId}/isApproval").access("hasRole('ROLE_ADMIN')")
+                //.antMatchers("/stores/{storeId}/isApproval").hasRole("ADMIN")
                 .anyRequest().permitAll();
-
-
     }
 }
