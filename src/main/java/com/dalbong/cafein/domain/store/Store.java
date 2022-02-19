@@ -3,6 +3,7 @@ package com.dalbong.cafein.domain.store;
 import com.dalbong.cafein.domain.BaseEntity;
 import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.review.Review;
 import lombok.*;
 
 import javax.persistence.*;
@@ -63,6 +64,10 @@ public class Store extends BaseEntity {
     @Builder.Default
     @Column(name = "feature")
     private List<Feature> featureList = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Review> reviewList = new ArrayList<>();
 
     public void changeIsApproval(){
         if (isApproval){

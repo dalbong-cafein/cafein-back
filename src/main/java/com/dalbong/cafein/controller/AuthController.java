@@ -51,14 +51,4 @@ public class AuthController {
     public String test(){
         return "성공했습니다.";
     }
-
-    @PostMapping("/auth/dto")
-    public String dto(@RequestBody StoreRegDto storeRegDto){
-
-        System.out.println("-----------------");
-        System.out.println(storeRegDto);
-        System.out.println("socketCnt: " + storeRegDto.getSocketCnt());
-        System.out.println("hastTagSet: " + storeRegDto.getHashTagSet());
-        return "성공";
-    }
 }

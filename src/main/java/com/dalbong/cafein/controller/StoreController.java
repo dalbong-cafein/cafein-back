@@ -27,7 +27,7 @@ public class StoreController {
     public ResponseEntity<?> register(@Validated StoreRegDto storeRegDto,
                                       @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        storeService.register(storeRegDto,2L);
+        storeService.register(storeRegDto,principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1,"가게 등록 성공",null), HttpStatus.CREATED);
     }
