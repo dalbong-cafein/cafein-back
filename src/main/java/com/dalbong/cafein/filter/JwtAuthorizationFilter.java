@@ -59,7 +59,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             //accessToken 이 유효할 경우
             if (memberId != null) {
                 System.out.println("memberId: " + memberId);
-                Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                Member member = memberRepository.findWithRoleSetByMemberId(memberId).orElseThrow(() ->
                         new IllegalArgumentException("존재하지 않은 회원입니다."));
 
                 PrincipalDetails principalDetails = new PrincipalDetails(member);
