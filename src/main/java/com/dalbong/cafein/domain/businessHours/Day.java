@@ -16,5 +16,7 @@ public class Day {
     protected Day(){}
 
     public Day(LocalTime open, LocalTime closed) {
+        this.open = open;
+        this.closed = closed;
     }
 }

@@ -10,6 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,8 +29,6 @@ public class StoreRegDto {
     private String siNm; //시도명
     private String sggNm; //시군구
     private String rn; //도로명
-
-    private BusinessHoursRegDto businessHoursRegDto;
 
     private int americano;
 
@@ -46,6 +47,41 @@ public class StoreRegDto {
 
     @Builder.Default //테스트 코드 용도
     private List<Feature> featureList = new ArrayList<>();
+
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime monOpen;
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime monClosed;
+
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime tueOpen;
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime tueClosed;
+
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime wedOpen;
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime wedClosed;
+
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime thuOpen;
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime thuClosed;
+
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime friOpen;
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime friClosed;
+
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime satOpen;
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime satClosed;
+
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime sunOpen;
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime sunClosed;
 
     //TODO image
 
@@ -67,4 +103,16 @@ public class StoreRegDto {
                 .build();
     }
 
+    public BusinessHoursRegDto getBusinessHoursRegDto(){
+
+        return BusinessHoursRegDto.builder()
+                .monOpen(monOpen).monClosed(monClosed)
+                .tueOpen(tueOpen).tueClosed(tueClosed)
+                .wedOpen(wedOpen).wedClosed(wedClosed)
+                .thuOpen(thuOpen).thuClosed(thuClosed)
+                .friOpen(friOpen).friClosed(friClosed)
+                .satOpen(satOpen).satClosed(satClosed)
+                .sunOpen(sunOpen).sunClosed(sunClosed)
+                .build();
+    }
 }

@@ -24,12 +24,11 @@ public class StoreServiceImpl implements StoreService{
     @Override
     public Store register(StoreRegDto storeRegDto, Long principalId) {
 
+        //store entity 저장
         Store store = storeRegDto.toEntity(principalId);
         storeRepository.save(store);
-        System.out.println(store.getStoreId());
-        System.out.println(store.getAddress());
 
-        System.out.println(storeRegDto.getBusinessHoursRegDto());
+        //businessHours 엔티티 저장
         BusinessHours businessHours = storeRegDto.getBusinessHoursRegDto().toEntity(store.getStoreId());
         businessHoursRepository.save(businessHours);
 
