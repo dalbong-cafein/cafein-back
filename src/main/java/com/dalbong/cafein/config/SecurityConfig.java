@@ -2,7 +2,9 @@ package com.dalbong.cafein.config;
 
 import com.dalbong.cafein.config.oAuth.OAuth2DetailsService;
 import com.dalbong.cafein.config.oAuth.handler.OAuth2AuthenticationSuccessHandler;
-import com.dalbong.cafein.domain.member.MemberRole;
+import com.dalbong.cafein.config.security.JwtAccessDeniedHandler;
+import com.dalbong.cafein.config.security.JwtAuthenticationEntryPoint;
+import com.dalbong.cafein.filter.JwtAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -20,6 +23,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final OAuth2DetailsService oAuth2DetailsService;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final JwtAuthorizationFilter jwtAuthorizationFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public PasswordEncoder encode() {
@@ -43,8 +49,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
+
                 .antMatchers("/stores/{storeId}/isApproval").access("hasRole('ROLE_ADMIN')")
                 //.antMatchers("/stores/{storeId}/isApproval").hasRole("ADMIN")
-                .anyRequest().permitAll();
+                .anyRequest().permitAll()
+
+                .and()
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler);
+
     }
 }
