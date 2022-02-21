@@ -52,6 +52,8 @@ public class Store extends BaseEntity {
     @Column(nullable = false)
     private SocketCnt socketCnt;
 
+    private String wifi;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "hash_tag", joinColumns = @JoinColumn(name = "store_id"))
     @Builder.Default
