@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -43,6 +44,14 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
         cookieUtil.createCookie(response, jwtUtil.accessTokenName, accessToken, jwtUtil.accessTokenExpire);
         cookieUtil.createCookie(response, jwtUtil.refreshTokenName, refreshToken,jwtUtil.refreshTokenExpire);
 
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies){
+            System.out.println("===================");
+            System.out.println(cookie.getName());
+            System.out.println(cookie.getValue());
+            System.out.println(cookie);
+
+        }
         //redirect
         //getRedirectStrategy().sendRedirect(request,response,redirectUrl);
     }
