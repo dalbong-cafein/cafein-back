@@ -59,7 +59,8 @@ public class AuthController {
 
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie :cookies){
-            System.out.println("cookie: " + cookie);
+            System.out.println("cookie name: "+ cookie.getName());
+            System.out.println("cookie value: "+ cookie.getValue());
         }
 
         return "성공했습니다";
