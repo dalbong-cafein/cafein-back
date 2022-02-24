@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RequiredArgsConstructor
@@ -48,7 +50,18 @@ public class AuthController {
     }
 
     @GetMapping("/auth/test")
-    public String test(){
-        return "성공했습니다.";
+    public String test(HttpServletRequest request){
+        System.out.println("----------------");
+        System.out.println(request.getRequestURI());
+        String test = request.getHeader("test");
+        System.out.println("헤더값: " + test);
+
+
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie :cookies){
+            System.out.println("cookie: " + cookie);
+        }
+
+        return "성공했습니다";
     }
 }
