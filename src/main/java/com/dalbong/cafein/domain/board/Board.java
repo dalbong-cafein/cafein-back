@@ -1,6 +1,7 @@
 package com.dalbong.cafein.domain.board;
 
 import com.dalbong.cafein.domain.BaseEntity;
+import com.dalbong.cafein.domain.boardCategory.BoardCategory;
 import com.dalbong.cafein.domain.member.Member;
 import lombok.*;
 

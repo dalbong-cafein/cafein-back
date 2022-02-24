@@ -1,4 +1,4 @@
-package com.dalbong.cafein.domain.board;
+package com.dalbong.cafein.domain.boardCategory;
 
 import lombok.*;
 
