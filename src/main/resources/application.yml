@@ -22,7 +22,6 @@ spring:
     open-in-view: false
     show-sql: true
 
-
   security:
     oauth2:
       client:
@@ -68,3 +67,8 @@ app:
     secretKey: 1234rhjknsdkjn2kKJnfkjanhdsfkjsdnaflkasjfnksjdfnksjdfs478415616
   oauth2:
     authorized-redirect-url: http://localhost:55773
+
+coolsms:
+  apiKey: NCS1YOS86LRGEY13
+  apiSecret: 9GNBHVGEE7YJ2YWJNSGHHE05QRQVNGKJ
+  fromNumber:

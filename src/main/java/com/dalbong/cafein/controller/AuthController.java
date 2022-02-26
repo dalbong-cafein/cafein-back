@@ -3,6 +3,7 @@ package com.dalbong.cafein.controller;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.redis.RedisService;
+import com.dalbong.cafein.service.SmsService;
 import com.dalbong.cafein.util.CookieUtil;
 import com.dalbong.cafein.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,20 @@ public class AuthController {
     private final RedisService redisService;
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
+    private final SmsService smsService;
+
+    @GetMapping("/auth/send-sms")
+    public ResponseEntity<?> sendSms(@RequestParam("toNumber") String toNumber){
+        System.out.println(toNumber);
+
+        //랜덤 4자리 인증번호 생성
+        String certifyNum = smsService.createCertifyNum();
+
+        //sms 문자 메시지 전송
+        smsService.sendSms(toNumber, certifyNum);
+
+        return new ResponseEntity<>(new CMRespDto<>(1,"문자 메세지 전송 성공", certifyNum), HttpStatus.OK);
+    }
 
     @GetMapping("/auth/refreshToken")
     public ResponseEntity<?> verifyRefreshToken(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response){
