@@ -58,7 +58,6 @@ public class AuthController {
 
 
         Cookie[] cookies = request.getCookies();
-        cookies.clone()
         System.out.println("쿠키 개수: " + cookies.length);
         for (Cookie cookie :cookies){
             System.out.println("cookie name: "+ cookie.getName());
