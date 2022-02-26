@@ -1,7 +1,6 @@
 server:
   port: 5000
 
-
 spring:
   datasource:
     url: jdbc:h2:tcp://localhost/~/cafein
@@ -21,7 +20,6 @@ spring:
         format_sql : true
     open-in-view: false
     show-sql: true
-
 
   security:
     oauth2:
@@ -68,3 +66,8 @@ app:
     secretKey: 1234rhjknsdkjn2kKJnfkjanhdsfkjsdnaflkasjfnksjdfnksjdfs478415616
   oauth2:
     authorized-redirect-url: http://localhost:55773
+
+coolsms:
+  apiKey: NCS1YOS86LRGEY13
+  apiSecret: 9GNBHVGEE7YJ2YWJNSGHHE05QRQVNGKJ
+  fromNumber: 070-8065-0427

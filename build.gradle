@@ -39,6 +39,10 @@ dependencies {
 
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// https://mvnrepository.com/artifact/net.nurigo/javaSDK
+	implementation group: 'net.nurigo', name: 'javaSDK', version: '2.2'
+
 }
 
 tasks.named('test') {
