@@ -24,6 +24,9 @@ public class AuthController {
     private final CookieUtil cookieUtil;
     private final SmsService smsService;
 
+    /**
+     * sms 인증 번호 전송
+     */
     @GetMapping("/auth/send-sms")
     public ResponseEntity<?> sendSms(@RequestParam("toNumber") String toNumber){
         System.out.println(toNumber);
@@ -37,6 +40,9 @@ public class AuthController {
         return new ResponseEntity<>(new CMRespDto<>(1,"문자 메세지 전송 성공", certifyNum), HttpStatus.OK);
     }
 
+    /**
+     * accessToken 재발급
+     */
     @GetMapping("/auth/refreshToken")
     public ResponseEntity<?> verifyRefreshToken(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response){
 
