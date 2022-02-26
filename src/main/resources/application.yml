@@ -1,7 +1,6 @@
 server:
   port: 5000
 
-
 spring:
   datasource:
     url: jdbc:h2:tcp://localhost/~/cafein
@@ -71,4 +70,4 @@ app:
 coolsms:
   apiKey: NCS1YOS86LRGEY13
   apiSecret: 9GNBHVGEE7YJ2YWJNSGHHE05QRQVNGKJ
-  fromNumber:
+  fromNumber: 070-8065-0427
