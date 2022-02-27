@@ -3,6 +3,7 @@ package com.dalbong.cafein.controller;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.redis.RedisService;
+import com.dalbong.cafein.service.MemberService;
 import com.dalbong.cafein.service.SmsService;
 import com.dalbong.cafein.util.CookieUtil;
 import com.dalbong.cafein.util.JwtUtil;
@@ -23,6 +24,19 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
     private final SmsService smsService;
+    private final MemberService memberService;
+
+    /**
+     * 닉네임 중복확인
+     */
+    @GetMapping("/auth/duplicate-nickname")
+    public ResponseEntity<?> duplicateCheck(@RequestParam("nickname") String nickname){
+
+        Boolean result = memberService.isDuplicateNickname(nickname);
+
+        return new ResponseEntity<>(new CMRespDto<>(1,"닉네임 중복체크 성공",result), HttpStatus.OK);
+    }
+
 
     /**
      * sms 인증 번호 전송
