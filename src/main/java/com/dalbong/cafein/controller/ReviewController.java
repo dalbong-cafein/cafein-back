@@ -3,7 +3,7 @@ package com.dalbong.cafein.controller;
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.review.ReviewRegDto;
-import com.dalbong.cafein.service.ReviewService;
+import com.dalbong.cafein.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

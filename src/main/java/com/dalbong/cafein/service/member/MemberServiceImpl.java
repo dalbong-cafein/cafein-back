@@ -1,4 +1,4 @@
-package com.dalbong.cafein.service;
+package com.dalbong.cafein.service.member;
 
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;

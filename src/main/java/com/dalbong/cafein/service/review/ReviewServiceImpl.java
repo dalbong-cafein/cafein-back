@@ -1,4 +1,4 @@
-package com.dalbong.cafein.service;
+package com.dalbong.cafein.service.review;
 
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;

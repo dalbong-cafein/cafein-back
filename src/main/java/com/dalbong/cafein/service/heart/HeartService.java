@@ -1,4 +1,4 @@
-package com.dalbong.cafein.service;
+package com.dalbong.cafein.service.heart;
 
 import com.dalbong.cafein.domain.heart.Heart;
 

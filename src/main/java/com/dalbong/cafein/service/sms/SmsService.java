@@ -1,4 +1,4 @@
-package com.dalbong.cafein.service;
+package com.dalbong.cafein.service.sms;
 
 public interface SmsService {
 

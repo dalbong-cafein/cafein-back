@@ -1,4 +1,4 @@
-package com.dalbong.cafein.service;
+package com.dalbong.cafein.service.store;
 
 import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;

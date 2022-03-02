@@ -1,10 +1,9 @@
 package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.dto.CMRespDto;
-import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.redis.RedisService;
-import com.dalbong.cafein.service.MemberService;
-import com.dalbong.cafein.service.SmsService;
+import com.dalbong.cafein.service.member.MemberService;
+import com.dalbong.cafein.service.sms.SmsService;
 import com.dalbong.cafein.util.CookieUtil;
 import com.dalbong.cafein.util.JwtUtil;
 import lombok.RequiredArgsConstructor;

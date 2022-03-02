@@ -1,4 +1,4 @@
-package com.dalbong.cafein.service;
+package com.dalbong.cafein.service.board;
 
 import com.dalbong.cafein.domain.board.Board;
 import com.dalbong.cafein.domain.board.BoardRepository;

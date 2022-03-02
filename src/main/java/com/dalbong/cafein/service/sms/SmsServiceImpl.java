@@ -1,7 +1,5 @@
-package com.dalbong.cafein.service;
+package com.dalbong.cafein.service.sms;
 
-import lombok.extern.java.Log;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
