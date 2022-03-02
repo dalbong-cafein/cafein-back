@@ -31,7 +31,10 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String oauthId;
 
+    @Column(nullable = false, unique = true)
     private String email;
+
+    private String phone;
 
     @Builder.Default
     private String imageUrl = "";
@@ -54,6 +57,10 @@ public class Member extends BaseEntity {
 
     public void changeEmail(String email){
         this.email = email;
+    }
+
+    public void changePhone(String phone){
+        this.phone = phone;
     }
 
     public void changeImageUrl(String imageUrl){
