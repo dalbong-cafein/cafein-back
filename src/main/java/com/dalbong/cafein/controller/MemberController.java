@@ -2,6 +2,7 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.member.MemberUpdateDto;
 import com.dalbong.cafein.dto.member.PhoneUpdateDto;
 import com.dalbong.cafein.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,18 @@ public class MemberController {
         memberService.modifyPhone(phoneUpdateDto.getPhone(), principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "휴대폰 번호 수정 성공",null), HttpStatus.OK);
+    }
+
+    /**
+     * 프로필 사진 및 닉네임 수정
+     */
+    @PatchMapping("/members/{memberId}/ImageAndNickname")
+    public ResponseEntity<?> modifyImageAndNinckanme(MemberUpdateDto memberUpdateDto,
+                                                     @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        memberService.modifyImageAndNickname(memberUpdateDto, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "프로필 사진 및 닉네임 수정 성공",null), HttpStatus.OK);
+
     }
 }
