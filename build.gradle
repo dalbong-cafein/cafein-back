@@ -43,6 +43,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/net.nurigo/javaSDK
 	implementation group: 'net.nurigo', name: 'javaSDK', version: '2.2'
 
+	//s3
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
 }
 
 tasks.named('test') {
