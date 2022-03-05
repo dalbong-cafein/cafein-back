@@ -16,10 +16,20 @@ public class MemberImage extends Image {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    private Boolean isSocial;
+
     protected MemberImage(){}
+
+    public MemberImage(Member member, String imagerUrl, Boolean isSocial){
+        super(member.getMemberId(), imagerUrl);
+        this.member = member;
+        this.isSocial = isSocial;
+    }
 
     public MemberImage(Member member, String imagerUrl){
         super(member.getMemberId(), imagerUrl);
         this.member = member;
+        this.isSocial = false;
     }
+
 }

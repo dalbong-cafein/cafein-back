@@ -3,6 +3,8 @@ package com.dalbong.cafein.config.oAuth;
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.config.oAuth.userInfo.OAuth2UserInfo;
 import com.dalbong.cafein.config.oAuth.userInfo.OAuth2UserInfoFactory;
+import com.dalbong.cafein.domain.image.MemberImage;
+import com.dalbong.cafein.domain.image.MemberImageRepository;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
@@ -27,6 +29,7 @@ import static com.dalbong.cafein.domain.member.AuthProvider.NAVER;
 public class OAuth2DetailsService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
+    private final MemberImageRepository memberImageRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -51,6 +54,7 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
         //신규 회원
         if(result.isEmpty()){
             Member member;
+            MemberImage memberImage;
 
             //랜덤값 비밀번호 생성
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -62,7 +66,6 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
                             .oauthId(userInfo.getId())
                             .password(password)
                             .username(userInfo.getName())
-                            .imageUrl(userInfo.getImageUrl())
                             .provider(KAKAO)
                             .build();
 
@@ -79,7 +82,6 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
                             .password(password)
                             .username(userInfo.getName())
                             .email(userInfo.getEmail())
-                            .imageUrl(userInfo.getImageUrl())
                             .provider(NAVER)
                             .build();
 
@@ -89,6 +91,10 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
                 default:
                     throw new IllegalStateException("Unexpected value: " + authProvider);
             }
+
+            //프로필 사진 저장
+            memberImage = new MemberImage(member, userInfo.getImageUrl(), true);
+            memberImageRepository.save(memberImage);
 
             return new PrincipalDetails(member, userInfo);
 
@@ -127,8 +133,8 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
         }
 
         //프로필 이미지 변경
-        if (userInfo.getImageUrl() != null && !member.getImageUrl().equals(userInfo.getImageUrl())) {
-            member.changeImageUrl(userInfo.getImageUrl());
-        }
+//        if (userInfo.getImageUrl() != null && !member.getImageUrl().equals(userInfo.getImageUrl())) {
+//            member.changeImageUrl(userInfo.getImageUrl());
+//        }
     }
 }
