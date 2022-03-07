@@ -1,5 +1,7 @@
 package com.dalbong.cafein.config.oAuth.userInfo;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class NaverOAuth2UserInfo extends OAuth2UserInfo{
@@ -29,5 +31,14 @@ public class NaverOAuth2UserInfo extends OAuth2UserInfo{
     @Override
     public String getImageUrl() {
         return (String) response.get("profile_image");
+    }
+
+    @Override
+    public LocalDate getBirth() {
+
+        String birthday = (String) response.get("birthday");
+        String birthyear = (String) response.get("birthyear");
+
+        return LocalDate.parse(birthyear+"-"+birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 }

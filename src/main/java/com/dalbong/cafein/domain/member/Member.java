@@ -4,6 +4,7 @@ import com.dalbong.cafein.domain.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,10 +32,13 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String oauthId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
     private String phone;
+
+    @Column(nullable = false)
+    private LocalDate birth;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -62,6 +66,10 @@ public class Member extends BaseEntity {
 
     public void changePhone(String phone){
         this.phone = phone;
+    }
+
+    public void changeBirth(LocalDate birth){
+        this.birth = birth;
     }
 
 
