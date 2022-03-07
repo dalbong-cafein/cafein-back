@@ -36,6 +36,7 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
+
         // oauth 제공해주는 사이트마다 제공해주는 데이터 변수명이 다름
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
@@ -66,6 +67,7 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
                             .oauthId(userInfo.getId())
                             .password(password)
                             .username(userInfo.getName())
+                            .birth(userInfo.getBirth())
                             .provider(KAKAO)
                             .build();
 
@@ -82,6 +84,7 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
                             .password(password)
                             .username(userInfo.getName())
                             .email(userInfo.getEmail())
+                            .birth(userInfo.getBirth())
                             .provider(NAVER)
                             .build();
 
@@ -130,6 +133,11 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
         //이메일 변경
         if (userInfo.getEmail() != null && !member.getEmail().equals(userInfo.getEmail())){
             member.changeEmail(userInfo.getEmail());
+        }
+
+        //생년월일 변경
+        if(userInfo.getBirth() != null && !member.getBirth().equals(userInfo.getBirth())){
+            member.changeBirth(userInfo.getBirth());
         }
 
         //프로필 이미지 변경

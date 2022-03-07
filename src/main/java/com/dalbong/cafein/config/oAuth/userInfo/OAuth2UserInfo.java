@@ -1,5 +1,6 @@
 package com.dalbong.cafein.config.oAuth.userInfo;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 public abstract class OAuth2UserInfo {
@@ -21,6 +22,8 @@ public abstract class OAuth2UserInfo {
     public abstract String getEmail();
 
     public abstract String getImageUrl();
+
+    public abstract LocalDate getBirth();
 
 }
 
