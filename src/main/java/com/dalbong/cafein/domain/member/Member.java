@@ -36,9 +36,6 @@ public class Member extends BaseEntity {
 
     private String phone;
 
-    @Builder.Default
-    private String imageUrl = "";
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;
@@ -67,9 +64,6 @@ public class Member extends BaseEntity {
         this.phone = phone;
     }
 
-    public void changeImageUrl(String imageUrl){
-        this.imageUrl = imageUrl;
-    }
 
 
 
