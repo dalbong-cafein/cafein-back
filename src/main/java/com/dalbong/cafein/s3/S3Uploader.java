@@ -63,7 +63,10 @@ public class S3Uploader {
     public void delete(Image image) {
         try{
             String imageUrl = image.getImageUrl();
-            String storeKey = imageUrl.replace(bucket, "");
+            String storeKey = imageUrl.replace("https://"+bucket+".s3.ap-northeast-2.amazonaws.com/", "");
+
+            System.out.println("imageUrl: " + imageUrl);
+            System.out.println("storeKey: "+ storeKey);
       
             amazonS3.deleteObject(new DeleteObjectRequest(bucket, storeKey));
 
@@ -71,15 +74,6 @@ public class S3Uploader {
             log.error("delete file error"+e.getMessage());
         }
     }
-
-    /**
-     * s3 파일 URL
-     */
-    public String getImageUrl(String filePath, String fileNm){
-        String storeKey = filePath + "/" + fileNm;
-        return amazonS3.getUrl(bucket,storeKey).toString();
-    }
-
 
     // S3로 업로드
     private String putS3(File uploadFile, String storeKey) {
