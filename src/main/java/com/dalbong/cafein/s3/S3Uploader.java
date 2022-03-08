@@ -16,6 +16,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,10 +31,26 @@ public class S3Uploader {
 
     private final AmazonS3 amazonS3;
 
+
+    /**
+     * S3 다중 업로드
+     */
+    public List<String> s3MultipleUpload(List<MultipartFile> multipartFiles) throws IOException {
+        List<String> imageUrlList = new ArrayList<>();
+
+        if (!multipartFiles.isEmpty()) {
+            for (MultipartFile multipartFile : multipartFiles) {
+                imageUrlList.add(s3Upload(multipartFile));
+            }
+        }
+
+        return imageUrlList;
+    }
+
     /**
      * S3 업로드
      */
-    public String S3Upload(MultipartFile multipartFile) throws IOException {
+    public String s3Upload(MultipartFile multipartFile) throws IOException {
 
         File uploadFile = convert(multipartFile)  // 파일 변환할 수 없으면 에러
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
