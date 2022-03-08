@@ -32,6 +32,8 @@ public class Review extends BaseEntity {
 
     private String content;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Recommendation recommendation;
 
     @Embedded

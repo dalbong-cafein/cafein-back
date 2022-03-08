@@ -13,14 +13,14 @@ public class DetailEvaluation {
 
     private int restroom;
 
-    private int table;
+    private int tableSize;
 
     protected DetailEvaluation(){}
 
-    public DetailEvaluation(int socket, int wifi, int restroom, int table){
+    public DetailEvaluation(int socket, int wifi, int restroom, int tableSize){
         this.socket = socket;
         this.wifi = wifi;
         this.restroom = restroom;
-        this.table = table;
+        this.tableSize = tableSize;
     }
 }
