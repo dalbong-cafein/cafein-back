@@ -12,6 +12,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RequiredArgsConstructor
 @RestController
 public class ReviewController {
@@ -23,7 +25,7 @@ public class ReviewController {
      */
     @PostMapping("/reviews")
     public ResponseEntity<?> register(@Validated ReviewRegDto reviewRegDto,
-                                      @AuthenticationPrincipal PrincipalDetails principalDetails){
+                                      @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
         reviewService.register(reviewRegDto, principalDetails.getMember().getMemberId());
 

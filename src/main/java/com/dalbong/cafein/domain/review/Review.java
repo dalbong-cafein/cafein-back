@@ -30,24 +30,14 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    @Column(nullable = false)
-    private int grade;
-
-    @Column(nullable = false)
     private String content;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SocketCnt socketCnt;
-
     @Enumerated(EnumType.STRING)
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "feature_review",joinColumns = @JoinColumn(name = "review_id"))
-    @Builder.Default
-    @Column(name = "feature")
-    private List<Feature> featureList = new ArrayList<>();
+    private Recommendation recommendation;
 
-    //TODO 이미지
+    @Embedded
+    private DetailEvaluation detailEvaluation;
 
     //연관관계 메서드
     public void setStore(Store store){
