@@ -26,7 +26,7 @@ import java.io.IOException;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private AntPathMatcher antPathMatcher;
-    private String pattern = "/auth/**/*";
+    private String pattern = "/**";
     private JwtUtil jwtUtil;
     private CookieUtil cookieUtil;
     private MemberRepository memberRepository;
