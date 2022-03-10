@@ -10,7 +10,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "DELETE", "PUT");
+                .allowedOrigins("http://cafein-env.eba-ipjcypwd.ap-northeast-2.elasticbeanstalk.com")
+                .allowedMethods("GET", "POST", "DELETE", "PUT")
+                .allowCredentials(true);
+
     }
 }
