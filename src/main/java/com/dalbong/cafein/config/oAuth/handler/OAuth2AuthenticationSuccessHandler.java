@@ -1,6 +1,7 @@
 package com.dalbong.cafein.config.oAuth.handler;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
+import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.redis.RedisService;
 import com.dalbong.cafein.util.CookieUtil;
 import com.dalbong.cafein.util.JwtUtil;
@@ -14,6 +15,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 
 @RequiredArgsConstructor
 @Component
@@ -52,7 +54,26 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
             System.out.println(cookie);
 
         }
+
+
         //redirect
-        //getRedirectStrategy().sendRedirect(request,response,redirectUrl);
+        Cookie findCookie = cookieUtil.getCookie(request, "os");
+
+        if(findCookie == null){
+            throw new CustomException("OS 정보가 존재하지 않습니다.");
+        }else{
+            String os = findCookie.getValue();
+
+            switch (os){
+                case "android":
+                    getRedirectStrategy().sendRedirect(request,response,"https://flutterbooksample.com");
+                    break;
+                case "ios":
+                    getRedirectStrategy().sendRedirect(request,response,redirectUrl);
+                    break;
+                default:
+                    throw new CustomException("지원하지 않는 os입니다.");
+            }
+        }
     }
 }

@@ -73,6 +73,7 @@ class MemberServiceImplTest {
                 .phone(phone)
                 .email(email)
                 .password("1111")
+                .birth(birth)
                 .oauthId(oauthId)
                 .birth(birth)
                 .provider(AuthProvider.KAKAO)
