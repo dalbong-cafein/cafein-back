@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
@@ -23,7 +25,7 @@ class MemberServiceImplTest {
     @BeforeEach
     void before(){
         Member member = createMember("testUsername", "testNickname", "010-1111-1111",
-                "testEmail@naver.com", "asdf123");
+                "testEmail@naver.com", "asdf123", LocalDate.now());
         this.member = member;
     }
 
@@ -63,7 +65,7 @@ class MemberServiceImplTest {
     }
 
     private Member createMember(String username, String nickname, String phone, String email,
-                                String oauthId) {
+                                String oauthId, LocalDate birth) {
 
         Member member = Member.builder()
                 .username(username)
@@ -72,6 +74,7 @@ class MemberServiceImplTest {
                 .email(email)
                 .password("1111")
                 .oauthId(oauthId)
+                .birth(birth)
                 .provider(AuthProvider.KAKAO)
                 .build();
 

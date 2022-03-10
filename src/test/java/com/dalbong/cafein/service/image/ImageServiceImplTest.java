@@ -16,6 +16,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -39,7 +40,7 @@ class ImageServiceImplTest {
     void 회원이미지_저장() throws Exception{
         //given
         Member member = createMember("testUsername", "testNickname", "010-0000-0000",
-                "test@naver.com", "asdf123");
+                "test@naver.com", "asdf123", LocalDate.now());
 
         MultipartFile imageFile = createImage("updateFile", "updateFilename.jpeg");
 
@@ -58,7 +59,7 @@ class ImageServiceImplTest {
     void 회원이미지_삭제() throws Exception{
         //given
         Member member = createMember("testUsername", "testNickname",
-                "010-0000-0000", "testEmail@naver.com","asd1233");
+                "010-0000-0000", "testEmail@naver.com","asd1233", LocalDate.now());
 
         MultipartFile imageFile = createImage("updateFile", "testFilename.jpeg");
         String imageUrl = s3Uploader.s3Upload(imageFile);
@@ -91,7 +92,7 @@ class ImageServiceImplTest {
     }
 
     private Member createMember(String username, String nickname, String phone, String email,
-                                String oauthId) {
+                                String oauthId, LocalDate birth) {
 
         Member member = Member.builder()
                 .username(username)
@@ -100,6 +101,7 @@ class ImageServiceImplTest {
                 .email(email)
                 .password("1111")
                 .oauthId(oauthId)
+                .birth(birth)
                 .provider(AuthProvider.KAKAO)
                 .build();
 
