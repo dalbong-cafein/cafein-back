@@ -24,9 +24,6 @@ public class CookieUtil {
 
     //쿠키를 가져온다
     public Cookie getCookie(HttpServletRequest request, String cookieName){
-        if(request.getCookies() == null){
-            System.out.println("쿠키가 아예 없다");
-        }
         Cookie[] cookies = request.getCookies();
 
         return Arrays.stream(cookies).filter(cookie -> cookie.getName().equals(cookieName))
