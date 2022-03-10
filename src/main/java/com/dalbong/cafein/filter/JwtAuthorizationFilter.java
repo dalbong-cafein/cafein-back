@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -25,15 +26,14 @@ import java.io.IOException;
 @Log4j2
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-    private AntPathMatcher antPathMatcher;
-    private String pattern = "/**";
     private JwtUtil jwtUtil;
     private CookieUtil cookieUtil;
     private MemberRepository memberRepository;
 
+    private static final String[] pattern = {"/", "/auth/**/*"};
+
     @Autowired
     public JwtAuthorizationFilter(CookieUtil cookieUtil, JwtUtil jwtUtil, MemberRepository memberRepository) {
-        this.antPathMatcher = new AntPathMatcher();
         this.jwtUtil = jwtUtil;
         this.cookieUtil = cookieUtil;
         this.memberRepository = memberRepository;
@@ -44,7 +44,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                                     FilterChain chain) throws IOException, ServletException {
 
         //인증이 필요 없는 uri 일 경우 바로 통과
-        if (antPathMatcher.match(pattern, request.getRequestURI())) {
+        if (PatternMatchUtils.simpleMatch(pattern,request.getRequestURI())) {
             chain.doFilter(request, response);
             return;
         }
