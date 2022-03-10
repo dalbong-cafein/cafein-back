@@ -61,7 +61,7 @@ class ImageServiceImplTest {
                 "010-0000-0000", "testEmail@naver.com","asd1233");
 
         MultipartFile imageFile = createImage("updateFile", "testFilename.jpeg");
-        String imageUrl = s3Uploader.S3Upload(imageFile);
+        String imageUrl = s3Uploader.s3Upload(imageFile);
 
         MemberImage memberImage = createMemberImage(member, imageUrl);
 
