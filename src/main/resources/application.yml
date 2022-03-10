@@ -9,7 +9,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   redis:
-    host: ${REDIS_SERVER}
+    host: cafein-redis.s5kppi.0001.apn2.cache.amazonaws.com
     port: 6379
 
   jpa:
