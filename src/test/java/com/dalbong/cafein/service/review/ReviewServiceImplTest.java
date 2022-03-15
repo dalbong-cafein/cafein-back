@@ -12,6 +12,7 @@ import com.dalbong.cafein.dto.review.ReviewRegDto;
 import com.dalbong.cafein.service.image.ImageService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,7 +44,7 @@ class ReviewServiceImplTest {
                 "testEmail@naver.com", "asdf123", LocalDate.now());
         this.member = member;
     }
-
+    @Disabled
     @Test
     void 리뷰등록_사진x() throws Exception{
         //given
@@ -65,6 +66,7 @@ class ReviewServiceImplTest {
         assertThat(review.getDetailEvaluation().getWifi()).isEqualTo(reviewRegDto.getWifi());
     }
 
+    @Disabled
     @Test
     void 리뷰등록_사진o() throws Exception{
         //given

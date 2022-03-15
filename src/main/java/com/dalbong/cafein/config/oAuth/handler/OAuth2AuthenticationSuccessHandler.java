@@ -66,7 +66,7 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
             switch (os){
                 case "android":
-                    getRedirectStrategy().sendRedirect(request,response,"https://flutterbooksample.com");
+                    getRedirectStrategy().sendRedirect(request,response,"https://psblues.site/app/cafein");
                     break;
                 case "ios":
                     getRedirectStrategy().sendRedirect(request,response,redirectUrl);
