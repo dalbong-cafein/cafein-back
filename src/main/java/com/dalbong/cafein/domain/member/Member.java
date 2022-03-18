@@ -52,6 +52,13 @@ public class Member extends BaseEntity {
     @Column(name = "role")
     private Set<MemberRole> roleSet = new HashSet<MemberRole>(Arrays.asList(MemberRole.USER));
 
+    public void setKakaoId(String kakaoId){
+        this.kakaoId = kakaoId;
+    }
+
+    public void setNaverId(String naverId){
+        this.naverId = naverId;
+    }
 
     public void changeUsername(String username){
         this.username = username;

@@ -1,6 +1,7 @@
 package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.login.AccountUniteRegDto;
 import com.dalbong.cafein.redis.RedisService;
 import com.dalbong.cafein.service.member.MemberService;
 import com.dalbong.cafein.service.sms.SmsService;
@@ -24,6 +25,38 @@ public class AuthController {
     private final CookieUtil cookieUtil;
     private final SmsService smsService;
     private final MemberService memberService;
+
+    /**
+     * 계정 연동
+     */
+    @PatchMapping("/auth/account-unite")
+    public ResponseEntity<?> uniteAccount(@CookieValue("accountUniteToken") String accountUniteToken,
+                                          @RequestBody AccountUniteRegDto accountUniteRegDto,
+                                          HttpServletResponse response){
+
+        String email = jwtUtil.validateAndExtractAccountUniteToken(accountUniteToken);
+
+        //잘못된 accountUniteToken 일 경우
+        if (email == null){
+            return new ResponseEntity<>(new CMRespDto<>(1,"UnAuthorized", null), HttpStatus.UNAUTHORIZED);
+        }
+
+        //계정 통합
+        Long memberId = memberService.uniteAccount(email, accountUniteRegDto);
+
+        //accessToken, refreshToken 토큰 생성
+        String accessToken = jwtUtil.generateAccessToken(memberId);
+        String refreshToken = jwtUtil.generateRefreshToken(memberId);
+
+        //refreshToken - redis 에 저장
+        redisService.setValues(memberId, refreshToken);
+
+        //TODO deploy - setMax() modify
+        cookieUtil.createCookie(response, JwtUtil.accessTokenName, accessToken, JwtUtil.accessTokenExpire);
+        cookieUtil.createCookie(response, JwtUtil.refreshTokenName, refreshToken, JwtUtil.refreshTokenExpire);
+
+        return new ResponseEntity<>(new CMRespDto<>(1,"계정 통합 성공", null), HttpStatus.OK);
+    }
 
     /**
      * 닉네임 중복확인
@@ -60,7 +93,7 @@ public class AuthController {
     public ResponseEntity<?> verifyRefreshToken(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response){
 
         //refreshToken 검증
-        Long memberId = jwtUtil.validateAndExtract(refreshToken);
+        Long memberId = jwtUtil.validateAndExtractLoginToken(refreshToken);
 
         //잘못된 refreshToken 일 경우
         if (memberId == null){
@@ -71,7 +104,7 @@ public class AuthController {
         String findRefreshToken = redisService.getValues(memberId);
 
         //잘못된 refreshToken 일 경우
-        if(findRefreshToken == null || !findRefreshToken.equals(refreshToken) || refreshToken == null){
+        if(findRefreshToken == null || !findRefreshToken.equals(refreshToken)){
             return new ResponseEntity<>(new CMRespDto<>(1,"UnAuthorized", null),HttpStatus.UNAUTHORIZED);
         }
 

@@ -8,7 +8,7 @@ import com.dalbong.cafein.domain.image.MemberImageRepository;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
-import com.dalbong.cafein.dto.login.UniteAccountResDto;
+import com.dalbong.cafein.dto.login.AccountUniteResDto;
 import com.dalbong.cafein.handler.exception.AlreadyExistedAccountException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -110,10 +110,10 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
             }
             //해당 email을 사용 중인 계정이 있는 경우
             else{
-                UniteAccountResDto uniteAccountResDto = new UniteAccountResDto(
+                AccountUniteResDto accountUniteResDto = new AccountUniteResDto(
                         userInfo.getEmail(), emailDuplicateResult.get().getRegDate(), userInfo.getId(), authProvider);
 
-                throw new AlreadyExistedAccountException("이미 해당 email을 사용중인 계정이 존재합니다.", uniteAccountResDto);
+                throw new AlreadyExistedAccountException("이미 해당 email을 사용중인 계정이 존재합니다.", accountUniteResDto);
             }
         }
         // 기존 회원

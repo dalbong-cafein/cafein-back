@@ -1,21 +1,20 @@
 package com.dalbong.cafein.handler.exception;
 
-import com.dalbong.cafein.dto.login.UniteAccountResDto;
+import com.dalbong.cafein.dto.login.AccountUniteResDto;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 
 public class AlreadyExistedAccountException extends AuthenticationException {
 
     private static final long serialVersionUID=1L;
 
-    private final UniteAccountResDto uniteAccountResDto;
+    private final AccountUniteResDto accountUniteResDto;
 
-    public AlreadyExistedAccountException(String message, UniteAccountResDto uniteAccountResDto) {
+    public AlreadyExistedAccountException(String message, AccountUniteResDto accountUniteResDto) {
         super(message);
-        this.uniteAccountResDto = uniteAccountResDto;
+        this.accountUniteResDto = accountUniteResDto;
     }
 
-    public UniteAccountResDto getUniteAccountResDto(){
-        return uniteAccountResDto;
+    public AccountUniteResDto getAccountUniteResDto(){
+        return accountUniteResDto;
     }
 }
