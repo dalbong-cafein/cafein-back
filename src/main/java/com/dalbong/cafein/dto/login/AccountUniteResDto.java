@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Data
-public class UniteAccountResDto {
+public class AccountUniteResDto {
 
     private String email;
 

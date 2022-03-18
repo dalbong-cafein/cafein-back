@@ -1,7 +1,9 @@
 package com.dalbong.cafein.service.member;
 
+import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.dto.login.AccountUniteRegDto;
 import com.dalbong.cafein.dto.member.MemberUpdateDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -10,12 +12,43 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.dalbong.cafein.domain.member.AuthProvider.KAKAO;
+import static com.dalbong.cafein.domain.member.AuthProvider.NAVER;
+
 @Transactional
 @RequiredArgsConstructor
 @Service
 public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
+
+    /**
+     * 계정 통합
+     */
+    @Transactional
+    @Override
+    public Long uniteAccount(String email, AccountUniteRegDto accountUniteRegDto) {
+
+        Member member = memberRepository.findByEmail(email).orElseThrow(() ->
+                new CustomException("해당 email은 등록된 계정이 없습니다."));
+
+        AuthProvider newAuthProvider = accountUniteRegDto.getNewAuthProvider();
+
+        switch (newAuthProvider) {
+            case KAKAO:
+                member.setKakaoId(accountUniteRegDto.getNewOAuthId());
+                break;
+
+            case NAVER:
+                member.setNaverId(accountUniteRegDto.getNewOAuthId());
+                break;
+
+            default:
+                throw new CustomException("Unexpected value: " + newAuthProvider);
+        }
+
+        return member.getMemberId();
+    }
 
     /**
      * 닉네임 중복체크

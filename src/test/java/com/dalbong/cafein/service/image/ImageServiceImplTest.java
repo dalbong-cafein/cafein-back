@@ -92,7 +92,7 @@ class ImageServiceImplTest {
     }
 
     private Member createMember(String username, String nickname, String phone, String email,
-                                String oauthId, LocalDate birth) {
+                                String kakaoId, LocalDate birth) {
 
         Member member = Member.builder()
                 .username(username)
@@ -100,9 +100,9 @@ class ImageServiceImplTest {
                 .phone(phone)
                 .email(email)
                 .password("1111")
-                .oauthId(oauthId)
+                .kakaoId(kakaoId)
                 .birth(birth)
-                .provider(AuthProvider.KAKAO)
+                .mainAuthProvider(AuthProvider.KAKAO)
                 .build();
 
         return memberRepository.save(member);
