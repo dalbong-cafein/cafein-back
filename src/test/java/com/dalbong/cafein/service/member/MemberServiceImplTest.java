@@ -65,7 +65,7 @@ class MemberServiceImplTest {
     }
 
     private Member createMember(String username, String nickname, String phone, String email,
-                                String oauthId, LocalDate birth) {
+                                String kakaoId, LocalDate birth) {
 
         Member member = Member.builder()
                 .username(username)
@@ -74,9 +74,8 @@ class MemberServiceImplTest {
                 .email(email)
                 .password("1111")
                 .birth(birth)
-                .oauthId(oauthId)
-                .birth(birth)
-                .provider(AuthProvider.KAKAO)
+                .kakaoId(kakaoId)
+                .mainAuthProvider(AuthProvider.KAKAO)
                 .build();
 
         return memberRepository.save(member);

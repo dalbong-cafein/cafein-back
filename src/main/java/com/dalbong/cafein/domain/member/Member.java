@@ -29,10 +29,11 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String oauthId;
+    private String kakaoId;
 
-    @Column(nullable = false)
+    private String naverId;
+
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String phone;
@@ -42,7 +43,7 @@ public class Member extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private AuthProvider provider;
+    private AuthProvider mainAuthProvider;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(joinColumns = @JoinColumn(name = "member_id"))
@@ -51,6 +52,13 @@ public class Member extends BaseEntity {
     @Column(name = "role")
     private Set<MemberRole> roleSet = new HashSet<MemberRole>(Arrays.asList(MemberRole.USER));
 
+    public void setKakaoId(String kakaoId){
+        this.kakaoId = kakaoId;
+    }
+
+    public void setNaverId(String naverId){
+        this.naverId = naverId;
+    }
 
     public void changeUsername(String username){
         this.username = username;

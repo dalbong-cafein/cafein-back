@@ -8,6 +8,8 @@ import com.dalbong.cafein.domain.image.MemberImageRepository;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.dto.login.AccountUniteResDto;
+import com.dalbong.cafein.handler.exception.AlreadyExistedAccountException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -22,7 +24,6 @@ import java.util.UUID;
 
 import static com.dalbong.cafein.domain.member.AuthProvider.KAKAO;
 import static com.dalbong.cafein.domain.member.AuthProvider.NAVER;
-
 
 @RequiredArgsConstructor
 @Service
@@ -47,75 +48,83 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
                 AuthProvider.valueOf(
                         userRequest.getClientRegistration().getRegistrationId().toUpperCase());
 
-        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(authProvider, attributes);
+        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(authProvider, attributes, memberRepository);
 
-        //신규,기존 회원 체크
-        Optional<Member> result = memberRepository.findByOauthId(userInfo.getId());
+        //DB : Member 조회
+        Optional<Member> memberResult = userInfo.getMember();
 
         //신규 회원
-        if(result.isEmpty()){
-            Member member;
-            MemberImage memberImage;
+        if(memberResult.isEmpty()){
 
-            //랜덤값 비밀번호 생성
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            String password = passwordEncoder.encode(UUID.randomUUID().toString());
+            //기존 회원 중 같은 email을 사용하고 있는 회원이 있는 지 체크
+            Optional<Member> emailDuplicateResult = memberRepository.findByEmail(userInfo.getEmail());
 
-            switch (authProvider) {
-                case KAKAO:
-                    member = Member.builder()
-                            .oauthId(userInfo.getId())
-                            .password(password)
-                            .username(userInfo.getName())
-                            .birth(userInfo.getBirth())
-                            .provider(KAKAO)
-                            .build();
+            //해당 email을 사용 중인 계정이 없는 경우
+            if (emailDuplicateResult.isEmpty()){
+                Member member;
+                MemberImage memberImage;
 
-                    if(userInfo.getEmail() != null){
-                        member.changeEmail(userInfo.getEmail());
-                    }
+                //랜덤값 비밀번호 생성
+                BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+                String password = passwordEncoder.encode(UUID.randomUUID().toString());
 
-                    memberRepository.save(member);
-                    break;
+                switch (authProvider) {
+                    case KAKAO:
+                        member = Member.builder()
+                                .kakaoId(userInfo.getId())
+                                .password(password)
+                                .username(userInfo.getName())
+                                .birth(userInfo.getBirth())
+                                .mainAuthProvider(KAKAO)
+                                .build();
 
-                case NAVER:
-                    member = Member.builder()
-                            .oauthId(userInfo.getId())
-                            .password(password)
-                            .username(userInfo.getName())
-                            .email(userInfo.getEmail())
-                            .birth(userInfo.getBirth())
-                            .provider(NAVER)
-                            .build();
+                        if(userInfo.getEmail() != null){
+                            member.changeEmail(userInfo.getEmail());
+                        }
 
-                    memberRepository.save(member);
-                    break;
+                        memberRepository.save(member);
+                        break;
 
-                default:
-                    throw new IllegalStateException("Unexpected value: " + authProvider);
+                    case NAVER:
+                        member = Member.builder()
+                                .naverId(userInfo.getId())
+                                .password(password)
+                                .username(userInfo.getName())
+                                .email(userInfo.getEmail())
+                                .birth(userInfo.getBirth())
+                                .mainAuthProvider(NAVER)
+                                .build();
+
+                        memberRepository.save(member);
+                        break;
+
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + authProvider);
+                }
+
+                //프로필 사진 저장
+                memberImage = new MemberImage(member, userInfo.getImageUrl(), true);
+                memberImageRepository.save(memberImage);
+
+                return new PrincipalDetails(member, userInfo);
             }
+            //해당 email을 사용 중인 계정이 있는 경우
+            else{
+                AccountUniteResDto accountUniteResDto = new AccountUniteResDto(
+                        userInfo.getEmail(), emailDuplicateResult.get().getRegDate(), userInfo.getId(), authProvider);
 
-            //프로필 사진 저장
-            memberImage = new MemberImage(member, userInfo.getImageUrl(), true);
-            memberImageRepository.save(memberImage);
-
-            return new PrincipalDetails(member, userInfo);
-
+                throw new AlreadyExistedAccountException("이미 해당 email을 사용중인 계정이 존재합니다.", accountUniteResDto);
+            }
         }
         // 기존 회원
         else{
-            Member findMember = result.get();
+            Member findMember = memberResult.get();
 
-            //소셜 제공자 타입이 다를 경우
-            if (authProvider != findMember.getProvider()) {
-                throw new IllegalStateException(
-                        "Looks like you're signed up with " + authProvider +
-                                " account. Please use your " + findMember.getProvider() + " account to login."
-                );
+            if (findMember.getMainAuthProvider().equals(authProvider)){
+
+                //사용자정보에 변경이 있다면 사용자 정보를 업데이트 해준다.
+                updateMember(findMember, userInfo);
             }
-
-            //사용자정보에 변경이 있다면 사용자 정보를 업데이트 해준다.
-            updateMember(findMember, userInfo);
 
             return new PrincipalDetails(findMember, userInfo);
         }
@@ -130,10 +139,6 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
             member.changeUsername(userInfo.getName());
         }
 
-        //이메일 변경
-        if (userInfo.getEmail() != null && !member.getEmail().equals(userInfo.getEmail())){
-            member.changeEmail(userInfo.getEmail());
-        }
 
         //생년월일 변경
         if(userInfo.getBirth() != null && !member.getBirth().equals(userInfo.getBirth())){
