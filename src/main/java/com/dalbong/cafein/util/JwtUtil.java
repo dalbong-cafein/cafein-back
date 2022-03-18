@@ -23,9 +23,13 @@ public class JwtUtil implements InitializingBean {
     //public final static int accessTokenExpire = 10*60;
 
     //테스트용
+    public final static int accountUniteTokenExpire = 10*600;
+
     public final static int accessTokenExpire = 10*600;
 
     public final static int refreshTokenExpire = 20160;
+
+    public final static String accountUniteTokenName = "accountUniteToken";
 
     public final static String accessTokenName = "accessToken";
 
@@ -37,6 +41,17 @@ public class JwtUtil implements InitializingBean {
     public void afterPropertiesSet() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    //accountUniteToken 생성
+    public String generateAccountUniteToken(String email) {
+
+        return Jwts.builder()
+                .setIssuedAt(new Date())
+                .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(accountUniteTokenExpire).toInstant()))
+                .claim("email", email)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
     }
 
     //accessToken 생성
@@ -61,8 +76,26 @@ public class JwtUtil implements InitializingBean {
                 .compact();
     }
 
-    //토큰 검증
-    public Long validateAndExtract(String tokenStr){
+    //accountUniteToken 토큰 검증
+    public String validateAndExtractAccountUniteToken(String tokenStr){
+        try{
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(tokenStr).getBody();
+            String email = claims.get("email", String.class);
+            return email;
+        }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            log.info("잘못된 JWT 서명입니다.");
+        } catch (ExpiredJwtException e) {
+            log.info("만료된 JWT 토큰입니다.");
+        } catch (UnsupportedJwtException e) {
+            log.info("지원되지 않는 JWT 토큰입니다.");
+        } catch (IllegalArgumentException e) {
+            log.info("JWT 토큰이 잘못되었습니다.");
+        }
+        return null;
+    }
+
+    //accessToken, refreshToken 토큰 검증
+    public Long validateAndExtractLoginToken(String tokenStr){
         try{
             Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(tokenStr).getBody();
             Long memberId= claims.get("memberId", Long.class);

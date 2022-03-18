@@ -54,7 +54,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         //accessToken 쿠키가 존재할 경우
         if (cookie != null) {
             String accessToken = cookie.getValue();
-            Long memberId = jwtUtil.validateAndExtract(accessToken);
+            Long memberId = jwtUtil.validateAndExtractLoginToken(accessToken);
 
             //accessToken 이 유효할 경우
             if (memberId != null) {
