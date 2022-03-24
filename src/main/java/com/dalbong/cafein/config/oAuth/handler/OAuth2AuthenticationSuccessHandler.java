@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
@@ -36,15 +37,15 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
         //accessToken, refreshToken 토큰 생성
-        String accessToken = jwtUtil.generateAccessToken(principalDetails.getMember().getMemberId());
-        String refreshToken = jwtUtil.generateRefreshToken(principalDetails.getMember().getMemberId());
+        //String accessToken = jwtUtil.generateAccessToken(principalDetails.getMember().getMemberId());
+        //String refreshToken = jwtUtil.generateRefreshToken(principalDetails.getMember().getMemberId());
 
         //refreshToken - redis 에 저장
-        redisService.setValues(principalDetails.getMember().getMemberId(), refreshToken);
+        //redisService.setValues(principalDetails.getMember().getMemberId(), refreshToken);
 
         //TODO deploy - setMax() modify
-        cookieUtil.createCookie(response, jwtUtil.accessTokenName, accessToken, jwtUtil.accessTokenExpire);
-        cookieUtil.createCookie(response, jwtUtil.refreshTokenName, refreshToken,jwtUtil.refreshTokenExpire);
+        //cookieUtil.createCookie(response, jwtUtil.accessTokenName, accessToken, jwtUtil.accessTokenExpire);
+        //cookieUtil.createCookie(response, jwtUtil.refreshTokenName, refreshToken,jwtUtil.refreshTokenExpire);
 
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies){
@@ -66,7 +67,7 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
             switch (os){
                 case "android":
-                    getRedirectStrategy().sendRedirect(request,response,"https://psblues.site/app/cafein");
+                    getRedirectStrategy().sendRedirect(request,response,"https://psblues.site/app/cafein?code="+ UUID.randomUUID().toString());
                     break;
                 case "ios":
                     getRedirectStrategy().sendRedirect(request,response,redirectUrl);
