@@ -56,6 +56,7 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
         }
 
+        
         //redirect
         Cookie findCookie = cookieUtil.getCookie(request, "os");
 
