@@ -48,7 +48,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
             return;
         }
-        System.out.println("인증필터 시작");
+        System.out.println("인증필터 시작!!");
+        System.out.println(request.getRequestURI());
+        System.out.println(request.getQueryString());
         Cookie cookie = cookieUtil.getCookie(request, jwtUtil.accessTokenName);
         //accessToken 쿠키가 존재할 경우
         if (cookie != null) {
