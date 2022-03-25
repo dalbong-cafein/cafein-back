@@ -59,7 +59,9 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
         //redirect
         Cookie findCookie = cookieUtil.getCookie(request, "os");
-
+        int status = response.getStatus();
+        System.out.println(status);
+        response.setStatus(200);
         if(findCookie == null){
             throw new CustomException("OS 정보가 존재하지 않습니다.");
         }else{
