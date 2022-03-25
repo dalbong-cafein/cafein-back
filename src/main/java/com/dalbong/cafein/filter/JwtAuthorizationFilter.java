@@ -30,7 +30,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private CookieUtil cookieUtil;
     private MemberRepository memberRepository;
 
-    private static final String[] pattern = {"/", "/auth/**/*"};
+    private static final String[] pattern = {"/", "/auth/**/*","/favicon.ico"};
 
     @Autowired
     public JwtAuthorizationFilter(CookieUtil cookieUtil, JwtUtil jwtUtil, MemberRepository memberRepository) {
