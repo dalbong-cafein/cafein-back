@@ -45,12 +45,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         System.out.println(request.getRequestURI());
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies){
-            System.out.println("-------------------");
-            System.out.println(cookie.getName());
-            System.out.println(cookie.getValue());
+        if (cookies != null && cookies.length > 0){
+            for (Cookie cookie : cookies){
+                System.out.println("-------------------");
+                System.out.println(cookie.getName());
+                System.out.println(cookie.getValue());
 
+            }
         }
+
 
         //인증이 필요 없는 uri 일 경우 바로 통과
         if (PatternMatchUtils.simpleMatch(pattern,request.getRequestURI())) {
