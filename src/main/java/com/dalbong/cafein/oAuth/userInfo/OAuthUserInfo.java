@@ -1,4 +1,4 @@
-package com.dalbong.cafein.config.oAuth.userInfo;
+package com.dalbong.cafein.oAuth.userInfo;
 
 import com.dalbong.cafein.domain.member.Member;
 
@@ -6,11 +6,11 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
-public abstract class OAuth2UserInfo {
+public abstract class OAuthUserInfo {
 
     protected Map<String, Object> attributes;
 
-    public OAuth2UserInfo(Map<String, Object> attributes) {
+    public OAuthUserInfo(Map<String, Object> attributes) {
         this.attributes = attributes;
     }
 

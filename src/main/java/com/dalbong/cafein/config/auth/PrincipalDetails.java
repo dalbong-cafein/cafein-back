@@ -1,26 +1,19 @@
 package com.dalbong.cafein.config.auth;
 
-import com.dalbong.cafein.config.oAuth.userInfo.OAuth2UserInfo;
+import com.dalbong.cafein.oAuth.userInfo.OAuthUserInfo;
 import com.dalbong.cafein.domain.member.Member;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
 @Data
-public class PrincipalDetails implements UserDetails, OAuth2User{
+public class PrincipalDetails implements UserDetails{
 
     private Member member;
-    private OAuth2UserInfo userInfo;
-
-    public PrincipalDetails(Member member, OAuth2UserInfo userInfo){
-        this.member = member;
-        this.userInfo = userInfo;
-    }
+    private OAuthUserInfo userInfo;
 
     public PrincipalDetails(Member member){
         this.member = member;
@@ -68,14 +61,4 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
         return true;
     }
 
-    @Override
-    public Map<String, Object> getAttributes() {
-
-        return userInfo.getAttributes();
-    }
-
-    @Override
-    public String getName() {
-        return userInfo.getName();
-    }
 }

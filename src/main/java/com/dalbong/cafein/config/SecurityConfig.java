@@ -1,8 +1,5 @@
 package com.dalbong.cafein.config;
 
-import com.dalbong.cafein.config.oAuth.OAuth2DetailsService;
-import com.dalbong.cafein.config.oAuth.handler.OAuth2AuthenticationFailedHandler;
-import com.dalbong.cafein.config.oAuth.handler.OAuth2AuthenticationSuccessHandler;
 import com.dalbong.cafein.config.security.JwtAccessDeniedHandler;
 import com.dalbong.cafein.config.security.JwtAuthenticationEntryPoint;
 import com.dalbong.cafein.filter.JwtAuthorizationFilter;
@@ -23,9 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final OAuth2DetailsService oAuth2DetailsService;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final OAuth2AuthenticationFailedHandler oAuth2AuthenticationFailedHandler;
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
@@ -56,14 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .httpBasic().disable();
 
-        http.oauth2Login()
-                .userInfoEndpoint()
-                .userService(oAuth2DetailsService)
-                .and()
-                .successHandler(oAuth2AuthenticationSuccessHandler)
-                .failureHandler(oAuth2AuthenticationFailedHandler)
-
-                .and()
+        http
                 .authorizeRequests()
                 .antMatchers("/members/**/*").authenticated()
                 .antMatchers("/stores/{storeId}/isApproval").access("hasRole('ROLE_ADMIN')")

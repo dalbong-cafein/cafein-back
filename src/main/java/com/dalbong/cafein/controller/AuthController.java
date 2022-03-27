@@ -1,11 +1,10 @@
 package com.dalbong.cafein.controller;
 
-import com.dalbong.cafein.config.oAuth.userInfo.OAuth2UserInfo;
-import com.dalbong.cafein.config.oAuth.userInfo.OAuth2UserInfoFactory;
 import com.dalbong.cafein.domain.member.AuthProvider;
-import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.login.AccountUniteRegDto;
+import com.dalbong.cafein.oAuth.SocialLoginService;
 import com.dalbong.cafein.redis.RedisService;
 import com.dalbong.cafein.service.member.MemberService;
 import com.dalbong.cafein.service.sms.SmsService;
@@ -23,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 
 @RequiredArgsConstructor
@@ -35,8 +33,33 @@ public class AuthController {
     private final CookieUtil cookieUtil;
     private final SmsService smsService;
     private final MemberService memberService;
-    private final ObjectMapper objectMapper;
-    private final MemberRepository memberRepository;
+    private final SocialLoginService socialLoginService;
+
+    /**
+     * 소셜 로그인
+     */
+    @PostMapping("/auth/social-login")
+    public ResponseEntity<?> oAuthLogin(@RequestHeader("authProvider")AuthProvider authProvider,
+                                        @RequestHeader("oAuthAccessToken") String oAuthAccessToken,
+                                        HttpServletResponse response){
+
+        //로그인 진행
+        Member member = socialLoginService.login(authProvider, oAuthAccessToken);
+
+        //accessToken, refreshToken 토큰 생성
+        String accessToken = jwtUtil.generateAccessToken(member.getMemberId());
+        String refreshToken = jwtUtil.generateRefreshToken(member.getMemberId());
+
+        //refreshToken - redis 에 저장
+        redisService.setValues(member.getMemberId(), refreshToken);
+
+        //TODO deploy - setMax() modify
+        cookieUtil.createCookie(response, jwtUtil.accessTokenName, accessToken, jwtUtil.accessTokenExpire);
+        cookieUtil.createCookie(response, jwtUtil.refreshTokenName, refreshToken,jwtUtil.refreshTokenExpire);
+
+
+        return new ResponseEntity<>(new CMRespDto<>(1,"소셜 로그인 성공",null),HttpStatus.OK);
+    }
 
     /**
      * 계정 연동
@@ -128,39 +151,7 @@ public class AuthController {
         return new ResponseEntity<>(new CMRespDto<>(1,"accessToken 토큰 재발급 완료", null), HttpStatus.OK);
     }
 
-    @PostMapping("/auth/oAuthLogin")
-    public ResponseEntity<?> oAuthLogin(@RequestHeader("authProvider")AuthProvider authProvider,
-                                        @RequestHeader("oAuthAccessToken") String oAuthAccessToken) throws JsonProcessingException {
 
-        System.out.println(authProvider);
-        System.out.println(oAuthAccessToken);
-
-        RestTemplate rt = new RestTemplate();
-
-        HttpHeaders headers = new HttpHeaders();
-
-        headers.add("Content-type","application/x-www-form-urlencoded;charset=utf-8");
-        headers.add("Authorization", "Bearer " + oAuthAccessToken);
-
-
-        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers);
-
-        ResponseEntity<String> response2 = rt.exchange(
-                "https://kapi.kakao.com/v2/user/me",
-                HttpMethod.POST,
-                kakaoProfileRequest,
-                String.class);
-
-        Map<String,Object> map = objectMapper.readValue(response2.getBody(), Map.class);
-        System.out.println(map.toString());
-        System.out.println(map);
-        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(authProvider, map, memberRepository);
-
-        System.out.println(userInfo.toString());
-
-
-        return new ResponseEntity<>(userInfo,HttpStatus.OK);
-    }
 
     @GetMapping("/login/kakao3")
     public String testAuth(@RequestParam("code") String code) throws JsonProcessingException {
@@ -199,23 +190,5 @@ public class AuthController {
         System.out.println(oAuthToken.getAccess_token());
 
         return oAuthToken.getAccess_token();
-    }
-
-    @GetMapping("/auth/test")
-    public String test(HttpServletRequest request){
-        System.out.println("----------------");
-        System.out.println(request.getRequestURI());
-        String test = request.getHeader("test");
-        System.out.println("헤더값: " + test);
-
-
-        Cookie[] cookies = request.getCookies();
-        System.out.println("쿠키 개수: " + cookies.length);
-        for (Cookie cookie :cookies){
-            System.out.println("cookie name: "+ cookie.getName());
-            System.out.println("cookie value: "+ cookie.getValue());
-        }
-
-        return "성공했습니다";
     }
 }
