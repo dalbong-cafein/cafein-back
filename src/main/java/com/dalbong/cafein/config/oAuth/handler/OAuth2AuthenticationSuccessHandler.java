@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -46,6 +47,15 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
         //TODO deploy - setMax() modify
         //cookieUtil.createCookie(response, jwtUtil.accessTokenName, accessToken, jwtUtil.accessTokenExpire);
         //cookieUtil.createCookie(response, jwtUtil.refreshTokenName, refreshToken,jwtUtil.refreshTokenExpire);
+
+        System.out.println(request.getRequestURI());
+        Collection<String> responseCookies = response.getHeaders("set-cookie");
+        System.out.println(responseCookies.size());
+
+        for (String c : responseCookies){
+            System.out.println(c);
+        }
+
 
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies){
