@@ -1,5 +1,9 @@
 package com.dalbong.cafein.controller;
 
+import com.dalbong.cafein.config.oAuth.userInfo.OAuth2UserInfo;
+import com.dalbong.cafein.config.oAuth.userInfo.OAuth2UserInfoFactory;
+import com.dalbong.cafein.domain.member.AuthProvider;
+import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.login.AccountUniteRegDto;
 import com.dalbong.cafein.redis.RedisService;
@@ -7,14 +11,20 @@ import com.dalbong.cafein.service.member.MemberService;
 import com.dalbong.cafein.service.sms.SmsService;
 import com.dalbong.cafein.util.CookieUtil;
 import com.dalbong.cafein.util.JwtUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -25,6 +35,8 @@ public class AuthController {
     private final CookieUtil cookieUtil;
     private final SmsService smsService;
     private final MemberService memberService;
+    private final ObjectMapper objectMapper;
+    private final MemberRepository memberRepository;
 
     /**
      * 계정 연동
@@ -114,6 +126,79 @@ public class AuthController {
         cookieUtil.createCookie(response, jwtUtil.accessTokenName, newAccessToken, jwtUtil.accessTokenExpire);
 
         return new ResponseEntity<>(new CMRespDto<>(1,"accessToken 토큰 재발급 완료", null), HttpStatus.OK);
+    }
+
+    @PostMapping("/auth/oAuthLogin")
+    public ResponseEntity<?> oAuthLogin(@RequestHeader("authProvider")AuthProvider authProvider,
+                                        @RequestHeader("oAuthAccessToken") String oAuthAccessToken) throws JsonProcessingException {
+
+        System.out.println(authProvider);
+        System.out.println(oAuthAccessToken);
+
+        RestTemplate rt = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.add("Content-type","application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Authorization", "Bearer " + oAuthAccessToken);
+
+
+        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response2 = rt.exchange(
+                "https://kapi.kakao.com/v2/user/me",
+                HttpMethod.POST,
+                kakaoProfileRequest,
+                String.class);
+
+        Map<String,Object> map = objectMapper.readValue(response2.getBody(), Map.class);
+        System.out.println(map.toString());
+        System.out.println(map);
+        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(authProvider, map, memberRepository);
+
+        System.out.println(userInfo.toString());
+
+
+        return new ResponseEntity<>(userInfo,HttpStatus.OK);
+    }
+
+    @GetMapping("/login/kakao3")
+    public String testAuth(@RequestParam("code") String code) throws JsonProcessingException {
+        System.out.println(code);
+
+        //POST 방식으로 key=value 데이터를 요청 (카카오쪽으로)
+        RestTemplate rt = new RestTemplate();
+
+        //HttpHeader 오브젝트 생성 (엔티티) - 헤더, 바디
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.add("Content-type","application/x-www-form-urlencoded;charset=utf-8");
+
+        //HttpBody 오브젝트 생성
+        MultiValueMap<String,String> params = new LinkedMultiValueMap<>();
+
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", "30e9f4fa92d2521d41eaf6f419dd5185");
+        params.add("redirect_uri", "http://localhost:5000/login/oauth2/code/kakao2");
+        params.add("code", code);
+
+        //HttpHeader와 HttpBody를 하나의 오브젝트에 담기
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
+
+        //Http요청하기 - Post방식으로 -그리고 response 변수의 응답 받음.
+        ResponseEntity<String> response = rt.exchange(
+                "https://kauth.kakao.com/oauth/token",
+                HttpMethod.POST,
+                kakaoTokenRequest,
+                String.class);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        OAuthToken oAuthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+
+        System.out.println(oAuthToken.getAccess_token());
+
+        return oAuthToken.getAccess_token();
     }
 
     @GetMapping("/auth/test")

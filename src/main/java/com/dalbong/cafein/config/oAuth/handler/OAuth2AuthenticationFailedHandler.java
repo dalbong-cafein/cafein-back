@@ -50,6 +50,8 @@ public class OAuth2AuthenticationFailedHandler implements AuthenticationFailureH
 
             }
         else{
+            System.out.println(exception.getMessage());
+            exception.getMessage();
             response.sendError(500, "로그인 시도 중 에러 발생");
         }
     }
