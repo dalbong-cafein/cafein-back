@@ -1,23 +1,20 @@
-package com.dalbong.cafein.config.oAuth.userInfo;
+package com.dalbong.cafein.oAuth.userInfo;
 
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
 
-public class KakaoOAuth2UserInfo extends OAuth2UserInfo{
+public class KakaoOAuthUserInfo extends OAuthUserInfo {
 
     private final Map<String,Object> kakaoAccount;
     private final Map<String,Object> profile;
     private final MemberRepository memberRepository;
 
-    public KakaoOAuth2UserInfo(Map<String, Object> attributes, MemberRepository memberRepository){
+    public KakaoOAuthUserInfo(Map<String, Object> attributes, MemberRepository memberRepository){
         super(attributes);
         kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
         profile = (Map<String, Object>) kakaoAccount.get("profile");

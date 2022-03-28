@@ -30,7 +30,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private CookieUtil cookieUtil;
     private MemberRepository memberRepository;
 
-    private static final String[] pattern = {"/", "/auth/**/*","/favicon.ico","/.env"};
+    private static final String[] pattern = {"/", "/auth/*","/favicon.ico","/.env","/login/*"};
 
     @Autowired
     public JwtAuthorizationFilter(CookieUtil cookieUtil, JwtUtil jwtUtil, MemberRepository memberRepository) {
@@ -60,9 +60,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
             return;
         }
+
         System.out.println("인증필터 시작!!");
+
         System.out.println(request.getRequestURI());
-        System.out.println(request.getQueryString());
+
         Cookie cookie = cookieUtil.getCookie(request, jwtUtil.accessTokenName);
         //accessToken 쿠키가 존재할 경우
         if (cookie != null) {
