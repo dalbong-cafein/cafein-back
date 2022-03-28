@@ -191,4 +191,49 @@ public class AuthController {
 
         return oAuthToken.getAccess_token();
     }
+
+    @GetMapping("/login/naver3")
+    public String testNaverAuth(@RequestParam("code") String code) throws JsonProcessingException {
+        System.out.println(code);
+
+        //POST 방식으로 key=value 데이터를 요청
+        RestTemplate rt = new RestTemplate();
+
+        //HttpHeader 오브젝트 생성 (엔티티) - 헤더, 바디
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.add("Content-type","application/x-www-form-urlencoded;charset=utf-8");
+
+
+        //HttpBody 오브젝트 생성
+        MultiValueMap<String,String> params = new LinkedMultiValueMap<>();
+
+        params.add("client_id", "30e9f4fa92d2521d41eaf6f419dd5185");
+        params.add("client_secret", "ihNAdUP3A5");
+        params.add("redirect_uri", "http://localhost:5000/login/oauth2/code/naver");
+        params.add("code", code);
+
+        //HttpHeader와 HttpBody를 하나의 오브젝트에 담기
+        HttpEntity<MultiValueMap<String, String>> naverTokenRequest = new HttpEntity<>(params, headers);
+
+        //Http요청하기 - Post방식으로 -그리고 response 변수의 응답 받음.
+        ResponseEntity<String> response = rt.exchange(
+                "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code" +
+                        "&client_id=SNNyu_24eC5xCqWW6vqF&client_secret=ihNAdUP3A5" +
+                        "&redirect_uri=http://localhost:5000/login/oauth2/code/naver" +
+                        "&code=" + code,
+                HttpMethod.GET,
+                naverTokenRequest,
+                String.class);
+
+
+        System.out.println(response.getBody());
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        OAuthToken oAuthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+
+        System.out.println(oAuthToken.getAccess_token());
+
+        return oAuthToken.getAccess_token();
+    }
 }
