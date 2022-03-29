@@ -69,7 +69,7 @@ class ImageServiceImplTest {
         Image findImage = imageRepository.findById(memberImage.getImageId()).get();
 
         //when
-        imageService.remove(findImage);
+        imageService.remove(findImage.getImageId());
 
         //then
         NoSuchElementException e1 = assertThrows(NoSuchElementException.class,

@@ -1,6 +1,7 @@
 package com.dalbong.cafein.domain.review;
 
 import com.dalbong.cafein.domain.BaseEntity;
+import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.store.Feature;
 import com.dalbong.cafein.domain.store.SocketCnt;
@@ -39,10 +40,25 @@ public class Review extends BaseEntity {
     @Embedded
     private DetailEvaluation detailEvaluation;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "review",fetch = FetchType.LAZY)
+    private List<ReviewImage> reviewImageList = new ArrayList<>();
+
     //연관관계 메서드
     public void setStore(Store store){
         this.store = store;
         store.getReviewList().add(this);
     }
 
+    public void changeContent(String content){
+        this.content = content;
+    }
+
+    public void changeRecommendation(Recommendation recommendation) {
+        this.recommendation = recommendation;
+    }
+
+    public void changeDetailEvaluation(DetailEvaluation detailEvaluation){
+        this.detailEvaluation = detailEvaluation;
+    }
 }

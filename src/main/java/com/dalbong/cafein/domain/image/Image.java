@@ -8,7 +8,6 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @ToString

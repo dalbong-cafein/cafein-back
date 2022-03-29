@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.dalbong.cafein.domain.image.Image;
+import com.dalbong.cafein.domain.image.ImageRepository;
+import com.dalbong.cafein.handler.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +32,7 @@ public class S3Uploader {
     private String bucket;
 
     private final AmazonS3 amazonS3;
+    private final ImageRepository imageRepository;
 
 
     /**
@@ -78,8 +81,11 @@ public class S3Uploader {
     /**
      * S3파일 삭제
      */
-    public void delete(Image image) {
+    public void delete(Long imageId) {
         try{
+            Image image = imageRepository.findById(imageId).orElseThrow(() ->
+                    new CustomException("존재하지 않는 이미지입니다."));
+
             String imageUrl = image.getImageUrl();
             String storeKey = imageUrl.replace("https://"+bucket+".s3.ap-northeast-2.amazonaws.com/", "");
 

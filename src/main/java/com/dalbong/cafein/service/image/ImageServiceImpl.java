@@ -67,11 +67,11 @@ public class ImageServiceImpl implements ImageService{
      */
     @Transactional
     @Override
-    public void remove(Image image){
+    public void remove(Long imageId){
 
         //s3 이미지 파일 삭제
-        s3Uploader.delete(image);
+        s3Uploader.delete(imageId);
 
-        imageRepository.deleteById(image.getImageId());
+        imageRepository.deleteById(imageId);
     }
 }

@@ -14,7 +14,7 @@ public interface ImageService {
 
     List<Image> saveReviewImage(Review review, List<MultipartFile> imageFiles) throws IOException;
 
-    void remove(Image image);
+    void remove(Long imageId);
 
 
 }
