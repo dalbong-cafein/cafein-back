@@ -77,7 +77,7 @@ public class ReviewServiceImpl implements ReviewService{
         imageService.saveReviewImage(review, updateImageFiles);
     }
 
-    /*
+    /**
      * 리뷰 삭제
      */
     @Transactional
