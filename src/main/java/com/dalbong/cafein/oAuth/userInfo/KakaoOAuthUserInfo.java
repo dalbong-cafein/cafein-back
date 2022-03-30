@@ -46,7 +46,9 @@ public class KakaoOAuthUserInfo extends OAuthUserInfo {
         String birthday = (String) kakaoAccount.get("birthday");
 
         //TODO 출생연도 데이터 권한 받을 시 수정 필요
-
+        if (birthday == null){
+            birthday = "9999";
+        }
         return LocalDate.parse("9999"+birthday, DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
 
