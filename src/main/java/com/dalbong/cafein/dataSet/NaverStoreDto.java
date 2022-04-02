@@ -10,8 +10,10 @@ import java.util.Map;
 public class NaverStoreDto {
 
     public NaverStoreDto(Map<String,Object> attributes){
+        String title = (String) attributes.get("title");
+        String storeName = title.replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", "");
 
-        this.storeName = (String) attributes.get("title");
+        this.storeName = storeName;
         this.link = (String) attributes.get("link");
         this.telephone = (String) attributes.get("telephone");
         String mapXString = (String) attributes.get("mapx");
@@ -22,7 +24,7 @@ public class NaverStoreDto {
 
         String roadAddress = (String) attributes.get("roadAddress");
 
-        String[] roadAddressArray = roadAddress.split(" ",4);
+        String[] roadAddressArray = roadAddress.split(" ",5);
 
         String detail = "";
         try{
