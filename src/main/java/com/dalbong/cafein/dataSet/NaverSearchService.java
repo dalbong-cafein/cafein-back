@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class NaverSearchApi {
+public class NaverSearchService {
 
     private final StoreRepository storeRepository;
 

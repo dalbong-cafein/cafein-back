@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -20,13 +21,17 @@ import java.util.Map;
 public class DataSetController {
 
     private final ObjectMapper objectMapper;
-    private final NaverSearchApi naverSearchApi;
+    private final NaverSearchService naverSearchService;
+    private final GoogleSearchService googleSearchService;
     private final RestTemplate rt;
     private String clientId = "dOXazpqK7gPsCGdr9Bou";
     private String secretId = "onJyZriJJg";
 
+    private String uploadFolder = System.getProperty("user.home");
+    private String apiKey = "AIzaSyCHYWy8S35-xInFU-hEPRN6nqDN7nTGosU";
+
     @PostMapping("/data/naver-search")
-    public String search(@RequestParam("keyword") String keyword) throws JsonProcessingException {
+    public String naverSearch(@RequestParam("keyword") String keyword) throws JsonProcessingException {
         //POST 방식으로 key=value 데이터를 요청 (카카오쪽으로)
         RestTemplate rt = new RestTemplate();
 
@@ -57,8 +62,26 @@ public class DataSetController {
         System.out.println("========================");
         System.out.println(searchData);
 
-        naverSearchApi.createStore(searchData);
+        naverSearchService.createStore(searchData);
 
+
+        return "검색 성공";
+    }
+
+    @PostMapping("/data/google-search")
+    public String googleSearch(@RequestParam("keyword") String keyword){
+
+
+
+        Map<String,Object> searchPlace =  rt.getForObject("https://maps.googleapis.com/maps/api/place/textsearch/json?query="
+                        + keyword + "&key="+apiKey,
+                Map.class);
+
+
+        googleSearchService.placeSearch(searchPlace);
+
+
+        System.out.println(searchPlace);
 
         return "검색 성공";
     }
