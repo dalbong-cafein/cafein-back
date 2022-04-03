@@ -88,7 +88,7 @@ public class StoreRegDto {
                 .storeName(storeName)
                 .address(address)
                 .americano(americano)
-                .mapX(mapX).mapY(mapY)
+                .katechX(mapX).katechY(mapY)
                 .hashTagSet(hashTagSet)
                 .phone(phone)
                 .website(website)

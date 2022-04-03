@@ -30,8 +30,8 @@ public class NaverSearchService {
                     .website(dto.getLink())
                     .phone(dto.getTelephone())
                     .address(dto.getAddress())
-                    .mapX(dto.getMapX())
-                    .mapY(dto.getMapY())
+                    .katechX(dto.getMapX())
+                    .katechY(dto.getMapY())
                     .build();
         }).collect(Collectors.toList());
 

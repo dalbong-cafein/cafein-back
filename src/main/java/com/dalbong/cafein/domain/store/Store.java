@@ -39,10 +39,14 @@ public class Store extends BaseEntity {
     private String phone;
 
     @Column(nullable = false)
-    private int mapX;
+    private int katechX;
 
     @Column(nullable = false)
-    private int mapY;
+    private int katechY;
+
+    private Double lngX;
+
+    private Double latY;
 
     @Builder.Default
     @Column(nullable = false)
@@ -68,6 +72,15 @@ public class Store extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "store",fetch = FetchType.LAZY)
     private List<StoreImage> storeImageList = new ArrayList<>();
+
+    public void changePhone(String phone){
+        this.phone = phone;
+    }
+
+    public void changeLatAndLng(Double lngX, Double latY){
+        this.lngX = lngX;
+        this.latY = latY;
+    }
 
     public void changeIsApproval(){
         if (isApproval){

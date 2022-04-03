@@ -23,12 +23,15 @@ public class DataSetController {
     private final ObjectMapper objectMapper;
     private final NaverSearchService naverSearchService;
     private final GoogleSearchService googleSearchService;
+    private final KakaoService kakaoService;
     private final RestTemplate rt;
     private String clientId = "dOXazpqK7gPsCGdr9Bou";
     private String secretId = "onJyZriJJg";
 
     private String uploadFolder = System.getProperty("user.home");
     private String apiKey = "AIzaSyCHYWy8S35-xInFU-hEPRN6nqDN7nTGosU";
+
+    private String restApiKey = "30e9f4fa92d2521d41eaf6f419dd5185";
 
     @PostMapping("/data/naver-search")
     public String naverSearch(@RequestParam("keyword") String keyword) throws JsonProcessingException {
@@ -81,7 +84,36 @@ public class DataSetController {
         googleSearchService.placeSearch(searchPlace);
 
 
-        System.out.println(searchPlace);
+        //System.out.println(searchPlace);
+
+        return "검색 성공";
+    }
+
+    @PostMapping("/data/kakao-search")
+    public String kakaoSearch(@RequestParam("keyword") String keyword) throws JsonProcessingException {
+
+        //HttpHeader 오브젝트 생성 (엔티티) - 헤더, 바디
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.add("Authorization","KakaoAK "+restApiKey);
+
+        //HttpHeader와 HttpBody를 하나의 오브젝트에 담기
+        HttpEntity<MultiValueMap<String,String>> kakaoSearchRequest =
+                new HttpEntity<>(null, headers);
+
+
+        //Http요청하기 - Post방식으로 -그리고 response 변수의 응답 받음.
+        ResponseEntity<String> response = rt.exchange(
+                "https://dapi.kakao.com/v2/local/search/keyword.json?query=" + keyword +"&size=15",
+                HttpMethod.GET,
+                kakaoSearchRequest,
+                String.class
+        );
+
+        Map<String,Object> searchData = objectMapper.readValue(response.getBody(),Map.class);
+
+        kakaoService.searchPlace(searchData);
+
 
         return "검색 성공";
     }
