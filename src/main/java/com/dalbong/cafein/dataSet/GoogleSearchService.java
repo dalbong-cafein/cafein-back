@@ -3,6 +3,7 @@ package com.dalbong.cafein.dataSet;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -16,7 +17,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class GoogleSearchService {
 
-    private String apiKey = "AIzaSyCHYWy8S35-xInFU-hEPRN6nqDN7nTGosU";
+    @Value("${dataSet.google.apiKey}")
+    private String googleApiKey;
+
     private final RestTemplate rt;
     private final StoreRepository storeRepository;
     private ImageService imageService;
@@ -50,7 +53,7 @@ public class GoogleSearchService {
 
         for (String placeId : placeIdList){
             Map<String,Object> detailPlaceData = rt.getForObject("https://maps.googleapis.com/maps/api/place/details/json?place_id="+placeId
-                    + "&key=" + apiKey, Map.class);
+                    + "&key=" + googleApiKey, Map.class);
 
             System.out.println(detailPlaceData);
 

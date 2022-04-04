@@ -3,6 +3,7 @@ package com.dalbong.cafein.dataSet;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,13 +26,15 @@ public class DataSetController {
     private final GoogleSearchService googleSearchService;
     private final KakaoService kakaoService;
     private final RestTemplate rt;
-    private String clientId = "dOXazpqK7gPsCGdr9Bou";
-    private String secretId = "onJyZriJJg";
 
-    private String uploadFolder = System.getProperty("user.home");
-    private String apiKey = "AIzaSyCHYWy8S35-xInFU-hEPRN6nqDN7nTGosU";
-
-    private String restApiKey = "30e9f4fa92d2521d41eaf6f419dd5185";
+    @Value("${dataSet.naver.clientId}")
+    private String clientId;
+    @Value("${dataSet.naver.clientSecret}")
+    private String secretId;
+    @Value("${dataSet.google.apiKey}")
+    private String googleApiKey;
+    @Value("${dataSet.kakao.apiKey}")
+    private String kakaoApiKey;
 
     @PostMapping("/data/naver-search")
     public String naverSearch(@RequestParam("keyword") String keyword) throws JsonProcessingException {
@@ -77,7 +80,7 @@ public class DataSetController {
 
 
         Map<String,Object> searchPlace =  rt.getForObject("https://maps.googleapis.com/maps/api/place/textsearch/json?query="
-                        + keyword + "&key="+apiKey,
+                        + keyword + "&key="+googleApiKey,
                 Map.class);
 
 
@@ -95,7 +98,7 @@ public class DataSetController {
         //HttpHeader 오브젝트 생성 (엔티티) - 헤더, 바디
         HttpHeaders headers = new HttpHeaders();
 
-        headers.add("Authorization","KakaoAK "+restApiKey);
+        headers.add("Authorization","KakaoAK "+kakaoApiKey);
 
         //HttpHeader와 HttpBody를 하나의 오브젝트에 담기
         HttpEntity<MultiValueMap<String,String>> kakaoSearchRequest =
