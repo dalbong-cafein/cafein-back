@@ -19,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+@ToString(exclude = {"hashTagSet","reviewList","reviewList","storeImageList"})
 @Entity
 public class Store extends BaseEntity {
 
