@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"store"})
 @Getter
 @Entity
 public class BusinessHours {
@@ -69,4 +69,8 @@ public class BusinessHours {
             @AttributeOverride(name="closed", column = @Column(name="sun_closed"))
     })
     private Day onSun;
+
+    public void setStore(Store store){
+        this.store = store;
+    }
 }
