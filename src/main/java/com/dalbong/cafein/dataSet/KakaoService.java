@@ -45,6 +45,7 @@ public class KakaoService {
                     store.changePhone(dto.getPhone());
 
                     System.out.println(store);
+                    break;
                 }
             }
         }

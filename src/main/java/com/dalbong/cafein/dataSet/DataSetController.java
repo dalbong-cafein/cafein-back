@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -75,7 +76,7 @@ public class DataSetController {
     }
 
     @PostMapping("/data/google-search")
-    public String googleSearch(@RequestParam("keyword") String keyword){
+    public String googleSearch(@RequestParam("keyword") String keyword) throws IOException {
 
 
 

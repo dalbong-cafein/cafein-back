@@ -31,6 +31,8 @@ public class GoogleStoreDto {
                 sunOpen = null, sunClosed= null;
 
         if(daysOpening != null){
+
+
             for (Map<String,Object> arr : daysOpening){
 
                 Map<String,Object> close = (Map<String,Object>) arr.get("close");
@@ -83,16 +85,17 @@ public class GoogleStoreDto {
             }
         }
 
-        this.businessHours = BusinessHours.builder()
-                .onMon(new Day(monOpen, monClosed))
-                .onTue(new Day(tueOpen, tueClosed))
-                .onWed(new Day(wedOpen, wedClosed))
-                .onThu(new Day(thuOpen, thuClosed))
-                .onFri(new Day(friOpen, friClosed))
-                .onSat(new Day(satOpen, satClosed))
-                .onSun(new Day(sunOpen, sunClosed))
-                .build();
-
+        if(daysOpening != null) {
+            this.businessHours = BusinessHours.builder()
+                    .onMon(new Day(monOpen, monClosed))
+                    .onTue(new Day(tueOpen, tueClosed))
+                    .onWed(new Day(wedOpen, wedClosed))
+                    .onThu(new Day(thuOpen, thuClosed))
+                    .onFri(new Day(friOpen, friClosed))
+                    .onSat(new Day(satOpen, satClosed))
+                    .onSun(new Day(sunOpen, sunClosed))
+                    .build();
+        }
         this.photoReferenceList = photoReferenceList;
     }
 

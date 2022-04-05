@@ -1,6 +1,12 @@
 package com.dalbong.cafein.dataSet;
 
+import com.dalbong.cafein.domain.businessHours.BusinessHours;
+import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
+import com.dalbong.cafein.domain.image.StoreImage;
+import com.dalbong.cafein.domain.image.StoreImageRepository;
+import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.s3.S3Uploader;
 import com.dalbong.cafein.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,9 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -22,10 +33,12 @@ public class GoogleSearchService {
 
     private final RestTemplate rt;
     private final StoreRepository storeRepository;
-    private ImageService imageService;
+    private final BusinessHoursRepository businessHoursRepository;
+    private final S3Uploader s3Uploader;
+    private final StoreImageRepository storeImageRepository;
 
 
-    public void placeSearch(Map<String,Object> searchData){
+    public void placeSearch(Map<String,Object> searchData) throws IOException {
 
         List<Map<String,Object>> searchPlaceData =  (List<Map<String,Object>>) searchData.get("results");
 
@@ -40,6 +53,8 @@ public class GoogleSearchService {
         for (GoogleStoreDto dto : googleStoreDtoList){
             System.out.println(dto);
         }
+
+        photosPlaceData(googleStoreDtoList);
 
 
     }
@@ -108,8 +123,133 @@ public class GoogleSearchService {
         return googleStoreDtoList;
     }
 
-    private void photosPlaceData(){
+    private void photosPlaceData(List<GoogleStoreDto> googleStoreDtoList) throws IOException {
 
+        List<Store> findStoreList = storeRepository.findAll();
+
+        if (googleStoreDtoList != null && !googleStoreDtoList.isEmpty()){
+            for (GoogleStoreDto dto : googleStoreDtoList){
+                for (Store store : findStoreList){
+
+                    //위도 경로로 매핑
+                    if (store.getLatY() != null) {
+                        double differenceX = Math.abs((dto.getLngX() - store.getLngX()));
+                        double differenceY = Math.abs((dto.getLatY() - store.getLatY()));
+
+                        if (differenceX+differenceY <= 0.0005){
+                            System.out.println("==========================");
+                            System.out.println(differenceX+differenceY);
+
+                            saveBusinessHoursAndImage(dto, store);
+                            break;
+                        }
+                    }
+
+                    //전화번호로 매핑
+                    if (store.getPhone() != null && !store.getPhone().isBlank()
+                            && dto.getPhone() != null && !dto.getPhone().isBlank()){
+
+                        if (dto.getPhone().equals(store.getPhone())){
+
+                            saveBusinessHoursAndImage(dto, store);
+                            break;
+                        }
+                    }
+
+                }
+
+            }
+        }
     }
 
+    private void saveBusinessHoursAndImage(GoogleStoreDto dto, Store store) throws IOException {
+        if (businessHoursRepository.findByStore(store).isEmpty() && dto.getBusinessHours() != null){
+            BusinessHours businessHours = dto.getBusinessHours();
+
+            businessHours.setStore(store);
+
+            businessHoursRepository.save(businessHours);
+
+            System.out.println(businessHours);
+        }
+
+
+//        if (storeImageRepository.findByStore(store).){
+//            System.out.println("//////////////");
+//            System.out.println(store);
+//            List<StoreImage> storeImages = storeImageRepository.findByStore(store).get();
+//            for (StoreImage i : storeImages){
+//                System.out.println(i);
+//            }
+//        }
+        if (storeImageRepository.findByStore(store).isEmpty()) {
+            //이미지 저장
+            photoApi(store, dto);
+        }
+    }
+
+    private String uploadFolder = System.getProperty("user.home");
+    private void photoApi(Store store, GoogleStoreDto dto) throws IOException {
+        System.out.println("111");
+        if (dto.getPhotoReferenceList() != null & !dto.getPhotoReferenceList().isEmpty()) {
+            System.out.println("123");
+            int i = 0;
+
+            for (String pr : dto.getPhotoReferenceList()) {
+                System.out.println(pr);
+
+                byte[] response = rt.getForObject(
+                        "https://maps.googleapis.com/maps/api/place/photo" +
+                                "?maxwidth=400" +
+                                "&photo_reference=" + pr +
+                                "&key=" + googleApiKey,
+                        byte[].class
+                );
+
+                String imageUrl = s3Upload(store, response);
+
+                storeImageRepository.save(new StoreImage(store,imageUrl));
+
+                i++;
+                if (i == 5) break;
+            }
+        }
+    }
+
+    private String s3Upload(Store store, byte[] bytes) throws IOException {
+        File fileDir = new File(uploadFolder,"data-set");
+
+        //폴더 경로
+        String folderPath = "store/" + store.getAddress().getSggNm();
+
+        //파일 이름
+        String frontName = store.getStoreId().toString();
+        String storeFilename = frontName + "_" + UUID.randomUUID().toString() + "_" + store.getStoreName();
+
+        if (!fileDir.isDirectory()){
+            fileDir.mkdirs();
+        }
+
+        File fileData = new File(uploadFolder+"/data-set",storeFilename+".png");
+
+        if (!fileData.exists()){
+            FileOutputStream fos = new FileOutputStream(fileData);
+            fos.write(bytes);
+            fos.close();
+        }
+
+        //storeKey
+        String storeKey = folderPath + "/" + storeFilename;
+
+        //s3 업로드
+        String imageUrl = s3Uploader.putS3(fileData, storeKey);
+
+        if (fileData.delete()) {
+            System.out.println("파일이 삭제되었습니다.");
+        } else {
+            System.out.println("파일이 삭제되지 못했습니다.");
+        }
+
+        return imageUrl;
+    }
 }
