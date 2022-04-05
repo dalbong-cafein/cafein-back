@@ -20,7 +20,7 @@ public abstract class Image extends BaseEntity {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long imageId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 300)
     private String imageUrl;
 
     public Image(String imageUrl){

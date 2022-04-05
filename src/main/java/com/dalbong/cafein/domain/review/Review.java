@@ -2,14 +2,11 @@ package com.dalbong.cafein.domain.review;
 
 import com.dalbong.cafein.domain.BaseEntity;
 import com.dalbong.cafein.domain.member.Member;
-import com.dalbong.cafein.domain.store.Feature;
-import com.dalbong.cafein.domain.store.SocketCnt;
 import com.dalbong.cafein.domain.store.Store;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Builder
 @AllArgsConstructor

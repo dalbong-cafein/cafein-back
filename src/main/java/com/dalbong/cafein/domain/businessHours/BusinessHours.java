@@ -1,10 +1,7 @@
 package com.dalbong.cafein.domain.businessHours;
 
 import com.dalbong.cafein.domain.store.Store;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,7 +9,8 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"store"})
+@Getter
 @Entity
 public class BusinessHours {
 
@@ -71,4 +69,8 @@ public class BusinessHours {
             @AttributeOverride(name="closed", column = @Column(name="sun_closed"))
     })
     private Day onSun;
+
+    public void setStore(Store store){
+        this.store = store;
+    }
 }

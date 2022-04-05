@@ -5,6 +5,9 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.dalbong.cafein.domain.image.Image;
+import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.domain.store.Store;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,14 +36,30 @@ public class S3Uploader {
 
 
     /**
-     * S3 다중 업로드
+     * 프로필 이미지 S3 업로드
      */
-    public List<String> s3MultipleUpload(List<MultipartFile> multipartFiles) throws IOException {
+    public String s3UploadOfProfileImage(Member member, MultipartFile multipartFile) throws IOException {
+
+        //폴더 경로
+        String folderPath = "member";
+
+        //파일 이름
+        String frontName = member.getMemberId().toString();
+        String storeFileName = createStoreFileName(frontName, multipartFile.getOriginalFilename());
+
+        return s3Upload(folderPath, storeFileName, multipartFile);
+    }
+
+    /**
+     * 가게 S3 다중업로드
+     */
+    public List<String> s3MultipleUploadOfStore(Store store, List<MultipartFile> multipartFiles) throws IOException {
+
         List<String> imageUrlList = new ArrayList<>();
 
-        if (!multipartFiles.isEmpty()) {
-            for (MultipartFile multipartFile : multipartFiles) {
-                imageUrlList.add(s3Upload(multipartFile));
+        if (!multipartFiles.isEmpty()){
+            for (MultipartFile multipartFile : multipartFiles){
+                imageUrlList.add(s3UploadOfStore(store, multipartFile));
             }
         }
 
@@ -48,18 +67,59 @@ public class S3Uploader {
     }
 
     /**
+     * 가게 이미지 S3 업로드
+     */
+    public String s3UploadOfStore(Store store, MultipartFile multipartFile) throws IOException {
+
+
+        //폴더 경로
+        String folderPath = "store/" + store.getAddress().getSggNm();
+
+        //파일 이름
+        String frontName = store.getStoreId().toString();
+        String storeFileName = createStoreFileName(frontName, multipartFile.getOriginalFilename());
+
+        return s3Upload(folderPath, storeFileName, multipartFile);
+    }
+
+    /**
+     * 리뷰 S3 다중업로드
+     */
+    public List<String> s3MultipleUploadOfReview(Review review, List<MultipartFile> multipartFiles) throws IOException {
+
+        List<String> imageUrlList = new ArrayList<>();
+
+        if (!multipartFiles.isEmpty()){
+            for (MultipartFile multipartFile : multipartFiles){
+                imageUrlList.add(s3UploadOfReview(review, multipartFile));
+            }
+        }
+
+        return imageUrlList;
+    }
+
+    /**
+     * 리뷰 이미지 S3 업로드
+     */
+    public String s3UploadOfReview(Review review, MultipartFile multipartFile) throws IOException {
+
+        //폴더 경로
+        String folderPath = createFolderPathOfReview();
+
+        //파일 이름
+        String frontName = review.getMember().getMemberId().toString() + review.getStore().getStoreId().toString();
+        String storeFileName = createStoreFileName(frontName, multipartFile.getOriginalFilename());
+
+        return s3Upload(folderPath, storeFileName, multipartFile);
+    }
+
+    /**
      * S3 업로드
      */
-    public String s3Upload(MultipartFile multipartFile) throws IOException {
+    private String s3Upload(String folderPath, String fileNm, MultipartFile multipartFile) throws IOException {
 
         File uploadFile = convert(multipartFile)  // 파일 변환할 수 없으면 에러
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
-
-        //폴더경로
-        String folderPath = createFolderPath();
-
-        //파일이름
-        String fileNm = uploadFile.getName();
 
         //S3에 저장될 위치 + 저장파일명
         String storeKey = folderPath + "/" + fileNm;
@@ -72,8 +132,6 @@ public class S3Uploader {
 
         return imageUrl;
     }
-
-
 
     /**
      * S3파일 삭제
@@ -93,8 +151,9 @@ public class S3Uploader {
         }
     }
 
+    //TODO data 세팅 후 public -> private 변경
     // S3로 업로드
-    private String putS3(File uploadFile, String storeKey) {
+    public String putS3(File uploadFile, String storeKey) {
         amazonS3.putObject(new PutObjectRequest(bucket, storeKey, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
         return amazonS3.getUrl(bucket,storeKey).toString();
     }
@@ -115,7 +174,7 @@ public class S3Uploader {
         String originalFilename = multipartFile.getOriginalFilename();
 
         //파일 저장 이름
-        String storeFileName = createStoreFileName(originalFilename);
+        String storeFileName = UUID.randomUUID().toString()+"_"+originalFilename;
 
         File convertFile = new File(System.getProperty("user.dir") + "/" + storeFileName);
 
@@ -129,15 +188,15 @@ public class S3Uploader {
         return Optional.empty();
     }
 
-    private String createFolderPath() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+    private String createFolderPathOfReview() {
+        return "review/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
     }
 
-    private String createStoreFileName(String originalFileName) {
+    private String createStoreFileName(String frontName, String originalFileName) {
 
         String uuid = UUID.randomUUID().toString();
 
-        return uuid + "_" + originalFileName;
+        return frontName + "_" + uuid + "_" + originalFileName;
     }
 
 

@@ -1,10 +1,12 @@
 package com.dalbong.cafein.domain.businessHours;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import javax.persistence.Embeddable;
 import java.time.LocalTime;
 
+@ToString
 @Embeddable //jpa 내장타입
 @Getter
 public class Day {

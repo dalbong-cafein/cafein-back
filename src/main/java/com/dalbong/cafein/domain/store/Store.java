@@ -3,7 +3,9 @@ package com.dalbong.cafein.domain.store;
 import com.dalbong.cafein.domain.BaseEntity;
 import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.heart.Heart;
+import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.review.DetailEvaluation;
 import com.dalbong.cafein.domain.review.Review;
 import lombok.*;
 
@@ -17,21 +19,17 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+@ToString(exclude = {"hashTagSet","reviewList","reviewList","storeImageList"})
 @Entity
 public class Store extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long storeId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
-
     @Column(nullable = false)
     private String storeName;
 
-    private int americano;
+    private Integer americano;
 
     @Embedded
     private Address address;
@@ -41,32 +39,27 @@ public class Store extends BaseEntity {
     private String phone;
 
     @Column(nullable = false)
-    private int mapX;
+    private int katechX;
 
     @Column(nullable = false)
-    private int mapY;
+    private int katechY;
+
+    private Double lngX;
+
+    private Double latY;
 
     @Builder.Default
     @Column(nullable = false)
     private Boolean isApproval = false;
 
-    @Column(nullable = false)
-    private SocketCnt socketCnt;
-
-    private String wifi;
+    @Embedded
+    private DetailEvaluation detailEvaluation;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "hash_tag", joinColumns = @JoinColumn(name = "store_id"))
     @Builder.Default
     @Column(name = "hash_tag")
     private Set<String> hashTagSet = new HashSet<>();
-
-    @Enumerated(EnumType.STRING)
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "feature_store",joinColumns = @JoinColumn(name = "store_id"))
-    @Builder.Default
-    @Column(name = "feature")
-    private List<Feature> featureList = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
@@ -75,6 +68,19 @@ public class Store extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Heart> heartList = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "store",fetch = FetchType.LAZY)
+    private List<StoreImage> storeImageList = new ArrayList<>();
+
+    public void changePhone(String phone){
+        this.phone = phone;
+    }
+
+    public void changeLatAndLng(Double lngX, Double latY){
+        this.lngX = lngX;
+        this.latY = latY;
+    }
 
     public void changeIsApproval(){
         if (isApproval){
