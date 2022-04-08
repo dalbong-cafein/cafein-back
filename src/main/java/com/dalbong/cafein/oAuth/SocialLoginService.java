@@ -59,7 +59,7 @@ public class SocialLoginService {
             //해당 email을 사용 중인 계정이 있는 경우
             else{
                 AccountUniteResDto accountUniteResDto = new AccountUniteResDto(
-                        userInfo.getEmail(), emailDuplicateResult.get().getRegDate(), userInfo.getId(), authProvider);
+                        userInfo.getEmail(), emailDuplicateResult.get().getRegDateTime(), userInfo.getId(), authProvider);
 
                 //기억!! 현재는
                 throw new AlreadyExistedAccountException("이미 해당 email을 사용중인 계정이 존재합니다.", accountUniteResDto);
