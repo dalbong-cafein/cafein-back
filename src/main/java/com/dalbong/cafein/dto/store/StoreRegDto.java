@@ -1,16 +1,15 @@
 package com.dalbong.cafein.dto.store;
 
 import com.dalbong.cafein.domain.address.Address;
-import com.dalbong.cafein.domain.member.Member;
-import com.dalbong.cafein.domain.store.Feature;
-import com.dalbong.cafein.domain.store.SocketCnt;
+import com.dalbong.cafein.domain.businessHours.BusinessHours;
+import com.dalbong.cafein.domain.businessHours.Day;
 import com.dalbong.cafein.domain.store.Store;
-import com.dalbong.cafein.dto.businessHours.BusinessHoursRegDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -28,25 +27,24 @@ public class StoreRegDto {
 
     private String siNm; //시도명
     private String sggNm; //시군구
-    private String rn; //도로명
+    private String rNm; //도로명
+    private String rNum; //도로 number
+    private String detail; //상세주소
 
-    private int americano;
+    private Integer americano;
 
     private String phone;
 
     private String website;
 
-    private int mapX;
+    private Integer katechX;
 
-    private int mapY;
+    private Integer katechY;
 
-    private SocketCnt socketCnt;
+    private List<MultipartFile> imageFiles = new ArrayList<>();
 
     @Builder.Default //테스트 코드 용도
     private Set<String> hashTagSet = new HashSet<>();
-
-    @Builder.Default //테스트 코드 용도
-    private List<Feature> featureList = new ArrayList<>();
 
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime monOpen;
@@ -83,36 +81,31 @@ public class StoreRegDto {
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime sunClosed;
 
-    //TODO image
+    public Store toEntity(){
 
-    public Store toEntity(Long principalId){
-
-        Address address = new Address(siNm, sggNm, rn);
+        Address address = new Address(siNm, sggNm, rNm, rNum, detail);
 
         return Store.builder()
-                .member(Member.builder().memberId(principalId).build())
                 .storeName(storeName)
                 .address(address)
                 .americano(americano)
-                .mapX(mapX).mapY(mapY)
-                .featureList(featureList)
+                .katechX(katechX).katechY(katechY)
                 .hashTagSet(hashTagSet)
                 .phone(phone)
-                .socketCnt(socketCnt)
                 .website(website)
                 .build();
     }
 
-    public BusinessHoursRegDto getBusinessHoursRegDto(){
+    public BusinessHours toBusinessHoursEntity(){
 
-        return BusinessHoursRegDto.builder()
-                .monOpen(monOpen).monClosed(monClosed)
-                .tueOpen(tueOpen).tueClosed(tueClosed)
-                .wedOpen(wedOpen).wedClosed(wedClosed)
-                .thuOpen(thuOpen).thuClosed(thuClosed)
-                .friOpen(friOpen).friClosed(friClosed)
-                .satOpen(satOpen).satClosed(satClosed)
-                .sunOpen(sunOpen).sunClosed(sunClosed)
+        return BusinessHours.builder()
+                .onMon(new Day(monOpen, monClosed))
+                .onTue(new Day(tueOpen, tueClosed))
+                .onWed(new Day(wedOpen, wedClosed))
+                .onThu(new Day(thuOpen, thuClosed))
+                .onFri(new Day(friOpen, friClosed))
+                .onSat(new Day(satOpen, satClosed))
+                .onSun(new Day(sunOpen, sunClosed))
                 .build();
     }
 }

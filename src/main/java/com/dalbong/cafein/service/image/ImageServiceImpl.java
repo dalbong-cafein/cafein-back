@@ -3,6 +3,7 @@ package com.dalbong.cafein.service.image;
 import com.dalbong.cafein.domain.image.*;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.s3.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.List;
 public class ImageServiceImpl implements ImageService{
 
     private final MemberImageRepository memberImageRepository;
+    private final StoreImageRepository storeImageRepository;
     private final ReviewImageRepository reviewImageRepository;
     private final ImageRepository imageRepository;
     private final S3Uploader s3Uploader;
@@ -31,11 +33,34 @@ public class ImageServiceImpl implements ImageService{
     public Image saveMemberImage(Member member, MultipartFile imageFile) throws IOException {
 
         //s3 업로드
-        String imageUrl = s3Uploader.s3Upload(imageFile);
+        String imageUrl = s3Uploader.s3UploadOfProfileImage(member, imageFile);
 
         //Image 저장
         MemberImage memberImage = new MemberImage(member, imageUrl);
         return memberImageRepository.save(memberImage);
+    }
+
+    /**
+     * 가게 이미지 저장
+     */
+    @Transactional
+    @Override
+    public List<StoreImage> saveStoreImage(Store store, List<MultipartFile> imageFiles) throws IOException {
+
+        List<String> imageUrlList = s3Uploader.s3MultipleUploadOfStore(store, imageFiles);
+
+        List<StoreImage> imageList = new ArrayList<>();
+
+        //StoreImage 저장
+        if(!imageUrlList.isEmpty()){
+            for(String imageUrl : imageUrlList){
+                StoreImage storeImage =
+                        storeImageRepository.save(new StoreImage(store, imageUrl));
+                imageList.add(storeImage);
+            }
+        }
+
+        return imageList;
     }
 
 
@@ -44,14 +69,14 @@ public class ImageServiceImpl implements ImageService{
      */
     @Transactional
     @Override
-    public List<Image> saveReviewImage(Review review, List<MultipartFile> imageFiles) throws IOException {
+    public List<ReviewImage> saveReviewImage(Review review, List<MultipartFile> imageFiles) throws IOException {
 
         //s3업로드
-        List<String> imageUrlList = s3Uploader.s3MultipleUpload(imageFiles);
+        List<String> imageUrlList = s3Uploader.s3MultipleUploadOfReview(review, imageFiles);
 
-        List<Image> imageList = new ArrayList<>();
+        List<ReviewImage> imageList = new ArrayList<>();
 
-        //Image 저장
+        //ReviewImage 저장
         if(!imageUrlList.isEmpty()){
             for(String imageUrl : imageUrlList){
                 ReviewImage reviewImage =
