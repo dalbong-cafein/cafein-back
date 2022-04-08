@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RequiredArgsConstructor
 @RestController
 public class StoreController {
@@ -21,13 +23,12 @@ public class StoreController {
     private final StoreService storeService;
 
     /**
-     * 가게 등록
+     * 관리자단 가게 등록
      */
-    @PostMapping("/stores")
-    public ResponseEntity<?> register(@Validated StoreRegDto storeRegDto,
-                                      @AuthenticationPrincipal PrincipalDetails principalDetails){
+    @PostMapping("/admin/stores")
+    public ResponseEntity<?> register(@Validated StoreRegDto storeRegDto) throws IOException {
 
-        storeService.register(storeRegDto,principalDetails.getMember().getMemberId());
+        storeService.registerByAdmin(storeRegDto);
 
         return new ResponseEntity<>(new CMRespDto<>(1,"가게 등록 성공",null), HttpStatus.CREATED);
     }
@@ -35,7 +36,7 @@ public class StoreController {
     /**
      * 가게 승인 여부 수정
      */
-    @PatchMapping("/stores/{storeId}/isApproval")
+    @PatchMapping("/admin/stores/{storeId}/isApproval")
     public ResponseEntity<?> modifyIsApproval(@PathVariable("storeId") Long storeId){
 
         storeService.modifyIsApproval(storeId);

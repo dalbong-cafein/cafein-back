@@ -20,6 +20,7 @@ public class StoreImage extends Image{
     protected StoreImage(){}
 
     public StoreImage(Store store, String imageUrl){
+        super(imageUrl);
         this.store = store;
     }
 

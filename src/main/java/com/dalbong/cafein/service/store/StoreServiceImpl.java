@@ -5,9 +5,12 @@ import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.store.StoreRegDto;
+import com.dalbong.cafein.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
 
 @Transactional
 @RequiredArgsConstructor
@@ -16,29 +19,33 @@ public class StoreServiceImpl implements StoreService{
 
     private final StoreRepository storeRepository;
     private final BusinessHoursRepository businessHoursRepository;
+    private final ImageService imageService;
 
     /**
-     * 카페 등록
+     * 관리자단 카페 등록
      */
     @Transactional
     @Override
-    public Store register(StoreRegDto storeRegDto, Long principalId) {
-
-        //store entity 저장
-        Store store = storeRegDto.toEntity(principalId);
-        storeRepository.save(store);
+    public Store registerByAdmin(StoreRegDto storeRegDto) throws IOException {
 
         //businessHours 엔티티 저장
-        BusinessHours businessHours = storeRegDto.getBusinessHoursRegDto().toEntity(store.getStoreId());
+        BusinessHours businessHours = storeRegDto.toBusinessHoursEntity();
         businessHoursRepository.save(businessHours);
 
-        //TODO 이미지 처리
+        //store entity 저장
+        Store store = storeRegDto.toEntity();
+        store.changeIsApproval(); //관리자가 등록시 바로 승인
+        store.changeBusinessHours(businessHours);
+
+        storeRepository.save(store);
+
+        imageService.saveStoreImage(store, storeRegDto.getImageFiles());
 
         return store;
     }
 
     /**
-     * 카페 승인 수정
+     * 카페 승인 여부 수정
      */
     @Transactional
     @Override

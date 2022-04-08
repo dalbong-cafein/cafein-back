@@ -2,6 +2,7 @@ package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.BaseEntity;
 import com.dalbong.cafein.domain.address.Address;
+import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.heart.Heart;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
@@ -19,7 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+@ToString(exclude = {"reviewList","reviewList","storeImageList","heartList"})
 @Entity
 public class Store extends BaseEntity {
 
@@ -38,18 +39,23 @@ public class Store extends BaseEntity {
 
     private String phone;
 
-    @Column(nullable = false)
-    private int mapX;
+    private int katechX;
 
-    @Column(nullable = false)
-    private int mapY;
+    private int katechY;
+
+    private Double lngX;
+
+    private Double latY;
+
+    //TODO data api에서 가게Id 필요 유무
 
     @Builder.Default
     @Column(nullable = false)
     private Boolean isApproval = false;
 
-    @Embedded
-    private DetailEvaluation detailEvaluation;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "businessHours")
+    private BusinessHours businessHours;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "hash_tag", joinColumns = @JoinColumn(name = "store_id"))
@@ -69,6 +75,15 @@ public class Store extends BaseEntity {
     @OneToMany(mappedBy = "store",fetch = FetchType.LAZY)
     private List<StoreImage> storeImageList = new ArrayList<>();
 
+    public void changePhone(String phone){
+        this.phone = phone;
+    }
+
+    public void changeLatAndLng(Double lngX, Double latY){
+        this.lngX = lngX;
+        this.latY = latY;
+    }
+
     public void changeIsApproval(){
         if (isApproval){
             isApproval = false;
@@ -77,5 +92,7 @@ public class Store extends BaseEntity {
         }
     }
 
-
+    public void changeBusinessHours(BusinessHours businessHours){
+        this.businessHours = businessHours;
+    }
 }
