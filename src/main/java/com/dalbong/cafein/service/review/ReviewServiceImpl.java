@@ -1,21 +1,30 @@
 package com.dalbong.cafein.service.review;
 
+import com.dalbong.cafein.domain.image.MemberImage;
 import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.page.PageRequestDto;
+import com.dalbong.cafein.dto.page.ScrollResultDto;
+import com.dalbong.cafein.dto.review.ReviewListDto;
 import com.dalbong.cafein.dto.review.ReviewRegDto;
+import com.dalbong.cafein.dto.review.ReviewResDto;
 import com.dalbong.cafein.dto.review.ReviewUpdateDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 @Transactional
 @RequiredArgsConstructor
@@ -68,6 +77,8 @@ public class ReviewServiceImpl implements ReviewService{
 
     private void updateReviewImage(Review review, List<MultipartFile> updateImageFiles) throws IOException {
 
+
+        //TODO 수정 로직 변경 필요
         //리뷰 기존 이미지 삭제
         for (ReviewImage reviewImage : review.getReviewImageList()){
             imageService.remove(reviewImage.getImageId());
@@ -95,6 +106,43 @@ public class ReviewServiceImpl implements ReviewService{
         }
 
         reviewRepository.deleteById(reviewId);
+    }
 
+    /**
+     * 리뷰 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public ReviewListDto getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId) {
+
+        Pageable pageable = pageRequestDto.getPageable();
+
+        Page<Object[]> results = reviewRepository.getReviewListOfStore(storeId, pageable);
+
+        Function<Object[], ReviewResDto> fn = (arr -> {
+
+            //작성자 프로필 이미지
+            MemberImage memberImage = (MemberImage) arr[1];
+
+            String profileImageUrl = null;
+            if (memberImage != null){
+                profileImageUrl = memberImage.getImageUrl();
+            }
+
+            //리뷰 이미지
+            Review review = (Review) arr[0];
+            List<String> reviewImageUrlList = new ArrayList<>();
+            if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()){
+
+                for (ReviewImage reviewImage : review.getReviewImageList()){
+                    reviewImageUrlList.add(reviewImage.getImageUrl());
+                }
+            }
+
+            return new ReviewResDto(review, profileImageUrl, (long)arr[2], reviewImageUrlList);
+        });
+
+
+        return new ReviewListDto(results.getTotalElements(), new ScrollResultDto<>(results, fn));
     }
 }

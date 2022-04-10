@@ -2,6 +2,8 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.page.PageRequestDto;
+import com.dalbong.cafein.dto.review.ReviewListDto;
 import com.dalbong.cafein.dto.review.ReviewRegDto;
 import com.dalbong.cafein.dto.review.ReviewUpdateDto;
 import com.dalbong.cafein.service.review.ReviewService;
@@ -20,6 +22,17 @@ import java.io.IOException;
 public class ReviewController {
 
     private final ReviewService reviewService;
+
+    /**
+     * 리뷰 리스트 조회
+     */
+    @GetMapping("stores/{storeId}/reviews")
+    public ResponseEntity<?> getReviewListOfStore(@PathVariable("storeId") Long storeId, PageRequestDto requestDto){
+
+        ReviewListDto reviewListDto = reviewService.getReviewListOfStore(requestDto, storeId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "리뷰 리스트 조회 성공", reviewListDto), HttpStatus.OK);
+    }
 
     /**
      * 리뷰 등록

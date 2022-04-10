@@ -7,6 +7,7 @@ import com.dalbong.cafein.domain.store.Feature;
 import com.dalbong.cafein.domain.store.SocketCnt;
 import com.dalbong.cafein.domain.store.Store;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class Review extends BaseEntity {
     @Embedded
     private DetailEvaluation detailEvaluation;
 
+    @BatchSize(size = 100)
     @Builder.Default
     @OneToMany(mappedBy = "review",fetch = FetchType.LAZY)
     private List<ReviewImage> reviewImageList = new ArrayList<>();
