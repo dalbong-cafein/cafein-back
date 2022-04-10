@@ -8,5 +8,5 @@ public interface ReviewRepositoryQuerydsl {
     /**
      * 리뷰 리스트 조회
      */
-    Page<Object[]> getReviewListOfStore(Long storeId, Pageable pageable);
+    Page<Object[]> getReviewListOfStore(Long storeId, Boolean isOnlyImage, Pageable pageable);
 }

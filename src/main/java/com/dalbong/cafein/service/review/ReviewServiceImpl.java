@@ -17,6 +17,7 @@ import com.dalbong.cafein.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -115,9 +116,10 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public ReviewListDto getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId) {
 
-        Pageable pageable = pageRequestDto.getPageable();
+        //TODO 동적 필요
+        Pageable pageable = pageRequestDto.getPageable(Sort.by("reviewId").descending());
 
-        Page<Object[]> results = reviewRepository.getReviewListOfStore(storeId, pageable);
+        Page<Object[]> results = reviewRepository.getReviewListOfStore(storeId, pageRequestDto.getIsOnlyImage(), pageable);
 
         Function<Object[], ReviewResDto> fn = (arr -> {
 

@@ -18,6 +18,8 @@ public class PageRequestDto {
 
     private String keyword;
 
+    private Boolean isOnlyImage;
+
     public PageRequestDto(){
         this.page = 1;
         this.size = 15;

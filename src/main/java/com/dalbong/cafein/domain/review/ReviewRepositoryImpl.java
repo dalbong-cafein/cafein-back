@@ -2,10 +2,17 @@ package com.dalbong.cafein.domain.review;
 
 import com.dalbong.cafein.domain.image.QMemberImage;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import javax.persistence.EntityManager;
@@ -15,7 +22,6 @@ import java.util.stream.Collectors;
 
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.review.QReview.review;
-import static com.querydsl.jpa.JPAExpressions.select;
 
 public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
 
@@ -30,19 +36,36 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
      * 리뷰 리스트 조회
      */
     @Override
-    public Page<Object[]> getReviewListOfStore(Long storeId, Pageable pageable) {
+    public Page<Object[]> getReviewListOfStore(Long storeId, Boolean isOnlyImage, Pageable pageable) {
 
-        List<Tuple> results = queryFactory
-                .select(review, memberImage)
+        QReview review = new QReview("review");
+        QReview reviewSub = new QReview("reviewSub");
+
+        JPAQuery<Tuple> query = queryFactory
+                .select(review, memberImage,
+                        JPAExpressions
+                                .select(review.member.memberId.count())
+                                .from(reviewSub)
+                                .where(reviewSub.store.storeId.eq(storeId),
+                                        reviewSub.member.memberId.eq(review.member.memberId))
+                                .groupBy(reviewSub.member.memberId))
                 .from(review)
                 .join(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
-                .where(review.store.storeId.eq(storeId))
-                .groupBy(review.reviewId)
-                .fetch();
+                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage));
 
-        JPAQuery<Tuple> countQuery = queryFactory
-                .select(review, memberImage)
+        //정렬
+        for (Sort.Order o : pageable.getSort()) {
+            PathBuilder pathBuilder = new PathBuilder(Review.class, "review");
+            query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
+                    pathBuilder.get(o.getProperty())));
+        }
+
+        List<Tuple> results = query.fetch();
+
+        //count 쿼리
+        JPAQuery<Review> countQuery = queryFactory
+                .select(review)
                 .from(review)
                 .join(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.memberId.eq(review.member.memberId))
@@ -58,5 +81,11 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
          * 날릴 필요가 없음.
          */
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchCount());
+    }
+
+    private BooleanExpression IsOnlyImage(Boolean isOnlyImage) {
+
+        return isOnlyImage != null && isOnlyImage ? review.reviewImageList.isNotEmpty() : null;
+
     }
 }
