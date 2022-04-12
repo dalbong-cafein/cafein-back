@@ -1,15 +1,20 @@
 package com.dalbong.cafein.service.member;
 
+import com.dalbong.cafein.domain.image.Image;
+import com.dalbong.cafein.domain.image.MemberImage;
+import com.dalbong.cafein.domain.image.MemberImageRepository;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.dto.login.AccountUniteRegDto;
 import com.dalbong.cafein.dto.member.MemberUpdateDto;
 import com.dalbong.cafein.handler.exception.CustomException;
+import com.dalbong.cafein.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import static com.dalbong.cafein.domain.member.AuthProvider.KAKAO;
@@ -21,6 +26,8 @@ import static com.dalbong.cafein.domain.member.AuthProvider.NAVER;
 public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
+    private final ImageService imageService;
+    private final MemberImageRepository memberImageRepository;
 
     /**
      * 계정 통합
@@ -80,13 +87,29 @@ public class MemberServiceImpl implements MemberService{
      */
     @Transactional
     @Override
-    public void modifyImageAndNickname(MemberUpdateDto memberUpdateDto, Long principalId) {
+    public void modifyImageAndNickname(MemberUpdateDto memberUpdateDto, Long principalId) throws IOException {
+
+        System.out.println(memberUpdateDto);
 
         Member member = memberRepository.findById(principalId).orElseThrow(() ->
                 new CustomException("존재하는 회원이 아닙니다."));
 
         member.changeNickname(memberUpdateDto.getNickname());
-        //TODO 이미지 수정 필요
 
+
+        //프로필 이미지 갱신
+        if (memberUpdateDto.getImageFile() != null){
+
+            //기존 프로필 이미지 삭제
+            imageService.remove(memberUpdateDto.getDeleteImageId());
+
+            //새로운 이미지로 갱신
+            imageService.saveMemberImage(member, memberUpdateDto.getImageFile());
+        }
+        //기본 이미지로 변경
+        else if(memberUpdateDto.getDeleteImageId() != null){
+            //기존 프로필 이미지 삭제
+            imageService.remove(memberUpdateDto.getDeleteImageId());
+        }
     }
 }

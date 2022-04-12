@@ -19,6 +19,8 @@ public class ReviewImage extends Image{
     protected ReviewImage(){}
 
     public ReviewImage(Review review, String imageUrl){
+        super(imageUrl);
         this.review = review;
+        review.getReviewImageList().add(this);
     }
 }

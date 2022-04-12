@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RequiredArgsConstructor
 @RestController
 public class MemberController {
@@ -36,11 +38,10 @@ public class MemberController {
      */
     @PatchMapping("/members/{memberId}/ImageAndNickname")
     public ResponseEntity<?> modifyImageAndNinckanme(MemberUpdateDto memberUpdateDto,
-                                                     @AuthenticationPrincipal PrincipalDetails principalDetails){
+                                                     @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
         memberService.modifyImageAndNickname(memberUpdateDto, principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "프로필 사진 및 닉네임 수정 성공",null), HttpStatus.OK);
-
     }
 }

@@ -52,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/members/**/*").authenticated()
+                .antMatchers("/members/**/*","/stores/**/*","/reviews/**/*").authenticated()
                 .antMatchers("/stores/{storeId}/isApproval").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll()
 

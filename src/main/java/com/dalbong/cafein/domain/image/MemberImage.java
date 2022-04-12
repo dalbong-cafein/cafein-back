@@ -21,13 +21,13 @@ public class MemberImage extends Image {
     protected MemberImage(){}
 
     public MemberImage(Member member, String imagerUrl, Boolean isSocial){
-        super(member.getMemberId(), imagerUrl);
+        super(imagerUrl);
         this.member = member;
         this.isSocial = isSocial;
     }
 
     public MemberImage(Member member, String imagerUrl){
-        super(member.getMemberId(), imagerUrl);
+        super(imagerUrl);
         this.member = member;
         this.isSocial = false;
     }
