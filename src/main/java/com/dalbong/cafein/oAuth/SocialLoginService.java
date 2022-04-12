@@ -141,6 +141,7 @@ public class SocialLoginService {
 
         //프로필 사진 저장
         memberImage = new MemberImage(member, userInfo.getImageUrl(), true);
+
         memberImageRepository.save(memberImage);
 
         return member;

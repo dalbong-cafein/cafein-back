@@ -1,10 +1,12 @@
 package com.dalbong.cafein.service.member;
 
+import com.dalbong.cafein.domain.image.Image;
 import com.dalbong.cafein.domain.image.MemberImage;
 import com.dalbong.cafein.domain.image.MemberImageRepository;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.member.MemberUpdateDto;
 import com.dalbong.cafein.service.image.ImageService;
 import org.assertj.core.api.Assertions;
@@ -37,10 +39,6 @@ class MemberServiceImplTest {
         Member member = createMember("testUsername", "testNickname", "010-1111-1111",
                 "testEmail@naver.com", "asdf123", LocalDate.now());
         this.member = member;
-
-        //회원 프로필 이미지 생성
-        MultipartFile imageFile = createImage("testProfileImage", "testProfileImageFilename1.png");
-        imageService.saveMemberImage(member, imageFile);
     }
 
 
@@ -85,9 +83,12 @@ class MemberServiceImplTest {
     void 프로필사진_닉네임_수정() throws Exception{
         //given
 
-        MultipartFile imageFile = createImage("updateProfileImage", "updateProfileImageFilename.jpeg");
+        MultipartFile oldImageFile = createImage("oldProfileImage", "oldProfileImageFilename.jpeg");
+        Image oldImage = imageService.saveMemberImage(member, oldImageFile);
 
-        MemberUpdateDto memberUpdateDto = createMemberUpdateDto("updateNickname", imageFile);
+        MultipartFile updateImageFile = createImage("updateProfileImage", "updateProfileImageFilename.jpeg");
+
+        MemberUpdateDto memberUpdateDto = createMemberUpdateDto("updateNickname", updateImageFile, oldImage.getImageId());
 
         //when
         memberService.modifyImageAndNickname(memberUpdateDto, member.getMemberId());
@@ -107,8 +108,10 @@ class MemberServiceImplTest {
 
     }
 
-    private MemberUpdateDto createMemberUpdateDto(String nickname, MultipartFile imageFile) {
-        return new MemberUpdateDto(nickname, imageFile);
+
+
+    private MemberUpdateDto createMemberUpdateDto(String nickname, MultipartFile imageFile, Long oldImageId) {
+        return new MemberUpdateDto(nickname, imageFile, oldImageId);
     }
 
     private MultipartFile createImage(String name, String originalFilename) {

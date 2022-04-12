@@ -41,7 +41,7 @@ public class ReviewResDto {
         this.content = review.getContent();
         this.visitCnt = visitCnt;
         this.reviewImageUrlList = reviewImageUrlList;
-        this.regDateTime = review.getRegDate();
+        this.regDateTime = review.getRegDateTime();
     }
 
 }

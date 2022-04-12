@@ -97,6 +97,8 @@ public class ImageServiceImpl implements ImageService{
         //s3 이미지 파일 삭제
         s3Uploader.delete(imageId);
 
+        System.out.println("-------------");
+
         imageRepository.deleteById(imageId);
     }
 }

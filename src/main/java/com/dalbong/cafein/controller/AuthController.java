@@ -170,7 +170,7 @@ public class AuthController {
 
         params.add("grant_type", "authorization_code");
         params.add("client_id", "30e9f4fa92d2521d41eaf6f419dd5185");
-        params.add("redirect_uri", "http://localhost:5000/login/oauth2/code/kakao2");
+        params.add("redirect_uri", "http://localhost:5000/login/kakao3");
         params.add("code", code);
 
         //HttpHeader와 HttpBody를 하나의 오브젝트에 담기
