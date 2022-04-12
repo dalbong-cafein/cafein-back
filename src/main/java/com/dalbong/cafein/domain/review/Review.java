@@ -5,6 +5,7 @@ import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.store.Store;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -40,10 +41,10 @@ public class Review extends BaseEntity {
     @Embedded
     private DetailEvaluation detailEvaluation;
 
+    @BatchSize(size = 100)
     @Builder.Default
     @OneToMany(mappedBy = "review",fetch = FetchType.LAZY)
     private List<ReviewImage> reviewImageList = new ArrayList<>();
-
 
     //연관관계 메서드
     public void setStore(Store store){
@@ -51,4 +52,15 @@ public class Review extends BaseEntity {
         store.getReviewList().add(this);
     }
 
+    public void changeContent(String content){
+        this.content = content;
+    }
+
+    public void changeRecommendation(Recommendation recommendation) {
+        this.recommendation = recommendation;
+    }
+
+    public void changeDetailEvaluation(DetailEvaluation detailEvaluation){
+        this.detailEvaluation = detailEvaluation;
+    }
 }
