@@ -2,6 +2,7 @@ package com.dalbong.cafein.dto.member;
 
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.dto.image.ImageDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class MemberInfoDto {
 
     private LocalDate birth;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime joinDateTime;
 
     public MemberInfoDto(Member member, ImageDto imageDto){
