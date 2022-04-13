@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +25,8 @@ public class MemberInfoDto {
 
     private LocalDate birth;
 
+    private LocalDateTime joinDateTime;
+
     public MemberInfoDto(Member member, ImageDto imageDto){
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname() != null ? member.getNickname() : null;
@@ -31,5 +34,6 @@ public class MemberInfoDto {
         this.email = member.getEmail();
         this.birth = member.getBirth();
         this.imageDto = imageDto;
+        this.joinDateTime = member.getRegDateTime();
     }
 }
