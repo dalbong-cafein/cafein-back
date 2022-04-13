@@ -6,7 +6,9 @@ import com.dalbong.cafein.domain.image.MemberImageRepository;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.login.AccountUniteRegDto;
+import com.dalbong.cafein.dto.member.MemberInfoDto;
 import com.dalbong.cafein.dto.member.MemberUpdateDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.image.ImageService;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import static com.dalbong.cafein.domain.member.AuthProvider.KAKAO;
@@ -111,5 +114,26 @@ public class MemberServiceImpl implements MemberService{
             //기존 프로필 이미지 삭제
             imageService.remove(memberUpdateDto.getDeleteImageId());
         }
+    }
+
+    /**
+     * 회원 프로필 정보 조회
+     */
+    @Transactional
+    @Override
+    public MemberInfoDto getMemberInfo(Long memberId) {
+        List<Object[]> result = memberRepository.getMemberInfo(memberId);
+        Object[] arr = result.get(0);
+
+        MemberImage memberImage = (MemberImage) arr[1];
+
+        ImageDto imageDto = null;
+        if (memberImage != null){
+            Long imageId = memberImage.getImageId();
+            String imageUrl = memberImage.getImageUrl();
+            imageDto = new ImageDto(imageId, imageUrl);
+        }
+
+        return new MemberInfoDto((Member) arr[0], imageDto);
     }
 }

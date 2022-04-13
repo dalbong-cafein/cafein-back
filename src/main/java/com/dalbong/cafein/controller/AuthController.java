@@ -4,6 +4,7 @@ import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.login.AccountUniteRegDto;
+import com.dalbong.cafein.dto.member.MemberInfoDto;
 import com.dalbong.cafein.oAuth.SocialLoginService;
 import com.dalbong.cafein.redis.RedisService;
 import com.dalbong.cafein.service.member.MemberService;
@@ -57,8 +58,10 @@ public class AuthController {
         cookieUtil.createCookie(response, jwtUtil.accessTokenName, accessToken, jwtUtil.accessTokenExpire);
         cookieUtil.createCookie(response, jwtUtil.refreshTokenName, refreshToken,jwtUtil.refreshTokenExpire);
 
+        //회원 정보 조회
+        MemberInfoDto memberInfoDto = memberService.getMemberInfo(member.getMemberId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1,"소셜 로그인 성공",null),HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1,"소셜 로그인 성공",memberInfoDto),HttpStatus.OK);
     }
 
     /**
@@ -90,7 +93,10 @@ public class AuthController {
         cookieUtil.createCookie(response, JwtUtil.accessTokenName, accessToken, JwtUtil.accessTokenExpire);
         cookieUtil.createCookie(response, JwtUtil.refreshTokenName, refreshToken, JwtUtil.refreshTokenExpire);
 
-        return new ResponseEntity<>(new CMRespDto<>(1,"계정 통합 성공", null), HttpStatus.OK);
+        //회원 정보 조회
+        MemberInfoDto memberInfoDto = memberService.getMemberInfo(memberId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1,"계정 통합 성공", memberInfoDto), HttpStatus.OK);
     }
 
     /**
