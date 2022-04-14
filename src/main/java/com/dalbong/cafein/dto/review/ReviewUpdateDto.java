@@ -32,7 +32,11 @@ public class ReviewUpdateDto {
     @Length(max = 100)
     private String content;
 
+    //이미지 추가
     private List<MultipartFile> imageFiles;
+
+    //이미지 삭제
+    private List<Long> deleteImageIdList;
 
     public DetailEvaluation getDetailEvaluation(){
         return new DetailEvaluation(this.socket, this.wifi, this.restroom, this.tableSize);
