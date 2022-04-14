@@ -6,6 +6,7 @@ import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.ScrollResultDto;
 import com.dalbong.cafein.dto.review.ReviewListDto;
@@ -133,15 +134,15 @@ public class ReviewServiceImpl implements ReviewService{
 
             //리뷰 이미지
             Review review = (Review) arr[0];
-            List<String> reviewImageUrlList = new ArrayList<>();
+            List<ImageDto> reviewImageDtoList = new ArrayList<>();
             if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()){
 
                 for (ReviewImage reviewImage : review.getReviewImageList()){
-                    reviewImageUrlList.add(reviewImage.getImageUrl());
+                    reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
                 }
             }
 
-            return new ReviewResDto(review, profileImageUrl, (long)arr[2], reviewImageUrlList);
+            return new ReviewResDto(review, profileImageUrl, (long)arr[2], reviewImageDtoList);
         });
 
 
