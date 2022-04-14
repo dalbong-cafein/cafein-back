@@ -25,8 +25,11 @@ public class CookieUtil {
     //쿠키를 가져온다
     public Cookie getCookie(HttpServletRequest request, String cookieName){
         Cookie[] cookies = request.getCookies();
-
-        return Arrays.stream(cookies).filter(cookie -> cookie.getName().equals(cookieName))
-                .findAny().orElse(null);
+        if(cookies==null) return null;
+        for(Cookie cookie : cookies){
+            if(cookie.getName().equals(cookieName))
+                return cookie;
+        }
+        return null;
     }
 }

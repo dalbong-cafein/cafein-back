@@ -6,6 +6,7 @@ import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.ScrollResultDto;
 import com.dalbong.cafein.dto.review.ReviewListDto;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -66,27 +68,34 @@ public class ReviewServiceImpl implements ReviewService{
         Review review = reviewRepository.findById(reviewUpdateDto.getReviewId()).orElseThrow(() ->
                 new CustomException("존재하는 리뷰가 없습니다."));
 
+
+        //리뷰 수정 기간 체크
+        if (review.getRegDateTime().isBefore(LocalDateTime.now().minusDays(3))){
+            throw new CustomException("리뷰 수정기간이 지났습니다.");
+        }
+
         review.changeContent(reviewUpdateDto.getContent());
         review.changeRecommendation(reviewUpdateDto.getRecommendation());
         review.changeDetailEvaluation(reviewUpdateDto.getDetailEvaluation());
 
+
         //리뷰 이미지 갱신
-        updateReviewImage(review, reviewUpdateDto.getImageFiles());
+        updateReviewImage(review, reviewUpdateDto.getImageFiles(), reviewUpdateDto.getDeleteImageIdList());
 
 
     }
 
-    private void updateReviewImage(Review review, List<MultipartFile> updateImageFiles) throws IOException {
+    private void updateReviewImage(Review review, List<MultipartFile> updateImageFiles, List<Long> deleteImageIdList) throws IOException {
 
-
-        //TODO 수정 로직 변경 필요
-        //리뷰 기존 이미지 삭제
-        for (ReviewImage reviewImage : review.getReviewImageList()){
-            imageService.remove(reviewImage.getImageId());
-        }
-
-        //갱신된 이미지 저장
+        //이미지 추가
         imageService.saveReviewImage(review, updateImageFiles);
+
+        //이미지 삭제
+        if (deleteImageIdList != null && !deleteImageIdList.isEmpty()){
+            for (Long imageId : deleteImageIdList){
+                imageService.remove(imageId);
+            }
+        }
     }
 
     /**
@@ -106,6 +115,7 @@ public class ReviewServiceImpl implements ReviewService{
             imageService.remove(reviewImage.getImageId());
         }
 
+        //리뷰 삭제
         reviewRepository.deleteById(reviewId);
     }
 
@@ -133,15 +143,15 @@ public class ReviewServiceImpl implements ReviewService{
 
             //리뷰 이미지
             Review review = (Review) arr[0];
-            List<String> reviewImageUrlList = new ArrayList<>();
+            List<ImageDto> reviewImageDtoList = new ArrayList<>();
             if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()){
 
                 for (ReviewImage reviewImage : review.getReviewImageList()){
-                    reviewImageUrlList.add(reviewImage.getImageUrl());
+                    reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
                 }
             }
 
-            return new ReviewResDto(review, profileImageUrl, (long)arr[2], reviewImageUrlList);
+            return new ReviewResDto(review, profileImageUrl, (long)arr[2], reviewImageDtoList);
         });
 
 

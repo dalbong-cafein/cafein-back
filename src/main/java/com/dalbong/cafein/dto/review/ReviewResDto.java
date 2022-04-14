@@ -1,6 +1,7 @@
 package com.dalbong.cafein.dto.review;
 
 import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.dto.image.ImageDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,13 +27,13 @@ public class ReviewResDto {
     private String content;
 
     private long visitCnt;
-    
-    private List<String> reviewImageUrlList = new ArrayList<>();
+
+    private List<ImageDto> reviewImageDtoList = new ArrayList<>();
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime regDateTime;
 
-    public ReviewResDto(Review review, String profileImageUrl, long visitCnt, List<String> reviewImageUrlList){
+    public ReviewResDto(Review review, String profileImageUrl, long visitCnt, List<ImageDto> reviewImageDtoList){
 
         this.reviewId = review.getReviewId();
         this.writerId = review.getMember().getMemberId();
@@ -40,7 +41,7 @@ public class ReviewResDto {
         this.profileImageUrl = profileImageUrl;
         this.content = review.getContent();
         this.visitCnt = visitCnt;
-        this.reviewImageUrlList = reviewImageUrlList;
+        this.reviewImageDtoList = reviewImageDtoList;
         this.regDateTime = review.getRegDateTime();
     }
 
