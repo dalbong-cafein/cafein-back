@@ -22,7 +22,7 @@ public class AdminController {
      * 전체 리뷰 리스트 조회
      */
     @GetMapping("/admin/reviews")
-    public ResponseEntity<?> getReviewListOfStore(PageRequestDto requestDto){
+    public ResponseEntity<?> getAllReviewList(PageRequestDto requestDto){
 
         AdminReviewListDto adminReviewListDto = reviewService.getReviewListOfAdmin(requestDto);
 
