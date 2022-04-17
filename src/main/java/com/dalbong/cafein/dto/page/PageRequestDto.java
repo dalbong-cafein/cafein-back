@@ -18,6 +18,8 @@ public class PageRequestDto {
 
     private String keyword;
 
+    private String searchType;
+
     private Boolean isOnlyImage;
 
     public PageRequestDto(){

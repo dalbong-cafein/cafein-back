@@ -1,13 +1,9 @@
 package com.dalbong.cafein.service.review;
 
 import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
-import com.dalbong.cafein.dto.page.ScrollResultDto;
-import com.dalbong.cafein.dto.review.ReviewListDto;
-import com.dalbong.cafein.dto.review.ReviewRegDto;
-import com.dalbong.cafein.dto.review.ReviewResDto;
-import com.dalbong.cafein.dto.review.ReviewUpdateDto;
-import org.springframework.data.domain.Pageable;
+import com.dalbong.cafein.dto.review.*;
 
 import java.io.IOException;
 
@@ -20,4 +16,6 @@ public interface ReviewService {
     void remove(Long reviewId);
 
     ReviewListDto getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId);
+
+    AdminReviewListDto getReviewListOfAdmin(PageRequestDto pageRequestDto);
 }
