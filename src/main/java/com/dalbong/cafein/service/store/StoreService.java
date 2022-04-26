@@ -7,7 +7,6 @@ import java.io.IOException;
 
 public interface StoreService {
 
-    Store registerByAdmin(StoreRegDto storeRegDto) throws IOException;
+    Store register(StoreRegDto storeRegDto, Long principal) throws IOException;
 
-    void modifyIsApproval(Long storeId);
 }

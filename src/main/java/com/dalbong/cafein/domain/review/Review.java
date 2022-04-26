@@ -32,7 +32,7 @@ public class Review extends BaseEntity {
     private Store store;
 
     @Column(length = 1000)
-    private String content;
+    private String content = "";
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
