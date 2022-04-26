@@ -23,25 +23,15 @@ public class StoreController {
     private final StoreService storeService;
 
     /**
-     * 관리자단 가게 등록
+     * 가게 등록
      */
-    @PostMapping("/admin/stores")
-    public ResponseEntity<?> register(@Validated StoreRegDto storeRegDto) throws IOException {
+    @PostMapping("/stores")
+    public ResponseEntity<?> register(@Validated StoreRegDto storeRegDto,
+                                      @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        storeService.registerByAdmin(storeRegDto);
+        storeService.register(storeRegDto,principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1,"가게 등록 성공",null), HttpStatus.CREATED);
-    }
-
-    /**
-     * 가게 승인 여부 수정
-     */
-    @PatchMapping("/admin/stores/{storeId}/isApproval")
-    public ResponseEntity<?> modifyIsApproval(@PathVariable("storeId") Long storeId){
-
-        storeService.modifyIsApproval(storeId);
-
-        return new ResponseEntity<>(new CMRespDto<>(1, "가게 승인여부 수정 성공", null),HttpStatus.OK);
     }
 
 }

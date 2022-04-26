@@ -20,7 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"reviewList","reviewList","storeImageList","heartList"})
+@ToString(exclude = {"reviewList","storeImageList","heartList"})
 @Entity
 public class Store extends BaseEntity {
 
@@ -29,8 +29,6 @@ public class Store extends BaseEntity {
 
     @Column(nullable = false)
     private String storeName;
-
-    private Integer americano;
 
     @Embedded
     private Address address;
@@ -49,19 +47,9 @@ public class Store extends BaseEntity {
 
     //TODO data api에서 가게Id 필요 유무
 
-    @Builder.Default
-    @Column(nullable = false)
-    private Boolean isApproval = false;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "businessHours")
     private BusinessHours businessHours;
-
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "hash_tag", joinColumns = @JoinColumn(name = "store_id"))
-    @Builder.Default
-    @Column(name = "hash_tag")
-    private Set<String> hashTagSet = new HashSet<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
@@ -82,14 +70,6 @@ public class Store extends BaseEntity {
     public void changeLatAndLng(Double lngX, Double latY){
         this.lngX = lngX;
         this.latY = latY;
-    }
-
-    public void changeIsApproval(){
-        if (isApproval){
-            isApproval = false;
-        }else{
-            isApproval = true;
-        }
     }
 
     public void changeBusinessHours(BusinessHours businessHours){
