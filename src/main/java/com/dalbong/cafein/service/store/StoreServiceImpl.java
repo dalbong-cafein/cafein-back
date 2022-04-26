@@ -4,6 +4,8 @@ import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
+import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.service.image.ImageService;
 import com.dalbong.cafein.service.review.ReviewService;
@@ -48,6 +50,13 @@ public class StoreServiceImpl implements StoreService{
         return store;
     }
 
+    /**
+     * 관리자단 카페 리스트 조회
+     */
+    @Override
+    public AdminStoreListDto getStoreListOfAdmin(PageRequestDto pageRequestDto) {
+        return null;
+    }
 
 
 }
