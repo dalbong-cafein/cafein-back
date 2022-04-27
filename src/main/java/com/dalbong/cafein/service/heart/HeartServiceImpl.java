@@ -5,6 +5,7 @@ import com.dalbong.cafein.domain.heart.HeartRepository;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.handler.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,7 @@ public class HeartServiceImpl implements HeartService{
     public Heart heart(Long principalId, Long storeId) {
 
         Store store = storeRepository.findById(storeId).orElseThrow(() ->
-                new IllegalArgumentException("존재하지 않는 가게입니다."));
+                new CustomException("존재하지 않는 가게입니다."));
 
         Heart heart = Heart.builder()
                 .member(Member.builder().memberId(principalId).build())

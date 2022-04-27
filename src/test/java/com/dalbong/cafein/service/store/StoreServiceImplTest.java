@@ -6,11 +6,18 @@ import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
 import com.dalbong.cafein.domain.businessHours.Day;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.image.StoreImageRepository;
+import com.dalbong.cafein.domain.member.AuthProvider;
+import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.domain.review.Recommendation;
+import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import org.aspectj.lang.annotation.RequiredTypes;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,12 +25,14 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,12 +44,24 @@ class StoreServiceImplTest {
     @Autowired StoreRepository storeRepository;
     @Autowired BusinessHoursRepository businessHoursRepository;
     @Autowired StoreImageRepository storeImageRepository;
+    @Autowired MemberRepository memberRepository;
+    @Autowired ReviewRepository reviewRepository;
+
+    private Member member;
+
+    @BeforeEach
+    void before(){
+        Member member = createMember("testUsername", "testNickname", "010-1111-1111",
+                "testEmail@naver.com", "asdf123", LocalDate.now());
+        this.member = member;
+    }
+
 
     /**
-     * 관리자단 카페 등록
+     * 카페 등록
      */
     @Test
-    void 카페등록_관리자() throws Exception{
+    void 카페등록() throws Exception{
         //given
 
         List<MultipartFile> imageFiles = new ArrayList<>();
@@ -50,11 +71,6 @@ class StoreServiceImplTest {
 
         //주소생성
         Address address = createAddress("서울특별시", "종로구", "새문안로", "85", null);
-
-        //해시태그 set 생성
-        Set<String> hashTagSet = new HashSet<>();
-        hashTagSet.add("조용한");
-        hashTagSet.add("테이블");
 
         //영업시간
         BusinessHours businessHours = createBusinessHours(new Day(LocalTime.of(07, 00), LocalTime.of(23, 00)),
@@ -67,21 +83,22 @@ class StoreServiceImplTest {
 
         //storeRegDto 생성성
         StoreRegDto storeRegDto = createStoreRegDto("testStoreName", address, "02-000-0000", "test@cafeinofficial.com",
-                hashTagSet, imageFiles, 123, 123, businessHours);
+             imageFiles, 123, 123, businessHours, Recommendation.GOOD,
+                1,3,4,1);
 
         //when
-        Store store = storeService.registerByAdmin(storeRegDto);
+        Store store = storeService.register(storeRegDto, member.getMemberId());
 
         //then
 
         //store 검증
         assertThat(store.getStoreId()).isNotNull();
+        assertThat(store.getRegMember().getMemberId()).isEqualTo(member.getMemberId());
+        assertThat(store.getModMember().getMemberId()).isEqualTo(member.getMemberId());
         assertThat(store.getStoreName()).isEqualTo(storeRegDto.getStoreName());
         assertThat(store.getAddress().toString()).isEqualTo(address.toString());
         assertThat(store.getPhone()).isEqualTo(storeRegDto.getPhone());
         assertThat(store.getWebsite()).isEqualTo(storeRegDto.getWebsite());
-        assertThat(store.getIsApproval()).isTrue();
-        assertThat(store.getHashTagSet()).isEqualTo(storeRegDto.getHashTagSet());
         assertThat(store.getKatechX()).isEqualTo(storeRegDto.getKatechX());
         assertThat(store.getKatechY()).isEqualTo(storeRegDto.getKatechY());
 
@@ -99,6 +116,13 @@ class StoreServiceImplTest {
         List<StoreImage> storeImageList = storeImageRepository.findByStore(store);
         assertThat(storeImageList.size()).isEqualTo(2);
 
+        //review 검증
+        List<Review> findReviewList = reviewRepository.findByStore(store);
+        assertThat(findReviewList.size()).isEqualTo(1);
+
+        Review findReview = findReviewList.get(0);
+        assertThat(findReview.getMember().getMemberId()).isEqualTo(member.getMemberId());
+
         System.out.println(store);
     }
 
@@ -112,17 +136,6 @@ class StoreServiceImplTest {
     }
 
 
-    /**
-     * 카페 승인 여부 수정
-     */
-    @Test
-    void 카페_승인여부_수정() throws Exception{
-        //given
-
-        //when
-        //then
-    }
-
     private Address createAddress(String siNm, String sggNm, String rNm, String rNum, String detail) {
         return new Address(siNm,sggNm,rNm, rNum, detail);
     }
@@ -132,9 +145,9 @@ class StoreServiceImplTest {
     }
 
     private StoreRegDto createStoreRegDto(String storeName, Address address, String phone,
-                                          String website, Set<String> hashTagSet,
-                                          List<MultipartFile> imageFiles, int katechX, int katechY,
-                                          BusinessHours businessHours) {
+                                          String website, List<MultipartFile> imageFiles, int katechX, int katechY,
+                                          BusinessHours businessHours, Recommendation recommendation,
+                                          int socket, int wifi, int restroom, int tableSize) {
 
         return StoreRegDto.builder()
                 .storeName(storeName)
@@ -142,7 +155,6 @@ class StoreServiceImplTest {
                 .rNm(address.getRNm()).rNum(address.getRNum()).detail(address.getDetail())
                 .phone(phone)
                 .website(website)
-                .hashTagSet(hashTagSet)
                 .imageFiles(imageFiles)
                 .katechX(katechX).katechY(katechY)
                 .monOpen(businessHours.getOnMon().getOpen()).monClosed(businessHours.getOnMon().getClosed())
@@ -152,7 +164,25 @@ class StoreServiceImplTest {
                 .friOpen(businessHours.getOnFri().getOpen()).friClosed(businessHours.getOnFri().getClosed())
                 .satOpen(businessHours.getOnSat().getOpen()).satClosed(businessHours.getOnSat().getClosed())
                 .sunOpen(businessHours.getOnSun().getOpen()).sunClosed(businessHours.getOnSun().getClosed())
+                .recommendation(recommendation)
+                .socket(socket).wifi(wifi).restroom(restroom).tableSize(tableSize)
+                .build();
+    }
+
+    private Member createMember(String username, String nickname, String phone, String email,
+                                String kakaoId, LocalDate birth) {
+
+        Member member = Member.builder()
+                .username(username)
+                .nickname(nickname)
+                .phone(phone)
+                .email(email)
+                .password("1111")
+                .birth(birth)
+                .kakaoId(kakaoId)
+                .mainAuthProvider(AuthProvider.KAKAO)
                 .build();
 
+        return memberRepository.save(member);
     }
 }

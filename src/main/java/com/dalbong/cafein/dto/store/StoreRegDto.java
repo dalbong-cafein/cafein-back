@@ -3,7 +3,10 @@ package com.dalbong.cafein.dto.store;
 import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.businessHours.Day;
+import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.dto.review.ReviewRegDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,8 +34,6 @@ public class StoreRegDto {
     private String rNum; //도로 number
     private String detail; //상세주소
 
-    private Integer americano;
-
     private String phone;
 
     private String website;
@@ -42,9 +43,6 @@ public class StoreRegDto {
     private Integer katechY;
 
     private List<MultipartFile> imageFiles = new ArrayList<>();
-
-    @Builder.Default //테스트 코드 용도
-    private Set<String> hashTagSet = new HashSet<>();
 
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime monOpen;
@@ -81,16 +79,27 @@ public class StoreRegDto {
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime sunClosed;
 
-    public Store toEntity(){
+    //카페 평가 데이터
+    private Recommendation recommendation;
+
+    private int socket;
+
+    private int wifi;
+
+    private int restroom;
+
+    private int tableSize;
+
+    public Store toEntity(Long principalId){
 
         Address address = new Address(siNm, sggNm, rNm, rNum, detail);
 
         return Store.builder()
+                .regMember(Member.builder().memberId(principalId).build())
+                .modMember(Member.builder().memberId(principalId).build())
                 .storeName(storeName)
                 .address(address)
-                .americano(americano)
                 .katechX(katechX).katechY(katechY)
-                .hashTagSet(hashTagSet)
                 .phone(phone)
                 .website(website)
                 .build();
@@ -107,5 +116,16 @@ public class StoreRegDto {
                 .onSat(new Day(satOpen, satClosed))
                 .onSun(new Day(sunOpen, sunClosed))
                 .build();
+    }
+
+    public ReviewRegDto toReviewRegDto(Long storeId){
+
+        return ReviewRegDto.builder()
+                .storeId(storeId)
+                .recommendation(recommendation)
+                .socket(socket).wifi(wifi).restroom(restroom).tableSize(tableSize)
+                .imageFiles(imageFiles)
+                .build();
+
     }
 }

@@ -1,10 +1,9 @@
 package com.dalbong.cafein.domain.review;
 
-import com.dalbong.cafein.domain.image.QMemberImage;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
@@ -22,6 +21,7 @@ import java.util.stream.Collectors;
 
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.review.QReview.review;
+import static org.aspectj.util.LangUtil.isEmpty;
 
 public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
 
@@ -33,7 +33,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
 
 
     /**
-     * 리뷰 리스트 조회
+     * 가게별 리뷰 리스트 조회
      */
     @Override
     public Page<Object[]> getReviewListOfStore(Long storeId, Boolean isOnlyImage, Pageable pageable) {
@@ -81,6 +81,99 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
          * 날릴 필요가 없음.
          */
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchCount());
+    }
+
+    /**
+     * 전체 리뷰 리스트 조회
+     */
+    @Override
+    public Page<Review> getAllReviewList(String searchType, String keyword, Pageable pageable) {
+
+        QReview review = new QReview("review");
+
+        JPAQuery<Review> query = queryFactory
+                .select(review)
+                .from(review)
+                .join(review.member).fetchJoin()
+                .join(review.store).fetchJoin()
+                .where(searchKeyword(searchType, keyword));
+
+        //정렬
+        for (Sort.Order o : pageable.getSort()) {
+            PathBuilder pathBuilder = new PathBuilder(Review.class, "review");
+            query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
+                    pathBuilder.get(o.getProperty())));
+        }
+
+        List<Review> results = query.fetch();
+
+        //count 쿼리
+        JPAQuery<Review> countQuery = queryFactory
+                .select(review)
+                .from(review)
+                .join(review.member).fetchJoin()
+                .join(review.store).fetchJoin()
+                .where(searchKeyword(searchType, keyword));
+
+
+        return PageableExecutionUtils.getPage(results, pageable, () -> countQuery.fetchCount());
+    }
+
+    private  BooleanBuilder searchKeyword(String searchType, String keyword) {
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (searchType != null){
+            String[] typeArr = searchType.split("");
+
+            for(String t : typeArr){
+                switch (t){
+                    case "c":
+                        builder.or(containContent(keyword));
+                        break;
+                    case "w":
+                        builder.or(containMemberId(keyword));
+                        break;
+                    case "s":
+                        builder.or(containStoreId(keyword));
+                }
+            }
+        }
+        return builder;
+    }
+
+    private BooleanExpression containMemberId(String keyword) {
+
+        Long memberId = null;
+
+        try {
+            memberId = Long.parseLong(keyword);
+        }catch (NumberFormatException e){
+            e.getMessage();
+        }
+
+        return !isEmpty(keyword) && memberId != null ? review.member.memberId.eq(memberId) : null;
+
+    }
+
+    private BooleanExpression containStoreId(String keyword) {
+
+        Long storeId = null;
+
+        try {
+            storeId = Long.parseLong(keyword);
+        }catch (NumberFormatException e){
+            e.getMessage();
+        }
+
+        return !isEmpty(keyword) && storeId != null? review.store.storeId.eq(storeId) : null;
+
+    }
+
+    private BooleanExpression containContent(String keyword) {
+
+        return !isEmpty(keyword) ? review.content.contains(keyword) : null;
+
     }
 
     private BooleanExpression IsOnlyImage(Boolean isOnlyImage) {

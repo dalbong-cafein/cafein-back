@@ -6,13 +6,13 @@ import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
+import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.dto.page.ScrollResultDto;
-import com.dalbong.cafein.dto.review.ReviewListDto;
-import com.dalbong.cafein.dto.review.ReviewRegDto;
-import com.dalbong.cafein.dto.review.ReviewResDto;
-import com.dalbong.cafein.dto.review.ReviewUpdateDto;
+import com.dalbong.cafein.dto.review.*;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -120,7 +120,7 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     /**
-     * 리뷰 리스트 조회
+     * 가게별 리뷰 리스트 조회
      */
     @Transactional(readOnly = true)
     @Override
@@ -156,5 +156,34 @@ public class ReviewServiceImpl implements ReviewService{
 
 
         return new ReviewListDto(results.getTotalElements(), new ScrollResultDto<>(results, fn));
+    }
+
+    /**
+     * 관리자단 리뷰 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminReviewListDto getReviewListOfAdmin(PageRequestDto pageRequestDto) {
+
+        //TODO 동적 필요
+        Pageable pageable = pageRequestDto.getPageable(Sort.by("reviewId").descending());
+
+        Page<Review> results = reviewRepository.getAllReviewList(pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
+
+        Function<Review, AdminReviewResDto> fn = (review -> {
+
+            ImageDto imageDto = null;
+            //리뷰 이미지
+            if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()) {
+
+                ReviewImage reviewImage = review.getReviewImageList().get(0);
+
+                imageDto = new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl());
+            }
+
+            return new AdminReviewResDto(review, imageDto);
+        });
+
+        return new AdminReviewListDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
     }
 }
