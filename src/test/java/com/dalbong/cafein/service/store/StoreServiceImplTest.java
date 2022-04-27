@@ -93,6 +93,8 @@ class StoreServiceImplTest {
 
         //store 검증
         assertThat(store.getStoreId()).isNotNull();
+        assertThat(store.getRegMember().getMemberId()).isEqualTo(member.getMemberId());
+        assertThat(store.getModMember().getMemberId()).isEqualTo(member.getMemberId());
         assertThat(store.getStoreName()).isEqualTo(storeRegDto.getStoreName());
         assertThat(store.getAddress().toString()).isEqualTo(address.toString());
         assertThat(store.getPhone()).isEqualTo(storeRegDto.getPhone());
