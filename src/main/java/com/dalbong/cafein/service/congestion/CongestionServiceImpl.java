@@ -27,11 +27,11 @@ public class CongestionServiceImpl implements CongestionService{
         Store store = storeRepository.findById(congestionRegDto.getStoreId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 가게입니다."));
 
-        //같은 카페의 혼잡도 2시간이내 등록 여부 체크
+        //같은 카페의 혼잡도 3시간이내 등록 여부 체크
         boolean isExist = congestionRepository.existWithinTime(congestionRegDto.getStoreId(), principalId);
 
         if(isExist){
-            throw new CustomException("혼잡도 등록 2시간안에는 새로운 등록을 할 수 없습니다.");
+            throw new CustomException("혼잡도 등록 3시간안에는 새로운 등록을 할 수 없습니다.");
         }
 
         Congestion congestion = congestionRegDto.toEntity(store, principalId);

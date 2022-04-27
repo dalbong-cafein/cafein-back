@@ -17,7 +17,7 @@ public class CongestionRepositoryImpl implements CongestionQuerydsl{
     }
 
     /**
-     * 혼잡도 2시간이내 등록 여부
+     * 혼잡도 3시간이내 등록 여부
      */
     @Override
     public boolean existWithinTime(Long storeId, Long principalId) {
@@ -26,7 +26,7 @@ public class CongestionRepositoryImpl implements CongestionQuerydsl{
                 .from(congestion)
                 .where(congestion.store.storeId.eq(storeId),
                         congestion.member.memberId.eq(principalId),
-                        congestion.regDateTime.between(LocalDateTime.now().minusHours(2),LocalDateTime.now()))
+                        congestion.regDateTime.between(LocalDateTime.now().minusHours(3),LocalDateTime.now()))
                 .fetchFirst();//limit 1
 
         return fetchOne != null;
