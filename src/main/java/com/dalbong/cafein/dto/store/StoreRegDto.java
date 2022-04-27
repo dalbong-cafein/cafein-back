@@ -3,6 +3,7 @@ package com.dalbong.cafein.dto.store;
 import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.businessHours.Day;
+import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.dto.review.ReviewRegDto;
@@ -89,11 +90,13 @@ public class StoreRegDto {
 
     private int tableSize;
 
-    public Store toEntity(){
+    public Store toEntity(Long principalId){
 
         Address address = new Address(siNm, sggNm, rNm, rNum, detail);
 
         return Store.builder()
+                .regMember(Member.builder().memberId(principalId).build())
+                .modMember(Member.builder().memberId(principalId).build())
                 .storeName(storeName)
                 .address(address)
                 .katechX(katechX).katechY(katechY)

@@ -37,7 +37,7 @@ public class StoreServiceImpl implements StoreService{
         businessHoursRepository.save(businessHours);
 
         //store entity 저장
-        Store store = storeRegDto.toEntity();
+        Store store = storeRegDto.toEntity(principalId);
         store.changeBusinessHours(businessHours);
 
         storeRepository.save(store);

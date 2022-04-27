@@ -27,6 +27,14 @@ public class Store extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long storeId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reg_member_id", nullable = false)
+    private Member regMember;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mod_member_id", nullable = false)
+    private Member modMember;
+
     @Column(nullable = false)
     private String storeName;
 
@@ -70,6 +78,10 @@ public class Store extends BaseEntity {
     public void changeLatAndLng(Double lngX, Double latY){
         this.lngX = lngX;
         this.latY = latY;
+    }
+
+    public void changeModMember(Member member){
+        this.modMember = member;
     }
 
     public void changeBusinessHours(BusinessHours businessHours){
