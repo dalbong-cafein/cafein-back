@@ -53,8 +53,12 @@ public class StoreServiceImpl implements StoreService{
     /**
      * 관리자단 카페 리스트 조회
      */
+    @Transactional(readOnly = true)
     @Override
     public AdminStoreListDto getStoreListOfAdmin(PageRequestDto pageRequestDto) {
+
+
+
         return null;
     }
 
