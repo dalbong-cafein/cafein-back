@@ -17,13 +17,13 @@ public class CongestionRegDto {
 
     private Long storeId;
 
-    private CongestionType type;
+    private CongestionType congestionType;
 
     public Congestion toEntity(Store store, Long principalId){
         return Congestion.builder()
                 .store(store)
                 .member(Member.builder().memberId(principalId).build())
-                .type(type)
+                .type(congestionType)
                 .build();
     }
 

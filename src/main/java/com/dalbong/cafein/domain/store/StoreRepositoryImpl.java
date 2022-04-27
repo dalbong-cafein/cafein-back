@@ -40,7 +40,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
      * 전체 가게 리스트 조회
      */
     @Override
-    public Page<Object[]> getAllStoreList(String searchType, String keyword, Pageable pageable) {
+    public Page<Object[]> getAllStoreList(String[] searchType, String keyword, Pageable pageable) {
 
         JPAQuery<Tuple> query = queryFactory
                 .select(store, store.reviewList.size(), congestion.type.ordinal().avg())
@@ -117,7 +117,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
     private BooleanExpression containAddress(String keyword) {
 
-        return !isEmpty(keyword) ? store.address.sggNm.li: null;
+        return !isEmpty(keyword) ? store.address.sggNm.contains(keyword): null;
 
     }
 }
