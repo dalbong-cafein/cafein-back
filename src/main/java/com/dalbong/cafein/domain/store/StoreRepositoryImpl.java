@@ -43,11 +43,12 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
     public Page<Object[]> getAllStoreList(String[] searchType, String keyword, Pageable pageable) {
 
         JPAQuery<Tuple> query = queryFactory
-                .select(store, store.reviewList.size(), congestion.type.ordinal().avg())
+                .select(store, store.reviewList.size(), congestion.congestionScore.avg())
                 .from(store)
                 .leftJoin(congestion).on(congestion.store.storeId.eq(store.storeId))
                 .where(searchKeyword(searchType, keyword),
-                        congestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()))
+                        congestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now())
+                                .or(congestion.regDateTime.isNull()))
                 .groupBy(store.storeId);
 
         //정렬
@@ -61,7 +62,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
         //count 쿼리
         JPAQuery<Tuple> countQuery = queryFactory
-                .select(store, store.reviewList.size(), congestion.type.ordinal().avg())
+                .select(store, store.reviewList.size(), congestion.congestionScore.avg())
                 .from(store)
                 .leftJoin(congestion).on(congestion.store.storeId.eq(store.storeId))
                 .where(searchKeyword(searchType, keyword),

@@ -1,7 +1,6 @@
 package com.dalbong.cafein.dto.admin.store;
 
 import com.dalbong.cafein.domain.address.Address;
-import com.dalbong.cafein.domain.congestion.CongestionType;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -23,9 +22,9 @@ public class AdminStoreResDto {
 
     private String phone;
 
-    private CongestionType congestionType;
-
     private int reviewCnt;
+
+    private Double congestionScoreAvg;
 
     private ImageDto storeImageDto;
 
@@ -39,13 +38,13 @@ public class AdminStoreResDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime modDateTime;
 
-    public AdminStoreResDto(Store store, CongestionType congestionType, int reviewCnt, ImageDto storeImageDto){
+    public AdminStoreResDto(Store store, int reviewCnt, Double congestionScoreAvg, ImageDto storeImageDto){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
         this.address = store.getAddress();
         this.phone = store.getPhone();
-        this.congestionType = congestionType;
+        this.congestionScoreAvg = congestionScoreAvg;
         this.reviewCnt = reviewCnt;
         this.storeImageDto = storeImageDto;
         this.regMemberId = store.getRegMember().getMemberId();

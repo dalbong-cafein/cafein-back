@@ -26,7 +26,6 @@ public class Congestion extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @Enumerated(EnumType.STRING)
-    private CongestionType type;
+    private int congestionScore;
 
 }

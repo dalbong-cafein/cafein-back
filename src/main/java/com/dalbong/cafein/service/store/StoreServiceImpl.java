@@ -2,11 +2,9 @@ package com.dalbong.cafein.service.store;
 
 import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
-import com.dalbong.cafein.domain.congestion.CongestionType;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
-import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
@@ -76,19 +74,6 @@ public class StoreServiceImpl implements StoreService{
 
             Store store = (Store) arr[0];
             int reviewCnt = (int) arr[1];
-            int congestion = (int) arr[2];
-
-            System.out.println("=====");
-            System.out.println(congestion);
-
-            CongestionType congestionType = null;
-            if (congestion == 1) {
-                congestionType = CongestionType.LESS;
-            } else if (congestion == 2) {
-                congestionType = CongestionType.NORMAL;
-            } else if (congestion == 3) {
-                congestionType = CongestionType.FULL;
-            }
 
             ImageDto imageDto = null;
 
@@ -99,7 +84,7 @@ public class StoreServiceImpl implements StoreService{
                 imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
             }
 
-            return new AdminStoreResDto(store, congestionType, reviewCnt, imageDto);
+            return new AdminStoreResDto(store, reviewCnt, (Double) arr[2], imageDto);
         });
 
         return new AdminStoreListDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
