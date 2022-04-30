@@ -17,7 +17,7 @@ public class StoreResDto {
 
     private double recommendPercent;
 
-    private boolean isOmpen;
+    private boolean isOpen;
 
     private int katechX;
 
@@ -34,7 +34,7 @@ public class StoreResDto {
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
         this.recommendPercent = recommendPercent;
-        this.isOmpen = isOpen;
+        this.isOpen = isOpen;
         this.katechX = store.getKatechX();
         this.katectY = store.getKatechY();
         this.heartCnt = heartCnt;

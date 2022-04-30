@@ -1,7 +1,9 @@
 package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.address.Address;
+import com.dalbong.cafein.domain.board.QBoard;
 import com.dalbong.cafein.domain.businessHours.QBusinessHours;
+import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.domain.congestion.QCongestion;
 import com.dalbong.cafein.domain.image.QStoreImage;
 import com.dalbong.cafein.domain.review.Review;
@@ -10,7 +12,10 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.StringExpressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.tomcat.jni.Local;
@@ -46,16 +51,19 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
     @Override
     public List<Object[]> getStoreList(String keyword) {
 
+        QCongestion subCongestion = new QCongestion("sub");
+
         //TODO 위치 검색 추가 필요
         List<Tuple> result = queryFactory
-                .select(store, store.heartList.size(), congestion.congestionScore.avg())
+                .select(store, store.heartList.size(), JPAExpressions
+                        .select(subCongestion.congestionScore.avg())
+                        .from(subCongestion)
+                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
+                                subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .join(store.businessHours).fetchJoin()
                 .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
-                .leftJoin(congestion).on(congestion.store.storeId.eq(store.storeId))
-                .where(containStoreName(keyword),
-                        congestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now())
-                                .or(congestion.regDateTime.isNull()))
+                .where(containStoreName(keyword))
                 .groupBy(store.storeId)
                 .fetch();
 
@@ -144,7 +152,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
     private BooleanExpression containAddress(String keyword) {
 
-        return !isEmpty(keyword) ? store.address.sggNm.contains(keyword): null;
+        return !isEmpty(keyword) ? Expressions.asBoolean(store.address.toString().contains(keyword)).isTrue(): null;
 
     }
 }
