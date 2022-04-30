@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ReviewListDto {
+public class ReviewListResDto {
 
     private long reviewCnt;
 

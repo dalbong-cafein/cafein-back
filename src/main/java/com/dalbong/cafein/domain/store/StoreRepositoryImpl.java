@@ -1,7 +1,9 @@
 package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.address.Address;
+import com.dalbong.cafein.domain.businessHours.QBusinessHours;
 import com.dalbong.cafein.domain.congestion.QCongestion;
+import com.dalbong.cafein.domain.image.QStoreImage;
 import com.dalbong.cafein.domain.review.Review;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -23,7 +25,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.dalbong.cafein.domain.businessHours.QBusinessHours.businessHours;
 import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
+import static com.dalbong.cafein.domain.image.QStoreImage.storeImage;
 import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
@@ -37,7 +41,29 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
     }
 
     /**
-     * 전체 가게 리스트 조회
+     * 앱단 가게 리스트 조회
+     */
+    @Override
+    public List<Object[]> getStoreList(String keyword) {
+
+        //TODO 위치 검색 추가 필요
+        List<Tuple> result = queryFactory
+                .select(store, store.heartList.size(), congestion.congestionScore.avg())
+                .from(store)
+                .join(store.businessHours).fetchJoin()
+                .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
+                .leftJoin(congestion).on(congestion.store.storeId.eq(store.storeId))
+                .where(containStoreName(keyword),
+                        congestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now())
+                                .or(congestion.regDateTime.isNull()))
+                .groupBy(store.storeId)
+                .fetch();
+
+        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
+    }
+
+    /**
+     * 관리자단 가게 리스트 조회
      */
     @Override
     public Page<Object[]> getAllStoreList(String[] searchType, String keyword, Pageable pageable) {

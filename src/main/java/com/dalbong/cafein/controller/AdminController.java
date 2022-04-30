@@ -5,7 +5,6 @@ import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
-import com.dalbong.cafein.dto.review.ReviewListDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.service.review.ReviewService;
 import com.dalbong.cafein.service.store.StoreService;
