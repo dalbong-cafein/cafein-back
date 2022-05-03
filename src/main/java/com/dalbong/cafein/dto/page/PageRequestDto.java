@@ -18,7 +18,8 @@ public class PageRequestDto {
 
     private String keyword;
 
-    private String searchType;
+    //회원Id: m, 회원명: mn, 핸드폰: p, 가게Id: s, 가게명: sn, 주소: a, 내용: c
+    private String[] searchType;
 
     private Boolean isOnlyImage;
 

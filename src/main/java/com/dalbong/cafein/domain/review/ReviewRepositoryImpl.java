@@ -87,7 +87,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
      * 전체 리뷰 리스트 조회
      */
     @Override
-    public Page<Review> getAllReviewList(String searchType, String keyword, Pageable pageable) {
+    public Page<Review> getAllReviewList(String[] searchType, String keyword, Pageable pageable) {
 
         QReview review = new QReview("review");
 
@@ -119,14 +119,12 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
         return PageableExecutionUtils.getPage(results, pageable, () -> countQuery.fetchCount());
     }
 
-    private  BooleanBuilder searchKeyword(String searchType, String keyword) {
+    private  BooleanBuilder searchKeyword(String[] searchType, String keyword) {
 
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (searchType != null){
-            String[] typeArr = searchType.split("");
-
-            for(String t : typeArr){
+        if (searchType != null){ ;
+            for(String t : searchType){
                 switch (t){
                     case "c":
                         builder.or(containContent(keyword));

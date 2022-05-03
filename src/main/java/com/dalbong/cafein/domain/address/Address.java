@@ -27,4 +27,8 @@ public class Address {
         this.rNum = rNum;
         this.detail = detail;
     }
+
+    public String toString(){
+        return this.siNm + " " + this.sggNm + " " + this.rNm + " " + this.rNum + " " + this.detail;
+    }
 }

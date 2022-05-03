@@ -13,6 +13,6 @@ public class AdminStoreListDto {
 
     private long storeCnt;
 
-    private PageResultDTO<AdminStoreResDto, Store> storeResDtoList;
+    private PageResultDTO<AdminStoreResDto, Object[]> storeResDtoList;
 
 }

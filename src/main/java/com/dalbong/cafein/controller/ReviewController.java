@@ -3,7 +3,7 @@ package com.dalbong.cafein.controller;
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
-import com.dalbong.cafein.dto.review.ReviewListDto;
+import com.dalbong.cafein.dto.review.ReviewListResDto;
 import com.dalbong.cafein.dto.review.ReviewRegDto;
 import com.dalbong.cafein.dto.review.ReviewUpdateDto;
 import com.dalbong.cafein.service.review.ReviewService;
@@ -29,9 +29,9 @@ public class ReviewController {
     @GetMapping("stores/{storeId}/reviews")
     public ResponseEntity<?> getReviewListOfStore(@PathVariable("storeId") Long storeId, PageRequestDto requestDto){
 
-        ReviewListDto reviewListDto = reviewService.getReviewListOfStore(requestDto, storeId);
+        ReviewListResDto reviewListResDto = reviewService.getReviewListOfStore(requestDto, storeId);
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "리뷰 리스트 조회 성공", reviewListDto), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "리뷰 리스트 조회 성공", reviewListResDto), HttpStatus.OK);
     }
 
     /**

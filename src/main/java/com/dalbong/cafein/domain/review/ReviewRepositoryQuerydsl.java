@@ -13,5 +13,5 @@ public interface ReviewRepositoryQuerydsl {
     /**
      * 전체 리뷰 리스트 조회
      */
-    Page<Review> getAllReviewList(String searchType, String keyword, Pageable pageable);
+    Page<Review> getAllReviewList(String[] searchType, String keyword, Pageable pageable);
 }
