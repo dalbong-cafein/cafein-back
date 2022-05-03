@@ -81,7 +81,7 @@ class StoreServiceImplTest {
                 new Day(LocalTime.of(07, 00), LocalTime.of(23, 00)),
                 new Day(LocalTime.of(07, 00), LocalTime.of(23, 00)));
 
-        //storeRegDto 생성성
+        //storeRegDto 생성
         StoreRegDto storeRegDto = createStoreRegDto("testStoreName", address, "02-000-0000", "test@cafeinofficial.com",
              imageFiles, 123, 123, businessHours, Recommendation.GOOD,
                 1,3,4,1);
