@@ -11,6 +11,7 @@ import com.dalbong.cafein.dto.admin.store.AdminStoreResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
+import com.dalbong.cafein.dto.store.MyStoreResDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.dto.store.StoreResDto;
 import com.dalbong.cafein.service.image.ImageService;
@@ -123,6 +124,35 @@ public class StoreServiceImpl implements StoreService{
             }
 
             return new StoreResDto(store, recommendPercent, isOpen, imageDto, (int) arr[1], (Double) arr[2]);
+        }).collect(Collectors.toList());
+    }
+
+    /**
+     * 앱단 내 카페 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<MyStoreResDto> getMyStoreList(Long principalId) {
+
+        List<Object[]> results = storeRepository.getMyStoreList(principalId);
+
+        return results.stream().map(arr -> {
+
+            Store store = (Store) arr[0];
+
+            //카페 영업중 체크
+            boolean isOpen = store.checkIsOpen();
+
+            //첫번째 이미지 불러오기
+            ImageDto imageDto = null;
+            if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
+
+                StoreImage storeImage = store.getStoreImageList().get(0);
+
+                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+            }
+
+            return new MyStoreResDto(store, isOpen, imageDto, (Double) arr[1]);
         }).collect(Collectors.toList());
     }
 }

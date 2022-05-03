@@ -5,6 +5,7 @@ import com.dalbong.cafein.domain.board.QBoard;
 import com.dalbong.cafein.domain.businessHours.QBusinessHours;
 import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.domain.congestion.QCongestion;
+import com.dalbong.cafein.domain.heart.QHeart;
 import com.dalbong.cafein.domain.image.QStoreImage;
 import com.dalbong.cafein.domain.review.Review;
 import com.querydsl.core.BooleanBuilder;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 
 import static com.dalbong.cafein.domain.businessHours.QBusinessHours.businessHours;
 import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
+import static com.dalbong.cafein.domain.heart.QHeart.heart;
 import static com.dalbong.cafein.domain.image.QStoreImage.storeImage;
 import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
@@ -64,6 +66,31 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                 .join(store.businessHours).fetchJoin()
                 .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
                 .where(containStoreName(keyword))
+                .groupBy(store.storeId)
+                .fetch();
+
+        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
+    }
+    /**
+     *
+     * 앱단 내 카페 리스트 조회
+     */
+    @Override
+    public List<Object[]> getMyStoreList(Long principalId) {
+
+        QCongestion subCongestion = new QCongestion("sub");
+
+        List<Tuple> result = queryFactory
+                .select(store, JPAExpressions
+                        .select(subCongestion.congestionScore.avg())
+                        .from(subCongestion)
+                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
+                                subCongestion.store.storeId.eq(store.storeId)))
+                .from(store)
+                .join(store.businessHours).fetchJoin()
+                .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
+                .join(heart).on(heart.store.storeId.eq(store.storeId))
+                .where(heart.member.memberId.eq(principalId))
                 .groupBy(store.storeId)
                 .fetch();
 
