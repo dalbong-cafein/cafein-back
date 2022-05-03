@@ -9,13 +9,19 @@ import java.util.List;
 public interface StoreRepositoryQuerydsl {
 
     /**
-     * 가게 리스트 조회
+     * 앱단 가게 리스트 조회
      */
     List<Object[]> getStoreList(String keyword);
 
+    /**
+     * 앱단 내 카페 리스트 조회
+     */
+    List<Object[]> getMyStoreList(Long principalId);
+
+
 
     /**
-     * 전체 가게 리스트 조회
+     * 관리자단 전체 가게 리스트 조회
      */
     Page<Object[]> getAllStoreList(String[] searchType, String keyword, Pageable pageable);
 }

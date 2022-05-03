@@ -11,6 +11,14 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @ToString(exclude = {"member","store"})
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name="heart_uk",
+                        columnNames={"member_id", "store_id"}
+                )
+        }
+)
 @Entity
 public class Heart {
 
