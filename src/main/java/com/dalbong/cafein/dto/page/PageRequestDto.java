@@ -7,6 +7,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
+
 @Builder
 @AllArgsConstructor
 @Data
@@ -23,9 +25,12 @@ public class PageRequestDto {
 
     private Boolean isOnlyImage;
 
+    private String sort = "DESC";
+
     public PageRequestDto(){
         this.page = 1;
         this.size = 15;
+        this.sort = "DESC";
     }
 
     public Pageable getPageable(){

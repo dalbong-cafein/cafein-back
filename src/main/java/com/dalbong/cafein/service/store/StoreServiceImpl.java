@@ -70,7 +70,13 @@ public class StoreServiceImpl implements StoreService{
     public AdminStoreListDto getStoreListOfAdmin(PageRequestDto pageRequestDto) {
 
         //TODO 동적 필요
-        Pageable pageable = pageRequestDto.getPageable(Sort.by("storeId").descending());
+        Pageable pageable;
+
+        if(pageRequestDto.getSort().equals("ASC")){
+            pageable = pageRequestDto.getPageable(Sort.by("storeId").ascending());
+        }else{
+            pageable = pageRequestDto.getPageable(Sort.by("storeId").descending());
+        }
 
         Page<Object[]> results = storeRepository.getAllStoreList(pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
 
