@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestController
 @ControllerAdvice
@@ -49,6 +50,12 @@ public class ControllerExceptionHandler {
         cookieUtil.createCookie(response, JwtUtil.accountUniteTokenName, accountUniteToken, JwtUtil.accountUniteTokenExpire);
 
         return new ResponseEntity<>(new CMRespDto<>(-1,e.getMessage(),e.getAccountUniteResDto()), HttpStatus.UNAUTHORIZED);
+    }
+
+    //sql 에러
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public ResponseEntity<CMRespDto<?>> apiSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e){
+        return new ResponseEntity<>(new CMRespDto<>(-1,e.getMessage(),null), HttpStatus.BAD_REQUEST);
     }
 
 }

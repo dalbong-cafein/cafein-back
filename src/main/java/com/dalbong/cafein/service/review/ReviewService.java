@@ -15,7 +15,7 @@ public interface ReviewService {
 
     void remove(Long reviewId);
 
-    ReviewListDto getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId);
+    ReviewListResDto getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId);
 
     AdminReviewListDto getReviewListOfAdmin(PageRequestDto pageRequestDto);
 }

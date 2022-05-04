@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface HeartRepository extends JpaRepository<Heart, Long> {
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("delete from Heart h where h.member.memberId = :memberId and h.store.storeId = :storeId")
     void deleteHeart(@Param("memberId") Long memberId, @Param("storeId") Long storeId);
 }

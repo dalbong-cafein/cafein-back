@@ -124,7 +124,7 @@ public class ReviewServiceImpl implements ReviewService{
      */
     @Transactional(readOnly = true)
     @Override
-    public ReviewListDto getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId) {
+    public ReviewListResDto getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId) {
 
         //TODO 동적 필요
         Pageable pageable = pageRequestDto.getPageable(Sort.by("reviewId").descending());
@@ -155,7 +155,7 @@ public class ReviewServiceImpl implements ReviewService{
         });
 
 
-        return new ReviewListDto(results.getTotalElements(), new ScrollResultDto<>(results, fn));
+        return new ReviewListResDto(results.getTotalElements(), new ScrollResultDto<>(results, fn));
     }
 
     /**

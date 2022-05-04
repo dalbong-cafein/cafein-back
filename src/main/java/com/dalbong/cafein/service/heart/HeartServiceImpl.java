@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class HeartServiceImpl implements HeartService{
 
-    private HeartRepository heartRepository;
-    private StoreRepository storeRepository;
+    private final HeartRepository heartRepository;
+    private final StoreRepository storeRepository;
 
     /**
      * 관심 추가
