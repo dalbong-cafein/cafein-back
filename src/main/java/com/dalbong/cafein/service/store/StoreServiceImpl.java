@@ -69,7 +69,6 @@ public class StoreServiceImpl implements StoreService{
     @Override
     public AdminStoreListDto getStoreListOfAdmin(PageRequestDto pageRequestDto) {
 
-        //TODO 동적 필요
         Pageable pageable;
 
         if(pageRequestDto.getSort().equals("ASC")){

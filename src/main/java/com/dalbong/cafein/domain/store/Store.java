@@ -145,10 +145,6 @@ public class Store extends BaseEntity {
                break ;
         }
 
-        System.out.println(dayOfWeekNumber);
-        System.out.println(isOpen);
-        System.out.println(now);
-
         return isOpen;
     }
 }

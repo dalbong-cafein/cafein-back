@@ -62,7 +62,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                 .from(store)
                 .join(store.businessHours).fetchJoin()
                 .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
-                .where(containStoreName(keyword))
+                .where(containStoreName(keyword).or(containAddress(keyword)))
                 .groupBy(store.storeId)
                 .fetch();
 
