@@ -55,8 +55,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
         QCongestion subCongestion = new QCongestion("sub");
 
-        //TODO 위치 검색 추가 필요
-        List<Tuple> result = queryFactory
+       List<Tuple> result = queryFactory
                 .select(store, store.heartList.size(), JPAExpressions
                         .select(subCongestion.congestionScore.avg())
                         .from(subCongestion)
@@ -65,7 +64,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                 .from(store)
                 .join(store.businessHours).fetchJoin()
                 .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
-                .where(containStoreName(keyword))
+                .where(containStoreName(keyword).or(containAddress(keyword)))
                 .groupBy(store.storeId)
                 .fetch();
 
@@ -103,13 +102,16 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
     @Override
     public Page<Object[]> getAllStoreList(String[] searchType, String keyword, Pageable pageable) {
 
+        QCongestion subCongestion = new QCongestion("sub");
+
         JPAQuery<Tuple> query = queryFactory
-                .select(store, store.reviewList.size(), congestion.congestionScore.avg())
+                .select(store, store.reviewList.size(), JPAExpressions
+                        .select(subCongestion.congestionScore.avg())
+                        .from(subCongestion)
+                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
+                                subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
-                .leftJoin(congestion).on(congestion.store.storeId.eq(store.storeId))
-                .where(searchKeyword(searchType, keyword),
-                        congestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now())
-                                .or(congestion.regDateTime.isNull()))
+                .where(searchKeyword(searchType, keyword))
                 .groupBy(store.storeId);
 
         //정렬
@@ -123,11 +125,13 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
         //count 쿼리
         JPAQuery<Tuple> countQuery = queryFactory
-                .select(store, store.reviewList.size(), congestion.congestionScore.avg())
+                .select(store, store.reviewList.size(), JPAExpressions
+                        .select(subCongestion.congestionScore.avg())
+                        .from(subCongestion)
+                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
+                                subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
-                .leftJoin(congestion).on(congestion.store.storeId.eq(store.storeId))
-                .where(searchKeyword(searchType, keyword),
-                        congestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()))
+                .where(searchKeyword(searchType, keyword))
                 .groupBy(store.storeId);
 
         List<Object[]> content = results.stream().map(t -> t.toArray()).collect(Collectors.toList());
@@ -167,7 +171,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
             e.getMessage();
         }
 
-        return !isEmpty(keyword) && storeId != null? review.store.storeId.eq(storeId) : null;
+        return !isEmpty(keyword) && storeId != null? store.storeId.eq(storeId) : null;
 
     }
 
@@ -179,7 +183,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
     private BooleanExpression containAddress(String keyword) {
 
-        return !isEmpty(keyword) ? Expressions.asBoolean(store.address.toString().contains(keyword)).isTrue(): null;
+        return !isEmpty(keyword) ? store.address.fullAddress.contains(keyword) : null;
 
     }
 }
