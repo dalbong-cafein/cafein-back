@@ -2,7 +2,6 @@ package com.dalbong.cafein.service.store;
 
 import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
-import com.dalbong.cafein.domain.image.Image;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
@@ -12,6 +11,7 @@ import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.dto.store.MyStoreResDto;
+import com.dalbong.cafein.dto.store.RecommendSearchStoreResDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.dto.store.StoreResDto;
 import com.dalbong.cafein.service.image.ImageService;
@@ -159,6 +159,19 @@ public class StoreServiceImpl implements StoreService{
 
             return new MyStoreResDto(store, isOpen, imageDto, (Double) arr[1]);
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 추천 검색 카페 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<RecommendSearchStoreResDto> getRecommendSearchStoreList(String keyword) {
+
+        List<Store> results = storeRepository.getRecommendSearchStoreList(keyword);
+
+        return results.stream().map(s -> new RecommendSearchStoreResDto(s)).collect(Collectors.toList());
+
     }
 }
 

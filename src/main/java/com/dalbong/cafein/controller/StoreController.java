@@ -2,6 +2,7 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.store.RecommendSearchStoreResDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.dto.store.StoreResDto;
 import com.dalbong.cafein.service.store.StoreService;
@@ -32,6 +33,18 @@ public class StoreController {
         return new ResponseEntity<>(new CMRespDto<>(1, "카페 리스트 조회 성공", storeResDtoList), HttpStatus.OK);
     }
 
+    /**
+     * 추천 검색 카페 리스트 조회
+     */
+    @GetMapping("/stores/recommend-search")
+    public ResponseEntity<?> getRecommendSearchStoreList(@RequestParam(value = "keyword") String keyword){
+
+        List<RecommendSearchStoreResDto> recommendSearchStoreResDtoList =
+                storeService.getRecommendSearchStoreList(keyword);
+
+        return new ResponseEntity<>(new CMRespDto<>(
+                1, "추천 카페 리스트 조회 성공", recommendSearchStoreResDtoList), HttpStatus.OK);
+    }
 
     /**
      * 가게 등록
@@ -44,5 +57,8 @@ public class StoreController {
 
         return new ResponseEntity<>(new CMRespDto<>(1,"가게 등록 성공",null), HttpStatus.CREATED);
     }
+
+
+
 
 }

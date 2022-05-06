@@ -24,4 +24,9 @@ public interface StoreRepositoryQuerydsl {
      * 관리자단 전체 가게 리스트 조회
      */
     Page<Object[]> getAllStoreList(String[] searchType, String keyword, Pageable pageable);
+
+    /**
+     * 추천 검색 카페 리스트 조회
+     */
+    List<Store> getRecommendSearchStoreList(String keyword);
 }
