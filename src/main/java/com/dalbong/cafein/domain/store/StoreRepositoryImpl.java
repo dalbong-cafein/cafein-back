@@ -62,7 +62,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                 .from(store)
                 .join(store.businessHours).fetchJoin()
                 .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
-                .where(containStoreName(keyword).or(containAddress(keyword)))
+                .where(containStoreNameOrAddress(keyword))
                 .groupBy(store.storeId)
                 .fetch();
 
@@ -120,7 +120,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
     public List<Store> getRecommendSearchStoreList(String keyword) {
 
         return queryFactory.selectFrom(store)
-                .where(containStoreName(keyword).or(containAddress(keyword)))
+                .where(containStoreNameOrAddress(keyword))
                 .fetch();
     }
 
@@ -142,6 +142,13 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                 }
             }
         }
+        return builder;
+    }
+
+    private BooleanBuilder containStoreNameOrAddress(String keyword){
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.or(containStoreName(keyword));
+        builder.or(containAddress(keyword));
         return builder;
     }
 

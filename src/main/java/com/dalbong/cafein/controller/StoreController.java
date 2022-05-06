@@ -37,7 +37,7 @@ public class StoreController {
      * 추천 검색 카페 리스트 조회
      */
     @GetMapping("/stores/recommend-search")
-    public ResponseEntity<?> getRecommendSearchStoreList(@RequestParam(value = "keyword", required = false) String keyword){
+    public ResponseEntity<?> getRecommendSearchStoreList(@RequestParam(value = "keyword") String keyword){
 
         List<RecommendSearchStoreResDto> recommendSearchStoreResDtoList =
                 storeService.getRecommendSearchStoreList(keyword);
