@@ -113,6 +113,17 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
     }
 
+    /**
+     * 추천 검색 카페 리스트 조회
+     */
+    @Override
+    public List<Store> getRecommendSearchStoreList(String keyword) {
+
+        return queryFactory.selectFrom(store)
+                .where(containStoreName(keyword).or(containAddress(keyword)))
+                .fetch();
+    }
+
     private BooleanBuilder searchKeyword(String[] searchType, String keyword) {
 
         BooleanBuilder builder = new BooleanBuilder();
