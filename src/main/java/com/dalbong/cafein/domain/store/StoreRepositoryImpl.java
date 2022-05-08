@@ -6,6 +6,7 @@ import com.dalbong.cafein.domain.businessHours.QBusinessHours;
 import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.domain.congestion.QCongestion;
 import com.dalbong.cafein.domain.heart.QHeart;
+import com.dalbong.cafein.domain.image.QMemberImage;
 import com.dalbong.cafein.domain.image.QStoreImage;
 import com.dalbong.cafein.domain.review.Review;
 import com.querydsl.core.BooleanBuilder;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 import static com.dalbong.cafein.domain.businessHours.QBusinessHours.businessHours;
 import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
 import static com.dalbong.cafein.domain.heart.QHeart.heart;
+import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.image.QStoreImage.storeImage;
 import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
@@ -56,7 +58,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
         QCongestion subCongestion = new QCongestion("sub");
 
        List<Tuple> result = queryFactory
-                .select(store, store.heartList.size(), JPAExpressions
+                .select(store , store.heartList.size(), JPAExpressions
                         .select(subCongestion.congestionScore.avg())
                         .from(subCongestion)
                         .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
@@ -70,8 +72,8 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
         return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
+
     /**
-     *
      * 앱단 내 카페 리스트 조회
      */
     @Override
@@ -94,6 +96,34 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                 .fetch();
 
         return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
+    }
+
+    /**
+     * 앱단 본인이 등록한 가게 리스트 조회
+     */
+    @Override
+    public List<Store> getRegisteredStoreList(Long principalId) {
+
+        return queryFactory.selectFrom(store)
+                .where(store.regMember.memberId.eq(principalId))
+                .fetch();
+    }
+
+    /**
+     * 앱단 카페 상세 페이지 조회
+     */
+    @Override
+    public Object[] getDetailStore(Long storeId) {
+
+        Tuple tuple = queryFactory.select(store, memberImage)
+                .from(store)
+                .join(store.modMember).fetchJoin()
+                .join(store.businessHours).fetchJoin()
+                .leftJoin(memberImage).on(memberImage.member.memberId.eq(store.modMember.memberId))
+                .where(store.storeId.eq(storeId))
+                .fetchOne();
+
+        return tuple.toArray();
     }
 
     /**

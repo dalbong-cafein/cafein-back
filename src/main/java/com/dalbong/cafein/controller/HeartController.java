@@ -3,6 +3,7 @@ package com.dalbong.cafein.controller;
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.store.MyStoreResDto;
+import com.dalbong.cafein.dto.store.StoreListResDto;
 import com.dalbong.cafein.service.heart.HeartService;
 import com.dalbong.cafein.service.store.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +27,9 @@ public class HeartController {
     @GetMapping("/hearts")
     public ResponseEntity<?> getMyStoreList(@AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        List<MyStoreResDto> myStoreResDtoList = storeService.getMyStoreList(principalDetails.getMember().getMemberId());
+        StoreListResDto<List<MyStoreResDto>> storeListResDto = storeService.getMyStoreList(principalDetails.getMember().getMemberId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "내 카페 리스트 조회 성공", myStoreResDtoList), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "내 카페 리스트 조회 성공", storeListResDto), HttpStatus.OK);
     }
 
     /**

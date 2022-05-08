@@ -18,6 +18,20 @@ public interface StoreRepositoryQuerydsl {
      */
     List<Object[]> getMyStoreList(Long principalId);
 
+    /**
+     * 앱단 본인이 등록한 가게 리스트 조회
+     */
+    List<Store> getRegisteredStoreList(Long principalId);
+
+    /**
+     * 앱단 카페 상세 페이지 조회
+     */
+    Object[] getDetailStore(Long storeId);
+
+    /**
+     * 추천 검색 카페 리스트 조회
+     */
+    List<Store> getRecommendSearchStoreList(String keyword);
 
 
     /**
@@ -25,8 +39,6 @@ public interface StoreRepositoryQuerydsl {
      */
     Page<Object[]> getAllStoreList(String[] searchType, String keyword, Pageable pageable);
 
-    /**
-     * 추천 검색 카페 리스트 조회
-     */
-    List<Store> getRecommendSearchStoreList(String keyword);
+
+
 }

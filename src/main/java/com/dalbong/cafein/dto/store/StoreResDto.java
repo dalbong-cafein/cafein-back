@@ -17,7 +17,7 @@ public class StoreResDto {
 
     private double recommendPercent;
 
-    private boolean isOpen;
+    private Boolean isOpen;
 
     private int katechX;
 

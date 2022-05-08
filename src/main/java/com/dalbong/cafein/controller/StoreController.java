@@ -2,9 +2,7 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
-import com.dalbong.cafein.dto.store.RecommendSearchStoreResDto;
-import com.dalbong.cafein.dto.store.StoreRegDto;
-import com.dalbong.cafein.dto.store.StoreResDto;
+import com.dalbong.cafein.dto.store.*;
 import com.dalbong.cafein.service.store.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,6 +42,31 @@ public class StoreController {
 
         return new ResponseEntity<>(new CMRespDto<>(
                 1, "추천 카페 리스트 조회 성공", recommendSearchStoreResDtoList), HttpStatus.OK);
+    }
+
+    /**
+     * 앱단 본인이 등록한 가게 리스트 조회
+     */
+    @GetMapping("/stores/my-registered")
+    public ResponseEntity<?> getRegisteredStoreList(@AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        StoreListResDto<List<RegisteredStoreResDto>> storeListResDto =
+                storeService.getRegisteredStoreList(principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(
+                1, "내가 등록한 가게 리스트 조회 성공", storeListResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 카페 상세 조회
+     */
+    @GetMapping("/stores/{storeId}")
+    public ResponseEntity<?> getDetailStore(@PathVariable("storeId") Long storeId,
+                                            @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        DetailStoreResDto detailStoreResDto = storeService.getDetailStore(storeId, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "카페 상세 조회 성공", detailStoreResDto), HttpStatus.OK);
     }
 
     /**
