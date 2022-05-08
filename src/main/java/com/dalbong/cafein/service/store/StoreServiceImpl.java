@@ -130,8 +130,26 @@ public class StoreServiceImpl implements StoreService{
      */
     @Transactional(readOnly = true)
     @Override
-    public StoreListResDto<RegisteredStoreResDto> getRegisteredStoreList(Long principalId) {
-        return null;
+    public StoreListResDto<List<RegisteredStoreResDto>> getRegisteredStoreList(Long principalId) {
+
+        List<Store> results = storeRepository.getRegisteredStoreList(principalId);
+
+        List<RegisteredStoreResDto> registeredStoreResDtoList = results.stream().map(store -> {
+
+            //첫번째 이미지 불러오기
+            ImageDto imageDto = null;
+            if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
+
+                StoreImage storeImage = store.getStoreImageList().get(0);
+
+                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+            }
+            ;
+
+            return new RegisteredStoreResDto(store, imageDto, principalId);
+        }).collect(Collectors.toList());
+
+        return new StoreListResDto<>(results.size(), registeredStoreResDtoList);
     }
 
     /**

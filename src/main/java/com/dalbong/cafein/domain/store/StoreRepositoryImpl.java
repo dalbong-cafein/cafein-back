@@ -99,6 +99,17 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
     }
 
     /**
+     * 앱단 본인이 등록한 가게 리스트 조회
+     */
+    @Override
+    public List<Store> getRegisteredStoreList(Long principalId) {
+
+        return queryFactory.selectFrom(store)
+                .where(store.regMember.memberId.eq(principalId))
+                .fetch();
+    }
+
+    /**
      * 앱단 카페 상세 페이지 조회
      */
     @Override
