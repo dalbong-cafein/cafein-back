@@ -2,6 +2,8 @@ package com.dalbong.cafein.service.review;
 
 import com.dalbong.cafein.domain.image.MemberImage;
 import com.dalbong.cafein.domain.image.ReviewImage;
+import com.dalbong.cafein.domain.review.DetailEvaluation;
+import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.store.Store;
@@ -156,6 +158,76 @@ public class ReviewServiceImpl implements ReviewService{
 
 
         return new ReviewListResDto(results.getTotalElements(), new ScrollResultDto<>(results, fn));
+    }
+
+    /**
+     * 카페별 상세 리뷰 점수 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public DetailReviewScoreResDto getDetailReviewScore(Long storeId) {
+
+        //TODO 리뷰 데이터가 많이 쌓일 시, 캐시 사용 예정
+
+        //카페 리뷰 데이터 조회
+        List<Review> reviewList = reviewRepository.findByStoreId(storeId);
+
+        //추천율, 항목별 가장 많이 받은 점수, 점수의 개수 찾기
+        double recommendCnt = 0;
+        int[] socketArr = new int[5];
+        int[] wifiArr = new int[5];
+        int[] restroomArr = new int[5];
+        int[] tableSizeArr = new int[5];
+
+        if(reviewList != null && !reviewList.isEmpty()){
+            for(Review r : reviewList){
+
+                //추천 count
+                if(r.getRecommendation().equals(Recommendation.GOOD)){
+                    recommendCnt += 1;
+                }
+
+                DetailEvaluation detailEvaluation = r.getDetailEvaluation();
+
+                //socket 항목 count
+                int socket = detailEvaluation.getSocket(); socketArr[socket] += 1;
+
+                //wifi 항목 count
+                int wifi = detailEvaluation.getWifi(); wifiArr[wifi] += 1;
+
+                //restroom 항목 count
+                int restroom = detailEvaluation.getRestroom(); restroomArr[restroom] += 1;
+
+                //tableSize 항목 count
+                int tableSize = detailEvaluation.getTableSize(); tableSizeArr[tableSize] += 1;
+            }
+        }
+        //추천율 계산
+        double recommendPercent = (recommendCnt / reviewList.size()) * 100;
+
+        //항목별 가장 많이 받은 점수, 점수의 개수 찾기
+        String socketScoreOfMaxCnt = null; int maxCntOfSocket= -1;
+        String wifiScoreOfMaxCnt = null; int maxCntOfWifi= -1;
+        String restroomScoreOfMaxCnt = null; int maxCntOfRestroom= -1;
+        String tableSizeScoreOfMaxCnt = null; int maxCntOfTableSize= -1;
+
+        for(int i=1; i<5; i++){
+            if(maxCntOfSocket <= socketArr[i]){
+                maxCntOfSocket = socketArr[i]; socketScoreOfMaxCnt = String.valueOf(i);
+            }
+            if(maxCntOfWifi <= wifiArr[i]){
+                maxCntOfWifi = wifiArr[i]; wifiScoreOfMaxCnt = String.valueOf(i);
+            }
+            if(maxCntOfRestroom <= restroomArr[i]){
+                maxCntOfRestroom = restroomArr[i]; restroomScoreOfMaxCnt = String.valueOf(i);
+            }
+            if(maxCntOfTableSize <= tableSizeArr[i]){
+                maxCntOfTableSize = tableSizeArr[i]; tableSizeScoreOfMaxCnt = String.valueOf(i);
+            }
+        }
+
+        return new DetailReviewScoreResDto(reviewList.size(),recommendPercent,socketScoreOfMaxCnt, maxCntOfSocket,
+                wifiScoreOfMaxCnt, maxCntOfWifi, restroomScoreOfMaxCnt, maxCntOfRestroom, tableSizeScoreOfMaxCnt, maxCntOfTableSize);
     }
 
     /**

@@ -17,5 +17,7 @@ public interface ReviewService {
 
     ReviewListResDto getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId);
 
+    DetailReviewScoreResDto getDetailReviewScore(Long storeId);
+
     AdminReviewListDto getReviewListOfAdmin(PageRequestDto pageRequestDto);
 }

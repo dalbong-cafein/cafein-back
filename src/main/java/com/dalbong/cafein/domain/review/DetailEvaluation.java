@@ -7,13 +7,13 @@ import javax.persistence.Embeddable;
 @Getter
 public class DetailEvaluation {
 
-    private Integer socket;
+    private int socket;
 
-    private Integer wifi;
+    private int wifi;
 
-    private Integer restroom;
+    private int restroom;
 
-    private Integer tableSize;
+    private int tableSize;
 
     protected DetailEvaluation(){}
 
