@@ -99,11 +99,11 @@ public class StoreServiceImpl implements StoreService{
      */
     @Transactional(readOnly = true)
     @Override
-    public List<MyStoreResDto> getMyStoreList(Long principalId) {
+    public StoreListResDto<List<MyStoreResDto>> getMyStoreList(Long principalId) {
 
         List<Object[]> results = storeRepository.getMyStoreList(principalId);
 
-        return results.stream().map(arr -> {
+        List<MyStoreResDto> myStoredResDtoList = results.stream().map(arr -> {
 
             Store store = (Store) arr[0];
 
@@ -121,6 +121,17 @@ public class StoreServiceImpl implements StoreService{
 
             return new MyStoreResDto(store, isOpen, imageDto, (Double) arr[1]);
         }).collect(Collectors.toList());
+
+        return new StoreListResDto<>(myStoredResDtoList.size(), myStoredResDtoList);
+    }
+
+    /**
+     * 앱단 본인이 등록한 가게 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public StoreListResDto<RegisteredStoreResDto> getRegisteredStoreList(Long principalId) {
+        return null;
     }
 
     /**
