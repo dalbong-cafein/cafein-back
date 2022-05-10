@@ -136,6 +136,8 @@ public class GoogleSearchService {
                         double differenceX = Math.abs((dto.getLngX() - store.getLngX()));
                         double differenceY = Math.abs((dto.getLatY() - store.getLatY()));
 
+                        System.out.println("-------위도 경도 오차--------");
+                        System.out.println(differenceX+differenceY);
                         if (differenceX+differenceY <= 0.0005){
                             System.out.println("==========================");
                             System.out.println(differenceX+differenceY);
@@ -148,9 +150,8 @@ public class GoogleSearchService {
                     //전화번호로 매핑
                     if (store.getPhone() != null && !store.getPhone().isBlank()
                             && dto.getPhone() != null && !dto.getPhone().isBlank()){
-
                         if (dto.getPhone().equals(store.getPhone())){
-
+                            System.out.println("-------전화번호로 매핑--------");
                             saveBusinessHoursAndImage(dto, store);
                             break;
                         }
@@ -164,7 +165,7 @@ public class GoogleSearchService {
 
     private void saveBusinessHoursAndImage(GoogleStoreDto dto, Store store) throws IOException {
 
-        if (store.getBusinessHours() != null && dto.getBusinessHours() != null){
+        if (store.getBusinessHours() == null && dto.getBusinessHours() != null){
             BusinessHours businessHours = dto.getBusinessHours();
 
             businessHoursRepository.save(businessHours);
@@ -191,9 +192,8 @@ public class GoogleSearchService {
 
     private String uploadFolder = System.getProperty("user.home");
     private void photoApi(Store store, GoogleStoreDto dto) throws IOException {
-        System.out.println("111");
+
         if (dto.getPhotoReferenceList() != null & !dto.getPhotoReferenceList().isEmpty()) {
-            System.out.println("123");
             int i = 0;
 
             for (String pr : dto.getPhotoReferenceList()) {
