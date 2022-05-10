@@ -130,10 +130,17 @@ public class GoogleSearchService {
         if (googleStoreDtoList != null && !googleStoreDtoList.isEmpty()){
             for (GoogleStoreDto dto : googleStoreDtoList){
                 for (Store store : findStoreList){
+
+
                     //카페 이름으로 매핑
                     if(store.getStoreName() != null && !store.getStoreName().isBlank()
                             && dto.getStoreName() != null && !dto.getStoreName().isBlank()){
-                        if(dto.getStoreName().equals(store.getStoreName())){
+
+                        //공백 제거
+                        String notBlankStoreName = store.getStoreName().replace(" ", "");
+                        String notBlankDtoStoreName = dto.getStoreName().replace(" ", "");
+
+                        if(notBlankDtoStoreName.equals(notBlankStoreName)){
                             System.out.println("--------카페이름으로 매핑----------");
                             saveBusinessHoursAndImage(dto, store);
                         }
