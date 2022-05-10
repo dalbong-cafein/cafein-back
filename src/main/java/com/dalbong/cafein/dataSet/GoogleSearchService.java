@@ -153,7 +153,7 @@ public class GoogleSearchService {
                             && dto.getPhone() != null && !dto.getPhone().isBlank()){
                         if (dto.getPhone().equals(store.getPhone())){
                             if (dto.getPhone().equals(store.getPhone())){
-                                if(!dto.getStoreName().contains("Starbucks")){
+                                if(!dto.getStoreName().contains("Starbucks") && !dto.getStoreName().contains("스타벅스")){
                                     System.out.println("-------전화번호로 매핑--------");
                                     System.out.println(store.getStoreName());
                                     saveBusinessHoursAndImage(dto, store);
