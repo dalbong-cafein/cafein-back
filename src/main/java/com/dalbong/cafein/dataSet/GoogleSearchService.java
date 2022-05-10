@@ -130,37 +130,6 @@ public class GoogleSearchService {
         if (googleStoreDtoList != null && !googleStoreDtoList.isEmpty()){
             for (GoogleStoreDto dto : googleStoreDtoList){
                 for (Store store : findStoreList){
-
-                    //위도 경로로 매핑
-                    if (store.getLatY() != null) {
-                        double differenceX = Math.abs((dto.getLngX() - store.getLngX()));
-                        double differenceY = Math.abs((dto.getLatY() - store.getLatY()));
-
-                        System.out.println("-------위도 경도 오차--------");
-                        System.out.println(differenceX+differenceY);
-                        if (differenceX+differenceY <= 0.0005){
-                            System.out.println("==========================");
-                            System.out.println(differenceX+differenceY);
-
-                            saveBusinessHoursAndImage(dto, store);
-                            break;
-                        }
-                    }
-
-                    //전화번호로 매핑
-                    if (store.getPhone() != null && !store.getPhone().isBlank()
-                            && dto.getPhone() != null && !dto.getPhone().isBlank()){
-                        if (dto.getPhone().equals(store.getPhone())){
-                            if (dto.getPhone().equals(store.getPhone())){
-                                if(dto.getStoreName().contains("Starbucks")){
-                                    System.out.println("-------전화번호로 매핑--------");
-                                    saveBusinessHoursAndImage(dto, store);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
                     //카페 이름으로 매핑
                     if(store.getStoreName() != null && !store.getStoreName().isBlank()
                             && dto.getStoreName() != null && !dto.getStoreName().isBlank()){
@@ -170,10 +139,56 @@ public class GoogleSearchService {
                         }
                     }
 
+                    //전화번호로 매핑
+                    if (store.getPhone() != null && !store.getPhone().isBlank()
+                            && dto.getPhone() != null && !dto.getPhone().isBlank()){
+                        if (dto.getPhone().equals(store.getPhone())){
+                            if (dto.getPhone().equals(store.getPhone())){
+                                if(!dto.getStoreName().contains("Starbucks")){
+                                    System.out.println("-------전화번호로 매핑--------");
+                                    saveBusinessHoursAndImage(dto, store);
+                                    break;
+                                }
+                                //프랜차이즈끼리 같은 전화번호를 사용할 경우
+                                else if((store.getLatY() != null)){
+
+                                    double differenceX = Math.abs((dto.getLngX() - store.getLngX()));
+                                    double differenceY = Math.abs((dto.getLatY() - store.getLatY()));
+
+                                    System.out.println("-------위도 경도 오차--------");
+                                    System.out.println(differenceX+differenceY);
+                                    if (differenceX+differenceY <= 0.0005){
+                                        System.out.println("==========================");
+                                        System.out.println(differenceX+differenceY);
+
+                                        saveBusinessHoursAndImage(dto, store);
+                                        break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    //위도 경로로 매핑
+//                    if (store.getLatY() != null) {
+//                        double differenceX = Math.abs((dto.getLngX() - store.getLngX()));
+//                        double differenceY = Math.abs((dto.getLatY() - store.getLatY()));
+//
+//                        System.out.println("-------위도 경도 오차--------");
+//                        System.out.println(differenceX+differenceY);
+//                        if (differenceX+differenceY <= 0.0005){
+//                            System.out.println("==========================");
+//                            System.out.println(differenceX+differenceY);
+//
+//                            saveBusinessHoursAndImage(dto, store);
+//                            break;
+//                        }
+//                    }
+
                 }
 
             }
-        }
     }
 
     private void saveBusinessHoursAndImage(GoogleStoreDto dto, Store store) throws IOException {
