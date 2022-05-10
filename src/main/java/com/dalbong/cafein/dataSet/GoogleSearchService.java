@@ -80,8 +80,8 @@ public class GoogleSearchService {
             //phone
             String phone = (String) result.get("formatted_phone_number");
 
-            System.out.println(name);
-            System.out.println(phone);
+            //rNum
+            String formattedAddress = (String) result.get("formatted_address");
 
             //lat, lng
             Map<String, Object> geometry = (Map<String, Object>) result.get("geometry");
@@ -117,7 +117,7 @@ public class GoogleSearchService {
                 System.out.println(name + "카페 이미지 데이터 자체가 없습니다.");
             }
 
-            googleStoreDtoList.add(new GoogleStoreDto(name,phone, lngX, latY, daysOpening, photoReferenceList));
+            googleStoreDtoList.add(new GoogleStoreDto(name,phone, lngX, latY, daysOpening, photoReferenceList,formattedAddress));
         }
 
         return googleStoreDtoList;
@@ -142,7 +142,9 @@ public class GoogleSearchService {
 
                         if(notBlankDtoStoreName.equals(notBlankStoreName)){
                             System.out.println("--------카페이름으로 매핑----------");
+                            System.out.println(notBlankDtoStoreName);
                             saveBusinessHoursAndImage(dto, store);
+                            break;
                         }
                     }
 
@@ -153,21 +155,13 @@ public class GoogleSearchService {
                             if (dto.getPhone().equals(store.getPhone())){
                                 if(!dto.getStoreName().contains("Starbucks")){
                                     System.out.println("-------전화번호로 매핑--------");
+                                    System.out.println(store.getStoreName());
                                     saveBusinessHoursAndImage(dto, store);
                                     break;
                                 }
                                 //프랜차이즈끼리 같은 전화번호를 사용할 경우
-                                else if((store.getLatY() != null)){
-
-                                    double differenceX = Math.abs((dto.getLngX() - store.getLngX()));
-                                    double differenceY = Math.abs((dto.getLatY() - store.getLatY()));
-
-                                    System.out.println("-------위도 경도 오차--------");
-                                    System.out.println(differenceX+differenceY);
-                                    if (differenceX+differenceY <= 0.0005){
-                                        System.out.println("==========================");
-                                        System.out.println(differenceX+differenceY);
-
+                                else if(dto.getFormattedAddress().contains(store.getAddress().getRNum())){
+                                        System.out.println(store.getStoreName());
                                         saveBusinessHoursAndImage(dto, store);
                                         break;
                                         }
@@ -195,7 +189,7 @@ public class GoogleSearchService {
 
                 }
 
-            }
+            
     }
 
     private void saveBusinessHoursAndImage(GoogleStoreDto dto, Store store) throws IOException {
