@@ -18,12 +18,13 @@ import java.util.Map;
 public class GoogleStoreDto {
 
     public GoogleStoreDto(String name, String phone, Double lngX, Double latY,
-                          List<Map<String,Object>> daysOpening, List<String> photoReferenceList){
+                          List<Map<String,Object>> daysOpening, List<String> photoReferenceList, String formattedAddress){
 
         this.storeName = name;
         this.phone = phone;
         this.lngX = lngX;
         this.latY = latY;
+        this.formattedAddress = formattedAddress;
 
         //open, closed
         LocalTime monOpen = null, monClosed = null,tueOpen= null, tueClosed= null, wedOpen= null, wedClosed= null,
@@ -113,4 +114,6 @@ public class GoogleStoreDto {
     private Double latY;
 
     private List<String> photoReferenceList;
+
+    private String formattedAddress;
 }
