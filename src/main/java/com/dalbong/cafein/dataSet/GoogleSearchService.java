@@ -151,9 +151,22 @@ public class GoogleSearchService {
                     if (store.getPhone() != null && !store.getPhone().isBlank()
                             && dto.getPhone() != null && !dto.getPhone().isBlank()){
                         if (dto.getPhone().equals(store.getPhone())){
-                            System.out.println("-------전화번호로 매핑--------");
+                            if (dto.getPhone().equals(store.getPhone())){
+                                if(dto.getStoreName().contains("Starbucks")){
+                                    System.out.println("-------전화번호로 매핑--------");
+                                    saveBusinessHoursAndImage(dto, store);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    //카페 이름으로 매핑
+                    if(store.getStoreName() != null && !store.getStoreName().isBlank()
+                            && dto.getStoreName() != null && !dto.getStoreName().isBlank()){
+                        if(dto.getStoreName().equals(store.getStoreName())){
+                            System.out.println("--------카페이름으로 매핑----------");
                             saveBusinessHoursAndImage(dto, store);
-                            break;
                         }
                     }
 
