@@ -1,5 +1,6 @@
 package com.dalbong.cafein.dataSet;
 
+import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,7 +40,8 @@ public class DataSetController {
     private String kakaoApiKey;
 
     @PostMapping("/data/naver-search")
-    public String naverSearch(@RequestParam("keyword") String keyword) throws JsonProcessingException {
+    public String naverSearch(@RequestParam("keyword") String keyword,
+                              @AuthenticationPrincipal PrincipalDetails principalDetails) throws JsonProcessingException {
         //POST 방식으로 key=value 데이터를 요청 (카카오쪽으로)
         RestTemplate rt = new RestTemplate();
 
@@ -69,7 +72,7 @@ public class DataSetController {
         System.out.println("========================");
         System.out.println(searchData);
 
-        naverSearchService.createStore(searchData);
+        naverSearchService.createStore(searchData, principalDetails.getMember().getMemberId());
 
 
         return "검색 성공";

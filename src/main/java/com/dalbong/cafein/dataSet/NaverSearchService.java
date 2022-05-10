@@ -1,5 +1,6 @@
 package com.dalbong.cafein.dataSet;
 
+import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class NaverSearchService {
 
     private final StoreRepository storeRepository;
 
-    public void createStore(Map<String, Object> searchData){
+    public void createStore(Map<String, Object> searchData, Long principalId){
 
         List<NaverStoreDto> naverStoreDtoList = createNaverDto(searchData);
 
@@ -28,6 +29,8 @@ public class NaverSearchService {
             return Store.builder()
                     .storeName(dto.getStoreName())
                     .website(dto.getLink())
+                    .regMember(Member.builder().memberId(principalId).build())
+                    .modMember(Member.builder().memberId(principalId).build())
                     .phone(dto.getTelephone())
                     .address(dto.getAddress())
                     .katechX(dto.getMapX())
