@@ -4,11 +4,17 @@ import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.domain.congestion.CongestionRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.congestion.CongestionListResDto;
 import com.dalbong.cafein.dto.congestion.CongestionRegDto;
+import com.dalbong.cafein.dto.congestion.CongestionResDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @RequiredArgsConstructor
@@ -40,5 +46,20 @@ public class CongestionServiceImpl implements CongestionService{
         //TODO 스탬프 증정
 
         return congestion;
+    }
+
+    /**
+     * 혼잡도 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public CongestionListResDto<List<CongestionResDto>> getCongestionList(Long storeId, Integer minusDays) {
+
+        List<Congestion> results = congestionRepository.getCongestionList(storeId, minusDays);
+
+        List<CongestionResDto> congestionResDtoList =
+                results.stream().map(c -> new CongestionResDto(c)).collect(Collectors.toList());
+
+        return new CongestionListResDto<>(results.size(), congestionResDtoList);
     }
 }

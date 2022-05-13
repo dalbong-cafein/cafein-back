@@ -1,12 +1,19 @@
 package com.dalbong.cafein.domain.congestion;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
+import static com.dalbong.cafein.domain.review.QReview.review;
+import static org.aspectj.util.LangUtil.isEmpty;
 
 public class CongestionRepositoryImpl implements CongestionQuerydsl{
 
@@ -31,4 +38,33 @@ public class CongestionRepositoryImpl implements CongestionQuerydsl{
 
         return fetchOne != null;
     }
+
+    /**
+     * 카페별 혼잡도 리스트 조회
+     */
+    @Override
+    public List<Congestion> getCongestionList(Long storeId, Integer minusDays) {
+
+        return queryFactory.select(congestion)
+                .from(congestion)
+                .join(congestion.member).fetchJoin()
+                .where(congestion.store.storeId.eq(storeId), dailyLookup(minusDays))
+                .orderBy(congestion.congestionId.desc())
+                .fetch();
+    }
+
+    private BooleanExpression dailyLookup(Integer minusDays) {
+
+        System.out.println(congestion.regDateTime);
+        System.out.println(LocalDate.now().minusDays(minusDays).atTime(0,0));
+        System.out.println(LocalDate.now().minusDays(minusDays).atTime(23,59,59));
+
+        return minusDays != null ?
+                congestion.regDateTime
+                        .between(LocalDate.now().minusDays(minusDays).atTime(0,0),
+                                LocalDate.now().minusDays(minusDays).atTime(23,59,59)) : null;
+
+    }
+
+
 }
