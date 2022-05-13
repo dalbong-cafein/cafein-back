@@ -49,6 +49,8 @@ public class Store extends BaseEntity {
 
     private String phone;
 
+    private String wifiPassword;
+
     private int katechX;
 
     private int katechY;
