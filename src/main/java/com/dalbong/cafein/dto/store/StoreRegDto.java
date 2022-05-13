@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -86,12 +88,16 @@ public class StoreRegDto {
     //카페 평가 데이터
     private Recommendation recommendation;
 
+    @Max(value = 4) @Min(value = 1)
     private int socket;
 
+    @Max(value = 4) @Min(value = 1)
     private int wifi;
 
+    @Max(value = 4) @Min(value = 1)
     private int restroom;
 
+    @Max(value = 4) @Min(value = 1)
     private int tableSize;
 
     public Store toEntity(Long principalId){
