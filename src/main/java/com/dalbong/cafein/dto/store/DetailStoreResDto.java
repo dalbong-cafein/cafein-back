@@ -27,6 +27,8 @@ public class DetailStoreResDto {
 
     private Address address;
 
+    private String wifiPassword;
+
     private int heartCnt;
 
     private Boolean isHeart;
@@ -48,6 +50,7 @@ public class DetailStoreResDto {
         this.nicknameOfModMember = store.getModMember().getNickname();
         this.memberImageDto = memberImageDto;
         this.address = store.getAddress();
+        this.wifiPassword = store.getWifiPassword();
         this.heartCnt = store.getHeartList().size();
         this.isHeart = store.getHeartList().stream().anyMatch(h -> h.getMember().getMemberId().equals(principalId) ? true : false);
         this.isOpen = store.checkIsOpen();

@@ -178,6 +178,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
         return queryFactory.selectFrom(store)
                 .where(containStoreNameOrAddress(keyword))
+                .limit(10)
                 .fetch();
     }
 
