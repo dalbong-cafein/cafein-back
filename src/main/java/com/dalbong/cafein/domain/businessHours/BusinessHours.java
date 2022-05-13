@@ -65,4 +65,6 @@ public class BusinessHours {
             @AttributeOverride(name="closed", column = @Column(name="sun_closed"))
     })
     private Day onSun;
+
+    private String etcTime;
 }

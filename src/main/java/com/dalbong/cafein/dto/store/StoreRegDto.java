@@ -36,6 +36,8 @@ public class StoreRegDto {
 
     private String phone;
 
+    private String wifiPassword;
+
     private String website;
 
     private Integer katechX;
@@ -79,6 +81,8 @@ public class StoreRegDto {
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime sunClosed;
 
+    private String etcTime;
+
     //카페 평가 데이터
     private Recommendation recommendation;
 
@@ -101,6 +105,7 @@ public class StoreRegDto {
                 .address(address)
                 .katechX(katechX).katechY(katechY)
                 .phone(phone)
+                .wifiPassword(wifiPassword)
                 .website(website)
                 .build();
     }
@@ -115,6 +120,7 @@ public class StoreRegDto {
                 .onFri(new Day(friOpen, friClosed))
                 .onSat(new Day(satOpen, satClosed))
                 .onSun(new Day(sunOpen, sunClosed))
+                .etcTime(etcTime)
                 .build();
     }
 
