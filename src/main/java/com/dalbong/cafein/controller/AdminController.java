@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +41,7 @@ public class AdminController {
      * 관리자단 가게 등록
      */
     @PostMapping("/stores")
-    public ResponseEntity<?> register(@Validated StoreRegDto storeRegDto,
+    public ResponseEntity<?> register(@Validated StoreRegDto storeRegDto, BindingResult bindingResult,
                                       @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
         storeService.register(storeRegDto,principalDetails.getMember().getMemberId());
@@ -49,7 +50,7 @@ public class AdminController {
     }
 
     /**
-     * 관리자단 가게 등록
+     * 관리자단 가게 리스트 조회
      */
     @GetMapping("/stores")
     public ResponseEntity<?> getAllStoreList(PageRequestDto requestDto){
