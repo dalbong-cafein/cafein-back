@@ -17,6 +17,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import javax.persistence.EntityManager;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
@@ -117,6 +118,28 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
 
 
         return PageableExecutionUtils.getPage(results, pageable, () -> countQuery.fetchCount());
+    }
+
+    /**
+     * 관리자단 리뷰 상세 정보 조회
+     */
+    @Override
+    public Optional<Object[]> getDetailReview(Long reviewId) {
+
+        QReview review = new QReview("review");
+        QReview reviewSub = new QReview("reviewSub");
+
+        Tuple tuple = queryFactory.select(review, JPAExpressions.select(review.member.memberId.count())
+                .from(reviewSub)
+                .where(reviewSub.store.storeId.eq(review.store.storeId),
+                        reviewSub.member.memberId.eq(review.member.memberId)))
+                .from(review)
+                .leftJoin(review.member).fetchJoin()
+                .leftJoin(review.store).fetchJoin()
+                .where(review.reviewId.eq(reviewId))
+                .fetchOne();
+
+        return tuple != null ? Optional.ofNullable(tuple.toArray()) : Optional.empty();
     }
 
     private  BooleanBuilder searchKeyword(String[] searchType, String keyword) {

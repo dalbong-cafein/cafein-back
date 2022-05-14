@@ -3,6 +3,8 @@ package com.dalbong.cafein.domain.review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
+
 public interface ReviewRepositoryQuerydsl {
 
     /**
@@ -14,4 +16,9 @@ public interface ReviewRepositoryQuerydsl {
      * 전체 리뷰 리스트 조회
      */
     Page<Review> getAllReviewList(String[] searchType, String keyword, Pageable pageable);
+
+    /**
+     * 관리자단 리뷰 상세 정보 조회
+     */
+    Optional<Object[]> getDetailReview(Long reviewId);
 }

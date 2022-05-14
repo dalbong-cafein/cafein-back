@@ -2,6 +2,7 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
@@ -35,6 +36,17 @@ public class AdminController {
         AdminReviewListDto adminReviewListDto = reviewService.getReviewListOfAdmin(requestDto);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 리스트 조회 성공", adminReviewListDto), HttpStatus.OK);
+    }
+
+    /**
+     * 리뷰 상세 정보 조회
+     */
+    @GetMapping("/reviews/{reviewId}")
+    public ResponseEntity<?> getDetailReview(@PathVariable("reviewId") Long reviewId){
+
+        AdminDetailReviewResDto adminDetailReviewResDto= reviewService.getDetailReviewOfAdmin(reviewId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 상세 정보 조회 성공", adminDetailReviewResDto), HttpStatus.OK);
     }
 
     /**
