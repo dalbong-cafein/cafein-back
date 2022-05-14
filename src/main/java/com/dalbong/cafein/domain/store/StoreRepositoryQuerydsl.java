@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StoreRepositoryQuerydsl {
 
@@ -26,7 +27,7 @@ public interface StoreRepositoryQuerydsl {
     /**
      * 앱단 카페 상세 페이지 조회
      */
-    Object[] getDetailStore(Long storeId);
+    Optional<Object[]> getDetailStore(Long storeId);
 
     /**
      * 추천 검색 카페 리스트 조회
