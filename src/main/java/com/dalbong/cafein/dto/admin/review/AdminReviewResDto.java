@@ -20,7 +20,7 @@ public class AdminReviewResDto {
 
     private Long writerId;
 
-    private String nickname;
+    private String nicknameOfWriter;
 
     private Long storeId;
 
@@ -39,7 +39,7 @@ public class AdminReviewResDto {
     public AdminReviewResDto(Review review, ImageDto reviewImageDto){
         this.reviewId = review.getReviewId();
         this.writerId = review.getMember().getMemberId();
-        this.nickname = review.getMember().getNickname();
+        this.nicknameOfWriter = review.getMember().getNickname();
         this.content = review.getContent();
         this.reviewImageDto = reviewImageDto;
         this.regDateTime = review.getRegDateTime();

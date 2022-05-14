@@ -15,7 +15,7 @@ public class CongestionResDto {
 
     private Long writerId;
 
-    private String nickname;
+    private String nicknameOfWriter;
 
     private int congestionScore;
 
@@ -24,7 +24,7 @@ public class CongestionResDto {
 
     public CongestionResDto(Congestion congestion){
         this.writerId = congestion.getMember().getMemberId();
-        this.nickname = congestion.getMember().getNickname();
+        this.nicknameOfWriter = congestion.getMember().getNickname();
         this.congestionScore = congestion.getCongestionScore();
         this.regDateTime = congestion.getRegDateTime();
     }
