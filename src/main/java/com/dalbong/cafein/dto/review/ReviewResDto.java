@@ -20,7 +20,7 @@ public class ReviewResDto {
 
     private Long writerId;
 
-    private String nickname;
+    private String nicknameOfWriter;
 
     private String profileImageUrl;
 
@@ -37,7 +37,7 @@ public class ReviewResDto {
 
         this.reviewId = review.getReviewId();
         this.writerId = review.getMember().getMemberId();
-        this.nickname = review.getMember().getNickname();
+        this.nicknameOfWriter = review.getMember().getNickname();
         this.profileImageUrl = profileImageUrl;
         this.content = review.getContent();
         this.visitCnt = visitCnt;

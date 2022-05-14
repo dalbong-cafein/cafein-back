@@ -8,6 +8,7 @@ import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Transactional
@@ -257,5 +259,29 @@ public class ReviewServiceImpl implements ReviewService{
         });
 
         return new AdminReviewListDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
+    }
+
+    /**
+     * 관리자단 상세 리뷰 정보 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminDetailReviewResDto getDetailReviewOfAdmin(Long reviewId) {
+
+        Object[] arr = reviewRepository.getDetailReview(reviewId).orElseThrow(() ->
+                new CustomException("존재하지 않은 리뷰입니다."));
+
+        Review review = (Review) arr[0];
+
+        //review 이미지 리스트
+        List<ImageDto> reviewImageDtoList = new ArrayList<>();
+        if(review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()){
+
+            for(ReviewImage reviewImage : review.getReviewImageList()){
+                reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+            }
+        }
+
+        return new AdminDetailReviewResDto(review, (long)arr[1], reviewImageDtoList);
     }
 }

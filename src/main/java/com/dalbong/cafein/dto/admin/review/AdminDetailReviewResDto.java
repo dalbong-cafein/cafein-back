@@ -8,13 +8,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class AdminReviewResDto {
+public class AdminDetailReviewResDto {
 
     private Long reviewId;
 
@@ -22,13 +21,15 @@ public class AdminReviewResDto {
 
     private String nicknameOfWriter;
 
+    private long visitCnt;
+
     private Long storeId;
 
     private String storeName;
 
     private String content;
 
-    private ImageDto reviewImageDto;
+    private List<ImageDto> reviewImageDtoList;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime regDateTime;
@@ -36,14 +37,17 @@ public class AdminReviewResDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime modDateTime;
 
-    public AdminReviewResDto(Review review, ImageDto reviewImageDto){
+    public AdminDetailReviewResDto(Review review, long visitCnt, List<ImageDto> reviewImageDtoList){
         this.reviewId = review.getReviewId();
         this.writerId = review.getMember().getMemberId();
         this.nicknameOfWriter = review.getMember().getNickname();
+        this.visitCnt = visitCnt;
+        this.storeId = review.getStore().getStoreId();
+        this.storeName = review.getStore().getStoreName();
         this.content = review.getContent();
-        this.reviewImageDto = reviewImageDto;
         this.regDateTime = review.getRegDateTime();
         this.modDateTime = review.getModDateTime();
+        this.reviewImageDtoList = reviewImageDtoList;
     }
 
 }

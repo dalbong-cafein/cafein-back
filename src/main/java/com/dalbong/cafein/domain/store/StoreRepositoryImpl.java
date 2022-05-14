@@ -30,6 +30,7 @@ import javax.persistence.EntityManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.dalbong.cafein.domain.businessHours.QBusinessHours.businessHours;
@@ -113,7 +114,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
      * 앱단 카페 상세 페이지 조회
      */
     @Override
-    public Object[] getDetailStore(Long storeId) {
+    public Optional<Object[]> getDetailStore(Long storeId) {
 
         Tuple tuple = queryFactory.select(store, memberImage)
                 .from(store)
@@ -123,7 +124,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                 .where(store.storeId.eq(storeId))
                 .fetchOne();
 
-        return tuple.toArray();
+        return tuple != null ? Optional.ofNullable(tuple.toArray()) : Optional.empty();
     }
 
     /**

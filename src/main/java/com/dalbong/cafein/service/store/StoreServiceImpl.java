@@ -12,6 +12,7 @@ import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.dto.store.*;
+import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.image.ImageService;
 import com.dalbong.cafein.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -172,7 +173,8 @@ public class StoreServiceImpl implements StoreService{
     @Override
     public DetailStoreResDto getDetailStore(Long storeId, Long principalId) {
 
-        Object[] arr = storeRepository.getDetailStore(storeId);
+        Object[] arr = storeRepository.getDetailStore(storeId).orElseThrow(() ->
+                new CustomException("존재하지 않은 카페입니다."));
 
         Store store = (Store) arr[0];
 
