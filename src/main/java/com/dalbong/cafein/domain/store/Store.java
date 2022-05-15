@@ -65,17 +65,14 @@ public class Store extends BaseEntity {
     @JoinColumn(name = "businessHours")
     private BusinessHours businessHours;
 
-    @BatchSize(size = 100)
     @Builder.Default
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Review> reviewList = new ArrayList<>();
 
-    @BatchSize(size = 100)
     @Builder.Default
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Heart> heartList = new ArrayList<>();
 
-    @BatchSize(size = 100)
     @Builder.Default
     @OneToMany(mappedBy = "store",fetch = FetchType.LAZY)
     private List<StoreImage> storeImageList = new ArrayList<>();
