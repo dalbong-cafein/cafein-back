@@ -51,8 +51,8 @@ public class StoreController {
     @GetMapping("/stores/my-registered")
     public ResponseEntity<?> getRegisteredStoreList(@AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        StoreListResDto<List<RegisteredStoreResDto>> storeListResDto =
-                storeService.getRegisteredStoreList(principalDetails.getMember().getMemberId());
+        StoreListResDto<List<MyRegisterStoreResDto>> storeListResDto =
+                storeService.getMyRegisterStoreList(principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(
                 1, "내가 등록한 가게 리스트 조회 성공", storeListResDto), HttpStatus.OK);
