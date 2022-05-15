@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ReviewListResDto {
+public class ReviewListResDto<T> {
 
     private long reviewCnt;
 
-    private ScrollResultDto<ReviewResDto, Object[]> reviewResDtoList;
+    private T dtoList;
 
 }
