@@ -142,6 +142,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .from(review)
                 .join(review.store).fetchJoin()
                 .where(review.member.memberId.eq(principalId))
+                .orderBy(review.reviewId.desc())
                 .fetch();
 
         return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
