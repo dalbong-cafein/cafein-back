@@ -41,7 +41,6 @@ public class Review extends BaseEntity {
     @Embedded
     private DetailEvaluation detailEvaluation;
 
-    @BatchSize(size = 100)
     @Builder.Default
     @OneToMany(mappedBy = "review",fetch = FetchType.LAZY)
     private List<ReviewImage> reviewImageList = new ArrayList<>();

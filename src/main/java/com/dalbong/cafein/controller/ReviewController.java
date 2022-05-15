@@ -3,10 +3,8 @@ package com.dalbong.cafein.controller;
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
-import com.dalbong.cafein.dto.review.DetailReviewScoreResDto;
-import com.dalbong.cafein.dto.review.ReviewListResDto;
-import com.dalbong.cafein.dto.review.ReviewRegDto;
-import com.dalbong.cafein.dto.review.ReviewUpdateDto;
+import com.dalbong.cafein.dto.page.ScrollResultDto;
+import com.dalbong.cafein.dto.review.*;
 import com.dalbong.cafein.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -27,10 +26,10 @@ public class ReviewController {
     /**
      * 리뷰 리스트 조회
      */
-    @GetMapping("stores/{storeId}/reviews")
+    @GetMapping("/stores/{storeId}/reviews")
     public ResponseEntity<?> getReviewListOfStore(@PathVariable("storeId") Long storeId, PageRequestDto requestDto){
 
-        ReviewListResDto reviewListResDto = reviewService.getReviewListOfStore(requestDto, storeId);
+        ReviewListResDto<ScrollResultDto<ReviewResDto, Object[]>> reviewListResDto = reviewService.getReviewListOfStore(requestDto, storeId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "리뷰 리스트 조회 성공", reviewListResDto), HttpStatus.OK);
     }
@@ -38,12 +37,23 @@ public class ReviewController {
     /**
      * 카페별 상세 리뷰 점수 조회
      */
-    @GetMapping("stores/{storeId}/detail-review-score")
+    @GetMapping("/stores/{storeId}/detail-review-score")
     public ResponseEntity<?> getDetailReviewScore(@PathVariable("storeId") Long storeId){
 
         DetailReviewScoreResDto detailReviewScoreResDto = reviewService.getDetailReviewScore(storeId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "상세 리뷰 점수 조회 성공", detailReviewScoreResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 회원별 리뷰 리스트 조회
+     */
+    @GetMapping("/members/reviews")
+    public ResponseEntity<?> getMyReviewList(@AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        ReviewListResDto<List<MyReviewResDto>> reviewListResDto = reviewService.getMyReviewList(principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "내가 쓴 리뷰 리스트 조회 성공", reviewListResDto),HttpStatus.OK);
     }
 
     /**

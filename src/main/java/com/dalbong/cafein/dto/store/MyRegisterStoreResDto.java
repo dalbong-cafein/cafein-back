@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class RegisteredStoreResDto {
+public class MyRegisterStoreResDto {
 
     private Long storeId;
 
@@ -27,7 +27,7 @@ public class RegisteredStoreResDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime regDateTime;
 
-    public RegisteredStoreResDto(Store store, ImageDto storeImageDto, Long principalId){
+    public MyRegisterStoreResDto(Store store, ImageDto storeImageDto, Long principalId){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();

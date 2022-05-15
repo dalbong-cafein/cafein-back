@@ -103,7 +103,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
      * 앱단 본인이 등록한 가게 리스트 조회
      */
     @Override
-    public List<Store> getRegisteredStoreList(Long principalId) {
+    public List<Store> getMyRegisterStoreList(Long principalId) {
 
         return queryFactory.selectFrom(store)
                 .where(store.regMember.memberId.eq(principalId))
@@ -143,6 +143,8 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                                 subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .where(searchKeyword(searchType, keyword))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .groupBy(store.storeId);
 
         //정렬
