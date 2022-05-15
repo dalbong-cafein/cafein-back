@@ -1,5 +1,6 @@
 package com.dalbong.cafein.domain.review;
 
+import com.dalbong.cafein.domain.store.QStore;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
@@ -122,6 +123,29 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
 
 
         return PageableExecutionUtils.getPage(results, pageable, () -> countQuery.fetchCount());
+    }
+
+    /**
+     * 회원별 리뷰 리스트 조회
+     */
+    @Override
+    public List<Object[]> getMyReviewList(Long principalId) {
+
+        QReview review = new QReview("review");
+        QReview reviewSub = new QReview("reviewSub");
+
+        List<Tuple> result = queryFactory.select(review,
+                                        JPAExpressions.select(review.member.memberId.count())
+                                                .from(reviewSub)
+                                                .where(reviewSub.store.storeId.eq(review.store.storeId))
+                                                .groupBy(reviewSub.member.memberId))
+                .from(review)
+                .join(review.store).fetchJoin()
+                .where(review.member.memberId.eq(principalId))
+                .orderBy(review.reviewId.desc())
+                .fetch();
+
+        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
 
     /**

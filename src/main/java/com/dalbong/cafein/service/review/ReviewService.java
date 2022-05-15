@@ -23,8 +23,7 @@ public interface ReviewService {
 
     ReviewListResDto<ScrollResultDto<ReviewResDto, Object[]>> getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId);
 
-
-    //StoreListResDto<List<RegisteredStoreResDto>> getRegisteredStoreList(Long principalId);
+    ReviewListResDto<List<MyReviewResDto>> getMyReviewList(Long principalId);
 
     DetailReviewScoreResDto getDetailReviewScore(Long storeId);
 
