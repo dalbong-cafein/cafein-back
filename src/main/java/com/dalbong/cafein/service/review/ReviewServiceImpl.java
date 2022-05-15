@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 @Transactional
@@ -128,7 +127,7 @@ public class ReviewServiceImpl implements ReviewService{
      */
     @Transactional(readOnly = true)
     @Override
-    public ReviewListResDto getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId) {
+    public ReviewListResDto<ScrollResultDto<ReviewResDto, Object[]>> getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId) {
 
         //TODO 동적 필요
         Pageable pageable = pageRequestDto.getPageable(Sort.by("reviewId").descending());
@@ -159,7 +158,7 @@ public class ReviewServiceImpl implements ReviewService{
         });
 
 
-        return new ReviewListResDto(results.getTotalElements(), new ScrollResultDto<>(results, fn));
+        return new ReviewListResDto<>(results.getTotalElements(), new ScrollResultDto<>(results, fn));
     }
 
     /**

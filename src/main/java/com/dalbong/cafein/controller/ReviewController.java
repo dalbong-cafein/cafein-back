@@ -3,10 +3,8 @@ package com.dalbong.cafein.controller;
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
-import com.dalbong.cafein.dto.review.DetailReviewScoreResDto;
-import com.dalbong.cafein.dto.review.ReviewListResDto;
-import com.dalbong.cafein.dto.review.ReviewRegDto;
-import com.dalbong.cafein.dto.review.ReviewUpdateDto;
+import com.dalbong.cafein.dto.page.ScrollResultDto;
+import com.dalbong.cafein.dto.review.*;
 import com.dalbong.cafein.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,7 +28,7 @@ public class ReviewController {
     @GetMapping("stores/{storeId}/reviews")
     public ResponseEntity<?> getReviewListOfStore(@PathVariable("storeId") Long storeId, PageRequestDto requestDto){
 
-        ReviewListResDto reviewListResDto = reviewService.getReviewListOfStore(requestDto, storeId);
+        ReviewListResDto<ScrollResultDto<ReviewResDto, Object[]>> reviewListResDto = reviewService.getReviewListOfStore(requestDto, storeId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "리뷰 리스트 조회 성공", reviewListResDto), HttpStatus.OK);
     }

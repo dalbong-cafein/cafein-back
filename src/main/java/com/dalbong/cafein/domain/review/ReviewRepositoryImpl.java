@@ -53,7 +53,9 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .from(review)
                 .join(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
-                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage));
+                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
 
         //정렬
         for (Sort.Order o : pageable.getSort()) {
@@ -97,7 +99,9 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .from(review)
                 .join(review.member).fetchJoin()
                 .join(review.store).fetchJoin()
-                .where(searchKeyword(searchType, keyword));
+                .where(searchKeyword(searchType, keyword))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
 
         //정렬
         for (Sort.Order o : pageable.getSort()) {

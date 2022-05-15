@@ -143,6 +143,8 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                                 subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .where(searchKeyword(searchType, keyword))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .groupBy(store.storeId);
 
         //정렬
