@@ -77,10 +77,10 @@ public class StoreServiceImpl implements StoreService{
             Store store = (Store) arr[0];
 
             //리뷰 추천율
-            double recommendPercent = store.getRecommendPercent();
+            Double recommendPercent = store.getRecommendPercent();
 
             //카페 영업중 체크
-            boolean isOpen = store.checkIsOpen();
+            Boolean isOpen = store.checkIsOpen();
 
             //첫번째 이미지 불러오기
             ImageDto imageDto = null;
@@ -109,7 +109,7 @@ public class StoreServiceImpl implements StoreService{
             Store store = (Store) arr[0];
 
             //카페 영업중 체크
-            boolean isOpen = store.checkIsOpen();
+            Boolean isOpen = store.checkIsOpen();
 
             //첫번째 이미지 불러오기
             ImageDto imageDto = null;
@@ -145,7 +145,7 @@ public class StoreServiceImpl implements StoreService{
 
                 imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
             }
-            ;
+
 
             return new MyRegisterStoreResDto(store, imageDto, principalId);
         }).collect(Collectors.toList());

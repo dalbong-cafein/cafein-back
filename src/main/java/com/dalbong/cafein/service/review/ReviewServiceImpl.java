@@ -241,7 +241,10 @@ public class ReviewServiceImpl implements ReviewService{
             }
         }
         //추천율 계산
-        double recommendPercent = (recommendCnt / reviewList.size()) * 100;
+        Double recommendPercent = null;
+        if(reviewList != null && !reviewList.isEmpty()){
+            recommendPercent = (recommendCnt / reviewList.size()) * 100;
+        }
 
         //항목별 가장 많이 받은 점수, 점수의 개수 찾기
         String socketScoreOfMaxCnt = null; int maxCntOfSocket= -1;

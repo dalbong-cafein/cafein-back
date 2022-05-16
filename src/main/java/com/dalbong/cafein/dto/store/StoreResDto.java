@@ -15,7 +15,7 @@ public class StoreResDto {
 
     private String storeName;
 
-    private double recommendPercent;
+    private Double recommendPercent;
 
     private Boolean isOpen;
 
@@ -29,7 +29,7 @@ public class StoreResDto {
 
     private ImageDto storeImageDto;
 
-    public StoreResDto(Store store, double recommendPercent, boolean isOpen, ImageDto storeImageDto, long heartCnt, Double congestionScoreAvg ){
+    public StoreResDto(Store store, Double recommendPercent, Boolean isOpen, ImageDto storeImageDto, long heartCnt, Double congestionScoreAvg ){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();

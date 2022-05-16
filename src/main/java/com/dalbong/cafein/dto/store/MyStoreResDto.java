@@ -17,7 +17,7 @@ public class MyStoreResDto {
 
     private String storeName;
 
-    private boolean isOpen;
+    private Boolean isOpen;
 
     private int katechX;
 
@@ -27,7 +27,7 @@ public class MyStoreResDto {
 
     private ImageDto storeImageDto;
 
-    public MyStoreResDto(Store store, boolean isOpen, ImageDto storeImageDto, Double congestionScoreAvg){
+    public MyStoreResDto(Store store, Boolean isOpen, ImageDto storeImageDto, Double congestionScoreAvg){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
