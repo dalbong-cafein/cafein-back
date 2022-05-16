@@ -52,7 +52,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                                         reviewSub.member.memberId.eq(review.member.memberId))
                                 .groupBy(reviewSub.member.memberId))
                 .from(review)
-                .join(review.member).fetchJoin()
+                .leftJoin(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
                 .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage))
                 .offset(pageable.getOffset())
@@ -71,7 +71,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
         JPAQuery<Review> countQuery = queryFactory
                 .select(review)
                 .from(review)
-                .join(review.member).fetchJoin()
+                .leftJoin(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.memberId.eq(review.member.memberId))
                 .groupBy(review.reviewId)
                 .where(review.store.storeId.eq(storeId));
@@ -98,8 +98,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
         JPAQuery<Review> query = queryFactory
                 .select(review)
                 .from(review)
-                .join(review.member).fetchJoin()
-                .join(review.store).fetchJoin()
+                .leftJoin(review.member).fetchJoin()
+                .leftJoin(review.store).fetchJoin()
                 .where(searchKeyword(searchType, keyword))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
@@ -117,8 +117,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
         JPAQuery<Review> countQuery = queryFactory
                 .select(review)
                 .from(review)
-                .join(review.member).fetchJoin()
-                .join(review.store).fetchJoin()
+                .leftJoin(review.member).fetchJoin()
+                .leftJoin(review.store).fetchJoin()
                 .where(searchKeyword(searchType, keyword));
 
 
@@ -140,7 +140,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                                                 .where(reviewSub.store.storeId.eq(review.store.storeId))
                                                 .groupBy(reviewSub.member.memberId))
                 .from(review)
-                .join(review.store).fetchJoin()
+                .leftJoin(review.store).fetchJoin()
                 .where(review.member.memberId.eq(principalId))
                 .orderBy(review.reviewId.desc())
                 .fetch();

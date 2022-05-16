@@ -47,7 +47,7 @@ public class CongestionRepositoryImpl implements CongestionQuerydsl{
 
         return queryFactory.select(congestion)
                 .from(congestion)
-                .join(congestion.member).fetchJoin()
+                .leftJoin(congestion.member).fetchJoin()
                 .where(congestion.store.storeId.eq(storeId), dailyLookup(minusDays))
                 .orderBy(congestion.congestionId.desc())
                 .fetch();
