@@ -113,6 +113,12 @@ public class Store extends BaseEntity {
     }
 
     public Boolean checkIsOpen(){
+
+        //영업시간 데이터 없는 경우
+        if(this.businessHours == null){
+            return null;
+        }
+
         LocalDateTime now = LocalDateTime.now();
         LocalTime nowTime = now.toLocalTime();
 
