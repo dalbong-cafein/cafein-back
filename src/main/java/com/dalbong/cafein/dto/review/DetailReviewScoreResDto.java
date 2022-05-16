@@ -11,7 +11,7 @@ public class DetailReviewScoreResDto {
 
     private int reviewCnt;
 
-    private double recommendPercent;
+    private Double recommendPercent;
 
     private String socket;
 
