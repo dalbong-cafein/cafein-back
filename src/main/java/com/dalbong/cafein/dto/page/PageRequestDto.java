@@ -29,7 +29,7 @@ public class PageRequestDto {
 
     public PageRequestDto(){
         this.page = 1;
-        this.size = 15;
+        this.size = 10;
         this.sort = "DESC";
     }
 

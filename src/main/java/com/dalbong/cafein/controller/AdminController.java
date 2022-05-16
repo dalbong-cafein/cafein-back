@@ -28,7 +28,7 @@ public class AdminController {
     private final StoreService storeService;
 
     /**
-     * 전체 리뷰 리스트 조회
+     * 관리자단 리뷰 리스트 조회
      */
     @GetMapping("/reviews")
     public ResponseEntity<?> getAllReviewList(PageRequestDto requestDto){
