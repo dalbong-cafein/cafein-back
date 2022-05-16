@@ -6,8 +6,6 @@ import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.ScrollResultDto;
 import com.dalbong.cafein.dto.review.*;
-
-
 import java.io.IOException;
 import java.util.List;
 
