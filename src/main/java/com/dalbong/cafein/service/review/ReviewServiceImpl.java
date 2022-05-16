@@ -278,8 +278,13 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public AdminReviewListDto getReviewListOfAdmin(PageRequestDto pageRequestDto) {
 
-        //TODO 동적 필요
-        Pageable pageable = pageRequestDto.getPageable(Sort.by("reviewId").descending());
+        Pageable pageable;
+
+        if(pageRequestDto.getSort().equals("ASC")){
+            pageable = pageRequestDto.getPageable(Sort.by("reviewId").ascending());
+        }else{
+            pageable = pageRequestDto.getPageable(Sort.by("reviewId").descending());
+        }
 
         Page<Review> results = reviewRepository.getAllReviewList(pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
 
