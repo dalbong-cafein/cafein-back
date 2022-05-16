@@ -65,7 +65,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                         .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
                                 subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
-                .join(store.businessHours).fetchJoin()
+                .leftJoin(store.businessHours).fetchJoin()
                 .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
                 .where(containStoreNameOrAddress(keyword))
                 .groupBy(store.storeId)
@@ -89,7 +89,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                         .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
                                 subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
-                .join(store.businessHours).fetchJoin()
+                .leftJoin(store.businessHours).fetchJoin()
                 .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
                 .join(heart).on(heart.store.storeId.eq(store.storeId))
                 .where(heart.member.memberId.eq(principalId))
@@ -118,8 +118,8 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
         Tuple tuple = queryFactory.select(store, memberImage)
                 .from(store)
-                .join(store.modMember).fetchJoin()
-                .join(store.businessHours).fetchJoin()
+                .leftJoin(store.modMember).fetchJoin()
+                .leftJoin(store.businessHours).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.memberId.eq(store.modMember.memberId))
                 .where(store.storeId.eq(storeId))
                 .fetchOne();
