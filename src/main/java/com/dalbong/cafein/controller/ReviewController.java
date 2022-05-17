@@ -35,6 +35,18 @@ public class ReviewController {
     }
 
     /**
+     * 카페 상세 화면 - 미리보기 리뷰 리스트 조회
+     */
+    @GetMapping("/stores/{storeId}/reviews/preview")
+    public ResponseEntity<?> getCustomLimitReviewListOfStore(@PathVariable("storeId") Long storeId,
+                                                             @RequestParam(value = "limit",defaultValue = "3", required = false) int limit){
+
+        ReviewListResDto<List<ReviewResDto>> reviewListResDto = reviewService.getCustomLimitReviewListOfStore(limit, storeId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "미리보기 리뷰 리스트 조회 성공", reviewListResDto), HttpStatus.OK);
+    }
+
+    /**
      * 카페별 상세 리뷰 점수 조회
      */
     @GetMapping("/stores/{storeId}/detail-review-score")

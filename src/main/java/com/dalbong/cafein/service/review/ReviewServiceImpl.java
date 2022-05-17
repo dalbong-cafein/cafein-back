@@ -199,6 +199,44 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     /**
+     * 가게별 리뷰 리스트 개수 지정 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public ReviewListResDto<List<ReviewResDto>> getCustomLimitReviewListOfStore(int limit, Long storeId) {
+
+        List<Object[]> results = reviewRepository.getCustomLimitReviewList(limit, storeId);
+
+        List<ReviewResDto> reviewResDtoList = results.stream().map(arr -> {
+
+            //작성자 프로필 이미지
+            MemberImage memberImage = (MemberImage) arr[1];
+
+            String profileImageUrl = null;
+            if (memberImage != null) {
+                profileImageUrl = memberImage.getImageUrl();
+            }
+
+            //리뷰 이미지
+            Review review = (Review) arr[0];
+            List<ImageDto> reviewImageDtoList = new ArrayList<>();
+            if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()) {
+
+                for (ReviewImage reviewImage : review.getReviewImageList()) {
+                    reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                }
+            }
+
+            return new ReviewResDto(review, profileImageUrl, (long) arr[2], reviewImageDtoList);
+        }).collect(Collectors.toList());
+
+        //카페 전체 리뷰 수 조회
+        long totalCnt = reviewRepository.countByStoreStoreId(storeId);
+
+        return new ReviewListResDto<>(totalCnt, reviewResDtoList);
+    }
+
+    /**
      * 카페별 상세 리뷰 점수 조회
      */
     @Transactional(readOnly = true)

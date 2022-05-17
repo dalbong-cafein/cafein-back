@@ -88,6 +88,34 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
     }
 
     /**
+     * 가게별 리뷰 리스트 개수 지정 조회
+     */
+    @Override
+    public List<Object[]> getCustomLimitReviewList(int limit, Long storeId) {
+
+        QReview review = new QReview("review");
+        QReview reviewSub = new QReview("reviewSub");
+
+        List<Tuple> results = queryFactory
+                .select(review, memberImage,
+                        JPAExpressions
+                                .select(review.member.memberId.count())
+                                .from(reviewSub)
+                                .where(reviewSub.store.storeId.eq(storeId),
+                                        reviewSub.member.memberId.eq(review.member.memberId))
+                                .groupBy(reviewSub.member.memberId))
+                .from(review)
+                .leftJoin(review.member).fetchJoin()
+                .leftJoin(memberImage).on(memberImage.member.eq(review.member))
+                .where(review.store.storeId.eq(storeId))
+                .orderBy(review.reviewId.desc())
+                .limit(limit)
+                .fetch();
+
+        return results.stream().map(t -> t.toArray()).collect(Collectors.toList());
+    }
+
+    /**
      * 전체 리뷰 리스트 조회
      */
     @Override
