@@ -21,6 +21,8 @@ public interface ReviewService {
 
     ReviewListResDto<List<MyReviewResDto>> getMyReviewList(Long principalId);
 
+    ReviewListResDto<List<ReviewResDto>> getCustomLimitReviewListOfStore(int limit, Long storeId);
+
     DetailReviewScoreResDto getDetailReviewScore(Long storeId);
 
     AdminReviewListDto getReviewListOfAdmin(PageRequestDto pageRequestDto);

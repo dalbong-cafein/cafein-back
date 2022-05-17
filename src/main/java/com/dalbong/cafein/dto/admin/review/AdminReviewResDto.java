@@ -40,6 +40,8 @@ public class AdminReviewResDto {
         this.reviewId = review.getReviewId();
         this.writerId = review.getMember().getMemberId();
         this.nicknameOfWriter = review.getMember().getNickname();
+        this.storeId = review.getStore().getStoreId();
+        this.storeName = review.getStore().getStoreName();
         this.content = review.getContent();
         this.reviewImageDto = reviewImageDto;
         this.regDateTime = review.getRegDateTime();

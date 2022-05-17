@@ -15,6 +15,11 @@ public interface ReviewRepositoryQuerydsl {
     Page<Object[]> getReviewListOfStore(Long storeId, Boolean isOnlyImage, Pageable pageable);
 
     /**
+     * 가게별 리뷰 리스트 개수 지정 조회
+     */
+    List<Object[]> getCustomLimitReviewList(int limit, Long storeId);
+
+    /**
      * 전체 리뷰 리스트 조회
      */
     Page<Review> getAllReviewList(String[] searchType, String keyword, Pageable pageable);
