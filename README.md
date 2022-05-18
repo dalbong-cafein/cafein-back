@@ -9,6 +9,16 @@
 - 안소영 (frontend - web)
 - 이형우 (backend)
 
+# Branch 전략
+ - master : 최상위 브랜치로 product로 release하는 소스가 저장됩니다.
+ - release : QA를 위해 develop 브랜치에서 release 브랜치를 생성합니다. 완료되면 master브랜치로 merge합니다.
+ - develop : release할 준비가 된 준비가 된 브랜치입니다. 개발된 모든 feature는 develop에 merge됩니다.
+ - feature : 개별 기능의 구현과 버그를 해결할때 사용하는 브랜치입니다. master branch에는 직접 접근이 불가합니다.
+ 
+ <br/>
+ 
+ ![image](https://user-images.githubusercontent.com/69441691/152711253-348c902b-2058-4b5b-93cf-59eb8d92823f.png)
+
 # 👨‍💻 Tech Stack
 back 
 - Springboot
