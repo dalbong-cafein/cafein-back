@@ -4,6 +4,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
+
+import static com.dalbong.cafein.domain.sticker.QCongestionSticker.congestionSticker;
 import static com.dalbong.cafein.domain.sticker.QSticker.sticker;
 
 public class StickerRepositoryImpl implements StickerRepositoryQuerydsl{
@@ -22,10 +24,9 @@ public class StickerRepositoryImpl implements StickerRepositoryQuerydsl{
     public boolean existWithinTimeOfCongestionType(Long principalId) {
 
         Integer fetchOne = queryFactory.selectOne()
-                .from(sticker)
-                .where(sticker.member.memberId.eq(principalId),
-                        sticker.stickerType.eq(StickerType.CONGESTION),
-                        sticker.regDateTime.between(LocalDateTime.now().minusHours(3),LocalDateTime.now()))
+                .from(congestionSticker)
+                .where(congestionSticker.member.memberId.eq(principalId),
+                        congestionSticker.regDateTime.between(LocalDateTime.now().minusHours(3),LocalDateTime.now()))
                 .fetchFirst();//limit 1
 
         return fetchOne != null;

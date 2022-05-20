@@ -57,6 +57,8 @@ public class StickerServiceImpl implements StickerService{
         //혼잡도 스티커일 경우 시간 체크 - 3시간 이내 스티커 발급 체크
         boolean isExist = stickerRepository.existWithinTimeOfCongestionType(principalId);
 
+
+        //TODO 예외 처리시 혼잡도 데이터 추가 x
         if(isExist){
             throw new CustomException("동일한 카페의 3시간 이내 혼잡도 등록은 스티커 발급할 수 없습니다.");
         }
