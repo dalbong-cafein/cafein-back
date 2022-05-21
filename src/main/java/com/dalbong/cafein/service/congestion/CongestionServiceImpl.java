@@ -8,6 +8,7 @@ import com.dalbong.cafein.dto.congestion.CongestionListResDto;
 import com.dalbong.cafein.dto.congestion.CongestionRegDto;
 import com.dalbong.cafein.dto.congestion.CongestionResDto;
 import com.dalbong.cafein.handler.exception.CustomException;
+import com.dalbong.cafein.service.sticker.StickerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ public class CongestionServiceImpl implements CongestionService{
 
     private final CongestionRepository congestionRepository;
     private final StoreRepository storeRepository;
+    private final StickerService stickerService;
 
     /**
      * 혼잡도 등록
@@ -35,8 +37,6 @@ public class CongestionServiceImpl implements CongestionService{
 
         Congestion congestion = congestionRegDto.toEntity(store, principalId);
         congestionRepository.save(congestion);
-
-        //TODO 스탬프 증정
 
         return congestion;
     }
