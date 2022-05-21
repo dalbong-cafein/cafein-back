@@ -29,9 +29,9 @@ public class Coupon extends BaseEntity {
     @Column(nullable = false)
     private String itemName;
 
-    private boolean status;
-
     @Column(nullable = false)
+    private Boolean status;
+
     private LocalDateTime processingDateTime;
 
     public void issue(){
@@ -40,6 +40,7 @@ public class Coupon extends BaseEntity {
         }
 
         this.status = true;
+        this.processingDateTime = LocalDateTime.now();
     }
 
 }

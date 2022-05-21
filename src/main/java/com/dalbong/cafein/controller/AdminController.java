@@ -2,11 +2,13 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.admin.coupon.AdminCouponListDto;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
+import com.dalbong.cafein.service.coupon.CouponService;
 import com.dalbong.cafein.service.review.ReviewService;
 import com.dalbong.cafein.service.store.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ public class AdminController {
 
     private final ReviewService reviewService;
     private final StoreService storeService;
+    private final CouponService couponService;
 
     /**
      * 관리자단 리뷰 리스트 조회
@@ -70,5 +73,16 @@ public class AdminController {
         AdminStoreListDto adminStoreListDto = storeService.getStoreListOfAdmin(requestDto);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 카페 리스트 조회 성공", adminStoreListDto), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 쿠폰 리스트 조회
+     */
+    @GetMapping("/coupons")
+    public ResponseEntity<?> getAllCouponList(PageRequestDto requestDto){
+
+        AdminCouponListDto adminCouponListDto = couponService.getCouponListOfAdmin(requestDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 쿠폰 리스트 조회 성공", adminCouponListDto), HttpStatus.OK);
     }
 }

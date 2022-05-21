@@ -29,7 +29,6 @@ public class CouponRegDto {
                 .brandName(this.brandName)
                 .itemName(this.itemName)
                 .status(false)
-                .processingDateTime(LocalDateTime.now())
                 .build();
     }
 }
