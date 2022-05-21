@@ -64,6 +64,19 @@ public class StoreServiceImpl implements StoreService{
     }
 
     /**
+     * 카페 수정
+     */
+    @Transactional
+    @Override
+    public void modify(StoreUpdateDto storeUpdateDto) {
+
+        Store store = storeRepository.findById(storeUpdateDto.getStoreId()).orElseThrow(() ->
+                new CustomException("존재하지 않는 카페입니다."));
+
+
+    }
+
+    /**
      * 앱단 카페 리스트 조회
      */
     @Transactional(readOnly = true)
