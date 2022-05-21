@@ -2,6 +2,7 @@ package com.dalbong.cafein.domain.coupon;
 
 import com.dalbong.cafein.domain.BaseEntity;
 import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.handler.exception.CustomException;
 import lombok.*;
 
 import javax.persistence.*;
@@ -33,5 +34,12 @@ public class Coupon extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime processingDateTime;
 
+    public void issue(){
+        if (this.status) {
+            throw new CustomException("이미 발급된 쿠폰입니다.");
+        }
+
+        this.status = true;
+    }
 
 }

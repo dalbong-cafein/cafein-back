@@ -5,5 +5,7 @@ import com.dalbong.cafein.dto.coupon.CouponRegDto;
 
 public interface CouponService {
 
-    Coupon issue(CouponRegDto couponRegDto, Long principalId);
+    Coupon requestCoupon(CouponRegDto couponRegDto, Long principalId);
+
+    void issue(Long couponId);
 }

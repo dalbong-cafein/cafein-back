@@ -17,15 +17,27 @@ public class CouponController {
     private final CouponService couponService;
 
     /**
-     * 쿠폰 발급
+     * 쿠폰 발급 신청
      */
     @PostMapping("/coupons")
-    public ResponseEntity<?> issue(@RequestBody CouponRegDto couponRegDto,
+    public ResponseEntity<?> requestCoupon(@RequestBody CouponRegDto couponRegDto,
                                    @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        couponService.issue(couponRegDto, principalDetails.getMember().getMemberId());
+        couponService.requestCoupon(couponRegDto, principalDetails.getMember().getMemberId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "쿠폰 발급 성공", null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CMRespDto<>(1, "쿠폰 발급 신청 성공", null), HttpStatus.CREATED);
     }
+
+    /**
+     * 쿠폰 상태 변경
+     */
+    @PatchMapping("/coupons/{couponId}")
+    public ResponseEntity<?> issue(@PathVariable("couponId") Long couponId){
+
+        couponService.issue(couponId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "쿠폰 상태 변경 성공", null), HttpStatus.OK);
+    }
+
 
 }
