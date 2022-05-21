@@ -38,9 +38,6 @@ public class CongestionServiceImpl implements CongestionService{
         Congestion congestion = congestionRegDto.toEntity(store, principalId);
         congestionRepository.save(congestion);
 
-        //스티커 발급
-        stickerService.issueCongestionSticker(congestion, principalId);
-
         return congestion;
     }
 

@@ -4,10 +4,12 @@ import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
 
+@NoArgsConstructor
 @Getter
 @ToString(exclude = {"congestion"})
 @DiscriminatorValue("congestion")

@@ -29,9 +29,12 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public Sticker issueStoreSticker(Store store, Long principalId) {
 
+        Member member = memberRepository.findById(principalId).orElseThrow(() ->
+                new CustomException("존재하는 않는 회원입니다."));
 
+        StoreSticker storeSticker = new StoreSticker(store, member);
 
-        return null;
+        return storeStickerRepository.save(storeSticker);
     }
 
     /**
@@ -41,9 +44,12 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public Sticker issueReviewSticker(Review review, Long principalId) {
 
+        Member member = memberRepository.findById(principalId).orElseThrow(() ->
+                new CustomException("존재하는 않는 회원입니다."));
 
+        ReviewSticker reviewSticker = new ReviewSticker(review, member);
 
-        return null;
+        return reviewStickerRepository.save(reviewSticker);
     }
 
 
@@ -55,10 +61,8 @@ public class StickerServiceImpl implements StickerService{
     public Sticker issueCongestionSticker(Congestion congestion, Long principalId) {
 
         //혼잡도 스티커일 경우 시간 체크 - 3시간 이내 스티커 발급 체크
-        boolean isExist = stickerRepository.existWithinTimeOfCongestionType(principalId);
+        boolean isExist = stickerRepository.existWithinTimeOfCongestionType(congestion, principalId);
 
-
-        //TODO 예외 처리시 혼잡도 데이터 추가 x
         if(isExist){
             throw new CustomException("동일한 카페의 3시간 이내 혼잡도 등록은 스티커 발급할 수 없습니다.");
         }
