@@ -1,7 +1,5 @@
 package com.dalbong.cafein.domain.congestion;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -12,10 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
-import static com.dalbong.cafein.domain.review.QReview.review;
 import static org.aspectj.util.LangUtil.isEmpty;
 
-public class CongestionRepositoryImpl implements CongestionQuerydsl{
+public class CongestionRepositoryImpl implements CongestionRepositoryQuerydsl {
 
     private final JPAQueryFactory queryFactory;
 
