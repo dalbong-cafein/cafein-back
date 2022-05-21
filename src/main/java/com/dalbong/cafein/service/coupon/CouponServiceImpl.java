@@ -31,7 +31,7 @@ public class CouponServiceImpl implements CouponService{
 
 
     /**
-     * 쿠폰 발급
+     * 쿠폰 발급 신청
      */
     @Transactional
     @Override
