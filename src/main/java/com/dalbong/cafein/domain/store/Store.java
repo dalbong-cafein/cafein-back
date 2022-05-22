@@ -73,8 +73,29 @@ public class Store extends BaseEntity {
     @OneToMany(mappedBy = "store",fetch = FetchType.LAZY)
     private List<StoreImage> storeImageList = new ArrayList<>();
 
+    public void changeStoreName(String storeName){
+        this.storeName = storeName;
+    }
+
+    public void changeAddress(Address address){
+        this.address = address;
+    }
+
     public void changePhone(String phone){
         this.phone = phone;
+    }
+
+    public void changeWebsite(String website){
+        this.website = website;
+    }
+
+    public void changeWifiPassword(String wifiPassword){
+        this.wifiPassword =wifiPassword;
+    }
+
+    public void changeKatechXY(int katechX, int katechY){
+        this.katechX = katechX;
+        this.katechY = katechY;
     }
 
     public void changeLatAndLng(Double lngX, Double latY){

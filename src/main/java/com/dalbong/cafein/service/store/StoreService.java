@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface StoreService {
 
-    Store register(StoreRegDto storeRegDto, Long principal) throws IOException;
+    Store register(StoreRegDto storeRegDto, Long principalId) throws IOException;
 
-    void modify(StoreUpdateDto storeUpdateDto);
+    void modify(StoreUpdateDto storeUpdateDto, Long principalId) throws IOException;
 
     List<StoreResDto> getStoreList(String keyword);
 

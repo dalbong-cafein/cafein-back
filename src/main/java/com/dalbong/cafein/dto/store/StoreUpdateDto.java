@@ -1,5 +1,9 @@
 package com.dalbong.cafein.dto.store;
 
+import com.dalbong.cafein.domain.address.Address;
+import com.dalbong.cafein.domain.businessHours.BusinessHours;
+import com.dalbong.cafein.domain.businessHours.Day;
+import com.dalbong.cafein.dto.businessHours.BusinessHoursUpdateDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -75,5 +79,37 @@ public class StoreUpdateDto {
     private LocalTime sunClosed;
 
     private String etcTime;
+
+    public Address getAddress(){
+        return new Address(siNm, sggNm, rNm, rNum, detail);
+    }
+
+    public BusinessHours toBusinessHoursEntity(){
+
+        return BusinessHours.builder()
+                .onMon(new Day(monOpen, monClosed))
+                .onTue(new Day(tueOpen, tueClosed))
+                .onWed(new Day(wedOpen, wedClosed))
+                .onThu(new Day(thuOpen, thuClosed))
+                .onFri(new Day(friOpen, friClosed))
+                .onSat(new Day(satOpen, satClosed))
+                .onSun(new Day(sunOpen, sunClosed))
+                .etcTime(etcTime)
+                .build();
+    }
+
+    public BusinessHoursUpdateDto toBusinessHoursUpdateDto(){
+
+        return BusinessHoursUpdateDto.builder()
+                .onMon(new Day(monOpen, monClosed))
+                .onTue(new Day(tueOpen, tueClosed))
+                .onWed(new Day(wedOpen, wedClosed))
+                .onThu(new Day(thuOpen, thuClosed))
+                .onFri(new Day(friOpen, friClosed))
+                .onSat(new Day(satOpen, satClosed))
+                .onSun(new Day(sunOpen, sunClosed))
+                .etcTime(etcTime)
+                .build();
+    }
 
 }
