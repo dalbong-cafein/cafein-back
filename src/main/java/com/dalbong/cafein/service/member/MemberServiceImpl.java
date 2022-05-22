@@ -101,7 +101,7 @@ public class MemberServiceImpl implements MemberService{
 
 
         //프로필 이미지 갱신
-        if (memberUpdateDto.getImageFile() != null){
+        if (memberUpdateDto.getImageFile() != null && !memberUpdateDto.getImageFile().isEmpty()){
 
             //기존 프로필 이미지 삭제
             imageService.remove(memberUpdateDto.getDeleteImageId());
