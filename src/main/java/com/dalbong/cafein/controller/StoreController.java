@@ -71,7 +71,7 @@ public class StoreController {
     }
 
     /**
-     * 가게 등록
+     * 카페 등록
      */
     @PostMapping("/stores")
     public ResponseEntity<?> register(@Validated StoreRegDto storeRegDto, BindingResult bindingResult,
@@ -79,9 +79,21 @@ public class StoreController {
 
         storeService.register(storeRegDto,principalDetails.getMember().getMemberId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1,"가게 등록 성공",null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CMRespDto<>(1,"카페 등록 성공",null), HttpStatus.CREATED);
     }
 
+    /**
+     * 카페 수정
+     */
+    @PutMapping("/stores/{storeId}")
+    public ResponseEntity<?> modify(@Validated StoreUpdateDto storeUpdateDto, BindingResult bindingResult,
+                                    @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+
+        storeService.modify(storeUpdateDto, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "카페 수정 성공", null), HttpStatus.OK);
+
+    }
 
 
 
