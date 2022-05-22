@@ -60,7 +60,7 @@ public class S3Uploader {
 
         List<String> imageUrlList = new ArrayList<>();
 
-        if (!multipartFiles.isEmpty()){
+        if (!multipartFiles.isEmpty() && !multipartFiles.get(0).isEmpty()){
             for (MultipartFile multipartFile : multipartFiles){
                 imageUrlList.add(s3UploadOfStore(store, multipartFile));
             }
@@ -92,7 +92,7 @@ public class S3Uploader {
 
         List<String> imageUrlList = new ArrayList<>();
 
-        if (!multipartFiles.isEmpty()){
+        if (!multipartFiles.isEmpty() && !multipartFiles.get(0).isEmpty()){
             for (MultipartFile multipartFile : multipartFiles){
                 imageUrlList.add(s3UploadOfReview(review, multipartFile));
             }

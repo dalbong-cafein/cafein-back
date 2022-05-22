@@ -8,11 +8,11 @@ import com.dalbong.cafein.dto.congestion.CongestionListResDto;
 import com.dalbong.cafein.dto.congestion.CongestionRegDto;
 import com.dalbong.cafein.dto.congestion.CongestionResDto;
 import com.dalbong.cafein.handler.exception.CustomException;
+import com.dalbong.cafein.service.sticker.StickerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +23,7 @@ public class CongestionServiceImpl implements CongestionService{
 
     private final CongestionRepository congestionRepository;
     private final StoreRepository storeRepository;
+    private final StickerService stickerService;
 
     /**
      * 혼잡도 등록
@@ -33,17 +34,8 @@ public class CongestionServiceImpl implements CongestionService{
         Store store = storeRepository.findById(congestionRegDto.getStoreId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 가게입니다."));
 
-        //같은 카페의 혼잡도 3시간이내 등록 여부 체크
-        boolean isExist = congestionRepository.existWithinTime(congestionRegDto.getStoreId(), principalId);
-
-        if(isExist){
-            throw new CustomException("혼잡도 등록 3시간안에는 새로운 등록을 할 수 없습니다.");
-        }
-
         Congestion congestion = congestionRegDto.toEntity(store, principalId);
         congestionRepository.save(congestion);
-
-        //TODO 스탬프 증정
 
         return congestion;
     }

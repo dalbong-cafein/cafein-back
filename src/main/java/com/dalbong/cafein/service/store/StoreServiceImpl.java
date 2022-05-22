@@ -4,10 +4,12 @@ import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
 import com.dalbong.cafein.domain.image.MemberImage;
 import com.dalbong.cafein.domain.image.StoreImage;
+import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreResDto;
+import com.dalbong.cafein.dto.businessHours.BusinessHoursUpdateDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
@@ -61,6 +63,54 @@ public class StoreServiceImpl implements StoreService{
         reviewService.register(storeRegDto.toReviewRegDto(store.getStoreId()), principalId);
 
         return store;
+    }
+
+    /**
+     * 카페 수정
+     */
+    @Transactional
+    @Override
+    public void modify(StoreUpdateDto storeUpdateDto, Long principalId) throws IOException {
+
+        Store store = storeRepository.findById(storeUpdateDto.getStoreId()).orElseThrow(() ->
+                new CustomException("존재하지 않는 카페입니다."));
+
+        //카페 데이터 수정
+        store.changeStoreName(storeUpdateDto.getStoreName());
+        store.changeAddress(storeUpdateDto.getAddress());
+        store.changeWebsite(storeUpdateDto.getWebsite());
+        store.changePhone(storeUpdateDto.getPhone());
+        store.changeWifiPassword(storeUpdateDto.getWifiPassword());
+        store.changeKatechXY(storeUpdateDto.getKatechX(), storeUpdateDto.getKatechY());
+
+        //영업시간 수정
+        BusinessHours FindBusinessHours = store.getBusinessHours();
+        BusinessHoursUpdateDto businessHoursUpdateDto = storeUpdateDto.toBusinessHoursUpdateDto();
+
+        //기존 영업시간 데이터가 있는 경우
+        if(FindBusinessHours != null){
+            FindBusinessHours.changeOnMon(businessHoursUpdateDto.getOnMon());
+            FindBusinessHours.changeOnTue(businessHoursUpdateDto.getOnTue());
+            FindBusinessHours.changeOnWed(businessHoursUpdateDto.getOnWed());
+            FindBusinessHours.changeOnThu(businessHoursUpdateDto.getOnThu());
+            FindBusinessHours.changeOnFri(businessHoursUpdateDto.getOnFri());
+            FindBusinessHours.changeOnSat(businessHoursUpdateDto.getOnSat());
+            FindBusinessHours.changeOnSun(businessHoursUpdateDto.getOnSun());
+            FindBusinessHours.changeEtcTime(businessHoursUpdateDto.getEtcTime());
+        }
+        //기존 영업시간 데이터가 없는 경우
+        else{
+            BusinessHours businessHours = storeUpdateDto.toBusinessHoursEntity();
+            businessHoursRepository.save(businessHours);
+            store.changeBusinessHours(businessHours);
+        }
+
+
+        //이미지 추가
+        imageService.saveStoreImage(store, storeUpdateDto.getImageFiles());
+
+        //최신 수정자 변경
+        store.changeModMember(Member.builder().memberId(principalId).build());
     }
 
     /**

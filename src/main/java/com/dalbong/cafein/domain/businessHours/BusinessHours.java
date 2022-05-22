@@ -67,4 +67,34 @@ public class BusinessHours {
     private Day onSun;
 
     private String etcTime;
+
+    public void changeOnMon(Day onMon){
+        this.onMon = onMon;
+    }
+
+    public void changeOnTue(Day onTue){
+        this.onTue = onTue;
+    }
+
+    public void changeOnWed(Day onWed){
+        this.onWed = onWed;
+    }
+    public void changeOnThu(Day onThu){
+        this.onThu = onThu;
+    }
+    public void changeOnFri(Day onFri){
+        this.onFri = onFri;
+    }
+    public void changeOnSat(Day onSat){
+        this.onSat = onSat;
+    }
+
+    public void changeOnSun(Day onSun){
+        this.onSun = onSun;
+    }
+
+    public void changeEtcTime(String etcTime){
+        this.etcTime = etcTime;
+    }
+
 }
