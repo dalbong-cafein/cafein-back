@@ -32,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://dalbong-cafein.github.io/cafein_admin/")
+                .allowedOrigins("https://dalbong-cafein.github.io/cafein_admin/","http://localhost:3000")
                 .allowedMethods("GET", "POST", "DELETE", "PUT")
                 .allowCredentials(true);
 
