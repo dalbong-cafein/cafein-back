@@ -27,7 +27,7 @@ public class SmsServiceImpl implements SmsService{
 
 
     /**
-     * 4자리 인증번호 생성
+     * 6자리 인증번호 생성
      */
     @Transactional
     @Override
@@ -36,7 +36,7 @@ public class SmsServiceImpl implements SmsService{
         //4자리 인증번호 생성
         Random rand  = new Random();
         String certifyNumber = "";
-        for(int i=0; i<4; i++) {
+        for(int i=0; i<6; i++) {
             String ran = Integer.toString(rand.nextInt(10));
             certifyNumber+=ran;
         }
