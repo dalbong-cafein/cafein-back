@@ -252,8 +252,13 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
 
         if(!isEmpty(keyword)){
+            String replaceWord = keyword;
 
-            String replaceWord = keyword.replace("스벅", "스타벅스");
+            if(keyword.contains("투썸 플레이스")){
+                replaceWord = keyword.replace("투썸 플레이스", "투썸");
+            }else if (keyword.contains("스벅")){
+                replaceWord = keyword.replace("스벅", "스타벅스");
+            }
             System.out.println("------");
             System.out.println(replaceWord);
             //키워드에 구 데이터가 있는 체크
