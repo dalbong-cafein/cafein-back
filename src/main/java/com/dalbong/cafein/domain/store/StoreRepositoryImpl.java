@@ -252,27 +252,31 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
 
         if(!isEmpty(keyword)){
+
+            String replaceWord = keyword.replace("스벅", "스타벅스");
+            System.out.println("------");
+            System.out.println(replaceWord);
             //키워드에 구 데이터가 있는 체크
             for(String sgg : sggList){
-                if(keyword.contains(sgg)){
+                if(replaceWord.contains(sgg)){
                     //구 이름이 있으면 띄어쓰기 전까지 문자 삭제
-                    int startIdx = keyword.indexOf(sgg);
-                    int endIdx = keyword.indexOf(" ", startIdx);
+                    int startIdx = replaceWord.indexOf(sgg);
+                    int endIdx = replaceWord.indexOf(" ", startIdx);
 
                     String deleteWord;
                     if(endIdx < 0){
-                        deleteWord = keyword.substring(startIdx);
+                        deleteWord = replaceWord.substring(startIdx);
                     }else {
-                        deleteWord = keyword.substring(startIdx, endIdx);
+                        deleteWord = replaceWord.substring(startIdx, endIdx);
                     }
                     System.out.println("startIdx: " + startIdx + " endIdx: " + endIdx);
 
-                    String result = keyword.replace(deleteWord, "").strip();
+                    String result = replaceWord.replace(deleteWord, "").strip();
 
-                    return !isEmpty(result) ? store.storeName.contains(result) : store.storeName.contains(keyword.replace(sgg, ""));
+                    return !isEmpty(result) ? store.storeName.contains(result) : store.storeName.contains(replaceWord.replace(sgg, ""));
                 }
             }
-            return store.storeName.contains(keyword);
+            return store.storeName.contains(replaceWord);
         }
 
         return null;
