@@ -22,8 +22,8 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_category_id", nullable = false)
     private BoardCategory boardCategory;
 
     @Column(nullable = false)
