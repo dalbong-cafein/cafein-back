@@ -13,6 +13,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -208,9 +209,29 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
     private BooleanBuilder containStoreNameOrAddress(String keyword){
         BooleanBuilder builder = new BooleanBuilder();
-        builder.or(containStoreName(keyword));
+
+        BooleanBuilder storeNameBuilder = new BooleanBuilder();
+        storeNameBuilder.and(containStoreName(keyword));
+        storeNameBuilder.and(sggNmEq(keyword));
+
+        builder.or(storeNameBuilder);
         builder.or(containAddress(keyword));
         return builder;
+    }
+
+    private BooleanExpression sggNmEq(String keyword) {
+
+        if(!isEmpty(keyword)){
+            //키워드에 구 데이터가 있는 체크
+            for(String sgg : sggList){
+                if(keyword.contains(sgg)){
+                    //구에 해당하는 카페 조건 추가
+                    return store.address.sggNm.contains(sgg);
+                }
+            }
+        }
+
+        return null;
     }
 
     private BooleanExpression containStoreId(String keyword) {
@@ -229,7 +250,32 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
     private BooleanExpression containStoreName(String keyword) {
 
-        return !isEmpty(keyword) ? store.storeName.contains(keyword) : null;
+
+        if(!isEmpty(keyword)){
+            //키워드에 구 데이터가 있는 체크
+            for(String sgg : sggList){
+                if(keyword.contains(sgg)){
+                    //구 이름이 있으면 띄어쓰기 전까지 문자 삭제
+                    int startIdx = keyword.indexOf(sgg);
+                    int endIdx = keyword.indexOf(" ", startIdx);
+
+                    String deleteWord;
+                    if(endIdx < 0){
+                        deleteWord = keyword.substring(startIdx);
+                    }else {
+                        deleteWord = keyword.substring(startIdx, endIdx);
+                    }
+                    System.out.println("startIdx: " + startIdx + " endIdx: " + endIdx);
+
+                    String result = keyword.replace(deleteWord, "").strip();
+
+                    return !isEmpty(result) ? store.storeName.contains(result) : store.storeName.contains(keyword.replace(sgg, ""));
+                }
+            }
+            return store.storeName.contains(keyword);
+        }
+
+        return null;
 
     }
 
@@ -238,4 +284,6 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
         return !isEmpty(keyword) ? store.address.fullAddress.contains(keyword) : null;
 
     }
+
+    private final String[] sggList = {"서대문","마포","노원","동대문","종로","강남"};
 }
