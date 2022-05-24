@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.dalbong.cafein.domain.board.Board;
 import com.dalbong.cafein.domain.image.Image;
 import com.dalbong.cafein.domain.image.ImageRepository;
 import com.dalbong.cafein.domain.member.Member;
@@ -48,13 +49,13 @@ public class S3Uploader {
 
         //파일 이름
         String frontName = member.getMemberId().toString();
-        String storeFileName = createStoreFileName(frontName, multipartFile.getOriginalFilename());
+        String storeFileName = createFileName(frontName, multipartFile.getOriginalFilename());
 
         return s3Upload(folderPath, storeFileName, multipartFile);
     }
 
     /**
-     * 가게 S3 다중업로드
+     * 가게 이미지 S3 다중업로드
      */
     public List<String> s3MultipleUploadOfStore(Store store, List<MultipartFile> multipartFiles) throws IOException {
 
@@ -80,13 +81,13 @@ public class S3Uploader {
 
         //파일 이름
         String frontName = store.getStoreId().toString();
-        String storeFileName = createStoreFileName(frontName, multipartFile.getOriginalFilename());
+        String storeFileName = createFileName(frontName, multipartFile.getOriginalFilename());
 
         return s3Upload(folderPath, storeFileName, multipartFile);
     }
 
     /**
-     * 리뷰 S3 다중업로드
+     * 리뷰 이미지 S3 다중업로드
      */
     public List<String> s3MultipleUploadOfReview(Review review, List<MultipartFile> multipartFiles) throws IOException {
 
@@ -111,10 +112,43 @@ public class S3Uploader {
 
         //파일 이름
         String frontName = review.getMember().getMemberId().toString() + review.getStore().getStoreId().toString();
-        String storeFileName = createStoreFileName(frontName, multipartFile.getOriginalFilename());
+        String reviewFileName = createFileName(frontName, multipartFile.getOriginalFilename());
 
-        return s3Upload(folderPath, storeFileName, multipartFile);
+        return s3Upload(folderPath, reviewFileName, multipartFile);
     }
+
+    /**
+     * 게시글 이미지 S3 다중업로드
+     */
+    public List<String> s3MultipleUploadOfBoard(Board board, List<MultipartFile> multipartFiles) throws IOException {
+
+        List<String> imageUrlList = new ArrayList<>();
+
+        if (!multipartFiles.isEmpty() && !multipartFiles.get(0).isEmpty()){
+            for (MultipartFile multipartFile : multipartFiles){
+                imageUrlList.add(s3UploadOfBoard(board, multipartFile));
+            }
+        }
+
+        return imageUrlList;
+    }
+
+    /**
+     * 게시글 이미지 S3 업로드
+     */
+    public String s3UploadOfBoard(Board board, MultipartFile multipartFile) throws IOException {
+
+
+        //폴더 경로
+        String folderPath = createFolderPathOfBoard();
+
+        //파일 이름
+        String frontName = board.getBoardId().toString();
+        String boardFileName = createFileName(frontName, multipartFile.getOriginalFilename());
+
+        return s3Upload(folderPath, boardFileName, multipartFile);
+    }
+
 
     /**
      * S3 업로드
@@ -198,7 +232,11 @@ public class S3Uploader {
         return "review/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
     }
 
-    private String createStoreFileName(String frontName, String originalFileName) {
+    private String createFolderPathOfBoard() {
+        return "board/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+    }
+
+    private String createFileName(String frontName, String originalFileName) {
 
         String uuid = UUID.randomUUID().toString();
 

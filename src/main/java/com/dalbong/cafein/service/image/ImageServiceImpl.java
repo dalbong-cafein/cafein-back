@@ -1,5 +1,6 @@
 package com.dalbong.cafein.service.image;
 
+import com.dalbong.cafein.domain.board.Board;
 import com.dalbong.cafein.domain.image.*;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
@@ -22,6 +23,7 @@ public class ImageServiceImpl implements ImageService{
     private final MemberImageRepository memberImageRepository;
     private final StoreImageRepository storeImageRepository;
     private final ReviewImageRepository reviewImageRepository;
+    private final BoardImageRepository boardImageRepository;
     private final ImageRepository imageRepository;
     private final S3Uploader s3Uploader;
 
@@ -82,6 +84,28 @@ public class ImageServiceImpl implements ImageService{
                 ReviewImage reviewImage =
                         reviewImageRepository.save(new ReviewImage(review, imageUrl));
                 imageList.add(reviewImage);
+            }
+        }
+        return imageList;
+    }
+
+    /**
+     * 게시글 이미지 저장
+     */
+    @Transactional
+    @Override
+    public List<BoardImage> saveBoardImage(Board board, List<MultipartFile> imageFiles) throws IOException {
+        //s3업로드
+        List<String> imageUrlList = s3Uploader.s3MultipleUploadOfBoard(board, imageFiles);
+
+        List<BoardImage> imageList = new ArrayList<>();
+
+        //ReviewImage 저장
+        if(!imageUrlList.isEmpty()){
+            for(String imageUrl : imageUrlList){
+                BoardImage boardImage =
+                        boardImageRepository.save(new BoardImage(board, imageUrl));
+                imageList.add(boardImage);
             }
         }
         return imageList;

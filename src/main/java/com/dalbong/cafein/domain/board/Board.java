@@ -2,10 +2,14 @@ package com.dalbong.cafein.domain.board;
 
 import com.dalbong.cafein.domain.BaseEntity;
 import com.dalbong.cafein.domain.boardCategory.BoardCategory;
+import com.dalbong.cafein.domain.image.BoardImage;
+import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -32,5 +36,9 @@ public class Board extends BaseEntity {
     @Builder.Default
     @Column(nullable = false)
     private String content = "";
+
+    @Builder.Default
+    @OneToMany(mappedBy = "board",fetch = FetchType.LAZY)
+    private List<BoardImage> boardImageList = new ArrayList<>();
 
 }

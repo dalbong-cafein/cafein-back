@@ -1,5 +1,7 @@
 package com.dalbong.cafein.service.image;
 
+import com.dalbong.cafein.domain.board.Board;
+import com.dalbong.cafein.domain.image.BoardImage;
 import com.dalbong.cafein.domain.image.Image;
 import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.image.StoreImage;
@@ -18,6 +20,8 @@ public interface ImageService {
     List<StoreImage> saveStoreImage(Store store, List<MultipartFile> imageFiles) throws IOException;
 
     List<ReviewImage> saveReviewImage(Review review, List<MultipartFile> imageFiles) throws IOException;
+
+    List<BoardImage> saveBoardImage(Board board, List<MultipartFile> imageFiles) throws IOException;
 
     void remove(Long imageId);
 }
