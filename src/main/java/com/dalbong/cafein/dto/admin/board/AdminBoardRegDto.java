@@ -1,28 +1,35 @@
-package com.dalbong.cafein.dto.board;
+package com.dalbong.cafein.dto.admin.board;
 
 import com.dalbong.cafein.domain.board.Board;
 import com.dalbong.cafein.domain.boardCategory.BoardCategory;
 import com.dalbong.cafein.domain.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class BoardResDto {
+public class AdminBoardRegDto {
 
+    @NotBlank
     private String title;
 
-    private String content;
+    private String content = "";
 
-    private Long categoryId;
+    private Long boardCategoryId;
+
+    private List<MultipartFile> imageFiles = new ArrayList<>();
 
     public Board toEntity(Long principalId){
         return Board.builder()
                 .member(Member.builder().memberId(principalId).build())
-                .boardCategory(BoardCategory.builder().categoryId(categoryId).build())
+                .boardCategory(BoardCategory.builder().boardCategoryId(this.boardCategoryId).build())
                 .title(title)
                 .content(content)
                 .build();
