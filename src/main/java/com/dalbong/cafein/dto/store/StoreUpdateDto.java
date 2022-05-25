@@ -41,7 +41,11 @@ public class StoreUpdateDto {
 
     private Integer katechY;
 
-    private List<MultipartFile> imageFiles = new ArrayList<>();
+    //이미지 추가
+    private List<MultipartFile> updateImageFiles = new ArrayList<>();
+
+    //이미지 삭제
+    private List<Long> deleteImageIdList = new ArrayList<>();
 
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime monOpen;

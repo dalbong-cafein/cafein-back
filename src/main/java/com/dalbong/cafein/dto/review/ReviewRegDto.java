@@ -42,6 +42,7 @@ public class ReviewRegDto {
     @Length(max = 100)
     private String content;
 
+    @Builder.Default
     private List<MultipartFile> imageFiles = new ArrayList<>();
 
     //TODO member 엔티티와 양방향 연관관계

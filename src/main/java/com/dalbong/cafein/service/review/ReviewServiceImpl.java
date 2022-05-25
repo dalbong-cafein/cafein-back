@@ -85,7 +85,7 @@ public class ReviewServiceImpl implements ReviewService{
 
 
         //리뷰 이미지 갱신
-        updateReviewImage(review, reviewUpdateDto.getImageFiles(), reviewUpdateDto.getDeleteImageIdList());
+        updateReviewImage(review, reviewUpdateDto.getUpdateImageFiles(), reviewUpdateDto.getDeleteImageIdList());
 
 
     }
