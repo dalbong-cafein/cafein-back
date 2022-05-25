@@ -67,7 +67,6 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                                 subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
                 .where(containStoreNameOrAddress(keyword))
                 .groupBy(store.storeId)
                 .fetch();
@@ -91,7 +90,6 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                                 subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
                 .join(heart).on(heart.store.storeId.eq(store.storeId))
                 .where(heart.member.memberId.eq(principalId))
                 .groupBy(store.storeId)
