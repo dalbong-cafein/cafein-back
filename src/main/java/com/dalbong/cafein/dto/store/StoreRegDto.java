@@ -136,7 +136,7 @@ public class StoreRegDto {
                 .storeId(storeId)
                 .recommendation(recommendation)
                 .socket(socket).wifi(wifi).restroom(restroom).tableSize(tableSize)
-                .imageFiles(imageFiles)
+           //     .imageFiles(imageFiles)
                 .build();
 
     }

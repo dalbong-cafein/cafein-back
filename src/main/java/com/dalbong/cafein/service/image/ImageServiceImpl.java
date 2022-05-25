@@ -43,7 +43,7 @@ public class ImageServiceImpl implements ImageService{
     }
 
     /**
-     * 가게 이미지 저장
+     * 카페 이미지 저장
      */
     @Transactional
     @Override

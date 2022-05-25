@@ -5,6 +5,7 @@ import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
 import com.dalbong.cafein.domain.image.MemberImage;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -107,10 +109,23 @@ public class StoreServiceImpl implements StoreService{
 
 
         //이미지 추가
-        imageService.saveStoreImage(store, storeUpdateDto.getImageFiles());
+        updateStoreImage(store, storeUpdateDto.getUpdateImageFiles(), storeUpdateDto.getDeleteImageIdList());
 
         //최신 수정자 변경
         store.changeModMember(Member.builder().memberId(principalId).build());
+    }
+
+    private void updateStoreImage(Store store, List<MultipartFile> updateImageFiles, List<Long> deleteImageIdList) throws IOException {
+
+        //이미지 추가
+        imageService.saveStoreImage(store, updateImageFiles);
+
+        //이미지 삭제
+        if (deleteImageIdList != null && !deleteImageIdList.isEmpty()){
+            for (Long imageId : deleteImageIdList){
+                imageService.remove(imageId);
+            }
+        }
     }
 
     /**
