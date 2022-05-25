@@ -183,7 +183,7 @@ public class S3Uploader {
 
             System.out.println("imageUrl: " + imageUrl);
             System.out.println("storeKey: "+ storeKey);
-      
+
             amazonS3.deleteObject(new DeleteObjectRequest(bucket, storeKey));
 
         }catch(Exception e) {

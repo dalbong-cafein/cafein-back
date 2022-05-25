@@ -99,4 +99,15 @@ public class AdminController {
 
         return new ResponseEntity<>(new CMRespDto<>(1, "게시글 등록 성공", null), HttpStatus.CREATED);
     }
+
+    /**
+     * 관리자단 게시글 삭제
+     */
+    @DeleteMapping("/boards/{boardId}")
+    public ResponseEntity<?> remove(@PathVariable("boardId") Long boardId){
+
+        boardService.remove(boardId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "게시글 삭제 성공",null), HttpStatus.OK);
+    }
 }

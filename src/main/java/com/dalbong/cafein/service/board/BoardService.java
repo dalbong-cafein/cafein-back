@@ -8,4 +8,6 @@ import java.io.IOException;
 public interface BoardService {
 
     Board register(AdminBoardRegDto adminBoardRegDto, Long principalId) throws IOException;
+
+    void remove(Long boardId);
 }
