@@ -41,6 +41,9 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private LocalDate birth;
 
+    @Enumerated(EnumType.STRING)
+    private GenderType genderType;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AuthProvider mainAuthProvider;
@@ -78,6 +81,10 @@ public class Member extends BaseEntity {
 
     public void changeBirth(LocalDate birth){
         this.birth = birth;
+    }
+
+    public void changeGender(GenderType genderType){
+        this.genderType = genderType;
     }
 
 

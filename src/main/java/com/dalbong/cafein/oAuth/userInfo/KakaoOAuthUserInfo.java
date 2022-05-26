@@ -1,10 +1,12 @@
 package com.dalbong.cafein.oAuth.userInfo;
 
+import com.dalbong.cafein.domain.member.GenderType;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,6 +52,20 @@ public class KakaoOAuthUserInfo extends OAuthUserInfo {
             birthday = "0231";
         }
         return LocalDate.parse("9999"+birthday, DateTimeFormatter.ofPattern("yyyyMMdd"));
+    }
+
+    @Override
+    public Optional<GenderType> getGender() {
+
+        boolean hasGender = (boolean) kakaoAccount.get("has_gender");
+        String result = (String) kakaoAccount.get("gender");
+
+        GenderType gender = null;
+        if(hasGender && result != null){
+            gender = GenderType.valueOf(result.toUpperCase(Locale.ROOT));
+        }
+
+        return Optional.ofNullable(gender);
     }
 
     @Override
