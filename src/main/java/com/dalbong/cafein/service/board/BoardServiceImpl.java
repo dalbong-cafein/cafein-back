@@ -11,6 +11,8 @@ import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
+import com.dalbong.cafein.dto.board.BoardListResDto;
+import com.dalbong.cafein.dto.board.BoardResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
@@ -24,8 +26,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Transactional
 @RequiredArgsConstructor
@@ -72,6 +76,30 @@ public class BoardServiceImpl implements BoardService{
 
         //게시글 삭제
         boardRepository.deleteById(boardId);
+    }
+
+    /**
+     * 게시글 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<BoardResDto> getBoardList(Long boardCategoryId) {
+
+        List<Board> results = boardRepository.getBoardList(boardCategoryId);
+
+        return results.stream().map(board -> {
+
+            //게시글 이미지
+            List<ImageDto> boardImageDtoList = new ArrayList<>();
+
+            if (board.getBoardImageList() != null && !board.getBoardImageList().isEmpty()) {
+
+                for (BoardImage boardImage : board.getBoardImageList()) {
+                    boardImageDtoList.add(new ImageDto(boardImage.getImageId(), boardImage.getImageUrl()));
+                }
+            }
+            return new BoardResDto(board, boardImageDtoList);
+        }).collect(Collectors.toList());
     }
 
     /**
