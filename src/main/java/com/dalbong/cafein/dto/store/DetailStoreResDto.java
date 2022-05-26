@@ -37,9 +37,9 @@ public class DetailStoreResDto {
 
     private BusinessHours businessHours;
 
-    private int katechX;
+    private double lngX;
 
-    private int katectY;
+    private double latY;
 
     private List<ImageDto> storeImageDtoList;
 
@@ -55,8 +55,8 @@ public class DetailStoreResDto {
         this.isHeart = store.getHeartList().stream().anyMatch(h -> h.getMember().getMemberId().equals(principalId) ? true : false);
         this.isOpen = store.checkIsOpen();
         this.businessHours = store.getBusinessHours();
-        this.katechX = store.getKatechX();
-        this.katectY = store.getKatechY();
+        this.lngX = store.getLngX();
+        this.latY = store.getLatY();
         this.storeImageDtoList = storeImageDtoList;
 
     }

@@ -83,7 +83,7 @@ public class StoreServiceImpl implements StoreService{
         store.changeWebsite(storeUpdateDto.getWebsite());
         store.changePhone(storeUpdateDto.getPhone());
         store.changeWifiPassword(storeUpdateDto.getWifiPassword());
-        store.changeKatechXY(storeUpdateDto.getKatechX(), storeUpdateDto.getKatechY());
+        store.changeLatAndLng(storeUpdateDto.getLngX(), storeUpdateDto.getLatY());
 
         //영업시간 수정
         BusinessHours FindBusinessHours = store.getBusinessHours();
