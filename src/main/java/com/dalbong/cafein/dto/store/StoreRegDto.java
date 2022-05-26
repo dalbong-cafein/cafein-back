@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,9 +43,11 @@ public class StoreRegDto {
 
     private String website;
 
-    private Integer katechX;
+    @NotNull
+    private Double lngX;
 
-    private Integer katechY;
+    @NotNull
+    private Double latY;
 
     private List<MultipartFile> imageFiles = new ArrayList<>();
 
@@ -109,7 +112,7 @@ public class StoreRegDto {
                 .modMember(Member.builder().memberId(principalId).build())
                 .storeName(storeName)
                 .address(address)
-                .katechX(katechX).katechY(katechY)
+                .lngX(lngX).latY(latY)
                 .phone(phone)
                 .wifiPassword(wifiPassword)
                 .website(website)

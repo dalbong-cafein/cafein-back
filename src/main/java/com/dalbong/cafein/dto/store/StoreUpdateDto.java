@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +38,11 @@ public class StoreUpdateDto {
 
     private String website;
 
-    private Integer katechX;
+    @NotNull
+    private Double lngX;
 
-    private Integer katechY;
+    @NotNull
+    private Double latY;
 
     //이미지 추가
     private List<MultipartFile> updateImageFiles = new ArrayList<>();
