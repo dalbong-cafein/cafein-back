@@ -5,6 +5,7 @@ import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
 import com.dalbong.cafein.domain.image.MemberImage;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,7 +83,7 @@ public class StoreServiceImpl implements StoreService{
         store.changeWebsite(storeUpdateDto.getWebsite());
         store.changePhone(storeUpdateDto.getPhone());
         store.changeWifiPassword(storeUpdateDto.getWifiPassword());
-        store.changeKatechXY(storeUpdateDto.getKatechX(), storeUpdateDto.getKatechY());
+        store.changeLatAndLng(storeUpdateDto.getLngX(), storeUpdateDto.getLatY());
 
         //영업시간 수정
         BusinessHours FindBusinessHours = store.getBusinessHours();
@@ -107,10 +109,23 @@ public class StoreServiceImpl implements StoreService{
 
 
         //이미지 추가
-        imageService.saveStoreImage(store, storeUpdateDto.getImageFiles());
+        updateStoreImage(store, storeUpdateDto.getUpdateImageFiles(), storeUpdateDto.getDeleteImageIdList());
 
         //최신 수정자 변경
         store.changeModMember(Member.builder().memberId(principalId).build());
+    }
+
+    private void updateStoreImage(Store store, List<MultipartFile> updateImageFiles, List<Long> deleteImageIdList) throws IOException {
+
+        //이미지 추가
+        imageService.saveStoreImage(store, updateImageFiles);
+
+        //이미지 삭제
+        if (deleteImageIdList != null && !deleteImageIdList.isEmpty()){
+            for (Long imageId : deleteImageIdList){
+                imageService.remove(imageId);
+            }
+        }
     }
 
     /**
@@ -196,6 +211,31 @@ public class StoreServiceImpl implements StoreService{
                 imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
             }
 
+            return new MyRegisterStoreResDto(store, imageDto, principalId);
+        }).collect(Collectors.toList());
+
+        return new StoreListResDto<>(results.size(), myRegisterStoreResDtoList);
+    }
+
+    /**
+     * 앱단 본인이 등록한 가게 리스트 개수지정 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public StoreListResDto<List<MyRegisterStoreResDto>> getCustomLimitMyRegisterStoreList(int limit, Long principalId) {
+
+        List<Store> results = storeRepository.getCustomLimitReviewList(limit, principalId);
+
+        List<MyRegisterStoreResDto> myRegisterStoreResDtoList = results.stream().map(store -> {
+
+            //첫번째 이미지 불러오기
+            ImageDto imageDto = null;
+            if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
+
+                StoreImage storeImage = store.getStoreImageList().get(0);
+
+                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+            }
 
             return new MyRegisterStoreResDto(store, imageDto, principalId);
         }).collect(Collectors.toList());

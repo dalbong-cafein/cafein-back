@@ -67,7 +67,6 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                                 subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
                 .where(containStoreNameOrAddress(keyword))
                 .groupBy(store.storeId)
                 .fetch();
@@ -91,7 +90,6 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                                 subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
                 .join(heart).on(heart.store.storeId.eq(store.storeId))
                 .where(heart.member.memberId.eq(principalId))
                 .groupBy(store.storeId)
@@ -108,6 +106,19 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
         return queryFactory.selectFrom(store)
                 .where(store.regMember.memberId.eq(principalId))
+                .fetch();
+    }
+
+    /**
+     * 엡단 본인이 등록한 가게 리스트 개수 지정 조회
+     */
+    @Override
+    public List<Store> getCustomLimitReviewList(int limit, Long principalId) {
+
+        return queryFactory.selectFrom(store)
+                .where(store.regMember.memberId.eq(principalId))
+                .orderBy(store.storeId.desc())
+                .limit(limit)
                 .fetch();
     }
 

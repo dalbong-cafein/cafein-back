@@ -19,9 +19,9 @@ public class StoreResDto {
 
     private Boolean isOpen;
 
-    private int katechX;
+    private double lngX;
 
-    private int katectY;
+    private double latY;
 
     private long heartCnt;
 
@@ -35,8 +35,8 @@ public class StoreResDto {
         this.storeName = store.getStoreName();
         this.recommendPercent = recommendPercent;
         this.isOpen = isOpen;
-        this.katechX = store.getKatechX();
-        this.katectY = store.getKatechY();
+        this.lngX = store.getLngX();
+        this.latY = store.getLatY();
         this.heartCnt = heartCnt;
         this.congestionScoreAvg = congestionScoreAvg;
         this.storeImageDto = storeImageDto;

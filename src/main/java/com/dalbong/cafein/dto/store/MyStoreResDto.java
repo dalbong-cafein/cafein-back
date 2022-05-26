@@ -19,9 +19,9 @@ public class MyStoreResDto {
 
     private Boolean isOpen;
 
-    private int katechX;
+    private double lngX;
 
-    private int katectY;
+    private double latY;
 
     private Double congestionScoreAvg;
 
@@ -32,8 +32,8 @@ public class MyStoreResDto {
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
         this.isOpen = isOpen;
-        this.katechX = store.getKatechX();
-        this.katectY = store.getKatechY();
+        this.lngX = store.getLngX();
+        this.latY = store.getLatY();
         this.congestionScoreAvg = congestionScoreAvg;
         this.storeImageDto = storeImageDto;
     }

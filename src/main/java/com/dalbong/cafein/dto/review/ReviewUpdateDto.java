@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -33,10 +34,10 @@ public class ReviewUpdateDto {
     private String content;
 
     //이미지 추가
-    private List<MultipartFile> imageFiles;
+    private List<MultipartFile> updateImageFiles = new ArrayList<>();
 
     //이미지 삭제
-    private List<Long> deleteImageIdList;
+    private List<Long> deleteImageIdList = new ArrayList<>();
 
     public DetailEvaluation getDetailEvaluation(){
         return new DetailEvaluation(this.socket, this.wifi, this.restroom, this.tableSize);
