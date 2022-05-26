@@ -5,15 +5,27 @@ import com.dalbong.cafein.domain.board.BoardRepository;
 import com.dalbong.cafein.domain.image.BoardImage;
 import com.dalbong.cafein.domain.image.BoardImageRepository;
 import com.dalbong.cafein.domain.image.ReviewImage;
+import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.dto.admin.board.AdminBoardListDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
+import com.dalbong.cafein.dto.admin.board.AdminBoardResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
+import com.dalbong.cafein.dto.image.ImageDto;
+import com.dalbong.cafein.dto.page.PageRequestDto;
+import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Function;
 
 @Transactional
 @RequiredArgsConstructor
@@ -60,6 +72,28 @@ public class BoardServiceImpl implements BoardService{
 
         //게시글 삭제
         boardRepository.deleteById(boardId);
+    }
+
+    /**
+     * 관리자단 게시글 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminBoardListDto getBoardListOfAdmin(Long boardCategoryId, PageRequestDto pageRequestDto) {
+
+        Pageable pageable;
+
+        if(pageRequestDto.getSort().equals("ASC")){
+            pageable = pageRequestDto.getPageable(Sort.by("boardId").ascending());
+        }else{
+            pageable = pageRequestDto.getPageable(Sort.by("boardId").descending());
+        }
+
+        Page<Board> results = boardRepository.getBoardList(boardCategoryId, pageRequestDto.getKeyword(), pageable);
+
+        Function<Board, AdminBoardResDto> fn = (AdminBoardResDto::new);
+
+        return new AdminBoardListDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
     }
 
 

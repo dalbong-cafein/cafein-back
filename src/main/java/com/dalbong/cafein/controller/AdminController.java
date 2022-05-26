@@ -2,6 +2,7 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.admin.board.AdminBoardListDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponListDto;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
@@ -109,5 +110,17 @@ public class AdminController {
         boardService.remove(boardId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "게시글 삭제 성공",null), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 게시글 리스트 조회
+     */
+    @GetMapping("/boards")
+    public ResponseEntity<?> getBoardList(@RequestParam(value = "boardCategoryId", defaultValue = "1", required = false) Long boardCategoryId,
+                                             PageRequestDto requestDto){
+
+        AdminBoardListDto adminBoardListDto = boardService.getBoardListOfAdmin(boardCategoryId, requestDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 게시글 리스트 조회 성공", adminBoardListDto), HttpStatus.OK);
     }
 }
