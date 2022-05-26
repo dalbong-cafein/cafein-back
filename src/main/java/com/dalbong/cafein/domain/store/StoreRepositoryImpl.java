@@ -110,6 +110,19 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
     }
 
     /**
+     * 엡단 본인이 등록한 가게 리스트 개수 지정 조회
+     */
+    @Override
+    public List<Store> getCustomLimitReviewList(int limit, Long principalId) {
+
+        return queryFactory.selectFrom(store)
+                .where(store.regMember.memberId.eq(principalId))
+                .orderBy(store.storeId.desc())
+                .limit(limit)
+                .fetch();
+    }
+
+    /**
      * 앱단 카페 상세 페이지 조회
      */
     @Override

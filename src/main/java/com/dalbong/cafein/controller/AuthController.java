@@ -175,7 +175,7 @@ public class AuthController {
         MultiValueMap<String,String> params = new LinkedMultiValueMap<>();
 
         params.add("grant_type", "authorization_code");
-        params.add("client_id", "b9ce32d513f42682e8fe32ad45c4c0fe");
+        params.add("client_id", "30e9f4fa92d2521d41eaf6f419dd5185");
         params.add("redirect_uri", "http://localhost:5000/login/kakao3");
         params.add("code", code);
 

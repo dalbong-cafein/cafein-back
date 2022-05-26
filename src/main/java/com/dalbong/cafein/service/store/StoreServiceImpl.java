@@ -211,6 +211,31 @@ public class StoreServiceImpl implements StoreService{
                 imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
             }
 
+            return new MyRegisterStoreResDto(store, imageDto, principalId);
+        }).collect(Collectors.toList());
+
+        return new StoreListResDto<>(results.size(), myRegisterStoreResDtoList);
+    }
+
+    /**
+     * 앱단 본인이 등록한 가게 리스트 개수지정 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public StoreListResDto<List<MyRegisterStoreResDto>> getCustomLimitMyRegisterStoreList(int limit, Long principalId) {
+
+        List<Store> results = storeRepository.getCustomLimitReviewList(limit, principalId);
+
+        List<MyRegisterStoreResDto> myRegisterStoreResDtoList = results.stream().map(store -> {
+
+            //첫번째 이미지 불러오기
+            ImageDto imageDto = null;
+            if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
+
+                StoreImage storeImage = store.getStoreImageList().get(0);
+
+                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+            }
 
             return new MyRegisterStoreResDto(store, imageDto, principalId);
         }).collect(Collectors.toList());
