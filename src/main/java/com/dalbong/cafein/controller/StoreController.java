@@ -49,13 +49,28 @@ public class StoreController {
      * 앱단 본인이 등록한 가게 리스트 조회
      */
     @GetMapping("/stores/my-registered")
-    public ResponseEntity<?> getRegisteredStoreList(@AuthenticationPrincipal PrincipalDetails principalDetails){
+    public ResponseEntity<?> getMyRegisteredStoreList(@AuthenticationPrincipal PrincipalDetails principalDetails){
 
         StoreListResDto<List<MyRegisterStoreResDto>> storeListResDto =
                 storeService.getMyRegisterStoreList(principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(
                 1, "내가 등록한 가게 리스트 조회 성공", storeListResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 앱단 본인이 등록한 가게 리스트 개수지정 조회
+     */
+    @GetMapping("/stores/my-registered/limit")
+    public ResponseEntity<?> getCustomLimitMyRegisteredStoreList(@RequestParam(value = "limit",defaultValue = "3", required = false) int limit,
+                                                               @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+
+        StoreListResDto<List<MyRegisterStoreResDto>> storeListResDto =
+                storeService.getCustomLimitMyRegisterStoreList(limit, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(
+                1, "내가 등록한 가게 리스트 개수지정 조회 성공", storeListResDto), HttpStatus.OK);
     }
 
     /**
