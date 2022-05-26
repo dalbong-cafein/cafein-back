@@ -228,7 +228,7 @@ class ReviewServiceImplTest {
                 .tableSize(tableSize)
                 .wifi(wifi)
                 .content(content)
-                .imageFiles(imageFiles)
+                .updateImageFiles(imageFiles)
                 .build();
     }
 

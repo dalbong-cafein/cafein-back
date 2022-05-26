@@ -83,8 +83,8 @@ class StoreServiceImplTest {
 
         //storeRegDto 생성
         StoreRegDto storeRegDto = createStoreRegDto("testStoreName", address, "02-000-0000", "test@cafeinofficial.com",
-             imageFiles, 37.13346, 127.165749, businessHours, Recommendation.GOOD,
-                1,3,4,1);
+
+             imageFiles, 37.13346, 127.165749, businessHours, Recommendation.GOOD, 1,3,4,1);
 
         //when
         Store store = storeService.register(storeRegDto, member.getMemberId());
