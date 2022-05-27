@@ -130,8 +130,8 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
         Tuple tuple = queryFactory.select(store, memberImage)
                 .from(store)
-                .leftJoin(store.modMember).fetchJoin()
                 .leftJoin(store.businessHours).fetchJoin()
+                .leftJoin(store.modMember).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.memberId.eq(store.modMember.memberId))
                 .where(store.storeId.eq(storeId))
                 .fetchOne();

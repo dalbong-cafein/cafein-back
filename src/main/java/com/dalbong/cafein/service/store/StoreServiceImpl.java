@@ -3,6 +3,8 @@ package com.dalbong.cafein.service.store;
 import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
 import com.dalbong.cafein.domain.image.MemberImage;
+import com.dalbong.cafein.domain.image.ReviewImage;
+import com.dalbong.cafein.domain.image.ReviewImageRepository;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
@@ -41,6 +43,7 @@ public class StoreServiceImpl implements StoreService{
     private final BusinessHoursRepository businessHoursRepository;
     private final ImageService imageService;
     private final ReviewService reviewService;
+    private final ReviewImageRepository reviewImageRepository;
 
     /**
      * 카페 등록
@@ -277,18 +280,29 @@ public class StoreServiceImpl implements StoreService{
             memberImageDto = new ImageDto(imageId, imageUrl);
         }
 
+
+        //totalImageList (review 이미지 + store 이미지)
+        List<ImageDto> totalImageDtoList = new ArrayList<>();
+
+        //review 이미지 리스트
+        List<ReviewImage> reviewImageList = reviewImageRepository.findByStoreId(storeId);
+        if(!reviewImageList.isEmpty()){
+            for(ReviewImage reviewImage : reviewImageList){
+                totalImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+            }
+        }
+
         //store 이미지 리스트
-        List<ImageDto> storeImageDto = new ArrayList<>();
         if(store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()){
             for (StoreImage storeImage : store.getStoreImageList()){
-                storeImageDto.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                totalImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
             }
         }
 
         //조회수 증가
         store.increaseViewCnt();
 
-        return new DetailStoreResDto(store, memberImageDto, storeImageDto, principalId);
+        return new DetailStoreResDto(store, memberImageDto, totalImageDtoList, principalId);
     }
 
     /**
