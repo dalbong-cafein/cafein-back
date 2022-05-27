@@ -2,14 +2,9 @@ package com.dalbong.cafein.service.coupon;
 
 import com.dalbong.cafein.domain.coupon.Coupon;
 import com.dalbong.cafein.domain.coupon.CouponRepository;
-import com.dalbong.cafein.domain.image.StoreImage;
-import com.dalbong.cafein.domain.store.Store;
-import com.dalbong.cafein.dto.admin.coupon.AdminCouponListDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
-import com.dalbong.cafein.dto.admin.store.AdminStoreResDto;
+import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 import com.dalbong.cafein.dto.coupon.CouponRegDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponResDto;
-import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.handler.exception.CustomException;
@@ -60,7 +55,7 @@ public class CouponServiceImpl implements CouponService{
      */
     @Transactional(readOnly = true)
     @Override
-    public AdminCouponListDto getCouponListOfAdmin(PageRequestDto pageRequestDto) {
+    public AdminCouponListResDto getCouponListOfAdmin(PageRequestDto pageRequestDto) {
 
         Pageable pageable;
 
@@ -74,6 +69,6 @@ public class CouponServiceImpl implements CouponService{
 
         Function<Coupon, AdminCouponResDto> fn = (c-> new AdminCouponResDto(c));
 
-        return new AdminCouponListDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
+        return new AdminCouponListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
     }
 }

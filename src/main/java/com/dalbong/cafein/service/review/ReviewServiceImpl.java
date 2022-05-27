@@ -10,7 +10,7 @@ import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
@@ -314,7 +314,7 @@ public class ReviewServiceImpl implements ReviewService{
      */
     @Transactional(readOnly = true)
     @Override
-    public AdminReviewListDto getReviewListOfAdmin(PageRequestDto pageRequestDto) {
+    public AdminReviewListResDto getReviewListOfAdmin(PageRequestDto pageRequestDto) {
 
         Pageable pageable;
 
@@ -340,7 +340,7 @@ public class ReviewServiceImpl implements ReviewService{
             return new AdminReviewResDto(review, imageDto);
         });
 
-        return new AdminReviewListDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
+        return new AdminReviewListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
     }
 
     /**
