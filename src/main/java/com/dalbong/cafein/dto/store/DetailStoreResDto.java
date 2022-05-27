@@ -41,9 +41,10 @@ public class DetailStoreResDto {
 
     private double latY;
 
-    private List<ImageDto> storeImageDtoList;
+    //reviewImage + storeImage
+    private List<ImageDto> totalImageDtoList;
 
-    public DetailStoreResDto(Store store, ImageDto memberImageDto, List<ImageDto> storeImageDtoList, Long principalId){
+    public DetailStoreResDto(Store store, ImageDto memberImageDto, List<ImageDto> totalImageDtoList, Long principalId){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
@@ -57,7 +58,7 @@ public class DetailStoreResDto {
         this.businessHours = store.getBusinessHours();
         this.lngX = store.getLngX();
         this.latY = store.getLatY();
-        this.storeImageDtoList = storeImageDtoList;
+        this.totalImageDtoList = totalImageDtoList;
 
     }
 }
