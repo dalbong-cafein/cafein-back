@@ -55,6 +55,10 @@ public class Store extends BaseEntity {
 
     private Double latY;
 
+    //TODO 출시전 data set 전에 int 타입으로 변경 예정
+    @Builder.Default
+    private Integer viewCnt = 0;
+
     //TODO data api에서 가게Id 필요 유무
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -93,9 +97,8 @@ public class Store extends BaseEntity {
         this.wifiPassword =wifiPassword;
     }
 
-    public void changeKatechXY(int katechX, int katechY){
-        this.katechX = katechX;
-        this.katechY = katechY;
+    public void increaseViewCnt(){
+        this.viewCnt += 1;
     }
 
     public void changeLatAndLng(Double lngX, Double latY){

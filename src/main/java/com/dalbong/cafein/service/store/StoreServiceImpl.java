@@ -259,7 +259,7 @@ public class StoreServiceImpl implements StoreService{
     /**
      * 앱단 카페 상세 페이지 조회
      */
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public DetailStoreResDto getDetailStore(Long storeId, Long principalId) {
 
@@ -284,6 +284,9 @@ public class StoreServiceImpl implements StoreService{
                 storeImageDto.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
             }
         }
+
+        //조회수 증가
+        store.increaseViewCnt();
 
         return new DetailStoreResDto(store, memberImageDto, storeImageDto, principalId);
     }
