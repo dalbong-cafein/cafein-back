@@ -95,6 +95,7 @@ public class Member extends BaseEntity {
 
     public void leave(){
         this.isDeleted = true;
+        this.email = "";
         this.leaveDateTime = LocalDateTime.now();
     }
 
