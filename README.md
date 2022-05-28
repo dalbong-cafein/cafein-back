@@ -41,4 +41,4 @@ server
 https://documenter.getpostman.com/view/15013144/UVkjuccy
 
 # ERD(진행중)
-![cafein_erd](https://user-images.githubusercontent.com/77663506/169005512-7e46d277-d376-4903-bab5-709fe68e1754.png)
+![cafein_erd](https://user-images.githubusercontent.com/77663506/170822973-8e41c732-c84a-4710-906b-1c4f7194f426.png)
