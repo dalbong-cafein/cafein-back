@@ -16,5 +16,7 @@ public interface MemberService {
 
     void modifyImageAndNickname(MemberUpdateDto memberUpdateDto, Long principalId) throws IOException;
 
+    void leave(Long memberId);
+
     MemberInfoDto getMemberInfo(Long memberId);
 }
