@@ -1,6 +1,7 @@
 package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
+import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.ScrollResultDto;
@@ -75,9 +76,9 @@ public class ReviewController {
     public ResponseEntity<?> register(@Validated ReviewRegDto reviewRegDto, BindingResult bindingResult,
                                       @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        reviewService.register(reviewRegDto, principalDetails.getMember().getMemberId());
+        Review review = reviewService.register(reviewRegDto, principalDetails.getMember().getMemberId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1,"리뷰 등록 성공",null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CMRespDto<>(1,"리뷰 등록 성공",review.getReviewId()), HttpStatus.CREATED);
     }
 
     /**
