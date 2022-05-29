@@ -1,6 +1,7 @@
 package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
+import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.store.*;
 import com.dalbong.cafein.service.store.StoreService;
@@ -49,13 +50,28 @@ public class StoreController {
      * 앱단 본인이 등록한 가게 리스트 조회
      */
     @GetMapping("/stores/my-registered")
-    public ResponseEntity<?> getRegisteredStoreList(@AuthenticationPrincipal PrincipalDetails principalDetails){
+    public ResponseEntity<?> getMyRegisteredStoreList(@AuthenticationPrincipal PrincipalDetails principalDetails){
 
         StoreListResDto<List<MyRegisterStoreResDto>> storeListResDto =
                 storeService.getMyRegisterStoreList(principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(
                 1, "내가 등록한 가게 리스트 조회 성공", storeListResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 앱단 본인이 등록한 가게 리스트 개수지정 조회
+     */
+    @GetMapping("/stores/my-registered/limit")
+    public ResponseEntity<?> getCustomLimitMyRegisteredStoreList(@RequestParam(value = "limit",defaultValue = "3", required = false) int limit,
+                                                               @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+
+        StoreListResDto<List<MyRegisterStoreResDto>> storeListResDto =
+                storeService.getCustomLimitMyRegisterStoreList(limit, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(
+                1, "내가 등록한 가게 리스트 개수지정 조회 성공", storeListResDto), HttpStatus.OK);
     }
 
     /**
@@ -71,17 +87,29 @@ public class StoreController {
     }
 
     /**
-     * 가게 등록
+     * 카페 등록
      */
     @PostMapping("/stores")
     public ResponseEntity<?> register(@Validated StoreRegDto storeRegDto, BindingResult bindingResult,
                                       @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        storeService.register(storeRegDto,principalDetails.getMember().getMemberId());
+        Store store = storeService.register(storeRegDto, principalDetails.getMember().getMemberId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1,"가게 등록 성공",null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CMRespDto<>(1,"카페 등록 성공",store.getStoreId()), HttpStatus.CREATED);
     }
 
+    /**
+     * 카페 수정
+     */
+    @PutMapping("/stores/{storeId}")
+    public ResponseEntity<?> modify(@Validated StoreUpdateDto storeUpdateDto, BindingResult bindingResult,
+                                    @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+
+        storeService.modify(storeUpdateDto, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "카페 수정 성공", null), HttpStatus.OK);
+
+    }
 
 
 

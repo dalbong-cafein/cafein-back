@@ -1,6 +1,7 @@
 package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
+import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.ScrollResultDto;
@@ -35,15 +36,15 @@ public class ReviewController {
     }
 
     /**
-     * 카페 상세 화면 - 미리보기 리뷰 리스트 조회
+     * 카페 상세 화면 - 리뷰 리스트 개수지정 조회
      */
-    @GetMapping("/stores/{storeId}/reviews/preview")
+    @GetMapping("/stores/{storeId}/reviews/limit")
     public ResponseEntity<?> getCustomLimitReviewListOfStore(@PathVariable("storeId") Long storeId,
                                                              @RequestParam(value = "limit",defaultValue = "3", required = false) int limit){
 
         ReviewListResDto<List<ReviewResDto>> reviewListResDto = reviewService.getCustomLimitReviewListOfStore(limit, storeId);
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "미리보기 리뷰 리스트 조회 성공", reviewListResDto), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "리뷰 리스트 개수지정 조회 성공", reviewListResDto), HttpStatus.OK);
     }
 
     /**
@@ -75,9 +76,9 @@ public class ReviewController {
     public ResponseEntity<?> register(@Validated ReviewRegDto reviewRegDto, BindingResult bindingResult,
                                       @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        reviewService.register(reviewRegDto, principalDetails.getMember().getMemberId());
+        Review review = reviewService.register(reviewRegDto, principalDetails.getMember().getMemberId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1,"리뷰 등록 성공",null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CMRespDto<>(1,"리뷰 등록 성공",review.getReviewId()), HttpStatus.CREATED);
     }
 
     /**
