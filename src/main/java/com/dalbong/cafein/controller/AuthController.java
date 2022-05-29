@@ -214,9 +214,9 @@ public class AuthController {
         //HttpBody 오브젝트 생성
         MultiValueMap<String,String> params = new LinkedMultiValueMap<>();
 
-        params.add("client_id", "30e9f4fa92d2521d41eaf6f419dd5185");
-        params.add("client_secret", "ihNAdUP3A5");
-        params.add("redirect_uri", "http://localhost:5000/login/oauth2/code/naver");
+        params.add("client_id", "iNA8YL47sprlUNIIxhnK");
+        params.add("client_secret", "8q9aoiAq_W");
+        params.add("redirect_uri", "http://localhost:5000/login/naver3");
         params.add("code", code);
 
         //HttpHeader와 HttpBody를 하나의 오브젝트에 담기
@@ -225,8 +225,8 @@ public class AuthController {
         //Http요청하기 - Post방식으로 -그리고 response 변수의 응답 받음.
         ResponseEntity<String> response = rt.exchange(
                 "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code" +
-                        "&client_id=SNNyu_24eC5xCqWW6vqF&client_secret=ihNAdUP3A5" +
-                        "&redirect_uri=http://localhost:5000/login/oauth2/code/naver" +
+                        "&client_id=iNA8YL47sprlUNIIxhnK&client_secret=8q9aoiAq_W" +
+                        "&redirect_uri=http://localhost:5000/login/naver3" +
                         "&code=" + code,
                 HttpMethod.GET,
                 naverTokenRequest,

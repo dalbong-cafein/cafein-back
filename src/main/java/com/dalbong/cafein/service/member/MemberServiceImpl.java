@@ -1,11 +1,14 @@
 package com.dalbong.cafein.service.member;
 
+import com.dalbong.cafein.domain.coupon.CouponRepository;
+import com.dalbong.cafein.domain.heart.HeartRepository;
 import com.dalbong.cafein.domain.image.Image;
 import com.dalbong.cafein.domain.image.MemberImage;
 import com.dalbong.cafein.domain.image.MemberImageRepository;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.domain.sticker.StickerRepository;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.login.AccountUniteRegDto;
 import com.dalbong.cafein.dto.member.MemberInfoDto;
@@ -30,7 +33,10 @@ public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
     private final ImageService imageService;
-    private final MemberImageRepository memberImageRepository;
+    private final StickerRepository stickerRepository;
+    private final CouponRepository couponRepository;
+    private final HeartRepository heartRepository;
+
 
     /**
      * 계정 통합
@@ -101,7 +107,7 @@ public class MemberServiceImpl implements MemberService{
 
 
         //프로필 이미지 갱신
-        if (memberUpdateDto.getImageFile() != null){
+        if (memberUpdateDto.getImageFile() != null && !memberUpdateDto.getImageFile().isEmpty()){
 
             //기존 프로필 이미지 삭제
             imageService.remove(memberUpdateDto.getDeleteImageId());
@@ -114,6 +120,25 @@ public class MemberServiceImpl implements MemberService{
             //기존 프로필 이미지 삭제
             imageService.remove(memberUpdateDto.getDeleteImageId());
         }
+    }
+
+    /**
+     * 회원 탈퇴
+     */
+    @Transactional
+    @Override
+    public void leave(Long memberId) {
+
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                new CustomException("존재하지 않는 회원입니다."));
+
+        //회원 탈퇴
+        member.leave();
+
+        //회원의 sticker, coupon, heart 데이터 삭제
+        stickerRepository.deleteByMember(member);
+        couponRepository.deleteByMember(member);
+        heartRepository.deleteByMember(member);
     }
 
     /**

@@ -47,8 +47,6 @@ public class StickerRepositoryImpl implements StickerRepositoryQuerydsl{
     @Override
     public long getCountStickerToday(Long principalId) {
 
-        System.out.println(LocalDateTime.now().toLocalDate().atStartOfDay().toString());
-
         return queryFactory.select(sticker.count())
                 .from(sticker)
                 .where(sticker.member.memberId.eq(principalId),

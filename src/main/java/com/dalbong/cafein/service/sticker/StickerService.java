@@ -7,10 +7,10 @@ import com.dalbong.cafein.domain.store.Store;
 
 public interface StickerService {
 
-    Sticker issueStoreSticker(Store store, Long principalId);
+    Sticker issueStoreSticker(Long storeId, Long principalId);
 
-    Sticker issueReviewSticker(Review reivew, Long principalId);
+    Sticker issueReviewSticker(Long reviewId, Long principalId);
 
-    Sticker issueCongestionSticker(Congestion congestion, Long principalId);
+    Sticker issueCongestionSticker(Long congestionId, Long principalId);
 
 }

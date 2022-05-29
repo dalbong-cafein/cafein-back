@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class AdminReviewListDto {
+public class AdminReviewListResDto {
 
     private long reviewCnt;
 

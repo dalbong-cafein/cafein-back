@@ -83,7 +83,7 @@ class StoreServiceImplTest {
 
         //storeRegDto 생성
         StoreRegDto storeRegDto = createStoreRegDto("testStoreName", address, "02-000-0000", "test@cafeinofficial.com",
-             imageFiles, 123, 123, businessHours, Recommendation.GOOD,
+             imageFiles, 37.01654, 127.1067896, businessHours, Recommendation.GOOD,
                 1,3,4,1);
 
         //when
@@ -99,8 +99,8 @@ class StoreServiceImplTest {
         assertThat(store.getAddress().toString()).isEqualTo(address.toString());
         assertThat(store.getPhone()).isEqualTo(storeRegDto.getPhone());
         assertThat(store.getWebsite()).isEqualTo(storeRegDto.getWebsite());
-        assertThat(store.getKatechX()).isEqualTo(storeRegDto.getKatechX());
-        assertThat(store.getKatechY()).isEqualTo(storeRegDto.getKatechY());
+        assertThat(store.getLngX()).isEqualTo(storeRegDto.getLngX());
+        assertThat(store.getLatY()).isEqualTo(storeRegDto.getLatY());
 
         //영업시간 검증
         BusinessHours findBusinessHours = businessHoursRepository.findById(store.getBusinessHours().getBusinessHoursId()).get();
@@ -145,7 +145,7 @@ class StoreServiceImplTest {
     }
 
     private StoreRegDto createStoreRegDto(String storeName, Address address, String phone,
-                                          String website, List<MultipartFile> imageFiles, int katechX, int katechY,
+                                          String website, List<MultipartFile> imageFiles, double lngX, double latY,
                                           BusinessHours businessHours, Recommendation recommendation,
                                           int socket, int wifi, int restroom, int tableSize) {
 
@@ -156,7 +156,7 @@ class StoreServiceImplTest {
                 .phone(phone)
                 .website(website)
                 .imageFiles(imageFiles)
-                .katechX(katechX).katechY(katechY)
+                .lngX(lngX).latY(latY)
                 .monOpen(businessHours.getOnMon().getOpen()).monClosed(businessHours.getOnMon().getClosed())
                 .tueOpen(businessHours.getOnTue().getOpen()).tueClosed(businessHours.getOnTue().getClosed())
                 .wedOpen(businessHours.getOnWed().getOpen()).wedClosed(businessHours.getOnWed().getClosed())

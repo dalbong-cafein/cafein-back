@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +23,6 @@ public class CongestionServiceImpl implements CongestionService{
 
     private final CongestionRepository congestionRepository;
     private final StoreRepository storeRepository;
-    private final StickerService stickerService;
 
     /**
      * 혼잡도 등록

@@ -20,7 +20,7 @@ public interface ReviewRepositoryQuerydsl {
     List<Object[]> getCustomLimitReviewList(int limit, Long storeId);
 
     /**
-     * 전체 리뷰 리스트 조회
+     * 관리자단 전체 리뷰 리스트 조회
      */
     Page<Review> getAllReviewList(String[] searchType, String keyword, Pageable pageable);
 
