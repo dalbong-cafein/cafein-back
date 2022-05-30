@@ -67,7 +67,7 @@ public class AdminController {
     public ResponseEntity<?> register(@Validated StoreRegDto storeRegDto, BindingResult bindingResult,
                                       @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        storeService.register(storeRegDto,principalDetails.getMember().getMemberId());
+        storeService.register(storeRegDto,7L);
 
         return new ResponseEntity<>(new CMRespDto<>(1,"관리자단 가게 등록 성공",null), HttpStatus.CREATED);
     }
@@ -100,7 +100,7 @@ public class AdminController {
     @PostMapping("/boards")
     public ResponseEntity<?> registerBoard(AdminBoardRegDto adminBoardRegDto, @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        boardService.register(adminBoardRegDto, principalDetails.getMember().getMemberId());
+        boardService.register(adminBoardRegDto, 7L);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "게시글 등록 성공", null), HttpStatus.CREATED);
     }
