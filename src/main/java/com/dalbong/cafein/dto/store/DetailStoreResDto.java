@@ -3,6 +3,7 @@ package com.dalbong.cafein.dto.store;
 import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.dto.businessHours.BusinessHoursResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,7 +36,7 @@ public class DetailStoreResDto {
 
     private Boolean isOpen;
 
-    private BusinessHours businessHours;
+    private BusinessHoursResDto businessHoursResDto;
 
     private double lngX;
 
@@ -55,7 +56,7 @@ public class DetailStoreResDto {
         this.heartCnt = store.getHeartList().size();
         this.isHeart = store.getHeartList().stream().anyMatch(h -> h.getMember().getMemberId().equals(principalId) ? true : false);
         this.isOpen = store.checkIsOpen();
-        this.businessHours = store.getBusinessHours();
+        this.businessHoursResDto = new BusinessHoursResDto(store.getBusinessHours());
         this.lngX = store.getLngX();
         this.latY = store.getLatY();
         this.totalImageDtoList = totalImageDtoList;
