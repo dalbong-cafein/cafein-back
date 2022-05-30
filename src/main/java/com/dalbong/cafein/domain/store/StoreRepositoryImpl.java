@@ -43,7 +43,7 @@ import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
 
-public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
+public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     private final JPAQueryFactory queryFactory;
 
@@ -140,7 +140,19 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
     }
 
     /**
-     * 관리자단 가게 리스트 조회
+     * 추천 검색 카페 리스트 조회
+     */
+    @Override
+    public List<Store> getRecommendSearchStoreList(String keyword) {
+
+        return queryFactory.selectFrom(store)
+                .where(containStoreNameOrAddress(keyword))
+                .limit(10)
+                .fetch();
+    }
+
+    /**
+     * 관리자단 카페 리스트 조회
      */
     @Override
     public Page<Object[]> getAllStoreList(String[] searchType, String keyword, Pageable pageable) {
@@ -186,16 +198,23 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
     }
 
     /**
-     * 추천 검색 카페 리스트 조회
+     * 관리자단 카페 상세 페이지 조회
      */
     @Override
-    public List<Store> getRecommendSearchStoreList(String keyword) {
+    public Optional<Object[]> getDetailStoreOfAdmin(Long storeId) {
 
-        return queryFactory.selectFrom(store)
-                .where(containStoreNameOrAddress(keyword))
-                .limit(10)
-                .fetch();
+        Tuple tuple = queryFactory.select(store, store.heartList.size(), JPAExpressions
+                        .select(congestion.count()).from(congestion).where(congestion.store.storeId.eq(store.storeId))
+                , store.reviewList.size())
+                .from(store)
+                .leftJoin(store.businessHours).fetchJoin()
+                .where(store.storeId.eq(storeId))
+                .fetchOne();
+
+        return tuple != null ? Optional.ofNullable(tuple.toArray()) : Optional.empty();
     }
+
+
 
     private BooleanBuilder searchKeyword(String[] searchType, String keyword) {
 
