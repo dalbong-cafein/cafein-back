@@ -61,7 +61,7 @@ public class AuthController {
         //회원 정보 조회
         MemberInfoDto memberInfoDto = memberService.getMemberInfo(member.getMemberId());
 
-        String cookieString = "accessToken="+accessToken+";max-age="+jwtUtil.accessTokenExpire+";path=/;sameSite=None;secure;";
+        String cookieString = "accessToken="+accessToken+";max-age="+jwtUtil.accessTokenExpire+";path=/;sameSite=None;secure=false;";
 
         response.addHeader("Set-Cookie",cookieString);
 
