@@ -55,15 +55,15 @@ public class AuthController {
         redisService.setValues(member.getMemberId(), refreshToken);
 
         //TODO deploy - setMax() modify
-        //cookieUtil.createCookie(response, jwtUtil.accessTokenName, accessToken, jwtUtil.accessTokenExpire);
-        //cookieUtil.createCookie(response, jwtUtil.refreshTokenName, refreshToken,jwtUtil.refreshTokenExpire);
+        cookieUtil.createCookie(response, jwtUtil.accessTokenName, accessToken, jwtUtil.accessTokenExpire);
+        cookieUtil.createCookie(response, jwtUtil.refreshTokenName, refreshToken,jwtUtil.refreshTokenExpire);
 
         //회원 정보 조회
         MemberInfoDto memberInfoDto = memberService.getMemberInfo(member.getMemberId());
 
-        String cookieString = "accessToken="+accessToken+";max-age="+jwtUtil.accessTokenExpire+";path=/;sameSite=None;secure=false;";
-
-        response.addHeader("Set-Cookie",cookieString);
+//        String cookieString = "accessToken="+accessToken+";max-age="+jwtUtil.accessTokenExpire+";path=/;sameSite=None;secure=false;";
+//
+//        response.addHeader("Set-Cookie",cookieString);
 
         return new ResponseEntity<>(new CMRespDto<>(1,"소셜 로그인 성공",memberInfoDto),HttpStatus.OK);
     }
