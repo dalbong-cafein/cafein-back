@@ -33,6 +33,4 @@ public interface ReviewRepositoryQuerydsl {
      * 관리자단 리뷰 상세 정보 조회
      */
     Optional<Object[]> getDetailReview(Long reviewId);
-
-     getReviewEvaluationOfStore(Long storeId);
 }
