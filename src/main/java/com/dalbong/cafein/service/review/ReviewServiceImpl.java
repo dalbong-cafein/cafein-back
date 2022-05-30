@@ -10,6 +10,7 @@ import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewEvaluationOfStoreResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
@@ -365,5 +366,17 @@ public class ReviewServiceImpl implements ReviewService{
         }
 
         return new AdminDetailReviewResDto(review, (long)arr[1], reviewImageDtoList);
+    }
+
+    /**
+     * 관리자단 카페의 리뷰 평가 정보 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminReviewEvaluationOfStoreResDto getReviewEvaluationOfStore(Long storeId) {
+
+
+
+        return null;
     }
 }

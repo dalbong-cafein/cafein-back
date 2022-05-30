@@ -2,6 +2,7 @@ package com.dalbong.cafein.service.review;
 
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewEvaluationOfStoreResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.ScrollResultDto;
@@ -29,4 +30,6 @@ public interface ReviewService {
     AdminReviewListResDto getReviewListOfAdmin(PageRequestDto pageRequestDto);
 
     AdminDetailReviewResDto getDetailReviewOfAdmin(Long reviewId);
+
+    AdminReviewEvaluationOfStoreResDto getReviewEvaluationOfStore(Long storeId);
 }
