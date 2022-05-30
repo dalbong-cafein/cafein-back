@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -55,6 +56,11 @@ public class Member extends BaseEntity {
     @Column(name = "role")
     private Set<MemberRole> roleSet = new HashSet<MemberRole>(Arrays.asList(MemberRole.USER));
 
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    private LocalDateTime leaveDateTime;
+
     public void setKakaoId(String kakaoId){
         this.kakaoId = kakaoId;
     }
@@ -87,7 +93,11 @@ public class Member extends BaseEntity {
         this.genderType = genderType;
     }
 
-
+    public void leave(){
+        this.isDeleted = true;
+        this.email = "";
+        this.leaveDateTime = LocalDateTime.now();
+    }
 
 
 

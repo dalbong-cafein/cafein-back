@@ -1,6 +1,7 @@
 package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
+import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.store.*;
 import com.dalbong.cafein.service.store.StoreService;
@@ -92,9 +93,9 @@ public class StoreController {
     public ResponseEntity<?> register(@Validated StoreRegDto storeRegDto, BindingResult bindingResult,
                                       @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        storeService.register(storeRegDto,principalDetails.getMember().getMemberId());
+        Store store = storeService.register(storeRegDto, principalDetails.getMember().getMemberId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1,"카페 등록 성공",null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CMRespDto<>(1,"카페 등록 성공",store.getStoreId()), HttpStatus.CREATED);
     }
 
     /**

@@ -1,10 +1,8 @@
 package com.dalbong.cafein.service.board;
 
 import com.dalbong.cafein.domain.board.Board;
-import com.dalbong.cafein.dto.admin.board.AdminBoardListDto;
+import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
-import com.dalbong.cafein.dto.admin.board.AdminBoardResDto;
-import com.dalbong.cafein.dto.board.BoardListResDto;
 import com.dalbong.cafein.dto.board.BoardResDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 
@@ -19,6 +17,6 @@ public interface BoardService {
 
     List<BoardResDto> getBoardList(Long boardCategoryId);
 
-    AdminBoardListDto getBoardListOfAdmin(Long boardCategoryId, PageRequestDto pageRequestDto);
+    AdminBoardListResDto getBoardListOfAdmin(Long boardCategoryId, PageRequestDto pageRequestDto);
 
 }

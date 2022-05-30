@@ -23,7 +23,6 @@ public class CongestionServiceImpl implements CongestionService{
 
     private final CongestionRepository congestionRepository;
     private final StoreRepository storeRepository;
-    private final StickerService stickerService;
 
     /**
      * 혼잡도 등록

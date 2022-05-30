@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class AdminBoardListDto {
+public class AdminBoardListResDto {
 
     private long boardCnt;
 

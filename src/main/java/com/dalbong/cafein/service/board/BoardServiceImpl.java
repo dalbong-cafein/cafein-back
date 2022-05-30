@@ -4,14 +4,9 @@ import com.dalbong.cafein.domain.board.Board;
 import com.dalbong.cafein.domain.board.BoardRepository;
 import com.dalbong.cafein.domain.image.BoardImage;
 import com.dalbong.cafein.domain.image.BoardImageRepository;
-import com.dalbong.cafein.domain.image.ReviewImage;
-import com.dalbong.cafein.domain.review.Review;
-import com.dalbong.cafein.dto.admin.board.AdminBoardListDto;
+import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardResDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
-import com.dalbong.cafein.dto.board.BoardListResDto;
 import com.dalbong.cafein.dto.board.BoardResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
@@ -107,7 +102,7 @@ public class BoardServiceImpl implements BoardService{
      */
     @Transactional(readOnly = true)
     @Override
-    public AdminBoardListDto getBoardListOfAdmin(Long boardCategoryId, PageRequestDto pageRequestDto) {
+    public AdminBoardListResDto getBoardListOfAdmin(Long boardCategoryId, PageRequestDto pageRequestDto) {
 
         Pageable pageable;
 
@@ -121,7 +116,7 @@ public class BoardServiceImpl implements BoardService{
 
         Function<Board, AdminBoardResDto> fn = (AdminBoardResDto::new);
 
-        return new AdminBoardListDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
+        return new AdminBoardListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
     }
 
 

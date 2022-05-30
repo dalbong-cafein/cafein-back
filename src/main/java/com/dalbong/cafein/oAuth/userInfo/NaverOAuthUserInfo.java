@@ -66,6 +66,6 @@ public class NaverOAuthUserInfo extends OAuthUserInfo {
 
     @Override
     public Optional<Member> getMember() {
-        return memberRepository.findByNaverId(getId());
+        return memberRepository.findByNaverIdAndNotDeleted(getId());
     }
 }

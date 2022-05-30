@@ -1,13 +1,19 @@
 package com.dalbong.cafein.domain.sticker;
 
 import com.dalbong.cafein.domain.congestion.Congestion;
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import static com.dalbong.cafein.domain.sticker.QCongestionSticker.congestionSticker;
 import static com.dalbong.cafein.domain.sticker.QSticker.sticker;
+import static com.dalbong.cafein.domain.store.QStore.store;
 
 public class StickerRepositoryImpl implements StickerRepositoryQuerydsl{
 
@@ -34,4 +40,20 @@ public class StickerRepositoryImpl implements StickerRepositoryQuerydsl{
 
         return fetchOne != null;
     }
+
+    /**
+     * 회원별 금일 스티커 수 조회
+     */
+    @Override
+    public long getCountStickerToday(Long principalId) {
+
+        return queryFactory.select(sticker.count())
+                .from(sticker)
+                .where(sticker.member.memberId.eq(principalId),
+                        sticker.regDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
+                                LocalDateTime.of(LocalDate.now(), LocalTime.of(11, 59, 59))))
+                .fetchCount();
+    }
+
+
 }

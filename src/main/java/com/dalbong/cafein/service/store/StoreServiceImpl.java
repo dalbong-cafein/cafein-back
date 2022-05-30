@@ -20,6 +20,7 @@ import com.dalbong.cafein.dto.store.*;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.image.ImageService;
 import com.dalbong.cafein.service.review.ReviewService;
+import com.dalbong.cafein.service.sticker.StickerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
