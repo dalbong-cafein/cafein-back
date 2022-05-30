@@ -1,6 +1,7 @@
 package com.dalbong.cafein.service.store;
 
 import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.review.ReviewListResDto;
@@ -29,5 +30,7 @@ public interface StoreService {
     DetailStoreResDto getDetailStore(Long storeId, Long principalId);
 
     AdminStoreListDto getStoreListOfAdmin(PageRequestDto pageRequestDto);
+
+    AdminDetailStoreResDto getDetailStoreOfAdmin(Long storeId);
 
 }
