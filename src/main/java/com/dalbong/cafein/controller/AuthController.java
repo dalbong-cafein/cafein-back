@@ -55,8 +55,8 @@ public class AuthController {
         redisService.setValues(member.getMemberId(), refreshToken);
 
         //TODO deploy - setMax() modify
-        cookieUtil.createCookie(response, jwtUtil.accessTokenName, accessToken, jwtUtil.accessTokenExpire);
-        cookieUtil.createCookie(response, jwtUtil.refreshTokenName, refreshToken,jwtUtil.refreshTokenExpire);
+        cookieUtil.createCookie(response, JwtUtil.accessTokenName, accessToken, JwtUtil.accessTokenExpire);
+        cookieUtil.createCookie(response, JwtUtil.refreshTokenName, refreshToken, JwtUtil.refreshTokenExpire);
 
         //회원 정보 조회
         MemberInfoDto memberInfoDto = memberService.getMemberInfo(member.getMemberId());
