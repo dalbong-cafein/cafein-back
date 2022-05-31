@@ -19,6 +19,7 @@ import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.image.ImageService;
 import com.dalbong.cafein.service.sticker.StickerService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -147,7 +148,7 @@ public class ReviewServiceImpl implements ReviewService{
             //리뷰 이미지
             Review review = (Review) arr[0];
             List<ImageDto> reviewImageDtoList = new ArrayList<>();
-            if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()){
+            if (!CollectionUtils.isEmpty(reviewImageDtoList)){
 
                 for (ReviewImage reviewImage : review.getReviewImageList()){
                     reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
