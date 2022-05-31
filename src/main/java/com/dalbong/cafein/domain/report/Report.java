@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"toMember","reportCategory"})
+@ToString(exclude = {"review","reportCategory"})
 @Entity
 public class Report extends BaseEntity {
 
