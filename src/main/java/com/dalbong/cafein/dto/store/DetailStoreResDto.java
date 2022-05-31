@@ -56,7 +56,7 @@ public class DetailStoreResDto {
         this.heartCnt = store.getHeartList().size();
         this.isHeart = store.getHeartList().stream().anyMatch(h -> h.getMember().getMemberId().equals(principalId) ? true : false);
         this.isOpen = store.checkIsOpen();
-        this.businessHoursResDto = new BusinessHoursResDto(store.getBusinessHours());
+        this.businessHoursResDto = store.getBusinessHours() != null? new BusinessHoursResDto(store.getBusinessHours()) : null;
         this.lngX = store.getLngX();
         this.latY = store.getLatY();
         this.totalImageDtoList = totalImageDtoList;
