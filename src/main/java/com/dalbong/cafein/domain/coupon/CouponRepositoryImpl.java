@@ -72,6 +72,7 @@ public class CouponRepositoryImpl implements CouponRepositoryQuerydsl {
                         break;
                     case "p":
                         builder.or(containPhone(keyword));
+                        break;
                 }
             }
         }

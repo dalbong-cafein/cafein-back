@@ -19,4 +19,6 @@ public interface MemberService {
     void leave(Long memberId);
 
     MemberInfoDto getMemberInfo(Long memberId);
+
+    AdminMemberResDto
 }
