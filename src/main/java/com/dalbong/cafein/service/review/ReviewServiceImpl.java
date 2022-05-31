@@ -130,34 +130,35 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public ReviewListResDto<ScrollResultDto<ReviewResDto, Object[]>> getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId) {
 
-        //TODO 동적 필요
         Pageable pageable = pageRequestDto.getPageable(Sort.by("reviewId").descending());
 
         Page<Object[]> results = reviewRepository.getReviewListOfStore(storeId, pageRequestDto.getIsOnlyImage(), pageable);
 
         Function<Object[], ReviewResDto> fn = (arr -> {
 
-            //작성자 프로필 이미지
-            MemberImage memberImage = (MemberImage) arr[1];
-
-            String profileImageUrl = null;
-            if (memberImage != null){
-                profileImageUrl = memberImage.getImageUrl();
-            }
-
-            //리뷰 이미지
             Review review = (Review) arr[0];
-            List<ImageDto> reviewImageDtoList = new ArrayList<>();
-            if (!CollectionUtils.isEmpty(review.getReviewImageList())){
+            if(review != null){
+                //작성자 프로필 이미지
+                MemberImage memberImage = (MemberImage) arr[1];
 
-                for (ReviewImage reviewImage : review.getReviewImageList()){
-                    reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                String profileImageUrl = null;
+                if (memberImage != null){
+                    profileImageUrl = memberImage.getImageUrl();
                 }
+
+                //리뷰 이미지
+                List<ImageDto> reviewImageDtoList = new ArrayList<>();
+
+                if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()){
+                    for (ReviewImage reviewImage : review.getReviewImageList()){
+                        reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                    }
+                }
+
+                return new ReviewResDto(review, profileImageUrl, (long)arr[2], reviewImageDtoList);
             }
-
-            return new ReviewResDto(review, profileImageUrl, (long)arr[2], reviewImageDtoList);
+            return null;
         });
-
 
         return new ReviewListResDto<>(results.getTotalElements(), new ScrollResultDto<>(results, fn));
     }
