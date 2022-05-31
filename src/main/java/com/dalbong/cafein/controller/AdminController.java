@@ -7,7 +7,9 @@ import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewEvaluationOfStoreResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
+import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.report.ReportRegDto;
@@ -50,7 +52,7 @@ public class AdminController {
     }
 
     /**
-     * 리뷰 상세 정보 조회
+     * 관리자단 리뷰 상세 정보 조회
      */
     @GetMapping("/reviews/{reviewId}")
     public ResponseEntity<?> getDetailReview(@PathVariable("reviewId") Long reviewId){
@@ -58,6 +60,19 @@ public class AdminController {
         AdminDetailReviewResDto adminDetailReviewResDto= reviewService.getDetailReviewOfAdmin(reviewId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 상세 정보 조회 성공", adminDetailReviewResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 카페 리뷰 상세 평가 정보 조회
+     */
+    @GetMapping("/stores/{storeId}/reviews/detail-evaluation")
+    public ResponseEntity<?> getReviewDetailEvaluationOfStore(@PathVariable("storeId") Long storeId){
+
+        AdminReviewEvaluationOfStoreResDto adminReviewEvaluationOfStoreResDto =
+                reviewService.getReviewDetailEvaluationOfStore(storeId);
+
+        return new ResponseEntity<>(new CMRespDto<>(
+                1, "관리자단 카페 리뷰 상세 평가 정보 조회 성공", adminReviewEvaluationOfStoreResDto), HttpStatus.OK);
     }
 
     /**
@@ -81,6 +96,17 @@ public class AdminController {
         AdminStoreListDto adminStoreListDto = storeService.getStoreListOfAdmin(requestDto);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 카페 리스트 조회 성공", adminStoreListDto), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 가게 상세 조회
+     */
+    @GetMapping("/stores/{storeId}")
+    public ResponseEntity<?> getDetailStore(@PathVariable("storeId") Long storeId){
+
+        AdminDetailStoreResDto adminDetailStoreResDto = storeService.getDetailStoreOfAdmin(storeId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 카페 상세 조회 성공", adminDetailStoreResDto), HttpStatus.OK);
     }
 
     /**

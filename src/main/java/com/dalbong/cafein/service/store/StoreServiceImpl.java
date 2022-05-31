@@ -10,6 +10,7 @@ import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreResDto;
 import com.dalbong.cafein.dto.businessHours.BusinessHoursUpdateDto;
@@ -32,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -341,6 +343,32 @@ public class StoreServiceImpl implements StoreService{
         });
 
         return new AdminStoreListDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
+    }
+
+    /**
+     * 관리자단 카페 상세 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminDetailStoreResDto getDetailStoreOfAdmin(Long storeId) {
+
+        Object[] arr = storeRepository.getDetailStoreOfAdmin(storeId).orElseThrow(() ->
+                new CustomException("존재하지 않는 카페입니다."));
+
+        Store store = (Store) arr[0];
+
+
+        //storeImageDtoList
+        List<ImageDto> storeImageDtoList = new ArrayList<>();
+
+        //store 이미지 리스트
+        if(store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()){
+            for (StoreImage storeImage : store.getStoreImageList()){
+                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+            }
+        }
+
+        return new AdminDetailStoreResDto(store, (int)arr[1], (long) arr[2], (int)arr[3], storeImageDtoList);
     }
 }
 
