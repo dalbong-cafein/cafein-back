@@ -148,7 +148,7 @@ public class ReviewServiceImpl implements ReviewService{
             //리뷰 이미지
             Review review = (Review) arr[0];
             List<ImageDto> reviewImageDtoList = new ArrayList<>();
-            if (!CollectionUtils.isEmpty(reviewImageDtoList)){
+            if (!CollectionUtils.isEmpty(review.getReviewImageList())){
 
                 for (ReviewImage reviewImage : review.getReviewImageList()){
                     reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
