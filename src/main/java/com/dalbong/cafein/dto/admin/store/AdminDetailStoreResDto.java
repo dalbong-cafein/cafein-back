@@ -60,7 +60,7 @@ public class AdminDetailStoreResDto {
         this.wifiPassword = store.getWifiPassword();
         this.phone = store.getPhone();
         this.website = store.getWebsite();
-        this.businessHoursResDto = new BusinessHoursResDto(store.getBusinessHours());
+        this.businessHoursResDto = store.getBusinessHours() != null? new BusinessHoursResDto(store.getBusinessHours()) : null;
         this.viewCnt = store.getViewCnt();
         this.heartCnt = heartCnt;
         this.congestionCnt = congestionCnt;
