@@ -231,6 +231,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                         break;
                     case "a":
                         builder.or(containAddress(keyword));
+                        break;
                 }
             }
         }

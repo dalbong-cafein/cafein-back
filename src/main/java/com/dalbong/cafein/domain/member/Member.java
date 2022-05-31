@@ -1,14 +1,14 @@
 package com.dalbong.cafein.domain.member;
 
 import com.dalbong.cafein.domain.BaseEntity;
+import com.dalbong.cafein.domain.report.Report;
+import com.dalbong.cafein.domain.review.Review;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Builder
 @AllArgsConstructor

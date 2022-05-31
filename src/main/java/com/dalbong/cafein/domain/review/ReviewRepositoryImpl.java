@@ -213,6 +213,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                         break;
                     case "s":
                         builder.or(containStoreId(keyword));
+                        break;
                 }
             }
         }
