@@ -1,13 +1,15 @@
 package com.dalbong.cafein.domain.member;
 
-import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.domain.image.QMemberImage;
+import com.dalbong.cafein.domain.report.QReport;
+import com.dalbong.cafein.domain.review.QReview;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
@@ -20,10 +22,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.dalbong.cafein.domain.coupon.QCoupon.coupon;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.member.QMember.member;
+import static com.dalbong.cafein.domain.report.QReport.report;
 import static com.dalbong.cafein.domain.review.QReview.review;
+import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
 
 public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
@@ -66,24 +69,32 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
     @Override
     public Page<Object[]> getAllMemberListOfAdmin(String[] searchType, String keyword, Pageable pageable) {
 
-        JPAQuery<Tuple> query = queryFactory.select(member, member.memberId)
+
+        JPAQuery<Tuple> query = queryFactory.select(member, memberImage, JPAExpressions.selectOne()
+                                                                .from(report)
+                                                                .leftJoin(review).on(review.reviewId.eq(report.review.reviewId))
+                                                                .where(review.member.memberId.eq(member.memberId)).exists())
                 .from(member)
+                .leftJoin(memberImage).on(memberImage.member.memberId.eq(member.memberId))
                 .where(searchKeyword(searchType, keyword))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
+
         //정렬
         for (Sort.Order o : pageable.getSort()) {
-            PathBuilder pathBuilder = new PathBuilder(Member.class, "member");
+            PathBuilder pathBuilder = new PathBuilder(Member.class, "member1");
             query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
                     pathBuilder.get(o.getProperty())));
         }
 
+
         List<Tuple> results = query.fetch();
 
         //count 쿼리
-        JPAQuery<Tuple> countQuery = queryFactory.select()
+        JPAQuery<Tuple> countQuery = queryFactory.select(member, memberImage)
                 .from(member)
+                .leftJoin(memberImage).on(memberImage.member.eq(member))
                 .where(searchKeyword(searchType, keyword));
 
         List<Object[]> content = results.stream().map(t -> t.toArray()).collect(Collectors.toList());
