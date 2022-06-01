@@ -17,6 +17,8 @@ public interface NoticeService {
 
     void registerBoardNotice(Board board, List<Member> toMemberList);
 
+    void read(Long noticeId);
+
     List<NoticeResDto> getNoticeList(Long principalId);
 
 

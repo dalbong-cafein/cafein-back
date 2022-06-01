@@ -33,4 +33,8 @@ public abstract class Notice extends BaseEntity {
         this.isRead = false;
     }
 
+    public void read(){
+        this.isRead = true;
+    }
+
 }

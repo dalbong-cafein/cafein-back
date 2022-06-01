@@ -6,6 +6,7 @@ import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.notice.*;
 import com.dalbong.cafein.domain.sticker.Sticker;
 import com.dalbong.cafein.dto.notice.NoticeResDto;
+import com.dalbong.cafein.handler.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +60,19 @@ public class NoticeServiceImpl implements NoticeService{
                         .collect(Collectors.toList());
 
         boardNoticeRepository.saveAll(boardNoticeList);
+    }
+
+    /**
+     * 알림 읽음 처리
+     */
+    @Transactional
+    @Override
+    public void read(Long noticeId) {
+
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow(() ->
+                new CustomException("존재하지 않는 알림입니다."));
+
+        notice.read();
     }
 
     /**
