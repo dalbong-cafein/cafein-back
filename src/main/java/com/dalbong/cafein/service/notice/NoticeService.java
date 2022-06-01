@@ -6,13 +6,15 @@ import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.notice.Notice;
 import com.dalbong.cafein.domain.sticker.Sticker;
 
+import java.util.List;
+
 public interface NoticeService {
 
     Notice registerStickerNotice(Sticker sticker, Member toMember);
 
     Notice registerCouponNotice(Coupon coupon, Member toMember);
 
-    Notice registerBoardNotice(Board board, Member toMember);
+    void registerBoardNotice(Board board, List<Member> toMemberList);
 
 
 }

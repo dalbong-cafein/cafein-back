@@ -20,4 +20,7 @@ public interface MemberRepository extends JpaRepository<Member,Long>, MemberRepo
     Optional<Member> findWithRoleSetByMemberId(Long memberId);
 
     Optional<Member> findByNickname(String nickname);
+
+    @Query("select m from Member m where m.isDeleted is null or m.isDeleted = false")
+    List<Member> findAllNotDeleted();
 }

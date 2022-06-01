@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @RequiredArgsConstructor
@@ -48,10 +50,12 @@ public class NoticeServiceImpl implements NoticeService{
      */
     @Transactional
     @Override
-    public Notice registerBoardNotice(Board board ,Member toMember) {
+    public void registerBoardNotice(Board board , List<Member> toMemberList) {
 
-        BoardNotice boardNotice = new BoardNotice(board, toMember);
+        List<BoardNotice> boardNoticeList =
+                toMemberList.stream().map(m -> new BoardNotice(board, m))
+                        .collect(Collectors.toList());
 
-        return boardNoticeRepository.save(boardNotice);
+        boardNoticeRepository.saveAll(boardNoticeList);
     }
 }
