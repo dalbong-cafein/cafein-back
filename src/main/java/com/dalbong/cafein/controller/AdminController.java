@@ -125,6 +125,17 @@ public class AdminController {
     }
 
     /**
+     * 쿠폰 상태 변경
+     */
+    @PatchMapping("/coupons/{couponId}")
+    public ResponseEntity<?> issue(@PathVariable("couponId") Long couponId){
+
+        couponService.issue(couponId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "쿠폰 상태 변경 성공", null), HttpStatus.OK);
+    }
+
+    /**
      * 관리자단 게시글 등록
      */
     @PostMapping("/boards")
