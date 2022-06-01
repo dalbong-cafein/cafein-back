@@ -6,6 +6,7 @@ import com.dalbong.cafein.domain.image.BoardImage;
 import com.dalbong.cafein.domain.image.BoardImageRepository;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.domain.notice.BoardNoticeRepository;
 import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardResDto;
@@ -39,6 +40,7 @@ public class BoardServiceImpl implements BoardService{
     private final ImageService imageService;
     private final NoticeService noticeService;
     private final MemberRepository memberRepository;
+    private final BoardNoticeRepository boardNoticeRepository;
 
     /**
      * 게시글 등록
@@ -81,7 +83,8 @@ public class BoardServiceImpl implements BoardService{
             imageService.remove(boardImage.getImageId());
         }
 
-        //TODO 공지 사항 알람 삭제
+        //공지사항 알림 삭제
+        boardNoticeRepository.deleteByBoard(board);
 
        //게시글 삭제
         boardRepository.deleteById(boardId);
