@@ -76,7 +76,17 @@ public class NoticeServiceImpl implements NoticeService{
     }
 
     /**
-     * 공지사항 알림 등록
+     * 알림 삭제
+     */
+    @Transactional
+    @Override
+    public void remove(Long noticeId) {
+
+        noticeRepository.deleteById(noticeId);
+    }
+
+    /**
+     * 알림 리스트 조회
      */
     @Transactional(readOnly = true)
     @Override

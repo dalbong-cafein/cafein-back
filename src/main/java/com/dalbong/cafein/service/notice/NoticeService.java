@@ -19,6 +19,8 @@ public interface NoticeService {
 
     void read(Long noticeId);
 
+    void remove(Long noticeId);
+
     List<NoticeResDto> getNoticeList(Long principalId);
 
 
