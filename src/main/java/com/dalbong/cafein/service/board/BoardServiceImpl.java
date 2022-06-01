@@ -4,6 +4,8 @@ import com.dalbong.cafein.domain.board.Board;
 import com.dalbong.cafein.domain.board.BoardRepository;
 import com.dalbong.cafein.domain.image.BoardImage;
 import com.dalbong.cafein.domain.image.BoardImageRepository;
+import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardResDto;
@@ -13,6 +15,7 @@ import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.image.ImageService;
+import com.dalbong.cafein.service.notice.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +37,8 @@ public class BoardServiceImpl implements BoardService{
     private final BoardRepository boardRepository;
     private final BoardImageRepository boardImageRepository;
     private final ImageService imageService;
+    private final NoticeService noticeService;
+    private final MemberRepository memberRepository;
 
     /**
      * 게시글 등록
@@ -48,6 +53,13 @@ public class BoardServiceImpl implements BoardService{
 
         //게시글 이미지 저장
         imageService.saveBoardImage(board, adminBoardRegDto.getImageFiles());
+
+        //공지사항 알람 등록
+        if(adminBoardRegDto.getBoardCategoryId().equals(1L)){
+            List<Member> findMemberList = memberRepository.findAllNotDeleted();
+
+            noticeService.registerBoardNotice(board, findMemberList);
+        }
 
         return board;
     }
@@ -69,7 +81,9 @@ public class BoardServiceImpl implements BoardService{
             imageService.remove(boardImage.getImageId());
         }
 
-        //게시글 삭제
+        //TODO 공지 사항 알람 삭제
+
+       //게시글 삭제
         boardRepository.deleteById(boardId);
     }
 
