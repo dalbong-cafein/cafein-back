@@ -5,10 +5,12 @@ import com.dalbong.cafein.domain.coupon.Coupon;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.notice.*;
 import com.dalbong.cafein.domain.sticker.Sticker;
+import com.dalbong.cafein.dto.notice.NoticeResDto;
+import com.dalbong.cafein.handler.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class NoticeServiceImpl implements NoticeService{
 
+    private final NoticeRepository noticeRepository;
     private final StickerNoticeRepository stickerNoticeRepository;
     private final CouponNoticeRepository couponNoticeRepository;
     private final BoardNoticeRepository boardNoticeRepository;
@@ -57,5 +60,40 @@ public class NoticeServiceImpl implements NoticeService{
                         .collect(Collectors.toList());
 
         boardNoticeRepository.saveAll(boardNoticeList);
+    }
+
+    /**
+     * 알림 읽음 처리
+     */
+    @Transactional
+    @Override
+    public void read(Long noticeId) {
+
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow(() ->
+                new CustomException("존재하지 않는 알림입니다."));
+
+        notice.read();
+    }
+
+    /**
+     * 알림 삭제
+     */
+    @Transactional
+    @Override
+    public void remove(Long noticeId) {
+
+        noticeRepository.deleteById(noticeId);
+    }
+
+    /**
+     * 알림 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<NoticeResDto> getNoticeList(Long principalId) {
+
+        List<Notice> results = noticeRepository.getNoticeList(principalId);
+
+        return results.stream().map(n -> new NoticeResDto(n)).collect(Collectors.toList());
     }
 }
