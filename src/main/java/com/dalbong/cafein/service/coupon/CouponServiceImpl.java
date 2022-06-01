@@ -2,12 +2,14 @@ package com.dalbong.cafein.service.coupon;
 
 import com.dalbong.cafein.domain.coupon.Coupon;
 import com.dalbong.cafein.domain.coupon.CouponRepository;
+import com.dalbong.cafein.domain.notice.CouponNoticeRepository;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 import com.dalbong.cafein.dto.coupon.CouponRegDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponResDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.handler.exception.CustomException;
+import com.dalbong.cafein.service.notice.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,10 +25,11 @@ import java.util.function.Function;
 public class CouponServiceImpl implements CouponService{
 
     private final CouponRepository couponRepository;
+    private final NoticeService noticeService;
 
 
     /**
-     * 쿠폰 발급
+     * 쿠폰 발급 신청
      */
     @Transactional
     @Override
@@ -48,6 +51,8 @@ public class CouponServiceImpl implements CouponService{
                 new CustomException("존재하는 않는 쿠폰입니다."));
 
         coupon.issue();
+
+        noticeService.registerCouponNotice(coupon, coupon.getMember());
     }
 
     /**

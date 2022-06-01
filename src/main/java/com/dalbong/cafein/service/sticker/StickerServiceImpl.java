@@ -10,6 +10,7 @@ import com.dalbong.cafein.domain.sticker.*;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.handler.exception.CustomException;
+import com.dalbong.cafein.service.notice.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ public class StickerServiceImpl implements StickerService{
     private final StoreRepository storeRepository;
     private final ReviewRepository reviewRepository;
     private final CongestionRepository congestionRepository;
+    private final NoticeService noticeService;
 
     /**
      * 카페 등록 시 스티커 발급
@@ -45,7 +47,12 @@ public class StickerServiceImpl implements StickerService{
 
         StoreSticker storeSticker = new StoreSticker(store, member);
 
-        return storeStickerRepository.save(storeSticker);
+        storeStickerRepository.save(storeSticker);
+
+        //스티커 발급 알림 등록
+        noticeService.registerStickerNotice(storeSticker, member);
+
+        return storeSticker;
     }
 
     /**
@@ -65,7 +72,12 @@ public class StickerServiceImpl implements StickerService{
 
         ReviewSticker reviewSticker = new ReviewSticker(review, member);
 
-        return reviewStickerRepository.save(reviewSticker);
+        reviewStickerRepository.save(reviewSticker);
+
+        //스티커 발급 알림 등록
+        noticeService.registerStickerNotice(reviewSticker, member);
+
+        return reviewSticker;
     }
 
     /**
@@ -89,7 +101,12 @@ public class StickerServiceImpl implements StickerService{
 
         CongestionSticker congestionSticker = new CongestionSticker(congestion, member);
 
-        return congestionStickerRepository.save(congestionSticker);
+        congestionStickerRepository.save(congestionSticker);
+
+        //스티커 발급 알림 등록
+        noticeService.registerStickerNotice(congestionSticker, member);
+
+        return congestionSticker;
     }
 
     private void checkLimitTimeOfCongestionSticker(Congestion congestion, Long principalId) {
