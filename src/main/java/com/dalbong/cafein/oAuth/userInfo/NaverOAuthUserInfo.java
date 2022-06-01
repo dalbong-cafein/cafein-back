@@ -1,5 +1,6 @@
 package com.dalbong.cafein.oAuth.userInfo;
 
+import com.dalbong.cafein.domain.member.GenderType;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 
@@ -49,7 +50,22 @@ public class NaverOAuthUserInfo extends OAuthUserInfo {
     }
 
     @Override
+    public Optional<GenderType> getGender() {
+
+        String result = (String) response.get("gender");
+
+        GenderType gender = null;
+
+        if(result.equals("F")){
+            gender = GenderType.FEMALE;
+        }else if(result.equals("M")){
+            gender = GenderType.MALE;
+        }
+        return Optional.ofNullable(gender);
+    }
+
+    @Override
     public Optional<Member> getMember() {
-        return memberRepository.findByNaverId(getId());
+        return memberRepository.findByNaverIdAndNotDeleted(getId());
     }
 }

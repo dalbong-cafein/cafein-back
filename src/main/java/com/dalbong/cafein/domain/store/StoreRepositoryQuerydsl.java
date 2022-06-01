@@ -25,6 +25,11 @@ public interface StoreRepositoryQuerydsl {
     List<Store> getMyRegisterStoreList(Long principalId);
 
     /**
+     * 엡단 본인이 등록한 가게 리스트 개수 지정 조회
+     */
+    List<Store> getCustomLimitReviewList(int limit, Long principalId);
+
+    /**
      * 앱단 카페 상세 페이지 조회
      */
     Optional<Object[]> getDetailStore(Long storeId);
@@ -36,10 +41,13 @@ public interface StoreRepositoryQuerydsl {
 
 
     /**
-     * 관리자단 전체 가게 리스트 조회
+     * 관리자단 전체 카페 리스트 조회
      */
     Page<Object[]> getAllStoreList(String[] searchType, String keyword, Pageable pageable);
 
-
+    /**
+     * 관리자단 카페 상세 페이지 조회
+     */
+    Optional<Object[]> getDetailStoreOfAdmin(Long storeId);
 
 }

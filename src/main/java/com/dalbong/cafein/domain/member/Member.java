@@ -1,13 +1,14 @@
 package com.dalbong.cafein.domain.member;
 
 import com.dalbong.cafein.domain.BaseEntity;
+import com.dalbong.cafein.domain.report.Report;
+import com.dalbong.cafein.domain.review.Review;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Builder
 @AllArgsConstructor
@@ -41,6 +42,9 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private LocalDate birth;
 
+    @Enumerated(EnumType.STRING)
+    private GenderType genderType;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AuthProvider mainAuthProvider;
@@ -51,6 +55,11 @@ public class Member extends BaseEntity {
     @Builder.Default
     @Column(name = "role")
     private Set<MemberRole> roleSet = new HashSet<MemberRole>(Arrays.asList(MemberRole.USER));
+
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    private LocalDateTime leaveDateTime;
 
     public void setKakaoId(String kakaoId){
         this.kakaoId = kakaoId;
@@ -80,7 +89,15 @@ public class Member extends BaseEntity {
         this.birth = birth;
     }
 
+    public void changeGender(GenderType genderType){
+        this.genderType = genderType;
+    }
 
+    public void leave(){
+        this.isDeleted = true;
+        this.email = "";
+        this.leaveDateTime = LocalDateTime.now();
+    }
 
 
 

@@ -9,9 +9,7 @@ import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
-import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewListDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
+import com.dalbong.cafein.dto.admin.review.*;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
@@ -19,6 +17,7 @@ import com.dalbong.cafein.dto.page.ScrollResultDto;
 import com.dalbong.cafein.dto.review.*;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.image.ImageService;
+import com.dalbong.cafein.service.sticker.StickerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +41,6 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
     private final StoreRepository storeRepository;
     private final ImageService imageService;
-
 
     /**
      * 리뷰 등록
@@ -85,7 +83,7 @@ public class ReviewServiceImpl implements ReviewService{
 
 
         //리뷰 이미지 갱신
-        updateReviewImage(review, reviewUpdateDto.getImageFiles(), reviewUpdateDto.getDeleteImageIdList());
+        updateReviewImage(review, reviewUpdateDto.getUpdateImageFiles(), reviewUpdateDto.getDeleteImageIdList());
 
 
     }
@@ -131,34 +129,35 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public ReviewListResDto<ScrollResultDto<ReviewResDto, Object[]>> getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId) {
 
-        //TODO 동적 필요
         Pageable pageable = pageRequestDto.getPageable(Sort.by("reviewId").descending());
 
         Page<Object[]> results = reviewRepository.getReviewListOfStore(storeId, pageRequestDto.getIsOnlyImage(), pageable);
 
         Function<Object[], ReviewResDto> fn = (arr -> {
 
-            //작성자 프로필 이미지
-            MemberImage memberImage = (MemberImage) arr[1];
-
-            String profileImageUrl = null;
-            if (memberImage != null){
-                profileImageUrl = memberImage.getImageUrl();
-            }
-
-            //리뷰 이미지
             Review review = (Review) arr[0];
-            List<ImageDto> reviewImageDtoList = new ArrayList<>();
-            if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()){
+            if(review != null){
+                //작성자 프로필 이미지
+                MemberImage memberImage = (MemberImage) arr[1];
 
-                for (ReviewImage reviewImage : review.getReviewImageList()){
-                    reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                String profileImageUrl = null;
+                if (memberImage != null){
+                    profileImageUrl = memberImage.getImageUrl();
                 }
+
+                //리뷰 이미지
+                List<ImageDto> reviewImageDtoList = new ArrayList<>();
+
+                if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()){
+                    for (ReviewImage reviewImage : review.getReviewImageList()){
+                        reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                    }
+                }
+
+                return new ReviewResDto(review, profileImageUrl, (long)arr[2], reviewImageDtoList);
             }
-
-            return new ReviewResDto(review, profileImageUrl, (long)arr[2], reviewImageDtoList);
+            return null;
         });
-
 
         return new ReviewListResDto<>(results.getTotalElements(), new ScrollResultDto<>(results, fn));
     }
@@ -314,7 +313,7 @@ public class ReviewServiceImpl implements ReviewService{
      */
     @Transactional(readOnly = true)
     @Override
-    public AdminReviewListDto getReviewListOfAdmin(PageRequestDto pageRequestDto) {
+    public AdminReviewListResDto getReviewListOfAdmin(PageRequestDto pageRequestDto) {
 
         Pageable pageable;
 
@@ -340,7 +339,7 @@ public class ReviewServiceImpl implements ReviewService{
             return new AdminReviewResDto(review, imageDto);
         });
 
-        return new AdminReviewListDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
+        return new AdminReviewListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
     }
 
     /**
@@ -365,5 +364,54 @@ public class ReviewServiceImpl implements ReviewService{
         }
 
         return new AdminDetailReviewResDto(review, (long)arr[1], reviewImageDtoList);
+    }
+
+    /**
+     * 관리자단 카페 리뷰 상세 평가 정보 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminReviewEvaluationOfStoreResDto getReviewDetailEvaluationOfStore(Long storeId) {
+
+        Store store = storeRepository.findById(storeId).orElseThrow(() ->
+                new CustomException("존재하지 않는 카페입니다."));
+
+        //추천율 계산
+        Double recommendPercent = store.getRecommendPercent();
+
+        List<Review> reviewList = store.getReviewList();
+
+        //각 항목의 점수별 개수 count
+        int[] socketArr = new int[5];
+        int[] wifiArr = new int[5];
+        int[] restroomArr = new int[5];
+        int[] tableSizeArr = new int[5];
+
+        if(reviewList != null && !reviewList.isEmpty()){
+            for(Review r : reviewList){
+
+                DetailEvaluation detailEvaluation = r.getDetailEvaluation();
+
+                //socket 항목 count
+                int socket = detailEvaluation.getSocket(); socketArr[socket] += 1;
+
+                //wifi 항목 count
+                int wifi = detailEvaluation.getWifi(); wifiArr[wifi] += 1;
+
+                //restroom 항목 count
+                int restroom = detailEvaluation.getRestroom(); restroomArr[restroom] += 1;
+
+                //tableSize 항목 count
+                int tableSize = detailEvaluation.getTableSize(); tableSizeArr[tableSize] += 1;
+            }
+        }
+
+        AdminReviewScoreResDto socketScoreResDto = new AdminReviewScoreResDto(socketArr[1], socketArr[2], socketArr[3], socketArr[4]);
+        AdminReviewScoreResDto wifiScoreResDto = new AdminReviewScoreResDto(wifiArr[1], wifiArr[2], wifiArr[3], wifiArr[4]);
+        AdminReviewScoreResDto restroomScoreResDto = new AdminReviewScoreResDto(restroomArr[1], restroomArr[2], restroomArr[3], restroomArr[4]);
+        AdminReviewScoreResDto tableSizeScoreResDto = new AdminReviewScoreResDto(tableSizeArr[1], tableSizeArr[2], tableSizeArr[3], tableSizeArr[4]);
+
+        return new AdminReviewEvaluationOfStoreResDto(recommendPercent, socketScoreResDto,
+                wifiScoreResDto, restroomScoreResDto, tableSizeScoreResDto);
     }
 }

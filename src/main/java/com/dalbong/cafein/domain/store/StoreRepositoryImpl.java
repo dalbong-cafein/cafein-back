@@ -13,6 +13,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -42,7 +43,7 @@ import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
 
-public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
+public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     private final JPAQueryFactory queryFactory;
 
@@ -66,7 +67,6 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                                 subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
                 .where(containStoreNameOrAddress(keyword))
                 .groupBy(store.storeId)
                 .fetch();
@@ -90,7 +90,6 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                                 subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .leftJoin(storeImage).on(storeImage.store.storeId.eq(store.storeId))
                 .join(heart).on(heart.store.storeId.eq(store.storeId))
                 .where(heart.member.memberId.eq(principalId))
                 .groupBy(store.storeId)
@@ -111,6 +110,19 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
     }
 
     /**
+     * 엡단 본인이 등록한 가게 리스트 개수 지정 조회
+     */
+    @Override
+    public List<Store> getCustomLimitReviewList(int limit, Long principalId) {
+
+        return queryFactory.selectFrom(store)
+                .where(store.regMember.memberId.eq(principalId))
+                .orderBy(store.storeId.desc())
+                .limit(limit)
+                .fetch();
+    }
+
+    /**
      * 앱단 카페 상세 페이지 조회
      */
     @Override
@@ -118,8 +130,8 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
         Tuple tuple = queryFactory.select(store, memberImage)
                 .from(store)
-                .leftJoin(store.modMember).fetchJoin()
                 .leftJoin(store.businessHours).fetchJoin()
+                .leftJoin(store.modMember).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.memberId.eq(store.modMember.memberId))
                 .where(store.storeId.eq(storeId))
                 .fetchOne();
@@ -128,7 +140,19 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
     }
 
     /**
-     * 관리자단 가게 리스트 조회
+     * 추천 검색 카페 리스트 조회
+     */
+    @Override
+    public List<Store> getRecommendSearchStoreList(String keyword) {
+
+        return queryFactory.selectFrom(store)
+                .where(containStoreNameOrAddress(keyword))
+                .limit(10)
+                .fetch();
+    }
+
+    /**
+     * 관리자단 카페 리스트 조회
      */
     @Override
     public Page<Object[]> getAllStoreList(String[] searchType, String keyword, Pageable pageable) {
@@ -174,16 +198,23 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
     }
 
     /**
-     * 추천 검색 카페 리스트 조회
+     * 관리자단 카페 상세 페이지 조회
      */
     @Override
-    public List<Store> getRecommendSearchStoreList(String keyword) {
+    public Optional<Object[]> getDetailStoreOfAdmin(Long storeId) {
 
-        return queryFactory.selectFrom(store)
-                .where(containStoreNameOrAddress(keyword))
-                .limit(10)
-                .fetch();
+        Tuple tuple = queryFactory.select(store, store.heartList.size(), JPAExpressions
+                        .select(congestion.count()).from(congestion).where(congestion.store.storeId.eq(store.storeId))
+                , store.reviewList.size())
+                .from(store)
+                .leftJoin(store.businessHours).fetchJoin()
+                .where(store.storeId.eq(storeId))
+                .fetchOne();
+
+        return tuple != null ? Optional.ofNullable(tuple.toArray()) : Optional.empty();
     }
+
+
 
     private BooleanBuilder searchKeyword(String[] searchType, String keyword) {
 
@@ -200,6 +231,7 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
                         break;
                     case "a":
                         builder.or(containAddress(keyword));
+                        break;
                 }
             }
         }
@@ -208,9 +240,29 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
     private BooleanBuilder containStoreNameOrAddress(String keyword){
         BooleanBuilder builder = new BooleanBuilder();
-        builder.or(containStoreName(keyword));
+
+        BooleanBuilder storeNameBuilder = new BooleanBuilder();
+        storeNameBuilder.and(containStoreName(keyword));
+        storeNameBuilder.and(sggNmEq(keyword));
+
+        builder.or(storeNameBuilder);
         builder.or(containAddress(keyword));
         return builder;
+    }
+
+    private BooleanExpression sggNmEq(String keyword) {
+
+        if(!isEmpty(keyword)){
+            //키워드에 구 데이터가 있는 체크
+            for(String sgg : sggList){
+                if(keyword.contains(sgg)){
+                    //구에 해당하는 카페 조건 추가
+                    return store.address.sggNm.contains(sgg);
+                }
+            }
+        }
+
+        return null;
     }
 
     private BooleanExpression containStoreId(String keyword) {
@@ -229,7 +281,41 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
 
     private BooleanExpression containStoreName(String keyword) {
 
-        return !isEmpty(keyword) ? store.storeName.contains(keyword) : null;
+
+        if(!isEmpty(keyword)){
+            String replaceWord = keyword;
+
+            if(keyword.contains("투썸 플레이스")){
+                replaceWord = keyword.replace("투썸 플레이스", "투썸");
+            }else if (keyword.contains("스벅")){
+                replaceWord = keyword.replace("스벅", "스타벅스");
+            }
+            System.out.println("------");
+            System.out.println(replaceWord);
+            //키워드에 구 데이터가 있는 체크
+            for(String sgg : sggList){
+                if(replaceWord.contains(sgg)){
+                    //구 이름이 있으면 띄어쓰기 전까지 문자 삭제
+                    int startIdx = replaceWord.indexOf(sgg);
+                    int endIdx = replaceWord.indexOf(" ", startIdx);
+
+                    String deleteWord;
+                    if(endIdx < 0){
+                        deleteWord = replaceWord.substring(startIdx);
+                    }else {
+                        deleteWord = replaceWord.substring(startIdx, endIdx);
+                    }
+                    System.out.println("startIdx: " + startIdx + " endIdx: " + endIdx);
+
+                    String result = replaceWord.replace(deleteWord, "").strip();
+
+                    return !isEmpty(result) ? store.storeName.contains(result) : store.storeName.contains(replaceWord.replace(sgg, ""));
+                }
+            }
+            return store.storeName.contains(replaceWord);
+        }
+
+        return null;
 
     }
 
@@ -238,4 +324,6 @@ public class StoreRepositoryImpl implements  StoreRepositoryQuerydsl{
         return !isEmpty(keyword) ? store.address.fullAddress.contains(keyword) : null;
 
     }
+
+    private final String[] sggList = {"서대문","마포","노원","동대문","종로","강남"};
 }

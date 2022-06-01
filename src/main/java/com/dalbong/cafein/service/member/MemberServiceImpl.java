@@ -1,24 +1,39 @@
 package com.dalbong.cafein.service.member;
 
+import com.dalbong.cafein.domain.coupon.CouponRepository;
+import com.dalbong.cafein.domain.heart.HeartRepository;
 import com.dalbong.cafein.domain.image.Image;
 import com.dalbong.cafein.domain.image.MemberImage;
 import com.dalbong.cafein.domain.image.MemberImageRepository;
+import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.domain.sticker.StickerRepository;
+import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
+import com.dalbong.cafein.dto.admin.member.AdminMemberResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.login.AccountUniteRegDto;
 import com.dalbong.cafein.dto.member.MemberInfoDto;
 import com.dalbong.cafein.dto.member.MemberUpdateDto;
+import com.dalbong.cafein.dto.page.PageRequestDto;
+import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static com.dalbong.cafein.domain.member.AuthProvider.KAKAO;
 import static com.dalbong.cafein.domain.member.AuthProvider.NAVER;
@@ -30,7 +45,10 @@ public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
     private final ImageService imageService;
-    private final MemberImageRepository memberImageRepository;
+    private final StickerRepository stickerRepository;
+    private final CouponRepository couponRepository;
+    private final HeartRepository heartRepository;
+
 
     /**
      * 계정 통합
@@ -101,7 +119,7 @@ public class MemberServiceImpl implements MemberService{
 
 
         //프로필 이미지 갱신
-        if (memberUpdateDto.getImageFile() != null){
+        if (memberUpdateDto.getImageFile() != null && !memberUpdateDto.getImageFile().isEmpty()){
 
             //기존 프로필 이미지 삭제
             imageService.remove(memberUpdateDto.getDeleteImageId());
@@ -114,6 +132,25 @@ public class MemberServiceImpl implements MemberService{
             //기존 프로필 이미지 삭제
             imageService.remove(memberUpdateDto.getDeleteImageId());
         }
+    }
+
+    /**
+     * 회원 탈퇴
+     */
+    @Transactional
+    @Override
+    public void leave(Long memberId) {
+
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                new CustomException("존재하지 않는 회원입니다."));
+
+        //회원 탈퇴
+        member.leave();
+
+        //회원의 sticker, coupon, heart 데이터 삭제
+        stickerRepository.deleteByMember(member);
+        couponRepository.deleteByMember(member);
+        heartRepository.deleteByMember(member);
     }
 
     /**
@@ -135,5 +172,42 @@ public class MemberServiceImpl implements MemberService{
         }
 
         return new MemberInfoDto((Member) arr[0], imageDto);
+    }
+
+    /**
+     * 관리자단 회원 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminMemberListResDto getMemberListOfAdmin(PageRequestDto pageRequestDto) {
+
+        Pageable pageable;
+
+        if(pageRequestDto.getSort().equals("ASC")){
+            pageable = pageRequestDto.getPageable(Sort.by("memberId").ascending());
+        }else{
+            pageable = pageRequestDto.getPageable(Sort.by("memberId").descending());
+        }
+
+        Page<Object[]> results = memberRepository.getAllMemberListOfAdmin(
+                pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
+
+
+        Function<Object[], AdminMemberResDto> fn = (arr -> {
+
+            Member member = (Member) arr[0];
+
+            //회원 프로필 이미지
+            MemberImage memberImage = (MemberImage) arr[1];
+
+            ImageDto imageDto = null;
+            if(memberImage != null){
+                imageDto = new ImageDto(memberImage.getImageId(), memberImage.getImageUrl());
+            }
+
+            return new AdminMemberResDto(member, imageDto, (Boolean) arr[2]);
+        });
+
+        return new AdminMemberListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
     }
 }

@@ -119,6 +119,11 @@ public class SocialLoginService {
                     member.changeEmail(userInfo.getEmail());
                 }
 
+                //성별 데이터
+                if(userInfo.getGender().isPresent()){
+                    member.changeGender(userInfo.getGender().get());
+                }
+
                 memberRepository.save(member);
                 break;
 
@@ -131,6 +136,11 @@ public class SocialLoginService {
                         .birth(userInfo.getBirth())
                         .mainAuthProvider(NAVER)
                         .build();
+
+                //성별 데이터
+                if(userInfo.getGender().isPresent()){
+                    member.changeGender(userInfo.getGender().get());
+                }
 
                 memberRepository.save(member);
                 break;

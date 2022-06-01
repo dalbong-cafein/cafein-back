@@ -1,6 +1,7 @@
 package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
+import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.congestion.CongestionListResDto;
 import com.dalbong.cafein.dto.congestion.CongestionRegDto;
@@ -29,9 +30,9 @@ public class CongestionController {
     public ResponseEntity<?> register(@Validated @RequestBody CongestionRegDto congestionRegDto, BindingResult bindingResult,
                                       @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        congestionService.register(congestionRegDto, principalDetails.getMember().getMemberId());
+        Congestion congestion = congestionService.register(congestionRegDto, principalDetails.getMember().getMemberId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "혼잡도 등록 성공",null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CMRespDto<>(1, "혼잡도 등록 성공",congestion.getCongestionId()), HttpStatus.CREATED);
     }
 
     /**

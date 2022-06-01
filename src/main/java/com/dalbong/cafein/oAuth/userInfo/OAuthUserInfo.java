@@ -1,5 +1,6 @@
 package com.dalbong.cafein.oAuth.userInfo;
 
+import com.dalbong.cafein.domain.member.GenderType;
 import com.dalbong.cafein.domain.member.Member;
 
 import java.time.LocalDate;
@@ -27,6 +28,8 @@ public abstract class OAuthUserInfo {
     public abstract String getImageUrl();
 
     public abstract LocalDate getBirth();
+
+    public abstract Optional<GenderType> getGender();
 
     public abstract Optional<Member> getMember();
 

@@ -1,30 +1,37 @@
 package com.dalbong.cafein.dto.board;
 
 import com.dalbong.cafein.domain.board.Board;
-import com.dalbong.cafein.domain.boardCategory.BoardCategory;
-import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.dto.image.ImageDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class BoardResDto {
 
+    private Long boardId;
+
     private String title;
 
     private String content;
 
-    private Long categoryId;
+    private List<ImageDto> boardImageDtoList = new ArrayList<>();
 
-    public Board toEntity(Long principalId){
-        return Board.builder()
-                .member(Member.builder().memberId(principalId).build())
-                .boardCategory(BoardCategory.builder().categoryId(categoryId).build())
-                .title(title)
-                .content(content)
-                .build();
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
+    private LocalDateTime regDateTime;
+
+    public BoardResDto(Board board, List<ImageDto> boardImageDtoList){
+        this.boardId = board.getBoardId();
+        this.title = board.getTitle();
+        this.content = board.getContent();
+        this.regDateTime = board.getRegDateTime();
+        this.boardImageDtoList = boardImageDtoList;
     }
 }

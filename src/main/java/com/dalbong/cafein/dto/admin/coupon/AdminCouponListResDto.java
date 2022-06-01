@@ -1,5 +1,6 @@
-package com.dalbong.cafein.dto.admin.review;
+package com.dalbong.cafein.dto.admin.coupon;
 
+import com.dalbong.cafein.domain.coupon.Coupon;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import lombok.AllArgsConstructor;
@@ -9,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class AdminReviewListDto {
+public class AdminCouponListResDto {
 
-    private long reviewCnt;
+    private long couponCnt;
 
-    private PageResultDTO<AdminReviewResDto, Review> reviewResDtoList;
+    private PageResultDTO<AdminCouponResDto, Coupon> couponResDtoList;
 
 }

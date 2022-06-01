@@ -1,10 +1,8 @@
 package com.dalbong.cafein.domain.coupon;
 
-import com.dalbong.cafein.domain.review.Review;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -74,6 +72,7 @@ public class CouponRepositoryImpl implements CouponRepositoryQuerydsl {
                         break;
                     case "p":
                         builder.or(containPhone(keyword));
+                        break;
                 }
             }
         }
