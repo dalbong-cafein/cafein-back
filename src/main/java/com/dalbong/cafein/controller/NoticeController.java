@@ -18,6 +18,9 @@ public class NoticeController {
 
     private final NoticeService noticeService;
 
+    /**
+     * 알림 리스트 조회
+     */
     @GetMapping("/notices")
     public ResponseEntity<?> getNoticeList(@AuthenticationPrincipal PrincipalDetails principalDetails){
 
@@ -26,6 +29,9 @@ public class NoticeController {
         return new ResponseEntity<>(new CMRespDto<>(1, "알림 리스트 조회 성공", noticeResDtoList), HttpStatus.OK);
     }
 
+    /**
+     * 알림 읽음 처리
+     */
     @PatchMapping("/notices/{noticeId}/read")
     public ResponseEntity<?> modifyIsRead(@PathVariable("noticeId") Long noticeId){
 
@@ -34,6 +40,9 @@ public class NoticeController {
         return new ResponseEntity<>(new CMRespDto<>(1, "알림 읽음 처리 성공", null), HttpStatus.OK);
     }
 
+    /**
+     * 알림 삭제
+     */
     @DeleteMapping("/notices/{noticeId}")
     public ResponseEntity<?> remove(@PathVariable("noticeId") Long noticeId){
 
