@@ -25,8 +25,7 @@ public abstract class Notice extends BaseEntity {
 
     private String content;
 
-    private boolean isRead;
-
+    private Boolean isRead;
 
     public Notice(Member toMember, String content){
         this.toMember = toMember;

@@ -5,10 +5,11 @@ import com.dalbong.cafein.domain.coupon.Coupon;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.notice.*;
 import com.dalbong.cafein.domain.sticker.Sticker;
+import com.dalbong.cafein.dto.notice.NoticeResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class NoticeServiceImpl implements NoticeService{
 
+    private final NoticeRepository noticeRepository;
     private final StickerNoticeRepository stickerNoticeRepository;
     private final CouponNoticeRepository couponNoticeRepository;
     private final BoardNoticeRepository boardNoticeRepository;
@@ -57,5 +59,17 @@ public class NoticeServiceImpl implements NoticeService{
                         .collect(Collectors.toList());
 
         boardNoticeRepository.saveAll(boardNoticeList);
+    }
+
+    /**
+     * 공지사항 알림 등록
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<NoticeResDto> getNoticeList(Long principalId) {
+
+        List<Notice> results = noticeRepository.getNoticeList(principalId);
+
+        return results.stream().map(n -> new NoticeResDto(n)).collect(Collectors.toList());
     }
 }

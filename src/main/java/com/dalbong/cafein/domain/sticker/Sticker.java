@@ -15,7 +15,7 @@ import javax.persistence.*;
 public abstract class Sticker extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long sticker_id;
+    private Long stickerId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
