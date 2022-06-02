@@ -27,12 +27,13 @@ public class MemoServiceImpl implements MemoService{
     private final MemberRepository memberRepository;
 
     /**
-     * 관리자단 카페 메모 생성
+     * 관리자단 메모 생성
      */
     @Transactional
     @Override
     public Memo register(MemoRegDto memoRegDto, Long principalId) {
 
+        //카페 메모
         if (memoRegDto.getStoreId() != null) {
             Store store = storeRepository.findById(memoRegDto.getStoreId()).orElseThrow(() ->
                     new CustomException("존재하지 않는 카페입니다."));
@@ -41,7 +42,9 @@ public class MemoServiceImpl implements MemoService{
 
             return storeMemoRepository.save(storeMemo);
 
-        } else if (memoRegDto.getReviewId() != null) {
+        }
+        //리뷰 메모
+        else if (memoRegDto.getReviewId() != null) {
             Review review = reviewRepository.findById(memoRegDto.getReviewId()).orElseThrow(() ->
                     new CustomException("존재하지 않는 리뷰입니다."));
 
@@ -49,7 +52,9 @@ public class MemoServiceImpl implements MemoService{
 
             return reviewMemoRepository.save(reviewMemo);
 
-        } else if (memoRegDto.getMemberId() != null) {
+        }
+        //회원 메모
+        else if (memoRegDto.getMemberId() != null) {
             Member member = memberRepository.findById(memoRegDto.getMemberId()).orElseThrow(() ->
                     new CustomException("존재하지 않는 회원입니다."));
 
@@ -58,5 +63,15 @@ public class MemoServiceImpl implements MemoService{
         }
 
         throw new CustomException("존재하는 메모 기능이 없습니다.");
+    }
+
+    /**
+     * 관리자단 메모 삭제
+     */
+    @Transactional
+    @Override
+    public void remove(Long memoId) {
+
+        memoRepository.deleteById(memoId);
     }
 }

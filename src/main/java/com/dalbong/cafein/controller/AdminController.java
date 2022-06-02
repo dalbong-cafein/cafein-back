@@ -88,7 +88,7 @@ public class AdminController {
      * 관리자단 가게 등록
      */
     @PostMapping("/stores")
-    public ResponseEntity<?> register(@Validated StoreRegDto storeRegDto, BindingResult bindingResult,
+    public ResponseEntity<?> registerStore(@Validated StoreRegDto storeRegDto, BindingResult bindingResult,
                                       @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
         storeService.register(storeRegDto,principalDetails.getMember().getMemberId());
@@ -155,7 +155,7 @@ public class AdminController {
      * 관리자단 게시글 삭제
      */
     @DeleteMapping("/boards/{boardId}")
-    public ResponseEntity<?> remove(@PathVariable("boardId") Long boardId){
+    public ResponseEntity<?> removeBoard(@PathVariable("boardId") Long boardId){
 
         boardService.remove(boardId);
 
@@ -217,5 +217,16 @@ public class AdminController {
         memoService.register(memoRegDto, principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 생성 성공", null), HttpStatus.CREATED);
+    }
+
+    /**
+     * 관리자단 메모 삭제
+     */
+    @DeleteMapping("/memos/{memoId}")
+    public ResponseEntity<?> removeMemo(@PathVariable("memoId") Long memoId){
+
+        memoService.remove(memoId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 삭제 성공", null), HttpStatus.OK);
     }
 }

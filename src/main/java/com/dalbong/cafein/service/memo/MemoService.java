@@ -6,6 +6,7 @@ import com.dalbong.cafein.dto.memo.MemoRegDto;
 public interface MemoService {
 
     Memo register(MemoRegDto memoRegDto, Long principalId);
-    ;
+
+    void remove(Long memoId);
 
 }
