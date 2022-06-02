@@ -14,7 +14,6 @@ import com.dalbong.cafein.handler.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -104,5 +103,18 @@ public class MemoServiceImpl implements MemoService{
         List<Memo> result = memoRepository.getCustomLimitMemoList(limit);
 
         return result.stream().map(m -> new AdminMemoResDto(m)).collect(Collectors.toList());
+    }
+
+    /**
+     * 관리자단 메모 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminMemoResDto getMemo(Long memoId) {
+
+        Memo memo = memoRepository.findById(memoId).orElseThrow(() ->
+                new CustomException("존재하지 않는 메모입니다."));
+
+        return new AdminMemoResDto(memo);
     }
 }

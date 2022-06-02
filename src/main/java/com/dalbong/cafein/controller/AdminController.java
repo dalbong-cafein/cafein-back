@@ -254,4 +254,15 @@ public class AdminController {
                 new CMRespDto<>(1, "관리자단 최근 생성 or 수정된 메모 리스트 개수 지정 조회 성공", adminMemoResDtoList), HttpStatus.OK);
 
     }
+
+    /**
+     * 관리자단 메모 조회
+     */
+    @GetMapping("/memos/{memoId}")
+    public ResponseEntity<?> getMemo(@PathVariable("memoId") Long memoId){
+
+        AdminMemoResDto adminMemoResDto = memoService.getMemo(memoId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 조회 성공", adminMemoResDto), HttpStatus.OK);
+    }
 }

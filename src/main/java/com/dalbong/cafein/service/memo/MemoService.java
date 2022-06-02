@@ -17,4 +17,6 @@ public interface MemoService {
 
     List<AdminMemoResDto> getCustomLimitMemoList(int limit);
 
+    AdminMemoResDto getMemo(Long memoId);
+
 }
