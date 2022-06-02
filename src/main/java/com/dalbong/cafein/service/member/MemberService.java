@@ -1,5 +1,6 @@
 package com.dalbong.cafein.service.member;
 
+import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberResDto;
 import com.dalbong.cafein.dto.login.AccountUniteRegDto;
@@ -24,4 +25,6 @@ public interface MemberService {
     MemberInfoDto getMemberInfo(Long memberId);
 
     AdminMemberListResDto getMemberListOfAdmin(PageRequestDto pageRequestDto);
+
+    AdminDetailMemberResDto getDetailMemberOfAdmin(Long memberId);
 }

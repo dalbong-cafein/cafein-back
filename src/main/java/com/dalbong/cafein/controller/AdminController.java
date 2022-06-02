@@ -6,6 +6,7 @@ import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 
+import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
@@ -189,5 +190,17 @@ public class AdminController {
         AdminMemberListResDto adminMemberListResDto = memberService.getMemberListOfAdmin(requestDto);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 회원 리스트 조회 성공", adminMemberListResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 회원 상세 조회
+     */
+    @GetMapping("/members/{memberId}")
+    public ResponseEntity<?> getDetailMember(@PathVariable("memberId") Long memberId){
+
+        AdminDetailMemberResDto adminDetailMemberResDto = memberService.getDetailMemberOfAdmin(memberId);
+
+        return new ResponseEntity<>(
+                new CMRespDto<>(1, "관리자단 상세 회원 조회 성공", adminDetailMemberResDto), HttpStatus.OK);
     }
 }
