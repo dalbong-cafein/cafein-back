@@ -8,18 +8,21 @@ import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 
 import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
+import com.dalbong.cafein.dto.admin.memo.AdminMemoResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewEvaluationOfStoreResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
+import com.dalbong.cafein.dto.admin.memo.AdminMemoRegDto;
+import com.dalbong.cafein.dto.admin.memo.AdminMemoUpdateDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
-import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.service.board.BoardService;
 import com.dalbong.cafein.service.coupon.CouponService;
 import com.dalbong.cafein.service.member.MemberService;
+import com.dalbong.cafein.service.memo.MemoService;
 import com.dalbong.cafein.service.report.ReportService;
 import com.dalbong.cafein.service.review.ReviewService;
 import com.dalbong.cafein.service.store.StoreService;
@@ -32,6 +35,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequestMapping("/admin")
 @RequiredArgsConstructor
@@ -44,6 +48,7 @@ public class AdminController {
     private final BoardService boardService;
     private final ReportService reportService;
     private final MemberService memberService;
+    private final MemoService memoService;
 
     /**
      * 관리자단 리뷰 리스트 조회
@@ -84,7 +89,7 @@ public class AdminController {
      * 관리자단 가게 등록
      */
     @PostMapping("/stores")
-    public ResponseEntity<?> register(@Validated StoreRegDto storeRegDto, BindingResult bindingResult,
+    public ResponseEntity<?> registerStore(@Validated StoreRegDto storeRegDto, BindingResult bindingResult,
                                       @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
         storeService.register(storeRegDto,7L);
@@ -151,7 +156,7 @@ public class AdminController {
      * 관리자단 게시글 삭제
      */
     @DeleteMapping("/boards/{boardId}")
-    public ResponseEntity<?> remove(@PathVariable("boardId") Long boardId){
+    public ResponseEntity<?> removeBoard(@PathVariable("boardId") Long boardId){
 
         boardService.remove(boardId);
 
@@ -202,5 +207,62 @@ public class AdminController {
 
         return new ResponseEntity<>(
                 new CMRespDto<>(1, "관리자단 상세 회원 조회 성공", adminDetailMemberResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 메모 생성
+     */
+    @PostMapping("/memos")
+    public ResponseEntity<?> registerMemo(@RequestBody AdminMemoRegDto adminMemoRegDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        memoService.register(adminMemoRegDto, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 생성 성공", null), HttpStatus.CREATED);
+    }
+
+    /**
+     * 관리자단 메모 수정
+     */
+    @PutMapping("/memos/{memoId}")
+    public ResponseEntity<?> modifyMemo(@RequestBody AdminMemoUpdateDto adminMemoUpdateDto){
+
+        memoService.modify(adminMemoUpdateDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 수정 성공", null), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 메모 삭제
+     */
+    @DeleteMapping("/memos/{memoId}")
+    public ResponseEntity<?> removeMemo(@PathVariable("memoId") Long memoId){
+
+        memoService.remove(memoId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 삭제 성공", null), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 최근 생성 or 수정된 메모 리스트 개수 지정 조회
+     */
+    @GetMapping("memos/recent")
+    public ResponseEntity<?> getRecentMemoList(@RequestParam(value = "limit", defaultValue = "6", required = false) int limit){
+
+        List<AdminMemoResDto> adminMemoResDtoList = memoService.getCustomLimitMemoList(limit);
+
+        return new ResponseEntity<>(
+                new CMRespDto<>(1, "관리자단 최근 생성 or 수정된 메모 리스트 개수 지정 조회 성공", adminMemoResDtoList), HttpStatus.OK);
+
+    }
+
+    /**
+     * 관리자단 메모 조회
+     */
+    @GetMapping("/memos/{memoId}")
+    public ResponseEntity<?> getMemo(@PathVariable("memoId") Long memoId){
+
+        AdminMemoResDto adminMemoResDto = memoService.getMemo(memoId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 조회 성공", adminMemoResDto), HttpStatus.OK);
     }
 }
