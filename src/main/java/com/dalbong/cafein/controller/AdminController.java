@@ -1,7 +1,6 @@
 package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
-import com.dalbong.cafein.domain.memo.Memo;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
@@ -9,16 +8,16 @@ import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 
 import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
+import com.dalbong.cafein.dto.admin.memo.AdminMemoResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewEvaluationOfStoreResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
-import com.dalbong.cafein.dto.memo.MemoRegDto;
-import com.dalbong.cafein.dto.memo.MemoUpdateDto;
+import com.dalbong.cafein.dto.admin.memo.AdminMemoRegDto;
+import com.dalbong.cafein.dto.admin.memo.AdminMemoUpdateDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
-import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.service.board.BoardService;
 import com.dalbong.cafein.service.coupon.CouponService;
@@ -36,6 +35,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequestMapping("/admin")
 @RequiredArgsConstructor
@@ -213,9 +213,9 @@ public class AdminController {
      * 관리자단 메모 생성
      */
     @PostMapping("/memos")
-    public ResponseEntity<?> registerMemo(@RequestBody MemoRegDto memoRegDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
+    public ResponseEntity<?> registerMemo(@RequestBody AdminMemoRegDto adminMemoRegDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        memoService.register(memoRegDto, principalDetails.getMember().getMemberId());
+        memoService.register(adminMemoRegDto, principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 생성 성공", null), HttpStatus.CREATED);
     }
@@ -224,9 +224,9 @@ public class AdminController {
      * 관리자단 메모 수정
      */
     @PutMapping("/memos/{memoId}")
-    public ResponseEntity<?> modifyMemo(@RequestBody MemoUpdateDto memoUpdateDto){
+    public ResponseEntity<?> modifyMemo(@RequestBody AdminMemoUpdateDto adminMemoUpdateDto){
 
-        memoService.modify(memoUpdateDto);
+        memoService.modify(adminMemoUpdateDto);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 수정 성공", null), HttpStatus.OK);
     }
@@ -240,5 +240,18 @@ public class AdminController {
         memoService.remove(memoId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 삭제 성공", null), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 최근 생성 or 수정된 메모 리스트 개수 지정 조회
+     */
+    @GetMapping("memos/recent")
+    public ResponseEntity<?> getRecentMemoList(@RequestParam(value = "limit", defaultValue = "6", required = false) int limit){
+
+        List<AdminMemoResDto> adminMemoResDtoList = memoService.getCustomLimitMemoList(limit);
+
+        return new ResponseEntity<>(
+                new CMRespDto<>(1, "관리자단 최근 생성 or 수정된 메모 리스트 개수 지정 조회 성공", adminMemoResDtoList), HttpStatus.OK);
+
     }
 }

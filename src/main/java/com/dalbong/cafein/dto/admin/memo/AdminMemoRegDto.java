@@ -1,4 +1,4 @@
-package com.dalbong.cafein.dto.memo;
+package com.dalbong.cafein.dto.admin.memo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class MemoRegDto {
+public class AdminMemoRegDto {
 
     private Long storeId;
 
