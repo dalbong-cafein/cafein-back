@@ -1,6 +1,7 @@
 package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
+import com.dalbong.cafein.domain.memo.Memo;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
@@ -14,12 +15,14 @@ import com.dalbong.cafein.dto.admin.review.AdminReviewEvaluationOfStoreResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
+import com.dalbong.cafein.dto.memo.MemoRegDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.service.board.BoardService;
 import com.dalbong.cafein.service.coupon.CouponService;
 import com.dalbong.cafein.service.member.MemberService;
+import com.dalbong.cafein.service.memo.MemoService;
 import com.dalbong.cafein.service.report.ReportService;
 import com.dalbong.cafein.service.review.ReviewService;
 import com.dalbong.cafein.service.store.StoreService;
@@ -44,6 +47,7 @@ public class AdminController {
     private final BoardService boardService;
     private final ReportService reportService;
     private final MemberService memberService;
+    private final MemoService memoService;
 
     /**
      * 관리자단 리뷰 리스트 조회
@@ -202,5 +206,16 @@ public class AdminController {
 
         return new ResponseEntity<>(
                 new CMRespDto<>(1, "관리자단 상세 회원 조회 성공", adminDetailMemberResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 메모 생성
+     */
+    @PostMapping("/memos")
+    public ResponseEntity<?> registerMemo(@RequestBody MemoRegDto memoRegDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        memoService.register(memoRegDto, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 생성 성공", null), HttpStatus.CREATED);
     }
 }
