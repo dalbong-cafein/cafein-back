@@ -8,6 +8,7 @@ import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.memo.MemoRegDto;
+import com.dalbong.cafein.dto.memo.MemoUpdateDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,6 +64,19 @@ public class MemoServiceImpl implements MemoService{
         }
 
         throw new CustomException("존재하는 메모 기능이 없습니다.");
+    }
+
+    /**
+     * 관리자단 메모 수정
+     */
+    @Transactional
+    @Override
+    public void modify(MemoUpdateDto memoUpdateDto) {
+
+        Memo memo = memoRepository.findById(memoUpdateDto.getMemoId()).orElseThrow(() ->
+                new CustomException("존재하지 않는 메모입니다."));
+
+        memo.changeContent(memoUpdateDto.getContent());
     }
 
     /**

@@ -16,6 +16,7 @@ import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.memo.MemoRegDto;
+import com.dalbong.cafein.dto.memo.MemoUpdateDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
@@ -217,6 +218,17 @@ public class AdminController {
         memoService.register(memoRegDto, principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 생성 성공", null), HttpStatus.CREATED);
+    }
+
+    /**
+     * 관리자단 메모 수정
+     */
+    @PutMapping("/memos/{memoId}")
+    public ResponseEntity<?> modifyMemo(@RequestBody MemoUpdateDto memoUpdateDto){
+
+        memoService.modify(memoUpdateDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 수정 성공", null), HttpStatus.OK);
     }
 
     /**

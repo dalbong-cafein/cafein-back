@@ -31,4 +31,8 @@ public abstract class Memo extends BaseEntity {
         this.content = content;
     }
 
+    public void changeContent(String content){
+        this.content = content;
+    }
+
 }
