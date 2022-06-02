@@ -1,6 +1,7 @@
 package com.dalbong.cafein.domain.member;
 
 import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,8 @@ public interface MemberRepositoryQuerydsl {
      */
     Page<Object[]> getAllMemberListOfAdmin(String[] searchType, String keyword, Pageable pageable);
 
+    /**
+     * 관리자단 회원 상세 조회
+     */
+    Optional<Object[]> getDetailMemberOfAdmin(Long memberId);
 }

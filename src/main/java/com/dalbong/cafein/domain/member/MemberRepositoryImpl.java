@@ -1,8 +1,12 @@
 package com.dalbong.cafein.domain.member;
 
+import com.dalbong.cafein.domain.congestion.QCongestion;
+import com.dalbong.cafein.domain.heart.QHeart;
 import com.dalbong.cafein.domain.image.QMemberImage;
 import com.dalbong.cafein.domain.report.QReport;
 import com.dalbong.cafein.domain.review.QReview;
+import com.dalbong.cafein.domain.sticker.QSticker;
+import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
@@ -22,10 +26,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
+import static com.dalbong.cafein.domain.heart.QHeart.heart;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.member.QMember.member;
 import static com.dalbong.cafein.domain.report.QReport.report;
 import static com.dalbong.cafein.domain.review.QReview.review;
+import static com.dalbong.cafein.domain.sticker.QSticker.sticker;
 import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
 
@@ -106,6 +113,36 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
          * 날릴 필요가 없음.
          */
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchCount());
+    }
+
+    /**
+     * 관리자단 회원 상세 조회
+     */
+    @Override
+    public Optional<Object[]> getDetailMemberOfAdmin(Long memberId) {
+
+
+
+        Tuple tuple = queryFactory.select(member, memberImage,
+                JPAExpressions.select(heart.count())
+                        .from(heart)
+                        .where(heart.member.memberId.eq(memberId)),
+                JPAExpressions.select(congestion.count())
+                        .from(congestion)
+                        .where(congestion.member.memberId.eq(memberId)),
+                JPAExpressions.select(review.count())
+                        .from(review)
+                        .where(review.member.memberId.eq(memberId)),
+                JPAExpressions.select(sticker.count())
+                        .from(sticker)
+                        .where(sticker.member.memberId.eq(memberId))
+        )
+                .from(member)
+                .leftJoin(memberImage).on(memberImage.member.memberId.eq(member.memberId))
+                .where(member.memberId.eq(memberId))
+                .fetchOne();
+
+        return tuple != null ? Optional.of(tuple.toArray()) : Optional.empty();
     }
 
     private BooleanBuilder searchKeyword(String[] searchType, String keyword) {

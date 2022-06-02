@@ -11,6 +11,7 @@ import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.sticker.StickerRepository;
+import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -209,5 +211,32 @@ public class MemberServiceImpl implements MemberService{
         });
 
         return new AdminMemberListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
+    }
+
+    /**
+     * 관리자단 회원 상세 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminDetailMemberResDto getDetailMemberOfAdmin(Long memberId) {
+
+        Object[] arr = memberRepository.getDetailMemberOfAdmin(memberId).orElseThrow(() ->
+                new CustomException("존재하지 않는 회원입니다."));
+
+        //회원 프로필 이미지
+        MemberImage memberImage = (MemberImage) arr[1];
+
+        ImageDto memberImageDto = null;
+        if(memberImage != null){
+            memberImageDto = new ImageDto(memberImage.getImageId(), memberImage.getImageUrl());
+        }
+
+        long heartCnt = (long) arr[2];
+        long congestionCnt = (long) arr[3];
+        long reviewCnt = (long) arr[4];
+        long stickerCnt = (long) arr[5];
+
+        return new AdminDetailMemberResDto((Member)arr[0], memberImageDto,
+                heartCnt, congestionCnt, reviewCnt, stickerCnt);
     }
 }
