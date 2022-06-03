@@ -100,8 +100,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                                 .select(review.member.memberId.count())
                                 .from(reviewSub)
                                 .where(reviewSub.store.storeId.eq(storeId),
-                                        reviewSub.member.memberId.eq(review.member.memberId))
-                                .groupBy(reviewSub.member.memberId))
+                                        reviewSub.member.memberId.eq(review.member.memberId)))
                 .from(review)
                 .leftJoin(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
@@ -163,8 +162,9 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
         List<Tuple> result = queryFactory.select(review,
                                         JPAExpressions.select(review.member.memberId.count())
                                                 .from(reviewSub)
-                                                .where(reviewSub.store.storeId.eq(review.store.storeId))
-                                                .groupBy(reviewSub.member.memberId))
+                                                .where(reviewSub.store.storeId.eq(review.store.storeId),
+                                                        reviewSub.member.memberId.eq(review.member.memberId)))
+
                 .from(review)
                 .leftJoin(review.store).fetchJoin()
                 .where(review.member.memberId.eq(principalId))
