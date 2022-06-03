@@ -1,5 +1,7 @@
 package com.dalbong.cafein.domain.review;
 
+import com.dalbong.cafein.domain.memo.QMemo;
+import com.dalbong.cafein.domain.memo.QReviewMemo;
 import com.dalbong.cafein.domain.store.QStore;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -22,6 +24,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
+import static com.dalbong.cafein.domain.memo.QMemo.memo;
+import static com.dalbong.cafein.domain.memo.QReviewMemo.reviewMemo;
 import static com.dalbong.cafein.domain.review.QReview.review;
 import static org.aspectj.util.LangUtil.isEmpty;
 
@@ -116,15 +120,16 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
      * 관리자단 전체 리뷰 리스트 조회
      */
     @Override
-    public Page<Review> getAllReviewList(String[] searchType, String keyword, Pageable pageable) {
+    public Page<Object[]> getAllReviewList(String[] searchType, String keyword, Pageable pageable) {
 
         QReview review = new QReview("review");
 
-        JPAQuery<Review> query = queryFactory
-                .select(review)
+        JPAQuery<Tuple> query = queryFactory
+                .select(review, reviewMemo.memoId)
                 .from(review)
                 .leftJoin(review.member).fetchJoin()
                 .leftJoin(review.store).fetchJoin()
+                .leftJoin(reviewMemo).on(reviewMemo.review.reviewId.eq(review.reviewId))
                 .where(searchKeyword(searchType, keyword))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
@@ -136,7 +141,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                     pathBuilder.get(o.getProperty())));
         }
 
-        List<Review> results = query.fetch();
+        List<Tuple> results = query.fetch();
 
         //count 쿼리
         JPAQuery<Review> countQuery = queryFactory
@@ -146,8 +151,9 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .leftJoin(review.store).fetchJoin()
                 .where(searchKeyword(searchType, keyword));
 
+        List<Object[]> content = results.stream().map(t -> t.toArray()).collect(Collectors.toList());
 
-        return PageableExecutionUtils.getPage(results, pageable, () -> countQuery.fetchCount());
+        return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchCount());
     }
 
     /**

@@ -3,6 +3,7 @@ package com.dalbong.cafein.service.review;
 import com.dalbong.cafein.domain.image.MemberImage;
 import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.image.StoreImage;
+import com.dalbong.cafein.domain.memo.ReviewMemo;
 import com.dalbong.cafein.domain.review.DetailEvaluation;
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
@@ -324,9 +325,11 @@ public class ReviewServiceImpl implements ReviewService{
             pageable = pageRequestDto.getPageable(Sort.by("reviewId").descending());
         }
 
-        Page<Review> results = reviewRepository.getAllReviewList(pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
+        Page<Object[]> results = reviewRepository.getAllReviewList(pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
 
-        Function<Review, AdminReviewResDto> fn = (review -> {
+        Function<Object[], AdminReviewResDto> fn = (arr -> {
+
+            Review review = (Review) arr[0];
 
             ImageDto imageDto = null;
             //리뷰 이미지
@@ -337,7 +340,7 @@ public class ReviewServiceImpl implements ReviewService{
                 imageDto = new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl());
             }
 
-            return new AdminReviewResDto(review, imageDto);
+            return new AdminReviewResDto(review, imageDto, (Long) arr[1]);
         });
 
         return new AdminReviewListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));

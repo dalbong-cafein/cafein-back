@@ -22,7 +22,7 @@ public interface ReviewRepositoryQuerydsl {
     /**
      * 관리자단 전체 리뷰 리스트 조회
      */
-    Page<Review> getAllReviewList(String[] searchType, String keyword, Pageable pageable);
+    Page<Object[]> getAllReviewList(String[] searchType, String keyword, Pageable pageable);
 
     /**
      * 회원별 리뷰 리스트 조회

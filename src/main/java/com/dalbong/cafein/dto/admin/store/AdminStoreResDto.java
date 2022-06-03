@@ -38,7 +38,9 @@ public class AdminStoreResDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime modDateTime;
 
-    public AdminStoreResDto(Store store, int reviewCnt, Double congestionScoreAvg, ImageDto storeImageDto){
+    private Long memoId;
+
+    public AdminStoreResDto(Store store, int reviewCnt, Double congestionScoreAvg, ImageDto storeImageDto, Long memoId){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
@@ -51,5 +53,6 @@ public class AdminStoreResDto {
         this.modMemberId = store.getModMember().getMemberId();
         this.regDateTime = store.getRegDateTime();
         this.modDateTime = store.getModDateTime();
+        this.memoId = memoId;
     }
 }
