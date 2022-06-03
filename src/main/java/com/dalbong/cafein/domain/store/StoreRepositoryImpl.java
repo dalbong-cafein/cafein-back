@@ -8,6 +8,8 @@ import com.dalbong.cafein.domain.congestion.QCongestion;
 import com.dalbong.cafein.domain.heart.QHeart;
 import com.dalbong.cafein.domain.image.QMemberImage;
 import com.dalbong.cafein.domain.image.QStoreImage;
+import com.dalbong.cafein.domain.memo.QReviewMemo;
+import com.dalbong.cafein.domain.memo.QStoreMemo;
 import com.dalbong.cafein.domain.review.Review;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -39,6 +41,8 @@ import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
 import static com.dalbong.cafein.domain.heart.QHeart.heart;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.image.QStoreImage.storeImage;
+import static com.dalbong.cafein.domain.memo.QReviewMemo.reviewMemo;
+import static com.dalbong.cafein.domain.memo.QStoreMemo.storeMemo;
 import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
@@ -164,8 +168,10 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                         .select(subCongestion.congestionScore.avg())
                         .from(subCongestion)
                         .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
-                                subCongestion.store.storeId.eq(store.storeId)))
+                                subCongestion.store.storeId.eq(store.storeId)),
+                        storeMemo.memoId)
                 .from(store)
+                .leftJoin(storeMemo).on(storeMemo.store.storeId.eq(store.storeId))
                 .where(searchKeyword(searchType, keyword))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

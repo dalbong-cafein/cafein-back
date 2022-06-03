@@ -339,7 +339,7 @@ public class StoreServiceImpl implements StoreService{
                 imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
             }
 
-            return new AdminStoreResDto(store, reviewCnt, (Double) arr[2], imageDto);
+            return new AdminStoreResDto(store, reviewCnt, (Double) arr[2], imageDto, (Long) arr[3]);
         });
 
         return new AdminStoreListDto(results.getTotalElements(), new PageResultDTO<>(results, fn));

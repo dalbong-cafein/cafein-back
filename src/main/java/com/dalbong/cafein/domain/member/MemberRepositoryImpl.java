@@ -3,6 +3,7 @@ package com.dalbong.cafein.domain.member;
 import com.dalbong.cafein.domain.congestion.QCongestion;
 import com.dalbong.cafein.domain.heart.QHeart;
 import com.dalbong.cafein.domain.image.QMemberImage;
+import com.dalbong.cafein.domain.memo.QMemberMemo;
 import com.dalbong.cafein.domain.report.QReport;
 import com.dalbong.cafein.domain.review.QReview;
 import com.dalbong.cafein.domain.sticker.QSticker;
@@ -30,6 +31,7 @@ import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
 import static com.dalbong.cafein.domain.heart.QHeart.heart;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.member.QMember.member;
+import static com.dalbong.cafein.domain.memo.QMemberMemo.memberMemo;
 import static com.dalbong.cafein.domain.report.QReport.report;
 import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.sticker.QSticker.sticker;
@@ -80,9 +82,11 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
         JPAQuery<Tuple> query = queryFactory.select(member, memberImage, JPAExpressions.selectOne()
                                                                 .from(report)
                                                                 .leftJoin(review).on(review.reviewId.eq(report.review.reviewId))
-                                                                .where(review.member.memberId.eq(member.memberId)).exists())
+                                                                .where(review.member.memberId.eq(member.memberId)).exists(),
+                                                                memberMemo.memoId)
                 .from(member)
                 .leftJoin(memberImage).on(memberImage.member.memberId.eq(member.memberId))
+                .leftJoin(memberMemo).on(memberMemo.member.memberId.eq(member.memberId))
                 .where(searchKeyword(searchType, keyword))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());

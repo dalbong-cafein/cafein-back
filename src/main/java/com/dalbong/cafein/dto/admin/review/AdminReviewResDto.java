@@ -30,13 +30,15 @@ public class AdminReviewResDto {
 
     private ImageDto reviewImageDto;
 
+    private Long memoId;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime regDateTime;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime modDateTime;
 
-    public AdminReviewResDto(Review review, ImageDto reviewImageDto){
+    public AdminReviewResDto(Review review, ImageDto reviewImageDto, Long memoId){
         this.reviewId = review.getReviewId();
         this.writerId = review.getMember().getMemberId();
         this.nicknameOfWriter = review.getMember().getNickname();
@@ -46,6 +48,7 @@ public class AdminReviewResDto {
         this.reviewImageDto = reviewImageDto;
         this.regDateTime = review.getRegDateTime();
         this.modDateTime = review.getModDateTime();
+        this.memoId = memoId;
     }
 
 }
