@@ -36,7 +36,9 @@ public class AdminMemberResDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime regDateTime;
 
-    public AdminMemberResDto(Member member, ImageDto memberImageDto, Boolean isReported){
+    private Long memoId;
+
+    public AdminMemberResDto(Member member, ImageDto memberImageDto, Boolean isReported, Long memoId){
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
         this.memberImageDto = memberImageDto;;
@@ -44,6 +46,7 @@ public class AdminMemberResDto {
         this.email = member.getEmail();
         this.isDeleted = member.getIsDeleted();
         this.isReported = isReported;
+        this.memoId = memoId;
 
         //소셜타입
         this.socialTypeList = new ArrayList<>();
@@ -55,9 +58,6 @@ public class AdminMemberResDto {
         if(member.getNaverId() != null){
             this.socialTypeList.add(AuthProvider.NAVER);
         }
-
-
-
     }
 
 }

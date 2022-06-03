@@ -13,6 +13,6 @@ public class AdminReviewListResDto {
 
     private long reviewCnt;
 
-    private PageResultDTO<AdminReviewResDto, Review> reviewResDtoList;
+    private PageResultDTO<AdminReviewResDto, Object[]> reviewResDtoList;
 
 }

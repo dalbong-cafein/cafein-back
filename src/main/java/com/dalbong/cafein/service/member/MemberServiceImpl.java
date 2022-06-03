@@ -207,7 +207,7 @@ public class MemberServiceImpl implements MemberService{
                 imageDto = new ImageDto(memberImage.getImageId(), memberImage.getImageUrl());
             }
 
-            return new AdminMemberResDto(member, imageDto, (Boolean) arr[2]);
+            return new AdminMemberResDto(member, imageDto, (Boolean) arr[2], (Long) arr[3]);
         });
 
         return new AdminMemberListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
