@@ -198,41 +198,48 @@ public class StoreServiceImpl implements StoreService{
     }
 
     /**
+     * 앱단 내 가게 리스트 개수지정 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public StoreListResDto<List<MyStoreResDto>> getCustomLimitMyStoreList(int limit, Long principalId) {
+
+        List<Object[]> results = storeRepository.getCustomLimitMyStoreList(limit, principalId);
+
+        List<MyStoreResDto> myStoredResDtoList = results.stream().map(arr -> {
+
+            Store store = (Store) arr[0];
+
+            //카페 영업중 체크
+            Boolean isOpen = store.checkIsOpen();
+
+            //첫번째 이미지 불러오기
+            ImageDto imageDto = null;
+            if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
+
+                StoreImage storeImage = store.getStoreImageList().get(0);
+
+                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+            }
+
+            return new MyStoreResDto(store, isOpen, imageDto, (Double) arr[1]);
+        }).collect(Collectors.toList());
+
+        return new StoreListResDto<>(myStoredResDtoList.size(), myStoredResDtoList);
+    }
+
+    /**
      * 앱단 본인이 등록한 가게 리스트 조회
      */
     @Transactional(readOnly = true)
     @Override
     public StoreListResDto<List<MyRegisterStoreResDto>> getMyRegisterStoreList(Long principalId) {
 
-        List<Store> results = storeRepository.getMyRegisterStoreList(principalId);
+        List<Object[]> results = storeRepository.getMyRegisterStoreList(principalId);
 
-        List<MyRegisterStoreResDto> myRegisterStoreResDtoList = results.stream().map(store -> {
+        List<MyRegisterStoreResDto> myRegisterStoreResDtoList = results.stream().map(arr -> {
 
-            //첫번째 이미지 불러오기
-            ImageDto imageDto = null;
-            if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
-
-                StoreImage storeImage = store.getStoreImageList().get(0);
-
-                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
-            }
-
-            return new MyRegisterStoreResDto(store, store.checkIsOpen(), imageDto, principalId);
-        }).collect(Collectors.toList());
-
-        return new StoreListResDto<>(results.size(), myRegisterStoreResDtoList);
-    }
-
-    /**
-     * 앱단 본인이 등록한 가게 리스트 개수지정 조회
-     */
-    @Transactional(readOnly = true)
-    @Override
-    public StoreListResDto<List<MyRegisterStoreResDto>> getCustomLimitMyRegisterStoreList(int limit, Long principalId) {
-
-        List<Store> results = storeRepository.getCustomLimitReviewList(limit, principalId);
-
-        List<MyRegisterStoreResDto> myRegisterStoreResDtoList = results.stream().map(store -> {
+            Store store = (Store) arr[0];
 
             //첫번째 이미지 불러오기
             ImageDto imageDto = null;
@@ -243,7 +250,7 @@ public class StoreServiceImpl implements StoreService{
                 imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
             }
 
-            return new MyRegisterStoreResDto(store, imageDto, principalId);
+            return new MyRegisterStoreResDto(store, store.checkIsOpen(), (Double) arr[1], imageDto, principalId);
         }).collect(Collectors.toList());
 
         return new StoreListResDto<>(results.size(), myRegisterStoreResDtoList);

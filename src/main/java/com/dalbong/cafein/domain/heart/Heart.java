@@ -1,5 +1,6 @@
 package com.dalbong.cafein.domain.heart;
 
+import com.dalbong.cafein.domain.BaseEntity;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.store.Store;
 import lombok.*;
@@ -20,7 +21,7 @@ import javax.persistence.*;
         }
 )
 @Entity
-public class Heart {
+public class Heart extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long heartId;

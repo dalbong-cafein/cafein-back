@@ -1,6 +1,5 @@
 package com.dalbong.cafein.domain.store;
 
-import com.dalbong.cafein.domain.review.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,14 +19,14 @@ public interface StoreRepositoryQuerydsl {
     List<Object[]> getMyStoreList(Long principalId);
 
     /**
-     * 앱단 본인이 등록한 가게 리스트 조회
+     * 엡단 내 가게 리스트 개수 지정 조회
      */
-    List<Store> getMyRegisterStoreList(Long principalId);
+    List<Object[]> getCustomLimitMyStoreList(int limit, Long principalId);
 
     /**
-     * 엡단 본인이 등록한 가게 리스트 개수 지정 조회
+     * 앱단 본인이 등록한 가게 리스트 조회
      */
-    List<Store> getCustomLimitReviewList(int limit, Long principalId);
+    List<Object[]> getMyRegisterStoreList(Long principalId);
 
     /**
      * 앱단 카페 상세 페이지 조회
