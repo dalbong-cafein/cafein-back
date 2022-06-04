@@ -215,7 +215,7 @@ public class AdminController {
     @PostMapping("/memos")
     public ResponseEntity<?> registerMemo(@RequestBody AdminMemoRegDto adminMemoRegDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        memoService.register(adminMemoRegDto, principalDetails.getMember().getMemberId());
+        memoService.register(adminMemoRegDto, 7L);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 생성 성공", null), HttpStatus.CREATED);
     }
