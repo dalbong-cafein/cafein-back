@@ -239,4 +239,13 @@ public class MemberServiceImpl implements MemberService{
         return new AdminDetailMemberResDto((Member)arr[0], memberImageDto,
                 heartCnt, congestionCnt, reviewCnt, stickerCnt);
     }
+
+    /**
+     * 오늘 등록된 회원 수 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public Long getRegisterCountOfToday() {
+        return (Long) memberRepository.getRegisterCountOfToday();
+    }
 }

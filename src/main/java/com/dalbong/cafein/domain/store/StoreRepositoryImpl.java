@@ -1,6 +1,8 @@
 package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.congestion.QCongestion;
+import com.dalbong.cafein.domain.member.QMember;
+import com.dalbong.cafein.domain.review.QReview;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
@@ -17,7 +19,9 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import javax.persistence.EntityManager;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,7 +29,9 @@ import java.util.stream.Collectors;
 import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
 import static com.dalbong.cafein.domain.heart.QHeart.heart;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
+import static com.dalbong.cafein.domain.member.QMember.member;
 import static com.dalbong.cafein.domain.memo.QStoreMemo.storeMemo;
+import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
 
@@ -223,6 +229,19 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         return tuple != null ? Optional.ofNullable(tuple.toArray()) : Optional.empty();
     }
 
+    /**
+     * 오늘 등록된 카페 개수
+     */
+    @Override
+    public Long getRegisterCountOfToday() {
+
+        return queryFactory
+                .select(store.count())
+                .from(store)
+                .where(store.regDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
+                        LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59))))
+                .fetchOne();
+    }
 
 
     private BooleanBuilder searchKeyword(String[] searchType, String keyword) {

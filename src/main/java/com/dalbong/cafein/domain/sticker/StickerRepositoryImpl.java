@@ -51,7 +51,7 @@ public class StickerRepositoryImpl implements StickerRepositoryQuerydsl{
                 .from(sticker)
                 .where(sticker.member.memberId.eq(principalId),
                         sticker.regDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
-                                LocalDateTime.of(LocalDate.now(), LocalTime.of(11, 59, 59))))
+                                LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59))))
                 .fetchCount();
     }
 

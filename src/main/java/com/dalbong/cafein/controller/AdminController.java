@@ -2,6 +2,7 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.admin.RegisterDataCountOfTodayDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
@@ -275,5 +276,20 @@ public class AdminController {
         AdminMemoResDto adminMemoResDto = memoService.getMemo(memoId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 조회 성공", adminMemoResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 오늘 등록된 카페, 회원, 리뷰 수 조회
+     */
+    @GetMapping("/register-data")
+    public ResponseEntity<?> getRegisterDateCountOfToday(){
+
+        Long storeCnt = storeService.getRegisterCountOfToday();
+        Long memberCnt = memberService.getRegisterCountOfToday();
+        Long reviewCnt = reviewService.getRegisterCountOfToday();
+
+        RegisterDataCountOfTodayDto registerDataCountOfTodayDto = new RegisterDataCountOfTodayDto(storeCnt, memberCnt, reviewCnt);
+
+        return new ResponseEntity<>(new CMRespDto<>(1,"오늘 등록된 카페, 회원, 리뷰 수 조회", registerDataCountOfTodayDto), HttpStatus.OK);
     }
 }

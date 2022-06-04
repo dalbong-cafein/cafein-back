@@ -49,4 +49,9 @@ public interface StoreRepositoryQuerydsl {
      */
     Optional<Object[]> getDetailStoreOfAdmin(Long storeId);
 
+    /**
+     * 오늘 등록된 카페 개수 조회
+     */
+    Long getRegisterCountOfToday();
+
 }
