@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class StickerServiceImpl implements StickerService{
-    
+
     private final StickerRepository stickerRepository;
     private final StoreStickerRepository storeStickerRepository;
     private final ReviewStickerRepository reviewStickerRepository;
@@ -57,7 +57,7 @@ public class StickerServiceImpl implements StickerService{
         Store store = storeRepository.findById(storeId).orElseThrow(() ->
                 new CustomException("존재하지 않는 카페입니다."));
 
-        checkLimitStickerToday(principalId);
+        //checkLimitStickerToday(principalId);
 
         StoreSticker storeSticker = new StoreSticker(store, member);
 
@@ -142,7 +142,7 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public void recoverStoreSticker(Long storeId, Long principalId) {
 
-        Sticker sticker = storeStickerRepository.findByStoreIdAndMemberId(storeId, principalId).orElseThrow(() ->
+        Sticker sticker = stickerRepository.findByStoreIdAndMemberId(storeId, principalId).orElseThrow(() ->
                 new CustomException("존재하지 않는 스티커입니다."));
 
         //해당 알림 삭제
@@ -158,7 +158,7 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public void recoverReviewSticker(Long reviewId, Long principalId) {
 
-        Sticker sticker = reviewStickerRepository.findByReviewIdAndMemberId(reviewId,principalId).orElseThrow(() ->
+        Sticker sticker = stickerRepository.findByReviewIdAndMemberId(reviewId,principalId).orElseThrow(() ->
                 new CustomException("존재하지 않는 스티커입니다."));
 
         //해당 알림 삭제
@@ -175,7 +175,7 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public void recoverCongestionSticker(Long congestionId, Long principalId) {
 
-        Sticker sticker = congestionStickerRepository.findByCongestionIdAndMemberId(congestionId, principalId).orElseThrow(() ->
+        Sticker sticker = stickerRepository.findByCongestionIdAndMemberId(congestionId, principalId).orElseThrow(() ->
                 new CustomException("존재하지 않는 스티커입니다."));
 
         //해당 알림 삭제
@@ -184,6 +184,24 @@ public class StickerServiceImpl implements StickerService{
         congestionStickerRepository.delete((CongestionSticker) sticker);
 
     }
+
+    /**
+     * 스티커 삭제
+     */
+    @Transactional
+    @Override
+    public void removeStickerList(int limit, Long principalId) {
+
+        List<Sticker> results = stickerRepository.getCustomLimitStickerList(limit, principalId);
+
+        for(Sticker s : results){
+            //알림 삭제
+            stickerNoticeRepository.deleteBySticker(s);
+            //스티커 삭제
+            stickerRepository.delete(s);
+            }
+        }
+
 
     /**
      * 회원별 스티커 보유 개수 조회

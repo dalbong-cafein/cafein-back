@@ -3,6 +3,7 @@ package com.dalbong.cafein.service.coupon;
 import com.dalbong.cafein.domain.coupon.Coupon;
 import com.dalbong.cafein.domain.coupon.CouponRepository;
 import com.dalbong.cafein.domain.notice.CouponNoticeRepository;
+import com.dalbong.cafein.domain.sticker.StickerRepository;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 import com.dalbong.cafein.dto.coupon.CouponRegDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponResDto;
@@ -10,6 +11,7 @@ import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.notice.NoticeService;
+import com.dalbong.cafein.service.sticker.StickerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,8 @@ public class CouponServiceImpl implements CouponService{
 
     private final CouponRepository couponRepository;
     private final NoticeService noticeService;
+    private final StickerRepository stickerRepository;
+    private final StickerService stickerService;
 
 
     /**
@@ -36,6 +40,15 @@ public class CouponServiceImpl implements CouponService{
     @Transactional
     @Override
     public Coupon requestCoupon(CouponRegDto couponRegDto, Long principalId) {
+
+        Long stickerCnt = stickerRepository.getCountStickerOfMember(principalId);
+
+        if(stickerCnt < 20){
+            throw new CustomException("스티커 보유량이 20개 미만 입니다.");
+        }
+
+        //스티커 20개 삭제
+        stickerService.removeStickerList(20, principalId);
 
         Coupon coupon = couponRegDto.toEntity(principalId);
 
