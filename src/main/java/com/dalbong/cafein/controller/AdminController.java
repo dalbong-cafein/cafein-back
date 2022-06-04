@@ -131,6 +131,17 @@ public class AdminController {
     }
 
     /**
+     * 관리자단 쿠폰 리스트 사용자 지정 조회
+     */
+    @GetMapping("/coupons/limit")
+    public ResponseEntity<?> getCustomLimitCouponList(@RequestParam(required = false, defaultValue = "6") int limit){
+
+        AdminCouponListResDto adminCouponListResDto = couponService.getCustomLimitCouponListOfAdmin(limit);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 쿠폰 리스트 조회 성공", adminCouponListResDto), HttpStatus.OK);
+    }
+
+    /**
      * 쿠폰 상태 변경
      */
     @PatchMapping("/coupons/{couponId}")

@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class AdminCouponListResDto {
+public class AdminCouponListResDto<T> {
 
     private long couponCnt;
 
-    private PageResultDTO<AdminCouponResDto, Coupon> couponResDtoList;
+    private T couponResDtoList;
 
 }
