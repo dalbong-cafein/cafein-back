@@ -8,6 +8,5 @@ import java.util.Optional;
 
 public interface StoreStickerRepository extends JpaRepository<StoreSticker, Long> {
 
-    @Query("select ss from StoreSticker ss where ss.store.storeId =:storeId and ss.member.memberId=:memberId")
-    Optional<Sticker> findByStoreIdAndMemberId(@Param("storeId") Long storeId, @Param("memberId") Long memberId);
+
 }

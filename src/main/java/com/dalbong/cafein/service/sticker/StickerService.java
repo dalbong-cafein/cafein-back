@@ -22,6 +22,8 @@ public interface StickerService {
 
     void recoverCongestionSticker(Long congestionId, Long principalId);
 
+    void removeStickerList(int limit, Long principalId);
+
     int countStickerOfMember(Long principalId);
 
     List<StickerHistoryResDto> getStickerHistoryList(Long principalId);
