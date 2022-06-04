@@ -1,11 +1,10 @@
 package com.dalbong.cafein.service.store;
 
 import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.dto.admin.InsertDataCountOfTodayDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
-import com.dalbong.cafein.dto.review.ReviewListResDto;
-import com.dalbong.cafein.dto.review.ReviewResDto;
 import com.dalbong.cafein.dto.store.*;
 
 import java.io.IOException;
@@ -32,5 +31,7 @@ public interface StoreService {
     AdminStoreListDto getStoreListOfAdmin(PageRequestDto pageRequestDto);
 
     AdminDetailStoreResDto getDetailStoreOfAdmin(Long storeId);
+
+    InsertDataCountOfTodayDto getInsertDateCountOfToday();
 
 }

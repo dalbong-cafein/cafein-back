@@ -7,9 +7,9 @@ import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.image.ReviewImageRepository;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
-import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.admin.InsertDataCountOfTodayDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreResDto;
@@ -21,7 +21,6 @@ import com.dalbong.cafein.dto.store.*;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.image.ImageService;
 import com.dalbong.cafein.service.review.ReviewService;
-import com.dalbong.cafein.service.sticker.StickerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +32,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -376,6 +374,18 @@ public class StoreServiceImpl implements StoreService{
         }
 
         return new AdminDetailStoreResDto(store, (int)arr[1], (long) arr[2], (int)arr[3], storeImageDtoList);
+    }
+
+    /**
+     * 오늘 등록된 카페, 회원, 리뷰 수 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public InsertDataCountOfTodayDto getInsertDateCountOfToday() {
+
+        Object[] arr = storeRepository.getInsertDateCountOfToday();
+
+        return new InsertDataCountOfTodayDto((int)arr[0], (int)arr[1], (int)arr[2]);
     }
 }
 
