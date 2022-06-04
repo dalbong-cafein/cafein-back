@@ -26,6 +26,7 @@ import com.dalbong.cafein.service.member.MemberService;
 import com.dalbong.cafein.service.memo.MemoService;
 import com.dalbong.cafein.service.report.ReportService;
 import com.dalbong.cafein.service.review.ReviewService;
+import com.dalbong.cafein.service.sticker.StickerService;
 import com.dalbong.cafein.service.store.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,7 @@ public class AdminController {
     private final ReportService reportService;
     private final MemberService memberService;
     private final MemoService memoService;
+    private final StickerService stickerService;
 
     /**
      * 관리자단 리뷰 리스트 조회
@@ -291,5 +293,38 @@ public class AdminController {
         RegisterDataCountOfTodayDto registerDataCountOfTodayDto = new RegisterDataCountOfTodayDto(storeCnt, memberCnt, reviewCnt);
 
         return new ResponseEntity<>(new CMRespDto<>(1,"오늘 등록된 카페, 회원, 리뷰 수 조회", registerDataCountOfTodayDto), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 카페 타입 스티커 회수
+     */
+    @DeleteMapping("/stickers/storeType")
+    public ResponseEntity<?> recoverStoreSticker(@RequestParam("storeId") Long storeId, @RequestParam("memberId") Long memberId){
+
+        stickerService.recoverStoreSticker(storeId, memberId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "카페 타입 스티커 회수 성공", null), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 리뷰 타입 스티커 회수
+     */
+    @DeleteMapping("/stickers/reviewType")
+    public ResponseEntity<?> recoverReviewSticker(@RequestParam("reviewId") Long reviewId, @RequestParam("memberId") Long memberId){
+
+        stickerService.recoverReviewSticker(reviewId, memberId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "리뷰 타입 스티커 회수 성공", null), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 혼잡도 타입 스티커 회수
+     */
+    @DeleteMapping("/stickers/congestionType")
+    public ResponseEntity<?> recoverCongestionSticker(@RequestParam("congestionId") Long congestionId, @RequestParam("memberId") Long memberId){
+
+        stickerService.recoverCongestionSticker(congestionId, memberId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "혼잡도 타입 스티커 회수 성공", null), HttpStatus.OK);
     }
 }

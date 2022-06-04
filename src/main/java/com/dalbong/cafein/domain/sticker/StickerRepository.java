@@ -15,4 +15,5 @@ public interface StickerRepository extends JpaRepository<Sticker, Long>, Sticker
 
     @Query("select count(s) from Sticker s where s.member.memberId =:memberId")
     Long getCountStickerOfMember(@Param("memberId") Long memberId);
+
 }

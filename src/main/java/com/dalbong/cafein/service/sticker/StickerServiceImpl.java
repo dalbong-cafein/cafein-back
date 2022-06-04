@@ -4,6 +4,8 @@ import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.domain.congestion.CongestionRepository;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.domain.notice.NoticeRepository;
+import com.dalbong.cafein.domain.notice.StickerNoticeRepository;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.sticker.*;
@@ -30,6 +32,7 @@ public class StickerServiceImpl implements StickerService{
     private final ReviewRepository reviewRepository;
     private final CongestionRepository congestionRepository;
     private final NoticeService noticeService;
+    private final StickerNoticeRepository stickerNoticeRepository;
 
     /**
      * 카페 등록 시 스티커 발급
@@ -126,6 +129,56 @@ public class StickerServiceImpl implements StickerService{
         noticeService.registerStickerNotice(congestionSticker, member);
 
         return congestionSticker;
+    }
+
+    /**
+     * 카페 스티커 회수
+     */
+    @Transactional
+    @Override
+    public void recoverStoreSticker(Long storeId, Long principalId) {
+
+        Sticker sticker = storeStickerRepository.findByStoreIdAndMemberId(storeId, principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 스티커입니다."));
+
+        //해당 알림 삭제
+        stickerNoticeRepository.deleteBySticker(sticker);
+
+        storeStickerRepository.delete((StoreSticker) sticker);
+    }
+
+    /**
+     * 리뷰 스티커 회수
+     */
+    @Transactional
+    @Override
+    public void recoverReviewSticker(Long reviewId, Long principalId) {
+
+        Sticker sticker = reviewStickerRepository.findByReviewIdAndMemberId(reviewId,principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 스티커입니다."));
+
+        //해당 알림 삭제
+        stickerNoticeRepository.deleteBySticker(sticker);
+
+        reviewStickerRepository.delete((ReviewSticker) sticker);
+
+    }
+
+    /**
+     * 혼잡도 스티커 회수
+     */
+    @Transactional
+    @Override
+    public void recoverCongestionSticker(Long congestionId, Long principalId) {
+
+        Sticker sticker = congestionStickerRepository.findByCongestionIdAndMemberId(congestionId, principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 스티커입니다."));
+
+        //해당 알림 삭제
+        stickerNoticeRepository.deleteBySticker(sticker);
+
+        congestionStickerRepository.delete((CongestionSticker) sticker);
+
     }
 
     /**
