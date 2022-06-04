@@ -57,6 +57,20 @@ public class CouponRepositoryImpl implements CouponRepositoryQuerydsl {
         return PageableExecutionUtils.getPage(results, pageable, () -> countQuery.fetchCount());
     }
 
+    /**
+     * 관리자단 쿠폰 리스트 사용자 지정 조회
+     */
+    @Override
+    public List<Coupon> getCustomLimitCouponList(int limit) {
+
+        return queryFactory.select(coupon)
+                .from(coupon)
+                .leftJoin(coupon.member).fetchJoin()
+                .orderBy(coupon.couponId.desc())
+                .limit(limit)
+                .fetch();
+    }
+
     private BooleanBuilder searchKeyword(String[] searchType, String keyword) {
 
         BooleanBuilder builder = new BooleanBuilder();

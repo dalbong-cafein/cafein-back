@@ -12,4 +12,6 @@ public interface CouponService {
     void issue(Long couponId);
 
     AdminCouponListResDto getCouponListOfAdmin(PageRequestDto pageRequestDto);
+
+    AdminCouponListResDto getCustomLimitCouponListOfAdmin(int limit);
 }

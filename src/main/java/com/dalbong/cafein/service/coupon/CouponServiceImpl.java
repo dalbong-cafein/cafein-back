@@ -17,7 +17,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Transactional
 @RequiredArgsConstructor
@@ -60,7 +62,7 @@ public class CouponServiceImpl implements CouponService{
      */
     @Transactional(readOnly = true)
     @Override
-    public AdminCouponListResDto getCouponListOfAdmin(PageRequestDto pageRequestDto) {
+    public AdminCouponListResDto<?> getCouponListOfAdmin(PageRequestDto pageRequestDto) {
 
         Pageable pageable;
 
@@ -74,6 +76,20 @@ public class CouponServiceImpl implements CouponService{
 
         Function<Coupon, AdminCouponResDto> fn = (c-> new AdminCouponResDto(c));
 
-        return new AdminCouponListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
+        return new AdminCouponListResDto<>(results.getTotalElements(), new PageResultDTO<>(results, fn));
+    }
+
+    /**
+     * 쿠폰 리스트 사용자 지정 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminCouponListResDto<?> getCustomLimitCouponListOfAdmin(int limit) {
+
+        List<Coupon> results = couponRepository.getCustomLimitCouponList(limit);
+
+        List<AdminCouponResDto> adminCouponResDtoList = results.stream().map(c -> new AdminCouponResDto(c)).collect(Collectors.toList());
+
+        return new AdminCouponListResDto<>(results.size(), adminCouponResDtoList);
     }
 }
