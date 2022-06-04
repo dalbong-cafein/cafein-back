@@ -18,21 +18,21 @@ public class MyRegisterStoreResDto {
 
     private String storeName;
 
-    private int heartCnt;
+    private Boolean isOpen;
 
-    private Boolean isHeart;
+    private Double congestionScoreAvg;
 
     private ImageDto storeImageDto;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime regDateTime;
 
-    public MyRegisterStoreResDto(Store store, ImageDto storeImageDto, Long principalId){
+    public MyRegisterStoreResDto(Store store, Boolean isOpen, Double congestionScoreAvg, ImageDto storeImageDto, Long principalId){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
-        this.heartCnt = store.getHeartList().size();
-        this.isHeart = store.getHeartList().stream().anyMatch(h -> h.getMember().getMemberId().equals(principalId) ? true : false);
+        this.isOpen = isOpen;
+        this.congestionScoreAvg = congestionScoreAvg;
         this.storeImageDto = storeImageDto;
         this.regDateTime = store.getRegDateTime();
     }

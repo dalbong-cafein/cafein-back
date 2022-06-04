@@ -1,29 +1,15 @@
 package com.dalbong.cafein.domain.store;
 
-import com.dalbong.cafein.domain.address.Address;
-import com.dalbong.cafein.domain.board.QBoard;
-import com.dalbong.cafein.domain.businessHours.QBusinessHours;
-import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.domain.congestion.QCongestion;
-import com.dalbong.cafein.domain.heart.QHeart;
-import com.dalbong.cafein.domain.image.QMemberImage;
-import com.dalbong.cafein.domain.image.QStoreImage;
-import com.dalbong.cafein.domain.memo.QReviewMemo;
-import com.dalbong.cafein.domain.memo.QStoreMemo;
-import com.dalbong.cafein.domain.review.Review;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.core.types.dsl.StringExpressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.apache.tomcat.jni.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -36,14 +22,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.dalbong.cafein.domain.businessHours.QBusinessHours.businessHours;
 import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
 import static com.dalbong.cafein.domain.heart.QHeart.heart;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
-import static com.dalbong.cafein.domain.image.QStoreImage.storeImage;
-import static com.dalbong.cafein.domain.memo.QReviewMemo.reviewMemo;
 import static com.dalbong.cafein.domain.memo.QStoreMemo.storeMemo;
-import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
 
@@ -85,18 +67,43 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     public List<Object[]> getMyStoreList(Long principalId) {
 
         QCongestion subCongestion = new QCongestion("sub");
+        List<Tuple> result = queryFactory
+                .select(store, JPAExpressions
+                        .select(subCongestion.congestionScore.avg())
+                        .from(subCongestion)
+                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
+                                subCongestion.store.storeId.eq(store.storeId))
+                        .groupBy(subCongestion.store.storeId))
+                .from(store)
+                .leftJoin(store.businessHours).fetchJoin()
+                .join(heart).on(heart.store.storeId.eq(store.storeId))
+                .where(heart.member.memberId.eq(principalId))
+                .orderBy(heart.heartId.desc())
+                .fetch();
+
+        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
+    }
+
+    /**
+     * 엡단 내 카페 리스트 개수 지정 조회
+     */
+    @Override
+    public List<Object[]> getCustomLimitMyStoreList(int limit, Long principalId) {
+        QCongestion subCongestion = new QCongestion("sub");
 
         List<Tuple> result = queryFactory
                 .select(store, JPAExpressions
                         .select(subCongestion.congestionScore.avg())
                         .from(subCongestion)
                         .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
-                                subCongestion.store.storeId.eq(store.storeId)))
+                                subCongestion.store.storeId.eq(store.storeId))
+                        .groupBy(subCongestion.store.storeId))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
                 .join(heart).on(heart.store.storeId.eq(store.storeId))
                 .where(heart.member.memberId.eq(principalId))
-                .groupBy(store.storeId)
+                .orderBy(heart.heartId.desc())
+                .limit(limit)
                 .fetch();
 
         return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
@@ -106,24 +113,20 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
      * 앱단 본인이 등록한 가게 리스트 조회
      */
     @Override
-    public List<Store> getMyRegisterStoreList(Long principalId) {
+    public List<Object[]> getMyRegisterStoreList(Long principalId) {
 
-        return queryFactory.selectFrom(store)
+        QCongestion subCongestion = new QCongestion("sub");
+
+        List<Tuple> result = queryFactory.select(store, JPAExpressions
+                .select(subCongestion.congestionScore.avg())
+                .from(subCongestion)
+                .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
+                        subCongestion.store.storeId.eq(store.storeId)))
+                .from(store)
                 .where(store.regMember.memberId.eq(principalId))
                 .fetch();
-    }
 
-    /**
-     * 엡단 본인이 등록한 가게 리스트 개수 지정 조회
-     */
-    @Override
-    public List<Store> getCustomLimitReviewList(int limit, Long principalId) {
-
-        return queryFactory.selectFrom(store)
-                .where(store.regMember.memberId.eq(principalId))
-                .orderBy(store.storeId.desc())
-                .limit(limit)
-                .fetch();
+        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
 
     /**
