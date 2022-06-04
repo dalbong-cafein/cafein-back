@@ -114,7 +114,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     }
 
     /**
-     * 엡단 본인이 등록한 가게 리스트 개수 지정 조회
+     * 엡단 본인이 등록한 카페 리스트 개수 지정 조회
      */
     @Override
     public List<Store> getCustomLimitReviewList(int limit, Long principalId) {

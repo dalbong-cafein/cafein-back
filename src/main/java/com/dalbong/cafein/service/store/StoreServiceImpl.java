@@ -217,7 +217,7 @@ public class StoreServiceImpl implements StoreService{
                 imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
             }
 
-            return new MyRegisterStoreResDto(store, imageDto, principalId);
+            return new MyRegisterStoreResDto(store, store.checkIsOpen(), imageDto, principalId);
         }).collect(Collectors.toList());
 
         return new StoreListResDto<>(results.size(), myRegisterStoreResDtoList);
