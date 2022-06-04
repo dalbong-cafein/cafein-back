@@ -4,12 +4,15 @@ import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.domain.congestion.CongestionRepository;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.domain.notice.NoticeRepository;
+import com.dalbong.cafein.domain.notice.StickerNoticeRepository;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.sticker.*;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.handler.exception.CustomException;
+import com.dalbong.cafein.handler.exception.StickerExcessException;
 import com.dalbong.cafein.service.notice.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,7 @@ public class StickerServiceImpl implements StickerService{
     private final ReviewRepository reviewRepository;
     private final CongestionRepository congestionRepository;
     private final NoticeService noticeService;
+    private final StickerNoticeRepository stickerNoticeRepository;
 
     /**
      * 카페 등록 시 스티커 발급
@@ -36,6 +40,12 @@ public class StickerServiceImpl implements StickerService{
     @Transactional
     @Override
     public Sticker issueStoreSticker(Long storeId, Long principalId) {
+
+        int stickerCnt = countStickerOfMember(principalId);
+
+        if(stickerCnt >= 20){
+            throw new StickerExcessException("더 이상 스티커를 발급받을 수 없습니다.");
+        }
 
         Member member = memberRepository.findById(principalId).orElseThrow(() ->
                 new CustomException("존재하지 않는 회원입니다."));
@@ -62,6 +72,12 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public Sticker issueReviewSticker(Long reviewId, Long principalId) {
 
+        int stickerCnt = countStickerOfMember(principalId);
+
+        if(stickerCnt >= 20){
+            throw new StickerExcessException("더 이상 스티커를 발급받을 수 없습니다.");
+        }
+
         Member member = memberRepository.findById(principalId).orElseThrow(() ->
                 new CustomException("존재하지 않는 회원입니다."));
 
@@ -87,6 +103,12 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public Sticker issueCongestionSticker(Long congestionId, Long principalId) {
 
+        int stickerCnt = countStickerOfMember(principalId);
+
+        if(stickerCnt >= 20){
+            throw new StickerExcessException("더 이상 스티커를 발급받을 수 없습니다.");
+        }
+
         checkLimitStickerToday(principalId);
 
         Congestion congestion = congestionRepository.findById(congestionId).orElseThrow(() ->
@@ -107,6 +129,66 @@ public class StickerServiceImpl implements StickerService{
         noticeService.registerStickerNotice(congestionSticker, member);
 
         return congestionSticker;
+    }
+
+    /**
+     * 카페 스티커 회수
+     */
+    @Transactional
+    @Override
+    public void recoverStoreSticker(Long storeId, Long principalId) {
+
+        Sticker sticker = storeStickerRepository.findByStoreIdAndMemberId(storeId, principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 스티커입니다."));
+
+        //해당 알림 삭제
+        stickerNoticeRepository.deleteBySticker(sticker);
+
+        storeStickerRepository.delete((StoreSticker) sticker);
+    }
+
+    /**
+     * 리뷰 스티커 회수
+     */
+    @Transactional
+    @Override
+    public void recoverReviewSticker(Long reviewId, Long principalId) {
+
+        Sticker sticker = reviewStickerRepository.findByReviewIdAndMemberId(reviewId,principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 스티커입니다."));
+
+        //해당 알림 삭제
+        stickerNoticeRepository.deleteBySticker(sticker);
+
+        reviewStickerRepository.delete((ReviewSticker) sticker);
+
+    }
+
+    /**
+     * 혼잡도 스티커 회수
+     */
+    @Transactional
+    @Override
+    public void recoverCongestionSticker(Long congestionId, Long principalId) {
+
+        Sticker sticker = congestionStickerRepository.findByCongestionIdAndMemberId(congestionId, principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 스티커입니다."));
+
+        //해당 알림 삭제
+        stickerNoticeRepository.deleteBySticker(sticker);
+
+        congestionStickerRepository.delete((CongestionSticker) sticker);
+
+    }
+
+    /**
+     * 혼잡도 등록 시 스티커 발급
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public int countStickerOfMember(Long principalId) {
+        return (int)stickerRepository.getCountStickerToday(principalId);
+
     }
 
     private void checkLimitTimeOfCongestionSticker(Congestion congestion, Long principalId) {

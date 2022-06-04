@@ -8,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -49,6 +47,17 @@ public class StickerController {
         stickerService.issueCongestionSticker(stickerRegDto.getCongestionId(), principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1,"혼잡도 등록시 스티커 발급 성공", null), HttpStatus.CREATED);
+    }
+
+    /**
+     * 회원별 스티커 보유 개수 조회
+     */
+    @GetMapping("stickers/count-member")
+    public ResponseEntity<?> getCountStickerOfMember(@AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        int stickerCnt = stickerService.countStickerOfMember(principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "회원별 스티커 보유 개수 조회 성공", stickerCnt), HttpStatus.OK);
     }
 
 }
