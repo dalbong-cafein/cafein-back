@@ -2,15 +2,16 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.sticker.StickerHistoryResDto;
 import com.dalbong.cafein.dto.sticker.StickerRegDto;
 import com.dalbong.cafein.service.sticker.StickerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -49,6 +50,29 @@ public class StickerController {
         stickerService.issueCongestionSticker(stickerRegDto.getCongestionId(), principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1,"혼잡도 등록시 스티커 발급 성공", null), HttpStatus.CREATED);
+    }
+
+    /**
+     * 회원별 스티커 보유 개수 조회
+     */
+    @GetMapping("stickers/count-member")
+    public ResponseEntity<?> getCountStickerOfMember(@AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        int stickerCnt = stickerService.countStickerOfMember(principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "회원별 스티커 보유 개수 조회 성공", stickerCnt), HttpStatus.OK);
+    }
+
+    /**
+     * 회원별 스티커 히스토리 내역 조회
+     */
+    @GetMapping("/members/stickers")
+    public ResponseEntity<?> getStickerList(@AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        List<StickerHistoryResDto> stickerHistoryResDtoList = stickerService.getStickerHistoryList(principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "회원별 스티커 히스토리 내역 조회",stickerHistoryResDtoList), HttpStatus.OK);
+
     }
 
 }

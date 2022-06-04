@@ -27,4 +27,6 @@ public interface MemberService {
     AdminMemberListResDto getMemberListOfAdmin(PageRequestDto pageRequestDto);
 
     AdminDetailMemberResDto getDetailMemberOfAdmin(Long memberId);
+
+    Long getRegisterCountOfToday();
 }

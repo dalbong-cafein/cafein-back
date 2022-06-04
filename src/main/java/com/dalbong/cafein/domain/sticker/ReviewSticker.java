@@ -21,7 +21,7 @@ public class ReviewSticker extends Sticker{
     private Review review;
 
     public ReviewSticker(Review review, Member member){
-        super(member);
+        super(member, review.getStore().getStoreName());
         this.review = review;
     }
 }

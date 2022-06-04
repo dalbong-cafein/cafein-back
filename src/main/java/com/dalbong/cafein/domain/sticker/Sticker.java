@@ -5,6 +5,8 @@ import com.dalbong.cafein.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
@@ -21,7 +23,14 @@ public abstract class Sticker extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public Sticker(Member member){
+    @Column(nullable = false)
+    private String storeName;
+
+    @Column(nullable = false)
+    private LocalDateTime expDateTime = LocalDate.now().plusMonths(6).atTime(23,59,59);
+
+    public Sticker(Member member, String storeName){
         this.member = member;
+        this.storeName = storeName;
     }
 }
