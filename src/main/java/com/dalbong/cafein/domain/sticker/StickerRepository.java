@@ -12,4 +12,7 @@ public interface StickerRepository extends JpaRepository<Sticker, Long>, Sticker
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete from Sticker s where s.member =:member")
     void deleteByMember(@Param("member") Member member);
+
+    @Query("select count(s) from Sticker s where s.member.memberId =:memberId")
+    Long getCountStickerOfMember(@Param("memberId") Long memberId);
 }

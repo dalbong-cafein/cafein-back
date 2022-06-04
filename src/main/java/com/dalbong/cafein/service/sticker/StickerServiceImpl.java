@@ -109,6 +109,16 @@ public class StickerServiceImpl implements StickerService{
         return congestionSticker;
     }
 
+    /**
+     * 혼잡도 등록 시 스티커 발급
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public int countStickerOfMember(Long principalId) {
+        return (int)stickerRepository.getCountStickerToday(principalId);
+
+    }
+
     private void checkLimitTimeOfCongestionSticker(Congestion congestion, Long principalId) {
         boolean isExist = stickerRepository.existWithinTimeOfCongestionType(congestion, principalId);
 

@@ -13,4 +13,6 @@ public interface StickerService {
 
     Sticker issueCongestionSticker(Long congestionId, Long principalId);
 
+    int countStickerOfMember(Long principalId);
+
 }
