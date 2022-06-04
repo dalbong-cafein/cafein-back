@@ -21,7 +21,7 @@ public class CongestionSticker extends Sticker{
     private Congestion congestion;
 
     public CongestionSticker(Congestion congestion, Member member){
-        super(member);
+        super(member, congestion.getStore().getStoreName());
         this.congestion = congestion;
     }
 }

@@ -24,9 +24,13 @@ public abstract class Sticker extends BaseEntity {
     private Member member;
 
     @Column(nullable = false)
-    LocalDateTime expDateTime = LocalDate.now().plusMonths(6).atTime(23,59,59);
+    private String storeName;
 
-    public Sticker(Member member){
+    @Column(nullable = false)
+    private LocalDateTime expDateTime = LocalDate.now().plusMonths(6).atTime(23,59,59);
+
+    public Sticker(Member member, String storeName){
         this.member = member;
+        this.storeName = storeName;
     }
 }

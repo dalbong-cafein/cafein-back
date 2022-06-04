@@ -11,6 +11,7 @@ import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.sticker.*;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.sticker.StickerHistoryResDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.handler.exception.StickerExcessException;
 import com.dalbong.cafein.service.notice.NoticeService;
@@ -18,12 +19,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Transactional
 @RequiredArgsConstructor
 @Service
 public class StickerServiceImpl implements StickerService{
     
-    private final StickerRepositoryImpl stickerRepository;
+    private final StickerRepository stickerRepository;
     private final StoreStickerRepository storeStickerRepository;
     private final ReviewStickerRepository reviewStickerRepository;
     private final CongestionStickerRepository congestionStickerRepository;
@@ -81,7 +85,7 @@ public class StickerServiceImpl implements StickerService{
         Member member = memberRepository.findById(principalId).orElseThrow(() ->
                 new CustomException("존재하지 않는 회원입니다."));
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
+        Review review = reviewRepository.findByIdStoreFetch(reviewId).orElseThrow(() ->
                 new CustomException("존재하지 않는 리뷰입니다."));
 
         checkLimitStickerToday(principalId);
@@ -111,7 +115,7 @@ public class StickerServiceImpl implements StickerService{
 
         checkLimitStickerToday(principalId);
 
-        Congestion congestion = congestionRepository.findById(congestionId).orElseThrow(() ->
+        Congestion congestion = congestionRepository.findByIdStoreFetch(congestionId).orElseThrow(() ->
                 new CustomException("존재하지 않는 혼잡도입니다."));
 
         //혼잡도 스티커일 경우 시간 체크 - 3시간 이내 스티커 발급 체크
@@ -182,13 +186,25 @@ public class StickerServiceImpl implements StickerService{
     }
 
     /**
-     * 혼잡도 등록 시 스티커 발급
+     * 회원별 스티커 보유 개수 조회
      */
     @Transactional(readOnly = true)
     @Override
     public int countStickerOfMember(Long principalId) {
         return (int)stickerRepository.getCountStickerToday(principalId);
 
+    }
+
+    /**
+     * 회원별 스티커 히스토리 내역 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<StickerHistoryResDto> getStickerHistoryList(Long principalId) {
+
+        List<Sticker> results = stickerRepository.getStickerList(principalId);
+
+        return results.stream().map(s -> new StickerHistoryResDto(s)).collect(Collectors.toList());
     }
 
     private void checkLimitTimeOfCongestionSticker(Congestion congestion, Long principalId) {

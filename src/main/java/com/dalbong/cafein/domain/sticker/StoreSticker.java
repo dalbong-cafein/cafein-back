@@ -20,7 +20,7 @@ public class StoreSticker extends Sticker{
     private Store store;
 
     public StoreSticker(Store store, Member member){
-        super(member);
+        super(member, store.getStoreName());
         this.store = store;
     }
 

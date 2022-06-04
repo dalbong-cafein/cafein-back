@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRepositoryQuerydsl {
 
@@ -15,6 +16,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
     List<Review> findByStoreId(@Param("storeId") Long storeId);
 
     long countByStoreStoreId(Long storeId);
+
+    @Query("select r from Review r left join fetch r.store where r.reviewId =:reviewId")
+    Optional<Review> findByIdStoreFetch(@Param("reviewId") Long reviewId);
 
 
 }
