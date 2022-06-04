@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.function.Function;
 
 @Transactional
@@ -75,5 +76,20 @@ public class CouponServiceImpl implements CouponService{
         Function<Coupon, AdminCouponResDto> fn = (c-> new AdminCouponResDto(c));
 
         return new AdminCouponListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
+    }
+
+    /**
+     * 쿠폰 리스트 사용자 지정 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminCouponListResDto getCustomLimitCouponListOfAdmin(int limit) {
+
+        List<Coupon> results = couponRepository.getCustomLimitCouponList(limit);
+
+        results.stream().map(c -> new )
+
+
+        return null;
     }
 }
