@@ -21,9 +21,9 @@ public interface StoreService {
 
     StoreListResDto<List<MyStoreResDto>> getMyStoreList(Long principalId);
 
-    StoreListResDto<List<MyRegisterStoreResDto>> getMyRegisterStoreList(Long principalId);
+    StoreListResDto<List<MyStoreResDto>>getCustomLimitMyStoreList(int limit, Long principalId);
 
-    StoreListResDto<List<MyRegisterStoreResDto>> getCustomLimitMyRegisterStoreList(int limit, Long principalId);
+    StoreListResDto<List<MyRegisterStoreResDto>> getMyRegisterStoreList(Long principalId);
 
     List<RecommendSearchStoreResDto> getRecommendSearchStoreList(String keyword);
 
