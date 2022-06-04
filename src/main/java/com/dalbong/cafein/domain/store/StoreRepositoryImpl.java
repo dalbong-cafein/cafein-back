@@ -230,32 +230,17 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     }
 
     /**
-     * 관리자단 오늘 등록된 카페, 회원, 리뷰 수 조회
+     * 오늘 등록된 카페 개수
      */
     @Override
-    public Object[] getInsertDateCountOfToday() {
+    public Long getRegisterCountOfToday() {
 
-        Tuple tuple = queryFactory.select(
-                //오늘 등록된 카페 수
-                JPAExpressions
-                        .select(store.count()).from(store)
-                        .where(store.regDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
-                                LocalDateTime.of(LocalDate.now(), LocalTime.of(11, 59, 59)))),
-                //오늘 가입된 회원 수
-                JPAExpressions
-                        .select(member.count()).from(member)
-                        .where(member.regDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
-                                LocalDateTime.of(LocalDate.now(), LocalTime.of(11, 59, 59)))),
-                //오늘 등록된 리뷰 수
-                JPAExpressions
-                        .select(review.count()).from(review)
-                        .where(review.regDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
-                                LocalDateTime.of(LocalDate.now(), LocalTime.of(11, 59, 59)))))
-                .from()
+        return queryFactory
+                .select(store.count())
+                .from(store)
+                .where(store.regDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
+                        LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59))))
                 .fetchOne();
-
-        return tuple.toArray();
-
     }
 
 

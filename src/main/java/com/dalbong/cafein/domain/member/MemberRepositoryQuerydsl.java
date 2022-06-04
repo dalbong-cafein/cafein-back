@@ -24,4 +24,9 @@ public interface MemberRepositoryQuerydsl {
      * 관리자단 회원 상세 조회
      */
     Optional<Object[]> getDetailMemberOfAdmin(Long memberId);
+
+    /**
+     * 관리자단 오늘 등록된 회원 수 조회
+     */
+    Long getRegisterCountOfToday();
 }

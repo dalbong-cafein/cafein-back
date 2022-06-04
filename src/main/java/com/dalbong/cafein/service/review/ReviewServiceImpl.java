@@ -417,4 +417,13 @@ public class ReviewServiceImpl implements ReviewService{
         return new AdminReviewEvaluationOfStoreResDto(recommendPercent, socketScoreResDto,
                 wifiScoreResDto, restroomScoreResDto, tableSizeScoreResDto);
     }
+
+    /**
+     * 오늘 등록된 리뷰 수 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public Long getRegisterCountOfToday() {
+        return (Long) reviewRepository.getRegisterCountOfToday();
+    }
 }

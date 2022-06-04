@@ -19,6 +19,9 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import javax.persistence.EntityManager;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +30,7 @@ import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.memo.QMemo.memo;
 import static com.dalbong.cafein.domain.memo.QReviewMemo.reviewMemo;
 import static com.dalbong.cafein.domain.review.QReview.review;
+import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
 
 public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
@@ -200,6 +204,19 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .fetchOne();
 
         return tuple != null ? Optional.ofNullable(tuple.toArray()) : Optional.empty();
+    }
+
+    /**
+     * 관리자단 오늘 등록된 리뷰 개수 조회
+     */
+    @Override
+    public Long getRegisterCountOfToday() {
+        return queryFactory
+                .select(review.count())
+                .from(review)
+                .where(review.regDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
+                        LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59))))
+                .fetchOne();
     }
 
     private  BooleanBuilder searchKeyword(String[] searchType, String keyword) {

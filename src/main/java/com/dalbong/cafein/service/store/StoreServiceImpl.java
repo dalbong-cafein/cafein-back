@@ -9,7 +9,6 @@ import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
-import com.dalbong.cafein.dto.admin.InsertDataCountOfTodayDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreResDto;
@@ -377,15 +376,12 @@ public class StoreServiceImpl implements StoreService{
     }
 
     /**
-     * 오늘 등록된 카페, 회원, 리뷰 수 조회
+     * 오늘 등록된 카페 수 조회
      */
     @Transactional(readOnly = true)
     @Override
-    public InsertDataCountOfTodayDto getInsertDateCountOfToday() {
-
-        Object[] arr = storeRepository.getInsertDateCountOfToday();
-
-        return new InsertDataCountOfTodayDto((int)arr[0], (int)arr[1], (int)arr[2]);
+    public Long getRegisterCountOfToday() {
+        return (Long)storeRepository.getRegisterCountOfToday();
     }
 }
 

@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class InsertDataCountOfTodayDto {
+public class RegisterDataCountOfTodayDto {
 
-    int storeCnt;
+    Long storeCnt;
 
-    int memberCnt;
+    Long memberCnt;
 
-    int reviewCnt;
+    Long reviewCnt;
 }

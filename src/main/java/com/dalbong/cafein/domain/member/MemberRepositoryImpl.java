@@ -23,6 +23,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -147,6 +150,19 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
                 .fetchOne();
 
         return tuple != null ? Optional.of(tuple.toArray()) : Optional.empty();
+    }
+
+    /**
+     * 관리자단 오늘 등록된 회원 수 조회
+     */
+    @Override
+    public Long getRegisterCountOfToday() {
+        return queryFactory
+                .select(member.count())
+                .from(member)
+                .where(member.regDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
+                        LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59))))
+                .fetchOne();
     }
 
     private BooleanBuilder searchKeyword(String[] searchType, String keyword) {

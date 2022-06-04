@@ -32,4 +32,6 @@ public interface ReviewService {
     AdminDetailReviewResDto getDetailReviewOfAdmin(Long reviewId);
 
     AdminReviewEvaluationOfStoreResDto getReviewDetailEvaluationOfStore(Long storeId);
+
+    Long getRegisterCountOfToday();
 }

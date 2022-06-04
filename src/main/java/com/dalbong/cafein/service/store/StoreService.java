@@ -1,7 +1,6 @@
 package com.dalbong.cafein.service.store;
 
 import com.dalbong.cafein.domain.store.Store;
-import com.dalbong.cafein.dto.admin.InsertDataCountOfTodayDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
@@ -32,6 +31,6 @@ public interface StoreService {
 
     AdminDetailStoreResDto getDetailStoreOfAdmin(Long storeId);
 
-    InsertDataCountOfTodayDto getInsertDateCountOfToday();
+    Long getRegisterCountOfToday();
 
 }
