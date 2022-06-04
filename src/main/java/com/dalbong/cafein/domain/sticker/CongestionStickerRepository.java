@@ -8,7 +8,4 @@ import java.util.Optional;
 
 public interface CongestionStickerRepository extends JpaRepository<CongestionSticker, Long> {
 
-    @Query("select cs from CongestionSticker cs where cs.congestion.congestionId =:congestionId and cs.member.memberId=:memberId")
-    Optional<Sticker> findByCongestionIdAndMemberId(@Param("congestionId") Long congestionId, @Param("memberId") Long memberId);
-
 }

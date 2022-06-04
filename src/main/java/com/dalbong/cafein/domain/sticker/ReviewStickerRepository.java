@@ -8,6 +8,5 @@ import java.util.Optional;
 
 public interface ReviewStickerRepository extends JpaRepository<ReviewSticker, Long> {
 
-    @Query("select rs from ReviewSticker rs where rs.review.reviewId =:reviewId and rs.member.memberId=:memberId")
-    Optional<Sticker> findByReviewIdAndMemberId(@Param("reviewId") Long reviewId, @Param("memberId") Long memberId);
+
 }
