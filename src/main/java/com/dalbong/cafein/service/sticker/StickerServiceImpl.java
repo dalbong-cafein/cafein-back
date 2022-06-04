@@ -10,6 +10,7 @@ import com.dalbong.cafein.domain.sticker.*;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.handler.exception.CustomException;
+import com.dalbong.cafein.handler.exception.StickerExcessException;
 import com.dalbong.cafein.service.notice.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,12 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public Sticker issueStoreSticker(Long storeId, Long principalId) {
 
+        int stickerCnt = countStickerOfMember(principalId);
+
+        if(stickerCnt >= 20){
+            throw new StickerExcessException("더 이상 스티커를 발급받을 수 없습니다.");
+        }
+
         Member member = memberRepository.findById(principalId).orElseThrow(() ->
                 new CustomException("존재하지 않는 회원입니다."));
 
@@ -62,6 +69,12 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public Sticker issueReviewSticker(Long reviewId, Long principalId) {
 
+        int stickerCnt = countStickerOfMember(principalId);
+
+        if(stickerCnt >= 20){
+            throw new StickerExcessException("더 이상 스티커를 발급받을 수 없습니다.");
+        }
+
         Member member = memberRepository.findById(principalId).orElseThrow(() ->
                 new CustomException("존재하지 않는 회원입니다."));
 
@@ -86,6 +99,12 @@ public class StickerServiceImpl implements StickerService{
     @Transactional
     @Override
     public Sticker issueCongestionSticker(Long congestionId, Long principalId) {
+
+        int stickerCnt = countStickerOfMember(principalId);
+
+        if(stickerCnt >= 20){
+            throw new StickerExcessException("더 이상 스티커를 발급받을 수 없습니다.");
+        }
 
         checkLimitStickerToday(principalId);
 

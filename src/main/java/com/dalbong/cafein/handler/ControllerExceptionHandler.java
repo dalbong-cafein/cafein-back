@@ -4,6 +4,7 @@ import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.handler.exception.AlreadyExistedAccountException;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.handler.exception.CustomValidationException;
+import com.dalbong.cafein.handler.exception.StickerExcessException;
 import com.dalbong.cafein.redis.RedisService;
 import com.dalbong.cafein.util.CookieUtil;
 import com.dalbong.cafein.util.JwtUtil;
@@ -56,6 +57,14 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<CMRespDto<?>> apiSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e){
         return new ResponseEntity<>(new CMRespDto<>(-1,e.getMessage(),null), HttpStatus.BAD_REQUEST);
+    }
+
+    //스티커 보유량 초과 에러
+    @ExceptionHandler(StickerExcessException.class)
+    public ResponseEntity<CMRespDto<?>> exceedStickerException(StickerExcessException e){
+
+        return new ResponseEntity<>(new CMRespDto<>(-1, e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 
 }
