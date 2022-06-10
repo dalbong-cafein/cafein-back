@@ -14,6 +14,7 @@ import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewEvaluationOfStoreResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
+import com.dalbong.cafein.dto.admin.sticker.AdminStickerResDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoRegDto;
@@ -326,5 +327,17 @@ public class AdminController {
         stickerService.recoverCongestionSticker(congestionId, memberId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "혼잡도 타입 스티커 회수 성공", null), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 회원별 스티커 내역 조회
+     */
+    @GetMapping("/stickers")
+    public ResponseEntity<?> getStickerList(@RequestParam("memberId") Long memberId){
+
+        List<AdminStickerResDto> adminStickerResDtoList = stickerService.getStickerListOfAdmin(memberId);
+
+        return new ResponseEntity<>(new CMRespDto<>(
+                1, "관리자단 회원별 스티커 내역 조회 성공", adminStickerResDtoList), HttpStatus.OK);
     }
 }
