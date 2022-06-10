@@ -10,7 +10,7 @@ public interface CouponRepositoryQuerydsl {
     /**
      * 관리자단 쿠폰 리스트 조회
      */
-    Page<Coupon> getCouponList(String[] searchType, String keyword, Pageable pageable);
+    Page<Object[]> getCouponList(String[] searchType, String keyword, Pageable pageable);
 
     /**
      * 관리자단 쿠폰 리스트 조회

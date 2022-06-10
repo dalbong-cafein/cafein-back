@@ -85,9 +85,14 @@ public class CouponServiceImpl implements CouponService{
             pageable = pageRequestDto.getPageable(Sort.by("couponId").descending());
         }
 
-        Page<Coupon> results = couponRepository.getCouponList(pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
+        Page<Object[]> results = couponRepository.getCouponList(pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
 
-        Function<Coupon, AdminCouponResDto> fn = (c-> new AdminCouponResDto(c));
+        Function<Object[], AdminCouponResDto> fn = (arr-> {
+
+            Coupon coupon = (Coupon) arr[0];
+
+            return new AdminCouponResDto(coupon, (Long) arr[1]);
+        });
 
         return new AdminCouponListResDto<>(results.getTotalElements(), new PageResultDTO<>(results, fn));
     }

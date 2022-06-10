@@ -1,6 +1,8 @@
 package com.dalbong.cafein.domain.coupon;
 
+import com.dalbong.cafein.domain.memo.QCouponMemo;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -14,9 +16,10 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.dalbong.cafein.domain.coupon.QCoupon.coupon;
-import static com.dalbong.cafein.domain.review.QReview.review;
+import static com.dalbong.cafein.domain.memo.QCouponMemo.couponMemo;
 import static org.aspectj.util.LangUtil.isEmpty;
 
 public class CouponRepositoryImpl implements CouponRepositoryQuerydsl {
@@ -31,11 +34,12 @@ public class CouponRepositoryImpl implements CouponRepositoryQuerydsl {
      * 관리자단 쿠폰 리스트 조회
      */
     @Override
-    public Page<Coupon> getCouponList(String[] searchType, String keyword, Pageable pageable) {
+    public Page<Object[]> getCouponList(String[] searchType, String keyword, Pageable pageable) {
 
-        JPAQuery<Coupon> query = queryFactory.select(coupon)
+        JPAQuery<Tuple> query = queryFactory.select(coupon, couponMemo.memoId)
                 .from(coupon)
                 .leftJoin(coupon.member).fetchJoin()
+                .leftJoin(couponMemo).on(couponMemo.coupon.couponId.eq(coupon.couponId))
                 .where(searchKeyword(searchType, keyword));
 
         //정렬
@@ -45,7 +49,7 @@ public class CouponRepositoryImpl implements CouponRepositoryQuerydsl {
                     pathBuilder.get(o.getProperty())));
         }
 
-        List<Coupon> results = query.fetch();
+        List<Tuple> results = query.fetch();
 
         //count 쿼리
         JPAQuery<Coupon> countQuery = queryFactory
@@ -54,7 +58,9 @@ public class CouponRepositoryImpl implements CouponRepositoryQuerydsl {
                 .leftJoin(coupon.member).fetchJoin()
                 .where(searchKeyword(searchType, keyword));
 
-        return PageableExecutionUtils.getPage(results, pageable, () -> countQuery.fetchCount());
+        List<Object[]> content = results.stream().map(t -> t.toArray()).collect(Collectors.toList());
+
+        return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchCount());
     }
 
     /**
