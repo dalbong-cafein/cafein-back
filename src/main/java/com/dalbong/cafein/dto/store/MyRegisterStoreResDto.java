@@ -20,7 +20,7 @@ public class MyRegisterStoreResDto {
 
     private Boolean isOpen;
 
-    private Double congestionScoreAvg;
+    private double congestionScoreAvg;
 
     private ImageDto storeImageDto;
 
@@ -32,7 +32,7 @@ public class MyRegisterStoreResDto {
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
         this.isOpen = isOpen;
-        this.congestionScoreAvg = congestionScoreAvg;
+        this.congestionScoreAvg = congestionScoreAvg != null ? congestionScoreAvg : 99;
         this.storeImageDto = storeImageDto;
         this.regDateTime = store.getRegDateTime();
     }

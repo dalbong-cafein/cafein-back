@@ -25,7 +25,7 @@ public class StoreResDto {
 
     private long heartCnt;
 
-    private Double congestionScoreAvg;
+    private double congestionScoreAvg;
 
     private ImageDto storeImageDto;
 
@@ -38,7 +38,7 @@ public class StoreResDto {
         this.lngX = store.getLngX();
         this.latY = store.getLatY();
         this.heartCnt = heartCnt;
-        this.congestionScoreAvg = congestionScoreAvg;
+        this.congestionScoreAvg = congestionScoreAvg != null ? congestionScoreAvg : 99;
         this.storeImageDto = storeImageDto;
     }
 
