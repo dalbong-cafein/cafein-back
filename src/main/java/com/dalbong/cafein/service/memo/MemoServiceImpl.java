@@ -1,8 +1,11 @@
 package com.dalbong.cafein.service.memo;
 
+import com.dalbong.cafein.domain.coupon.Coupon;
+import com.dalbong.cafein.domain.coupon.CouponRepository;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.memo.*;
+import com.dalbong.cafein.domain.notice.CouponNoticeRepository;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.store.Store;
@@ -27,9 +30,11 @@ public class MemoServiceImpl implements MemoService{
     private final StoreMemoRepository storeMemoRepository;
     private final ReviewMemoRepository reviewMemoRepository;
     private final MemberMemoRepository memberMemoRepository;
+    private final CouponMemoRepository couponMemoRepository;
     private final StoreRepository storeRepository;
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
+    private final CouponRepository couponRepository;
 
     /**
      * 관리자단 메모 생성
@@ -65,6 +70,15 @@ public class MemoServiceImpl implements MemoService{
 
             MemberMemo memberMemo = new MemberMemo(member, Member.builder().memberId(principalId).build(), adminMemoRegDto.getContent());
             return memberMemoRepository.save(memberMemo);
+        }
+
+        //쿠폰 메모
+        else if (adminMemoRegDto.getCouponId() != null) {
+            Coupon coupon = couponRepository.findById(adminMemoRegDto.getCouponId()).orElseThrow(() ->
+                    new CustomException("존재하지 않는 쿠폰입니다."));
+
+            CouponMemo couponMemo = new CouponMemo(coupon, Member.builder().memberId(principalId).build(), adminMemoRegDto.getContent());
+            return couponMemoRepository.save(couponMemo);
         }
 
         throw new CustomException("존재하는 메모 기능이 없습니다.");

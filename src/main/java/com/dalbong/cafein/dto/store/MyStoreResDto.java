@@ -23,7 +23,7 @@ public class MyStoreResDto {
 
     private double latY;
 
-    private Double congestionScoreAvg;
+    private double congestionScoreAvg;
 
     private ImageDto storeImageDto;
 
@@ -34,7 +34,7 @@ public class MyStoreResDto {
         this.isOpen = isOpen;
         this.lngX = store.getLngX();
         this.latY = store.getLatY();
-        this.congestionScoreAvg = congestionScoreAvg;
+        this.congestionScoreAvg = congestionScoreAvg != null ? congestionScoreAvg : 99;
         this.storeImageDto = storeImageDto;
     }
 }
