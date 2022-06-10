@@ -4,6 +4,7 @@ import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.sticker.Sticker;
 import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.dto.admin.sticker.AdminStickerResDto;
 import com.dalbong.cafein.dto.sticker.StickerHistoryResDto;
 
 import java.util.List;
@@ -27,5 +28,7 @@ public interface StickerService {
     int countStickerOfMember(Long principalId);
 
     List<StickerHistoryResDto> getStickerHistoryList(Long principalId);
+
+    List<AdminStickerResDto> getStickerListOfAdmin(Long memberId);
 
 }
