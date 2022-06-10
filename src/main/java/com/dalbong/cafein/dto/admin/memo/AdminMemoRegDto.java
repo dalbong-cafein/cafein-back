@@ -17,6 +17,8 @@ public class AdminMemoRegDto {
 
     private Long memberId;
 
+    private Long couponId;
+
     private String content = "";
 
 }

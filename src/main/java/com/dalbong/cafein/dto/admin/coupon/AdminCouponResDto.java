@@ -28,10 +28,12 @@ public class AdminCouponResDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime regDateTime;
 
+    private Long memoId;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime processingDateTime;
 
-    public AdminCouponResDto(Coupon coupon){
+    public AdminCouponResDto(Coupon coupon, Long memoId){
         this.couponId = coupon.getCouponId();
         this.brandName = coupon.getBrandName();
         this.itemName = coupon.getItemName();
@@ -40,6 +42,11 @@ public class AdminCouponResDto {
         this.status = coupon.getStatus();
         this.regDateTime = coupon.getRegDateTime();
         this.processingDateTime = coupon.getProcessingDateTime();
+        this.memoId = memoId;
+    }
+
+    public AdminCouponResDto(Coupon coupon){
+        this(coupon, null);
     }
 
 
