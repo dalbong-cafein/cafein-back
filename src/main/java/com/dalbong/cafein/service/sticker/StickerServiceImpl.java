@@ -11,6 +11,7 @@ import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.sticker.*;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.admin.sticker.AdminStickerResDto;
 import com.dalbong.cafein.dto.sticker.StickerHistoryResDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.handler.exception.StickerExcessException;
@@ -223,6 +224,18 @@ public class StickerServiceImpl implements StickerService{
         List<Sticker> results = stickerRepository.getStickerList(principalId);
 
         return results.stream().map(s -> new StickerHistoryResDto(s)).collect(Collectors.toList());
+    }
+
+    /**
+     * 관리자단 회원별 스티커 내역 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<AdminStickerResDto> getStickerListOfAdmin(Long memberId) {
+
+        List<Sticker> results = stickerRepository.getStickerList(memberId);
+
+        return results.stream().map(s -> new AdminStickerResDto(s)).collect(Collectors.toList());
     }
 
     private void checkLimitTimeOfCongestionSticker(Congestion congestion, Long principalId) {
