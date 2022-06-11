@@ -173,27 +173,32 @@ public class ReviewServiceImpl implements ReviewService{
         List<Object[]> results = reviewRepository.getMyReviewList(principalId);
 
         List<MyReviewResDto> myReviewResDtoList = results.stream().map(arr -> {
+
             Review review = (Review) arr[0];
 
-            //review 이미지 리스트
-            List<ImageDto> reviewImageDtoList = new ArrayList<>();
+            if(review != null){
+                //review 이미지 리스트
+                List<ImageDto> reviewImageDtoList = new ArrayList<>();
 
-            if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()) {
-                for (ReviewImage reviewImage : review.getReviewImageList()) {
-                    reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()) {
+                    for (ReviewImage reviewImage : review.getReviewImageList()) {
+                        reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                    }
                 }
-            }
 
-            //store 이미지
-            ImageDto storeImageDto = null;
+                //store 이미지
+                ImageDto storeImageDto = null;
 
-            if (review.getStore().getStoreImageList() != null && !review.getStore().getStoreImageList().isEmpty()) {
-                StoreImage storeImage = review.getStore().getStoreImageList().get(0);
-                storeImageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
-            }
+                if (review.getStore().getStoreImageList() != null && !review.getStore().getStoreImageList().isEmpty()) {
+                    StoreImage storeImage = review.getStore().getStoreImageList().get(0);
+                    storeImageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+                }
 
-            return new MyReviewResDto(review, (long) arr[1], reviewImageDtoList, storeImageDto);
-        }).collect(Collectors.toList());
+                return new MyReviewResDto(review, (long) arr[1], reviewImageDtoList, storeImageDto);
+                }
+            return null;
+            }).collect(Collectors.toList());
+
 
         return new ReviewListResDto<>(results.size(), myReviewResDtoList);
     }
