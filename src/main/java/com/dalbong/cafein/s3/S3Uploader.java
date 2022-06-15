@@ -38,6 +38,9 @@ public class S3Uploader {
     private final AmazonS3 amazonS3;
     private final ImageRepository imageRepository;
 
+    /**
+     * 이벤트 이미지 S3 업로드
+     */
 
     /**
      * 프로필 이미지 S3 업로드
@@ -147,6 +150,20 @@ public class S3Uploader {
         String boardFileName = createFileName(frontName, multipartFile.getOriginalFilename());
 
         return s3Upload(folderPath, boardFileName, multipartFile);
+    }
+
+    /**
+     * 이벤트 이미지 S3 업로드
+     */
+    public String s3UploadOfEvent(MultipartFile multipartFile) throws IOException {
+
+        //폴더 경로
+        String folderPath = "event";
+
+        //파일 이름
+        String storeFileName = createFileName("", multipartFile.getOriginalFilename());
+
+        return s3Upload(folderPath, storeFileName, multipartFile);
     }
 
 

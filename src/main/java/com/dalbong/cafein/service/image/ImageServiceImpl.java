@@ -24,6 +24,7 @@ public class ImageServiceImpl implements ImageService{
     private final StoreImageRepository storeImageRepository;
     private final ReviewImageRepository reviewImageRepository;
     private final BoardImageRepository boardImageRepository;
+    private final EventImageRepository eventImageRepository;
     private final ImageRepository imageRepository;
     private final S3Uploader s3Uploader;
 
@@ -109,6 +110,21 @@ public class ImageServiceImpl implements ImageService{
             }
         }
         return imageList;
+    }
+
+    /**
+     * 이벤트 이미지 저장
+     */
+    @Transactional
+    @Override
+    public Image saveEventImage(MultipartFile imageFile) throws IOException {
+
+        //s3업로드
+        String eventImageUrl = s3Uploader.s3UploadOfEvent(imageFile);
+
+        //eventImage 저장
+        EventImage eventImage = new EventImage(eventImageUrl);
+        return eventImageRepository.save(eventImage);
     }
 
     /**
