@@ -5,8 +5,10 @@ import com.dalbong.cafein.domain.image.*;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.s3.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -140,6 +142,11 @@ public class ImageServiceImpl implements ImageService{
 
         System.out.println("-------------");
 
-        imageRepository.deleteById(imageId);
+        try{
+            imageRepository.deleteById(imageId);
+        }catch (EmptyResultDataAccessException e){
+            throw new CustomException("존재하는 이미지가 없습니다.");
+        }
+
     }
 }
