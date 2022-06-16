@@ -14,8 +14,8 @@ public class CookieUtil {
     //쿠키 create
     public void createCookie(HttpServletResponse response, String cookieName, String value, int maxAge){
         Cookie cookie = new Cookie(cookieName, value);
-        cookie.setHttpOnly(false);
-        cookie.setSecure(false);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         cookie.setMaxAge(maxAge);
         cookie.setPath("/");
 
