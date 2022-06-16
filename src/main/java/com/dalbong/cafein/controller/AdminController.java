@@ -1,6 +1,7 @@
 package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
+import com.dalbong.cafein.domain.image.Image;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.admin.RegisterDataCountOfTodayDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
@@ -21,8 +22,10 @@ import com.dalbong.cafein.dto.admin.memo.AdminMemoRegDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoUpdateDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
+import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.board.BoardService;
 import com.dalbong.cafein.service.coupon.CouponService;
+import com.dalbong.cafein.service.image.ImageService;
 import com.dalbong.cafein.service.member.MemberService;
 import com.dalbong.cafein.service.memo.MemoService;
 import com.dalbong.cafein.service.report.ReportService;
@@ -36,6 +39,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -53,6 +57,7 @@ public class AdminController {
     private final MemberService memberService;
     private final MemoService memoService;
     private final StickerService stickerService;
+    private final ImageService imageService;
 
     /**
      * 관리자단 리뷰 리스트 조회
@@ -340,4 +345,31 @@ public class AdminController {
         return new ResponseEntity<>(new CMRespDto<>(
                 1, "관리자단 회원별 스티커 내역 조회 성공", adminStickerResDtoList), HttpStatus.OK);
     }
+
+    /**
+     * 관리자단 이벤트 이미지 저장
+     */
+    @PostMapping("/event-image")
+    public ResponseEntity<?> registerEventImage(@ModelAttribute MultipartFile imageFile) throws IOException {
+
+        if(imageFile == null){
+            throw new CustomException("이미지 파일이 전송되지 않았습니다.");
+        }
+
+        imageService.saveEventImage(imageFile);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 이미지 저장 성공", null), HttpStatus.CREATED);
+    }
+
+    /**
+     * 관리자단 이벤트 이미지 삭제
+     */
+    @DeleteMapping("/event-image")
+    public ResponseEntity<?> removeEventImage(@RequestParam("eventImageId") Long eventImageId){
+
+        imageService.remove(eventImageId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 이미지 삭제 성공", null), HttpStatus.OK);
+    }
+
 }
