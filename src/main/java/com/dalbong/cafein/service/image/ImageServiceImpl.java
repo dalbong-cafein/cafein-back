@@ -124,6 +124,7 @@ public class ImageServiceImpl implements ImageService{
 
         //eventImage 저장
         EventImage eventImage = new EventImage(eventImageUrl);
+
         return eventImageRepository.save(eventImage);
     }
 
