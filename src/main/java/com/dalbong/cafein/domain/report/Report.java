@@ -27,5 +27,7 @@ public class Report extends BaseEntity {
     @JoinColumn(name = "report_category_id")
     private ReportCategory reportCategory;
 
+    private Integer reportCnt;
+
     private String content;
 }
