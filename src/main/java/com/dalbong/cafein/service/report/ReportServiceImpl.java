@@ -62,7 +62,7 @@ public class ReportServiceImpl implements ReportService{
             member.suspension(reportCnt);
         }
 
-        //정지알림 생성
+        //회원정지 알림 생성
         noticeService.registerReportNotice(report, member, reportCnt);
     }
 
