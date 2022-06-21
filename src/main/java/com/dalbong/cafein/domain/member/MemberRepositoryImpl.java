@@ -58,7 +58,7 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
 
         Member findMember = queryFactory.selectFrom(member)
                 .join(member.roleSet)
-                .where(member.kakaoId.eq(kakaoId), member.state.eq(MemberState.LEAVE).isFalse())
+                .where(member.kakaoId.eq(kakaoId), member.state.ne(MemberState.LEAVE))
                 .fetchOne();
         return findMember != null ? Optional.of(findMember) : Optional.empty();
     }
@@ -71,7 +71,7 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
 
         Member findMember = queryFactory.selectFrom(member)
                 .join(member.roleSet)
-                .where(member.naverId.eq(naverId), member.state.eq(MemberState.LEAVE).isFalse())
+                .where(member.naverId.eq(naverId), member.state.ne(MemberState.LEAVE))
                 .fetchOne();
         return findMember != null ? Optional.of(findMember) : Optional.empty();
     }

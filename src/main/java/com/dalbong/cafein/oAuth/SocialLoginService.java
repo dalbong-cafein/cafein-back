@@ -1,5 +1,6 @@
 package com.dalbong.cafein.oAuth;
 
+import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.oAuth.userInfo.OAuthUserInfo;
 import com.dalbong.cafein.oAuth.userInfo.OAuthUserInfoFactory;
 import com.dalbong.cafein.domain.image.MemberImage;
@@ -43,7 +44,7 @@ public class SocialLoginService {
 
         OAuthUserInfo userInfo = getOAuthUserInfo(authProvider, oAuthAccessToken);
 
-        //DB : Member 조회
+        //DB : Member 조회 - 탈퇴 회원 제외
         Optional<Member> memberResult = userInfo.getMember();
 
         //신규 회원
@@ -113,6 +114,7 @@ public class SocialLoginService {
                         .username(userInfo.getName())
                         .birth(userInfo.getBirth())
                         .mainAuthProvider(KAKAO)
+                        .state(MemberState.NORMAL)
                         .build();
 
                 if(userInfo.getEmail() != null){
@@ -135,6 +137,7 @@ public class SocialLoginService {
                         .email(userInfo.getEmail())
                         .birth(userInfo.getBirth())
                         .mainAuthProvider(NAVER)
+                        .state(MemberState.NORMAL)
                         .build();
 
                 //성별 데이터
