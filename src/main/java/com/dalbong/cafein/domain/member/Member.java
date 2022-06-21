@@ -34,7 +34,7 @@ public class Member extends BaseEntity {
 
     private String naverId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
     private String phone;
@@ -57,7 +57,10 @@ public class Member extends BaseEntity {
     private Set<MemberRole> roleSet = new HashSet<MemberRole>(Arrays.asList(MemberRole.USER));
 
     @Builder.Default
-    private Boolean isDeleted = false;
+    @Enumerated(EnumType.STRING)
+    private MemberState state = MemberState.NORMAL;
+
+    private LocalDateTime reportExpiredDateTime;
 
     private LocalDateTime leaveDateTime;
 
@@ -93,9 +96,28 @@ public class Member extends BaseEntity {
         this.genderType = genderType;
     }
 
+    public void suspension(int reportCnt){
+
+        switch (reportCnt){
+            case 1:
+                this.reportExpiredDateTime = LocalDateTime.now().plusDays(1);
+                break;
+            case 2:
+                this.reportExpiredDateTime = LocalDateTime.now().plusDays(3);
+                break;
+            case 3:
+                this.reportExpiredDateTime = LocalDateTime.now().plusDays(7);
+                break;
+            default:
+                this.reportExpiredDateTime = LocalDateTime.now().plusMonths(1);
+        }
+
+        this.state = MemberState.SUSPENSION;
+    }
+
+
     public void leave(){
-        this.isDeleted = true;
-        this.email = "";
+        this.state = MemberState.LEAVE;
         this.leaveDateTime = LocalDateTime.now();
     }
 

@@ -70,6 +70,6 @@ public class KakaoOAuthUserInfo extends OAuthUserInfo {
 
     @Override
     public Optional<Member> getMember() {
-        return memberRepository.findByKakaoIdAndNotDeleted(getId());
+        return memberRepository.findByKakaoIdAndNotLeave(getId());
     }
 }

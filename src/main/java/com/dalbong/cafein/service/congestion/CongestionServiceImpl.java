@@ -2,6 +2,9 @@ package com.dalbong.cafein.service.congestion;
 
 import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.domain.congestion.CongestionRepository;
+import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.congestion.CongestionListResDto;
@@ -23,6 +26,7 @@ public class CongestionServiceImpl implements CongestionService{
 
     private final CongestionRepository congestionRepository;
     private final StoreRepository storeRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 혼잡도 등록
@@ -30,6 +34,15 @@ public class CongestionServiceImpl implements CongestionService{
     @Transactional
     @Override
     public Congestion register(CongestionRegDto congestionRegDto, Long principalId) {
+
+        Member member = memberRepository.findById(principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 회원입니다."));
+
+        //회원 정지 상태 확인
+        if(member.getState().equals(MemberState.SUSPENSION)){
+            throw new CustomException("활동이 정지된 회원입니다.");
+        }
+
         Store store = storeRepository.findById(congestionRegDto.getStoreId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 가게입니다."));
 

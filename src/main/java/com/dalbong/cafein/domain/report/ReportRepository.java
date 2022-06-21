@@ -14,5 +14,10 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             "where r.member.memberId =:memberId")
     List<Report> getReportListByMemberId(@Param("memberId") Long memberId);
 
+    @Query("select count(rp) from Report rp left join Review r on r.reviewId = rp.review.reviewId " +
+            " where rp.review.member.memberId =: memberId")
+    long countByMemberId(@Param("memberId") Long memberId);
+
+
 
 }

@@ -230,6 +230,16 @@ public class AdminController {
     }
 
     /**
+     * 관리자단 회원 탈퇴 기능
+     */
+    @DeleteMapping("members/{memberId}")
+    public ResponseEntity<?> leave(@PathVariable("memberId") Long memberId){
+        memberService.leave(memberId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 회원 탈퇴 성공", null), HttpStatus.OK);
+    }
+
+    /**
      * 관리자단 메모 생성
      */
     @PostMapping("/memos")

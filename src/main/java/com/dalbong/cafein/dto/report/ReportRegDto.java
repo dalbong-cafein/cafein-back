@@ -25,16 +25,16 @@ public class ReportRegDto {
     private String content;
 
 
-    public Report toEntity(){
+    public Report toEntity(Review review){
 
         if(this.reportCategoryId != null){
             return Report.builder()
-                    .review(Review.builder().reviewId(this.reviewId).build())
+                    .review(review)
                     .reportCategory(ReportCategory.builder().reportCategoryId(reportCategoryId).build())
                     .build();
         }else{ //기타
             return Report.builder()
-                    .review(Review.builder().reviewId(this.reviewId).build())
+                    .review(review)
                     .content(this.content)
                     .build();
         }

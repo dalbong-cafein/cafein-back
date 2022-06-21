@@ -1,5 +1,6 @@
 package com.dalbong.cafein.oAuth;
 
+import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.oAuth.userInfo.OAuthUserInfo;
 import com.dalbong.cafein.oAuth.userInfo.OAuthUserInfoFactory;
 import com.dalbong.cafein.domain.image.MemberImage;
@@ -43,27 +44,27 @@ public class SocialLoginService {
 
         OAuthUserInfo userInfo = getOAuthUserInfo(authProvider, oAuthAccessToken);
 
-        //DB : Member 조회
+        //DB : Member 조회 - 탈퇴 회원 제외
         Optional<Member> memberResult = userInfo.getMember();
 
         //신규 회원
         if(memberResult.isEmpty()){
 
             //기존 회원 중 같은 email을 사용하고 있는 회원이 있는 지 체크
-            Optional<Member> emailDuplicateResult = memberRepository.findByEmail(userInfo.getEmail());
+           // Optional<Member> emailDuplicateResult = memberRepository.findByEmail(userInfo.getEmail());
 
             //해당 email을 사용 중인 계정이 없는 경우
-            if (emailDuplicateResult.isEmpty()){
+           // if (emailDuplicateResult.isEmpty()){
                 return signUp(authProvider, userInfo);
-            }
+           // }
             //해당 email을 사용 중인 계정이 있는 경우
-            else{
-                AccountUniteResDto accountUniteResDto = new AccountUniteResDto(
-                        userInfo.getEmail(), emailDuplicateResult.get().getRegDateTime(), userInfo.getId(), authProvider);
+           // else{
+            //    AccountUniteResDto accountUniteResDto = new AccountUniteResDto(
+           //             userInfo.getEmail(), emailDuplicateResult.get().getRegDateTime(), userInfo.getId(), authProvider);
 
                 //기억!! 현재는
-                throw new AlreadyExistedAccountException("이미 해당 email을 사용중인 계정이 존재합니다.", accountUniteResDto);
-            }
+            //    throw new AlreadyExistedAccountException("이미 해당 email을 사용중인 계정이 존재합니다.", accountUniteResDto);
+           // }
         }
         // 기존 회원
         else{
@@ -119,6 +120,7 @@ public class SocialLoginService {
                         .username(userInfo.getName())
                         .birth(userInfo.getBirth())
                         .mainAuthProvider(KAKAO)
+                        .state(MemberState.NORMAL)
                         .build();
 
                 if(userInfo.getEmail() != null){
@@ -141,6 +143,7 @@ public class SocialLoginService {
                         .email(userInfo.getEmail())
                         .birth(userInfo.getBirth())
                         .mainAuthProvider(NAVER)
+                        .state(MemberState.NORMAL)
                         .build();
 
                 //성별 데이터
