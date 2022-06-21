@@ -118,7 +118,6 @@ public class Member extends BaseEntity {
 
     public void leave(){
         this.state = MemberState.LEAVE;
-        this.email = "";
         this.leaveDateTime = LocalDateTime.now();
     }
 
