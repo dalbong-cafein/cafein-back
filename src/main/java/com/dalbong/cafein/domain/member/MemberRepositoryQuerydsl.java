@@ -11,9 +11,9 @@ import java.util.Optional;
 
 public interface MemberRepositoryQuerydsl {
 
-    Optional<Member> findByKakaoIdAndNotDeleted(String kakaoId);
+    Optional<Member> findByKakaoIdAndNotLeave(String kakaoId);
 
-    Optional<Member> findByNaverIdAndNotDeleted(String naverId);
+    Optional<Member> findByNaverIdAndNotLeave(String naverId);
 
     /**
      * 관리자단 전체 회원 리스트 조회

@@ -58,7 +58,7 @@ public class BoardServiceImpl implements BoardService{
 
         //공지사항 알람 등록
         if(adminBoardRegDto.getBoardCategoryId().equals(1L)){
-            List<Member> findMemberList = memberRepository.findAllNotDeleted();
+            List<Member> findMemberList = memberRepository.findAllNotLeave();
 
             noticeService.registerBoardNotice(board, findMemberList);
         }

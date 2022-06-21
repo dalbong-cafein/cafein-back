@@ -12,6 +12,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
@@ -53,11 +54,11 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
      * 카카오 계정 기존 회원 찾기
      */
     @Override
-    public Optional<Member> findByKakaoIdAndNotDeleted(String kakaoId) {
+    public Optional<Member> findByKakaoIdAndNotLeave(String kakaoId) {
 
         Member findMember = queryFactory.selectFrom(member)
                 .join(member.roleSet)
-                .where(member.kakaoId.eq(kakaoId), member.isDeleted.isFalse().or(QMember.member.isDeleted.isNull()))
+                .where(member.kakaoId.eq(kakaoId), member.state.ne(MemberState.LEAVE))
                 .fetchOne();
         return findMember != null ? Optional.of(findMember) : Optional.empty();
     }
@@ -66,11 +67,11 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
      * 네이버 계정 기존 회원 찾기
      */
     @Override
-    public Optional<Member> findByNaverIdAndNotDeleted(String naverId) {
+    public Optional<Member> findByNaverIdAndNotLeave(String naverId) {
 
         Member findMember = queryFactory.selectFrom(member)
                 .join(member.roleSet)
-                .where(member.naverId.eq(naverId), member.isDeleted.isFalse().or(QMember.member.isDeleted.isNull()))
+                .where(member.naverId.eq(naverId), member.state.ne(MemberState.LEAVE))
                 .fetchOne();
         return findMember != null ? Optional.of(findMember) : Optional.empty();
     }
@@ -82,11 +83,7 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
     public Page<Object[]> getAllMemberListOfAdmin(String[] searchType, String keyword, Pageable pageable) {
 
 
-        JPAQuery<Tuple> query = queryFactory.select(member, memberImage, JPAExpressions.selectOne()
-                                                                .from(report)
-                                                                .leftJoin(review).on(review.reviewId.eq(report.review.reviewId))
-                                                                .where(review.member.memberId.eq(member.memberId)).exists(),
-                                                                memberMemo.memoId)
+        JPAQuery<Tuple> query = queryFactory.select(member, memberImage, memberMemo.memoId)
                 .from(member)
                 .leftJoin(memberImage).on(memberImage.member.memberId.eq(member.memberId))
                 .leftJoin(memberMemo).on(memberMemo.member.memberId.eq(member.memberId))

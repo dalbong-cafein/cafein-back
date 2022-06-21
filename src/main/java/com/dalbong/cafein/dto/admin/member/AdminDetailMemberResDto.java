@@ -3,6 +3,7 @@ package com.dalbong.cafein.dto.admin.member;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.GenderType;
 import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -44,7 +45,7 @@ public class AdminDetailMemberResDto {
 
     private long stickerCnt;
 
-    private Boolean isDeleted;
+    private MemberState memberState;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime leaveDateTime;
@@ -66,7 +67,7 @@ public class AdminDetailMemberResDto {
         this.congestionCnt = congestionCnt;
         this.reviewCnt = reviewCnt;
         this.stickerCnt = stickerCnt;
-        this.isDeleted = member.getIsDeleted();
+        this.memberState = member.getState() != null ? member.getState() : null;
         this.leaveDateTime = member.getLeaveDateTime() != null ? member.getLeaveDateTime() : null;
         this.joinDateTime = member.getRegDateTime();
 

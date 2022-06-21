@@ -2,6 +2,7 @@ package com.dalbong.cafein.dto.admin.member;
 
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -29,23 +30,20 @@ public class AdminMemberResDto {
 
     private String email;
 
-    private Boolean isDeleted;
-
-    private Boolean isReported;
+    private MemberState memberState;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime regDateTime;
 
     private Long memoId;
 
-    public AdminMemberResDto(Member member, ImageDto memberImageDto, Boolean isReported, Long memoId){
+    public AdminMemberResDto(Member member, ImageDto memberImageDto, Long memoId){
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
         this.memberImageDto = memberImageDto;;
         this.phone = member.getPhone();
         this.email = member.getEmail();
-        this.isDeleted = member.getIsDeleted();
-        this.isReported = isReported;
+        this.memberState = member.getState() != null ? member.getState() : null;
         this.memoId = memoId;
 
         //소셜타입
