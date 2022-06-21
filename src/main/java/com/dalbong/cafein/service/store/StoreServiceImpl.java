@@ -7,6 +7,8 @@ import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.image.ReviewImageRepository;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
@@ -44,6 +46,7 @@ public class StoreServiceImpl implements StoreService{
     private final ImageService imageService;
     private final ReviewService reviewService;
     private final ReviewImageRepository reviewImageRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 카페 등록
@@ -51,6 +54,14 @@ public class StoreServiceImpl implements StoreService{
     @Transactional
     @Override
     public Store register(StoreRegDto storeRegDto, Long principalId) throws IOException {
+
+        Member member = memberRepository.findById(principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 회원입니다."));
+
+        //회원 정지 상태 확인
+        if(member.getState().equals(MemberState.SUSPENSION)){
+            throw new CustomException("활동이 정지된 회원입니다.");
+        }
 
         //businessHours 엔티티 저장
         BusinessHours businessHours = storeRegDto.toBusinessHoursEntity();

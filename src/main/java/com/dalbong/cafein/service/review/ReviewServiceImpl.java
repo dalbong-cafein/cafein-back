@@ -3,6 +3,9 @@ package com.dalbong.cafein.service.review;
 import com.dalbong.cafein.domain.image.MemberImage;
 import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.image.StoreImage;
+import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.domain.memo.ReviewMemo;
 import com.dalbong.cafein.domain.review.DetailEvaluation;
 import com.dalbong.cafein.domain.review.Recommendation;
@@ -42,6 +45,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
     private final StoreRepository storeRepository;
     private final ImageService imageService;
+    private final MemberRepository memberRepository;
 
     /**
      * 리뷰 등록
@@ -49,6 +53,14 @@ public class ReviewServiceImpl implements ReviewService{
     @Transactional
     @Override
     public Review register(ReviewRegDto reviewRegDto, Long principalId) throws IOException {
+
+        Member member = memberRepository.findById(principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 회원입니다."));
+
+        //회원 정지 상태 확인
+        if(member.getState().equals(MemberState.SUSPENSION)){
+            throw new CustomException("활동이 정지된 회원입니다.");
+        }
 
         Store store = storeRepository.findById(reviewRegDto.getStoreId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 매장입니다."));
