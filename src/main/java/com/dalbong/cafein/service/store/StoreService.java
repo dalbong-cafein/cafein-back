@@ -15,6 +15,8 @@ public interface StoreService {
 
     void modify(StoreUpdateDto storeUpdateDto, Long principalId) throws IOException;
 
+    void remove(Long storeId);
+
     List<StoreResDto> getStoreList(String keyword);
 
     StoreListResDto<List<MyStoreResDto>> getMyStoreList(Long principalId);

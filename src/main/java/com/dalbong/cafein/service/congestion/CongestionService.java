@@ -12,6 +12,8 @@ public interface CongestionService {
 
     Congestion register(CongestionRegDto congestionRegDto, Long principalId);
 
+    void remove(Long congestionId);
+
     CongestionListResDto<List<CongestionResDto>> getCongestionList(Long storeId, Integer minusDays);
 
 
