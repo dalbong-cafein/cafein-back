@@ -17,11 +17,15 @@ import javax.persistence.*;
 public class ReviewSticker extends Sticker{
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "review_id", nullable = true)
+    @JoinColumn(name = "review_id", nullable = false)
     private Review review;
 
     public ReviewSticker(Review review, Member member){
         super(member, review.getStore().getStoreName());
         this.review = review;
+    }
+
+    public void changeNullReview(){
+        this.review = null;
     }
 }
