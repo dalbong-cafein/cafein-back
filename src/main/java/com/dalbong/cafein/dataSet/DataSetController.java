@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,7 @@ public class DataSetController {
     private final GoogleSearchService googleSearchService;
     private final KakaoService kakaoService;
     private final RestTemplate rt;
+    private final NaverCloudService naverCloudService;
 
     @Value("${dataSet.naver.clientId}")
     private String clientId;
@@ -39,10 +41,11 @@ public class DataSetController {
     @Value("${dataSet.kakao.apiKey}")
     private String kakaoApiKey;
 
+
     @PostMapping("/data/naver-search")
     public String naverSearch(@RequestParam("keyword") String keyword,
                               @AuthenticationPrincipal PrincipalDetails principalDetails) throws JsonProcessingException {
-        //POST 방식으로 key=value 데이터를 요청 (카카오쪽으로)
+        //POST 방식으로 key=value 데이터를 요청
         RestTemplate rt = new RestTemplate();
 
         //HttpHeader 오브젝트 생성 (엔티티) - 헤더, 바디
@@ -123,5 +126,13 @@ public class DataSetController {
 
 
         return "검색 성공";
+    }
+
+    @PatchMapping("/data/naver-cloud-xy")
+    public String saveLatAndLng() throws JsonProcessingException {
+
+        naverCloudService.saveLatAndLng();
+
+        return "위도 경도 저장 성공";
     }
 }
