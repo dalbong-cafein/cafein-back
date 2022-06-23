@@ -24,4 +24,8 @@ public class CongestionSticker extends Sticker{
         super(member, congestion.getStore().getStoreName());
         this.congestion = congestion;
     }
+
+    public void changeNullCongestion(){
+        this.congestion = null;
+    }
 }

@@ -61,12 +61,12 @@ public class Store extends BaseEntity {
 
     //TODO data api에서 가게Id 필요 유무
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "businessHours")
     private BusinessHours businessHours;
 
     @Builder.Default
-    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     private List<Review> reviewList = new ArrayList<>();
 
     @Builder.Default

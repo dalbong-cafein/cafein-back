@@ -95,6 +95,16 @@ public class AdminController {
     }
 
     /**
+     * 관리자단 리뷰 삭제
+     */
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<?> removeReview(@PathVariable("reviewId") Long reviewId){
+        reviewService.remove(reviewId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 삭제 성공", null), HttpStatus.OK);
+    }
+
+    /**
      * 관리자단 가게 등록
      */
     @PostMapping("/stores")
@@ -104,6 +114,17 @@ public class AdminController {
         storeService.register(storeRegDto, 7L);
 
         return new ResponseEntity<>(new CMRespDto<>(1,"관리자단 가게 등록 성공",null), HttpStatus.CREATED);
+    }
+
+    /**
+     * 관리자단 가게 삭제
+     */
+    @DeleteMapping("/stores/{storeId}")
+    public ResponseEntity<?> removeStore(@PathVariable("storeId") Long storeId){
+
+        storeService.remove(storeId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 가게 삭제 성공", null), HttpStatus.OK);
     }
 
     /**

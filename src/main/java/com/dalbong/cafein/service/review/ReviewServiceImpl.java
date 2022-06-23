@@ -6,11 +6,15 @@ import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.member.MemberState;
+import com.dalbong.cafein.domain.memo.MemoRepository;
 import com.dalbong.cafein.domain.memo.ReviewMemo;
+import com.dalbong.cafein.domain.memo.ReviewMemoRepository;
 import com.dalbong.cafein.domain.review.DetailEvaluation;
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
+import com.dalbong.cafein.domain.sticker.ReviewSticker;
+import com.dalbong.cafein.domain.sticker.ReviewStickerRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.admin.review.*;
@@ -35,6 +39,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -47,6 +52,8 @@ public class ReviewServiceImpl implements ReviewService{
     private final StoreRepository storeRepository;
     private final ImageService imageService;
     private final MemberRepository memberRepository;
+    private final ReviewMemoRepository reviewMemoRepository;
+    private final ReviewStickerRepository reviewStickerRepository;
 
     /**
      * 리뷰 등록
@@ -125,9 +132,19 @@ public class ReviewServiceImpl implements ReviewService{
         Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
                 new CustomException("존재하지 않는 리뷰입니다."));
 
-        List<ReviewImage> reviewImageList = review.getReviewImageList();
+        //메모 삭제
+        reviewMemoRepository.deleteByReview(review);
+
+        //스티커 - reviewId null
+        Optional<ReviewSticker> result = reviewStickerRepository.findByReview(review);
+        if(result.isPresent()){
+            ReviewSticker reviewSticker = result.get();
+            reviewSticker.changeNullReview();
+        }
 
         //리뷰 이미지 삭제
+        List<ReviewImage> reviewImageList = review.getReviewImageList();
+
         for (ReviewImage reviewImage : reviewImageList){
             imageService.remove(reviewImage.getImageId());
         }
