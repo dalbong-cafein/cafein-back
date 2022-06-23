@@ -24,5 +24,8 @@ public class StoreSticker extends Sticker{
         this.store = store;
     }
 
+    public void changeNullStore(){
+        this.store = null;
+    }
 
 }

@@ -2,6 +2,8 @@ package com.dalbong.cafein.service.store;
 
 import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
+import com.dalbong.cafein.domain.congestion.Congestion;
+import com.dalbong.cafein.domain.congestion.CongestionRepository;
 import com.dalbong.cafein.domain.image.MemberImage;
 import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.image.ReviewImageRepository;
@@ -9,6 +11,10 @@ import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.member.MemberState;
+import com.dalbong.cafein.domain.memo.StoreMemoRepository;
+import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.domain.sticker.StoreSticker;
+import com.dalbong.cafein.domain.sticker.StoreStickerRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
@@ -20,6 +26,7 @@ import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.dto.store.*;
 import com.dalbong.cafein.handler.exception.CustomException;
+import com.dalbong.cafein.service.congestion.CongestionService;
 import com.dalbong.cafein.service.image.ImageService;
 import com.dalbong.cafein.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -47,6 +55,11 @@ public class StoreServiceImpl implements StoreService{
     private final ReviewService reviewService;
     private final ReviewImageRepository reviewImageRepository;
     private final MemberRepository memberRepository;
+    private final StoreMemoRepository storeMemoRepository;
+    private final StoreStickerRepository storeStickerRepository;
+    private final CongestionService congestionService;
+    private final CongestionRepository congestionRepository;
+
 
     /**
      * 카페 등록
@@ -127,6 +140,51 @@ public class StoreServiceImpl implements StoreService{
 
         //최신 수정자 변경
         store.changeModMember(Member.builder().memberId(principalId).build());
+    }
+
+    /**
+     * 카페 삭제
+     */
+    @Transactional
+    @Override
+    public void remove(Long storeId) {
+
+        Store store = storeRepository.findById(storeId).orElseThrow(() ->
+                new CustomException("존재하지 않는 카페입니다."));
+
+        //memo 삭제
+        storeMemoRepository.deleteByStore(store);
+
+        //스티커 storeId null
+        Optional<StoreSticker> result = storeStickerRepository.findByStore(store);
+        if(result.isPresent()){
+            StoreSticker storeSticker = result.get();
+            storeSticker.changeNullStore();
+        }
+
+        //혼잡도 삭제
+        List<Congestion> congestionList = congestionRepository.findByStore(store);
+
+        for(Congestion congestion : congestionList){
+            congestionService.remove(congestion.getCongestionId());
+        }
+
+        //리뷰 삭제
+        List<Review> reviewList = store.getReviewList();
+
+        for(Review review : reviewList){
+            reviewService.remove(review.getReviewId());
+        }
+
+        //store 이미지 삭제
+        List<StoreImage> storeImageList = store.getStoreImageList();
+
+        for(StoreImage storeImage : storeImageList){
+            imageService.remove(storeImage.getImageId());
+        }
+
+        //store 삭제 (Cascade.Remove - Heart, businessHours)
+        storeRepository.deleteById(storeId);
     }
 
     private void updateStoreImage(Store store, List<MultipartFile> updateImageFiles, List<Long> deleteImageIdList) throws IOException {

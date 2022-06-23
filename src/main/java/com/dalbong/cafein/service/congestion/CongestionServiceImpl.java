@@ -5,6 +5,8 @@ import com.dalbong.cafein.domain.congestion.CongestionRepository;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.member.MemberState;
+import com.dalbong.cafein.domain.sticker.CongestionSticker;
+import com.dalbong.cafein.domain.sticker.CongestionStickerRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.congestion.CongestionListResDto;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -27,6 +30,7 @@ public class CongestionServiceImpl implements CongestionService{
     private final CongestionRepository congestionRepository;
     private final StoreRepository storeRepository;
     private final MemberRepository memberRepository;
+    private final CongestionStickerRepository congestionStickerRepository;
 
     /**
      * 혼잡도 등록
@@ -50,6 +54,28 @@ public class CongestionServiceImpl implements CongestionService{
         congestionRepository.save(congestion);
 
         return congestion;
+    }
+
+    /**
+     * 혼잡도 삭제
+     */
+    @Transactional
+    @Override
+    public void remove(Long congestionId) {
+
+        Congestion congestion = congestionRepository.findById(congestionId).orElseThrow(() ->
+                new CustomException("존재하지 않는 혼잡도입니다.")
+        );
+
+        //memo - congestionId null
+        Optional<CongestionSticker> result = congestionStickerRepository.findByCongestion(congestion);
+
+        if(result.isPresent()){
+            CongestionSticker congestionSticker = result.get();
+            congestionSticker.changeNullCongestion();
+        }
+
+        congestionRepository.deleteById(congestionId);
     }
 
     /**
