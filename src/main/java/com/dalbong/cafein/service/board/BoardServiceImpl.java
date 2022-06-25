@@ -131,7 +131,18 @@ public class BoardServiceImpl implements BoardService{
 
         Page<Board> results = boardRepository.getBoardList(boardCategoryId, pageRequestDto.getKeyword(), pageable);
 
-        Function<Board, AdminBoardResDto> fn = (AdminBoardResDto::new);
+        Function<Board, AdminBoardResDto> fn = (board -> {
+            //게시글 이미지
+            List<ImageDto> boardImageDtoList = new ArrayList<>();
+
+            if (board.getBoardImageList() != null && !board.getBoardImageList().isEmpty()) {
+
+                for (BoardImage boardImage : board.getBoardImageList()) {
+                    boardImageDtoList.add(new ImageDto(boardImage.getImageId(), boardImage.getImageUrl()));
+                }
+            }
+            return new AdminBoardResDto(board, boardImageDtoList);
+        });
 
         return new AdminBoardListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
     }
