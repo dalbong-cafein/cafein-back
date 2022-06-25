@@ -1,11 +1,14 @@
 package com.dalbong.cafein.domain.report;
 
 import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.domain.sticker.ReviewSticker;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long>, ReportRepositoryQuerydsl {
 
@@ -18,4 +21,6 @@ public interface ReportRepository extends JpaRepository<Report, Long>, ReportRep
     @Query("select count(rp) from Report rp left join Review r on r.reviewId = rp.review.reviewId " +
             " where rp.review.member.memberId =:memberId")
     long countByMemberId(@Param("memberId") Long memberId);
+
+    List<Report> findByReview(Review review);
 }

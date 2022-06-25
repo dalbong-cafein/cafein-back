@@ -137,6 +137,7 @@ public class ImageServiceImpl implements ImageService{
     @Override
     public void remove(Long imageId){
 
+        System.out.println(imageId);
         //s3 이미지 파일 삭제
         s3Uploader.delete(imageId);
 
