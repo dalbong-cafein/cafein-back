@@ -3,12 +3,15 @@ package com.dalbong.cafein.domain.report;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.QMember;
 import com.dalbong.cafein.domain.review.QReview;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.dalbong.cafein.domain.member.QMember.member;
 import static com.dalbong.cafein.domain.report.QReport.report;
@@ -23,18 +26,20 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
     }
 
     /**
-     * 금일 신고 확인 후 회원 정지 상태로 변경
+     * 금일 신고 회원
      */
     @Override
-    public List<Member> findMemberByReportToday() {
+    public List<Object[]> findByReportToday() {
 
-        queryFactory.select(member)
+        List<Tuple> result = queryFactory.select(report, member)
                 .from(report)
                 .leftJoin(review).on(review.reviewId.eq(report.review.reviewId))
                 .leftJoin(member).on(member.memberId.eq(review.member.memberId))
-                .where(report.regDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(), LocalDateTime.of(LocalDate.now().LocalTime.of(23, 59, 59))))
+                .where(report.regDateTime.between(LocalDateTime.now().minusDays(1).toLocalDate().atStartOfDay(),
+                        LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(23, 59, 59))))
+                .fetch();
 
-        return null;
+        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
 
     /**

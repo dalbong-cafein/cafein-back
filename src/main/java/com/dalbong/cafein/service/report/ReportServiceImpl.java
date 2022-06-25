@@ -42,38 +42,43 @@ public class ReportServiceImpl implements ReportService{
         Review review = reviewRepository.findById(reportRegDto.getReviewId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 리뷰입니다."));
 
-        Member member = memberRepository.findById(review.getMember().getMemberId()).orElseThrow(() ->
-                new CustomException("존재하지 않는 회원입니다."));
-
-        long reportCnt = reportRepository.countByMemberId(review.getMember().getMemberId());
-
         Report report = reportRegDto.toEntity(review);
 
         reportRepository.save(report);
-
-        reportPolicy(report, member, (int)reportCnt);
 
         return report;
     }
 
     /**
-     * 매일 자정에 금일 신고 확인 후 회원 정지 상태로 변경
+     * 자정에 정지 회원 변동 기능 실행
+     */
+    @Scheduled(cron = "00 00 00 * * ?")
+    @Transactional
+    @Override
+    public void autoModifyMemberState() {
+
+        autoModifyToNormal();
+        autoModifyToSuspension();
+    }
+
+
+    /**
+     * 금일 신고 확인 후 회원 정지 상태로 변경
      */
     @Transactional
     @Override
     public void autoModifyToSuspension() {
 
-        reportRepository
+        List<Object[]> results = reportRepository.findByReportToday();
 
-    }
+        results.forEach(arr -> {
+            Report report = (Report) arr[0];
+            Member member = (Member) arr[1];
 
-    /**
-     * 매일 자정에 회원 정지기간 확인 후 일반 회원 상태로 변경
-     */
-    @Transactional
-    @Override
-    public void autoModifyToNormal() {
+            long reportCnt = reportRepository.countByMemberId(member.getMemberId());
 
+            reportPolicy(report, member, (int)reportCnt);
+        });
     }
 
     private void reportPolicy(Report report, Member member, int reportCnt) {
@@ -85,6 +90,18 @@ public class ReportServiceImpl implements ReportService{
 
         //회원정지 알림 생성
         noticeService.registerReportNotice(report, member, reportCnt);
+    }
+
+    /**
+     * 회원 정지기간 확인 후 일반 회원 상태로 변경
+     */
+    @Transactional
+    @Override
+    public void autoModifyToNormal() {
+
+        List<Member> results = memberRepository.findByReportExpiredToday();
+
+        results.forEach(Member::changeToNormal);
     }
 
     /**

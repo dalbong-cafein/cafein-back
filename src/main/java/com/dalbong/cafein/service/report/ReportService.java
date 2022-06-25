@@ -8,6 +8,8 @@ public interface ReportService {
 
     Report report(ReportRegDto reportRegDto);
 
+    void autoModifyMemberState();
+
     void autoModifyToSuspension();
 
     void autoModifyToNormal();

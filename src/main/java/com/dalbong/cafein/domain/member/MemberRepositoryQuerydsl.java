@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepositoryQuerydsl {
@@ -29,4 +30,9 @@ public interface MemberRepositoryQuerydsl {
      * 관리자단 오늘 등록된 회원 수 조회
      */
     Long getRegisterCountOfToday();
+
+    /**
+     * 회원 정지기간 만료 회원 리스트 조회
+     */
+    List<Member> findByReportExpiredToday();
 }

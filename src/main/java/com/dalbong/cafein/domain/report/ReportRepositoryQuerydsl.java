@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ReportRepositoryQuerydsl {
 
-    List<Member> findMemberByReportToday();
+    List<Object[]> findByReportToday();
 
     List<Member> findMemberByReportExpiredToday();
 }
