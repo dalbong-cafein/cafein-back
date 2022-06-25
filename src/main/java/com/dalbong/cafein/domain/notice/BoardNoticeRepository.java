@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface BoardNoticeRepository extends JpaRepository<BoardNotice,Long> {
 
-    @Modifying(clearAutomatically = true)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete from BoardNotice bn where bn.board =:board")
     void deleteByBoard(@Param("board") Board board);
 
