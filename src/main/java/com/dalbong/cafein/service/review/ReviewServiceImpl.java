@@ -141,6 +141,8 @@ public class ReviewServiceImpl implements ReviewService{
             reviewSticker.changeNullReview();
         }
 
+        //TODO 신고 - reviewId null
+
         //리뷰 이미지 삭제
         List<ReviewImage> reviewImageList = review.getReviewImageList();
 

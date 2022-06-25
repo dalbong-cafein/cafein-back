@@ -121,6 +121,9 @@ public class Member extends BaseEntity {
         this.leaveDateTime = LocalDateTime.now();
     }
 
+    public void changeToNormal(){
+        this.state = MemberState.NORMAL;
+    }
 
 
 }
