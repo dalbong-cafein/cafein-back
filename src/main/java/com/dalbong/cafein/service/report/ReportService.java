@@ -8,5 +8,9 @@ public interface ReportService {
 
     Report report(ReportRegDto reportRegDto);
 
+    void autoModifyToSuspension();
+
+    void autoModifyToNormal();
+
     AdminReportListResDto getReportListOfAdmin(Long memberId);
 }

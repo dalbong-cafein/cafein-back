@@ -13,6 +13,7 @@ import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.notice.NoticeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +54,26 @@ public class ReportServiceImpl implements ReportService{
         reportPolicy(report, member, (int)reportCnt);
 
         return report;
+    }
+
+    /**
+     * 매일 자정에 금일 신고 확인 후 회원 정지 상태로 변경
+     */
+    @Transactional
+    @Override
+    public void autoModifyToSuspension() {
+
+        reportRepository
+
+    }
+
+    /**
+     * 매일 자정에 회원 정지기간 확인 후 일반 회원 상태로 변경
+     */
+    @Transactional
+    @Override
+    public void autoModifyToNormal() {
+
     }
 
     private void reportPolicy(Report report, Member member, int reportCnt) {
