@@ -9,6 +9,8 @@ import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.domain.memo.MemoRepository;
 import com.dalbong.cafein.domain.memo.ReviewMemo;
 import com.dalbong.cafein.domain.memo.ReviewMemoRepository;
+import com.dalbong.cafein.domain.report.Report;
+import com.dalbong.cafein.domain.report.ReportRepository;
 import com.dalbong.cafein.domain.review.DetailEvaluation;
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
@@ -53,6 +55,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final MemberRepository memberRepository;
     private final ReviewMemoRepository reviewMemoRepository;
     private final ReviewStickerRepository reviewStickerRepository;
+    private final ReportRepository reportRepository;
 
     /**
      * 리뷰 등록
@@ -141,8 +144,13 @@ public class ReviewServiceImpl implements ReviewService{
             reviewSticker.changeNullReview();
         }
 
-        //TODO 신고 - reviewId null
-        
+        //신고 - reviewId null
+        List<Report> findReportList = reportRepository.findByReview(review);
+        if(findReportList != null){
+            for(Report report : findReportList){
+                report.changeNullReview();
+            }
+        }
 
         //리뷰 이미지 삭제
         List<ReviewImage> reviewImageList = review.getReviewImageList();
