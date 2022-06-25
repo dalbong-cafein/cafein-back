@@ -162,6 +162,19 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
                 .fetchOne();
     }
 
+    /**
+     * 회원 정지기간 만료 회원 리스트 조회
+     */
+    @Override
+    public List<Member> findByReportExpiredToday() {
+
+        return queryFactory.select(member)
+                .from(member)
+                .where(member.reportExpiredDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
+                        LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59))))
+                .fetch();
+    }
+
     private BooleanBuilder searchKeyword(String[] searchType, String keyword) {
 
         BooleanBuilder builder = new BooleanBuilder();
