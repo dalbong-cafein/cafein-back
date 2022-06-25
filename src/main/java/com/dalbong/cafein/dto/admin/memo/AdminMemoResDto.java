@@ -1,9 +1,6 @@
 package com.dalbong.cafein.dto.admin.memo;
 
-import com.dalbong.cafein.domain.memo.MemberMemo;
-import com.dalbong.cafein.domain.memo.Memo;
-import com.dalbong.cafein.domain.memo.ReviewMemo;
-import com.dalbong.cafein.domain.memo.StoreMemo;
+import com.dalbong.cafein.domain.memo.*;
 import com.dalbong.cafein.domain.notice.BoardNotice;
 import com.dalbong.cafein.domain.notice.CouponNotice;
 import com.dalbong.cafein.domain.notice.StickerNotice;
@@ -60,6 +57,12 @@ public class AdminMemoResDto {
         if(memo instanceof MemberMemo){
             this.memoType = "회원관리";
             this.memberId = ((MemberMemo) memo).getMember().getMemberId();
+        }
+
+        //쿠폰 메모일 경우
+        if(memo instanceof CouponMemo){
+            this.memoType = "쿠폰관리";
+            this.memberId = ((CouponMemo) memo).getCoupon().getCouponId();
         }
 
     }
