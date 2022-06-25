@@ -193,10 +193,11 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
         QReview review = new QReview("review");
         QReview reviewSub = new QReview("reviewSub");
 
-        Tuple tuple = queryFactory.select(review, JPAExpressions.select(review.member.memberId.count())
+        Tuple tuple = queryFactory.select(review, JPAExpressions.select(reviewSub.member.memberId.count())
                 .from(reviewSub)
                 .where(reviewSub.store.storeId.eq(review.store.storeId),
-                        reviewSub.member.memberId.eq(review.member.memberId)))
+                        reviewSub.member.memberId.eq(review.member.memberId))
+                .groupBy(reviewSub.member.memberId))
                 .from(review)
                 .leftJoin(review.member).fetchJoin()
                 .leftJoin(review.store).fetchJoin()
