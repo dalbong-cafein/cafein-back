@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -29,12 +30,21 @@ import java.util.Set;
 @Data
 public class StoreRegDto {
 
+    @NotBlank
     private String storeName;
 
+    @NotBlank
     private String siNm; //시도명
+
+    @NotBlank
     private String sggNm; //시군구
+
+    @NotBlank
     private String rNm; //도로명
+
+    @NotBlank
     private String rNum; //도로 number
+
     private String detail; //상세주소
 
     private String phone;
@@ -89,6 +99,7 @@ public class StoreRegDto {
     private String etcTime;
 
     //카페 평가 데이터
+    @NotNull
     private Recommendation recommendation;
 
     @Max(value = 4) @Min(value = 1)

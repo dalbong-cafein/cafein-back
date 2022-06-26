@@ -14,7 +14,7 @@ public class Address {
     private String sggNm; //시군구
     private String rNm; //도로명
     private String rNum; //도로 number
-    private String detail = ""; //상세주소
+    private String detail; //상세주소
     private String fullAddress;
 
     protected Address() {
@@ -26,7 +26,12 @@ public class Address {
         this.rNm = rNm;
         this.rNum = rNum;
         this.detail = detail;
-        this.fullAddress = siNm + " " + sggNm + " " + rNm + " " + rNum + " " + detail;
+        if(detail == null){
+            this.fullAddress = siNm + " " + sggNm + " " + rNm + " " + rNum;
+        }else{
+            this.fullAddress = siNm + " " + sggNm + " " + rNm + " " + rNum + " " + detail;
+        }
+
     }
 
 }
