@@ -14,7 +14,7 @@ public class Address {
     private String sggNm; //시군구
     private String rNm; //도로명
     private String rNum; //도로 number
-    private String detail; //상세주소
+    private String detail = ""; //상세주소
     private String fullAddress;
 
     protected Address() {
