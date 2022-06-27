@@ -21,7 +21,7 @@ public class NaverSearchService {
 
     private final StoreRepository storeRepository;
 
-    public void createStore(Map<String, Object> searchData, Long principalId){
+    public List<Store> createStore(Map<String, Object> searchData, Long principalId){
 
         List<NaverStoreDto> naverStoreDtoList = createNaverDto(searchData);
 
@@ -39,16 +39,19 @@ public class NaverSearchService {
         }).collect(Collectors.toList());
 
         System.out.println("생성된 store 출력--------------------");
+
+        List<Store> saveStoreList = new ArrayList<>();
         if(!storeList.isEmpty()){
             for(Store store : storeList){
                 System.out.println(store);
                 Optional<Store> result = storeRepository.findByStoreName(store.getStoreName());
                 if (result.isEmpty()){
+                    saveStoreList.add(store);
                     storeRepository.save(store);
                 }
             }
         }
-
+    return saveStoreList;
     }
 
 

@@ -1,23 +1,20 @@
 package com.dalbong.cafein.dataSet;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
+import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.dto.CMRespDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,8 +39,8 @@ public class DataSetController {
     private String kakaoApiKey;
 
 
-    @PostMapping("/data/naver-search")
-    public String naverSearch(@RequestParam("keyword") String keyword,
+    @GetMapping("/data/naver-search")
+    public ResponseEntity<?> naverSearch(@RequestParam("keyword") String keyword,
                               @AuthenticationPrincipal PrincipalDetails principalDetails) throws JsonProcessingException {
         //POST 방식으로 key=value 데이터를 요청
         RestTemplate rt = new RestTemplate();
@@ -75,13 +72,19 @@ public class DataSetController {
         System.out.println("========================");
         System.out.println(searchData);
 
-        naverSearchService.createStore(searchData, principalDetails.getMember().getMemberId());
+        List<Store> saveStoreList = naverSearchService.createStore(searchData, principalDetails.getMember().getMemberId());
 
+        List<SaveStoreResDto> saveStoreResDtoList = new ArrayList<>();
+        if(saveStoreList != null){
+            for (Store store : saveStoreList){
+                saveStoreResDtoList.add(new SaveStoreResDto(store.getStoreName()));
+            }
+        }
 
-        return "검색 성공";
+        return new ResponseEntity<>(new CMRespDto<>(1, "저장된 카페 리스트",saveStoreResDtoList), HttpStatus.OK);
     }
 
-    @PostMapping("/data/google-search")
+    @GetMapping("/data/google-search")
     public String googleSearch(@RequestParam("keyword") String keyword) throws IOException {
 
 
@@ -99,8 +102,8 @@ public class DataSetController {
         return "검색 성공";
     }
 
-    @PostMapping("/data/kakao-search")
-    public String kakaoSearch(@RequestParam("keyword") String keyword) throws JsonProcessingException {
+    @GetMapping("/data/kakao-search")
+    public ResponseEntity<?> kakaoSearch(@RequestParam("keyword") String keyword) throws JsonProcessingException {
 
         //HttpHeader 오브젝트 생성 (엔티티) - 헤더, 바디
         HttpHeaders headers = new HttpHeaders();
@@ -122,10 +125,16 @@ public class DataSetController {
 
         Map<String,Object> searchData = objectMapper.readValue(response.getBody(),Map.class);
 
-        kakaoService.searchPlace(searchData);
+        List<Store> updateStoreList = kakaoService.searchPlace(searchData);
 
+        List<SaveStoreResDto> updateStoreResDtoList = new ArrayList<>();
+        if(updateStoreList != null){
+            for (Store store : updateStoreList){
+                updateStoreResDtoList.add(new SaveStoreResDto(store.getStoreName()));
+            }
+        }
 
-        return "검색 성공";
+        return new ResponseEntity<>(new CMRespDto<>(1, "카카오로부터 추가 데이터를 얻은 카페 리스트",updateStoreResDtoList), HttpStatus.OK);
     }
 
     @PatchMapping("/data/naver-cloud-xy")
