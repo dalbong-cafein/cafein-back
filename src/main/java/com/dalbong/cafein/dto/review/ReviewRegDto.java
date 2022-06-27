@@ -45,7 +45,6 @@ public class ReviewRegDto {
     @Builder.Default
     private List<MultipartFile> imageFiles = new ArrayList<>();
 
-    //TODO member 엔티티와 양방향 연관관계
     public Review toEntity(Long principalId, Store store){
 
         Review review = Review.builder()

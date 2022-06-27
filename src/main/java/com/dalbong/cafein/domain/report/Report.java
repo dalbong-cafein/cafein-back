@@ -25,6 +25,10 @@ public class Report extends BaseEntity {
     private Review review;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "to_member_id", nullable = false)
+    private Member toMember;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "report_category_id")
     private ReportCategory reportCategory;
 

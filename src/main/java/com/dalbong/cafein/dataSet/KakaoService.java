@@ -17,7 +17,7 @@ public class KakaoService {
 
     private final StoreRepository storeRepository;
 
-    public void searchPlace(Map<String,Object> searchData){
+    public List<Store> searchPlace(Map<String,Object> searchData){
 
         List<Store> findStoreList = storeRepository.findAll();
 
@@ -33,6 +33,9 @@ public class KakaoService {
             }
         }
 
+        //갱신되는 StoreList
+        List<Store> updateStoreList = new ArrayList<>();
+
         //기존 store 데이터에 카카오 지역 api 데이터 추가
         for (KakaoStoreDto dto : kakaoStoreDtoList){
             System.out.println(dto);
@@ -44,11 +47,14 @@ public class KakaoService {
                     store.changeLatAndLng(dto.getX(), dto.getY());
                     store.changePhone(dto.getPhone());
 
+                    updateStoreList.add(store);
+
                     System.out.println(store);
                     break;
                 }
             }
         }
+        return updateStoreList;
     }
 
 

@@ -59,8 +59,6 @@ public class Store extends BaseEntity {
     @Builder.Default
     private Integer viewCnt = 0;
 
-    //TODO data api에서 가게Id 필요 유무
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "businessHours")
     private BusinessHours businessHours;
