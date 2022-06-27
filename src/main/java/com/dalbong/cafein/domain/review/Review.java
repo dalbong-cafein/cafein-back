@@ -24,7 +24,7 @@ public class Review extends BaseEntity {
     private Long reviewId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,6 +38,7 @@ public class Review extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Recommendation recommendation;
 
+    @Column(nullable = false)
     @Embedded
     private DetailEvaluation detailEvaluation;
 

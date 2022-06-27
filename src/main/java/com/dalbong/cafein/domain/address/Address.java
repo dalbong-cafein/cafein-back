@@ -3,6 +3,7 @@ package com.dalbong.cafein.domain.address;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @ToString
@@ -26,6 +27,7 @@ public class Address {
         this.rNm = rNm;
         this.rNum = rNum;
         this.detail = detail;
+
         if(detail == null){
             this.fullAddress = siNm + " " + sggNm + " " + rNm + " " + rNum;
         }else{

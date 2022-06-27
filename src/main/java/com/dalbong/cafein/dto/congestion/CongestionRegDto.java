@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Builder
 @NoArgsConstructor
@@ -17,8 +18,10 @@ import javax.validation.constraints.Min;
 @Data
 public class CongestionRegDto {
 
+    @NotNull
     private Long storeId;
 
+    @NotNull
     @Max(value = 3) @Min(value = 1)
     private int congestionScore;
 

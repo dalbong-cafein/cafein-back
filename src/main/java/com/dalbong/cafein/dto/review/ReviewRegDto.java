@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,19 +24,25 @@ import java.util.List;
 @Data
 public class ReviewRegDto {
 
+    @NotNull
     private Long storeId;
 
+    @NotNull
     private Recommendation recommendation;
 
+    @NotNull
     @Max(value = 4) @Min(value = 1)
     private int socket;
 
+    @NotNull
     @Max(value = 4) @Min(value = 1)
     private int wifi;
 
+    @NotNull
     @Max(value = 4) @Min(value = 1)
     private int restroom;
 
+    @NotNull
     @Max(value = 4) @Min(value = 1)
     private int tableSize;
 

@@ -20,7 +20,7 @@ public abstract class Sticker extends BaseEntity {
     private Long stickerId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Column(nullable = false)

@@ -33,8 +33,6 @@ public class NaverSearchService {
                     .modMember(Member.builder().memberId(principalId).build())
                     .phone(dto.getTelephone())
                     .address(dto.getAddress())
-                    .katechX(dto.getMapX())
-                    .katechY(dto.getMapY())
                     .build();
         }).collect(Collectors.toList());
 

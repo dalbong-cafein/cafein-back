@@ -102,15 +102,19 @@ public class StoreRegDto {
     @NotNull
     private Recommendation recommendation;
 
+    @NotNull
     @Max(value = 4) @Min(value = 1)
     private int socket;
 
+    @NotNull
     @Max(value = 4) @Min(value = 1)
     private int wifi;
 
+    @NotNull
     @Max(value = 4) @Min(value = 1)
     private int restroom;
 
+    @NotNull
     @Max(value = 4) @Min(value = 1)
     private int tableSize;
 

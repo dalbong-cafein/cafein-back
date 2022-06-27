@@ -28,16 +28,17 @@ public class Store extends BaseEntity {
     private Long storeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reg_member_id", nullable = false)
+    @JoinColumn(name = "reg_member_id")
     private Member regMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mod_member_id", nullable = false)
+    @JoinColumn(name = "mod_member_id")
     private Member modMember;
 
     @Column(nullable = false)
     private String storeName;
 
+    @Column(nullable = false)
     @Embedded
     private Address address;
 
@@ -47,17 +48,12 @@ public class Store extends BaseEntity {
 
     private String wifiPassword;
 
-    private int katechX;
-
-    private int katechY;
-
     private Double lngX;
 
     private Double latY;
 
-    //TODO 출시전 data set 전에 int 타입으로 변경 예정
     @Builder.Default
-    private Integer viewCnt = 0;
+    private int viewCnt = 0;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "businessHours")

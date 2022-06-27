@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class CouponMemo extends Memo{
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coupon_id", unique = true)
+    @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
     public CouponMemo(Coupon coupon, Member writer, String content){
