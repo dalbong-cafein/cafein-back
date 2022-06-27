@@ -118,7 +118,6 @@ public class SocialLoginService {
                         .kakaoId(userInfo.getId())
                         .password(password)
                         .username(userInfo.getName())
-                        .birth(userInfo.getBirth())
                         .mainAuthProvider(KAKAO)
                         .state(MemberState.NORMAL)
                         .build();
@@ -132,6 +131,11 @@ public class SocialLoginService {
                     member.changeGender(userInfo.getGender().get());
                 }
 
+                //생년월일 데이터
+                if(userInfo.getBirth() != null){
+                    member.changeBirth(userInfo.getBirth());
+                }
+
                 memberRepository.save(member);
                 break;
 
@@ -141,7 +145,6 @@ public class SocialLoginService {
                         .password(password)
                         .username(userInfo.getName())
                         .email(userInfo.getEmail())
-                        .birth(userInfo.getBirth())
                         .mainAuthProvider(NAVER)
                         .state(MemberState.NORMAL)
                         .build();
@@ -149,6 +152,11 @@ public class SocialLoginService {
                 //성별 데이터
                 if(userInfo.getGender().isPresent()){
                     member.changeGender(userInfo.getGender().get());
+                }
+
+                //생년월일 데이터
+                if(userInfo.getBirth() != null){
+                    member.changeBirth(userInfo.getBirth());
                 }
 
                 memberRepository.save(member);
