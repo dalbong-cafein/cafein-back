@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class ReviewMemo extends Memo{
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "review_id", unique = true)
+    @JoinColumn(name = "review_id")
     private Review review;
 
     public ReviewMemo(Review review, Member writer, String content){

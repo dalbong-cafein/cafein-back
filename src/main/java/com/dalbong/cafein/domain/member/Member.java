@@ -39,7 +39,6 @@ public class Member extends BaseEntity {
 
     private String phone;
 
-    @Column(nullable = false)
     private LocalDate birth;
 
     @Enumerated(EnumType.STRING)
@@ -58,6 +57,7 @@ public class Member extends BaseEntity {
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private MemberState state = MemberState.NORMAL;
 
     private LocalDateTime reportExpiredDateTime;

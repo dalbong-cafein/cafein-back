@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class MemberMemo extends Memo{
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", unique = true)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     public MemberMemo(Member member, Member writer, String content){

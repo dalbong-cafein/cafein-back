@@ -59,7 +59,7 @@ class HeartServiceImplTest {
                 new Day(LocalTime.of(07, 00), LocalTime.of(23, 00)));
 
         Store store = createStore("testStoreName", address, businessHours, "test@dalbong.com",
-                "02-000-0000", 123, 123, member);
+                "02-000-0000",  member);
 
         this.store =store;
 
@@ -109,8 +109,7 @@ class HeartServiceImplTest {
 
 
     private Store createStore(String storeName, Address address, BusinessHours businessHours,
-                              String website, String phone, int katechX, int katechY,
-                              Member member) {
+                              String website, String phone, Member member) {
 
         Store store = Store.builder()
                 .storeName(storeName)
@@ -118,7 +117,6 @@ class HeartServiceImplTest {
                 .businessHours(businessHours)
                 .website(website)
                 .phone(phone)
-                .katechX(katechX).katechY(katechY)
                 .regMember(member)
                 .modMember(member)
                 .build();
