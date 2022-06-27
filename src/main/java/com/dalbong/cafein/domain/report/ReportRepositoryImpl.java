@@ -29,24 +29,12 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
      * 금일 신고 회원
      */
     @Override
-    public List<Object[]> findByReportToday() {
+    public List<Report> findByReportToday() {
 
-        List<Tuple> result = queryFactory.select(report, member)
+        return queryFactory.select(report)
                 .from(report)
-                .leftJoin(review).on(review.reviewId.eq(report.review.reviewId))
-                .leftJoin(member).on(member.memberId.eq(review.member.memberId))
-                .where(report.regDateTime.between(LocalDateTime.now().minusDays(1).toLocalDate().atStartOfDay(),
-                        LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(23, 59, 59))))
+                .leftJoin(report.toMember).fetchJoin()
+                .where(report.regDateTime.between(LocalDateTime.now().minusDays(1).toLocalDate().atStartOfDay(), LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(23, 59, 59))))
                 .fetch();
-
-        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
-    }
-
-    /**
-     * 회원 정지기간 확인 후 일반 회원 상태로 변경
-     */
-    @Override
-    public List<Member> findMemberByReportExpiredToday() {
-        return null;
     }
 }

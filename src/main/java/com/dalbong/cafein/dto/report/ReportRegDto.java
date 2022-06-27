@@ -30,11 +30,13 @@ public class ReportRegDto {
         if(this.reportCategoryId != null){
             return Report.builder()
                     .review(review)
+                    .toMember(Member.builder().memberId(review.getMember().getMemberId()).build())
                     .reportCategory(ReportCategory.builder().reportCategoryId(reportCategoryId).build())
                     .build();
         }else{ //기타
             return Report.builder()
                     .review(review)
+                    .toMember(Member.builder().memberId(review.getMember().getMemberId()).build())
                     .content(this.content)
                     .build();
         }

@@ -69,15 +69,15 @@ public class ReportServiceImpl implements ReportService{
     @Override
     public void autoModifyToSuspension() {
 
-        List<Object[]> results = reportRepository.findByReportToday();
+        List<Report> reportList = reportRepository.findByReportToday();
 
-        results.forEach(arr -> {
-            Report report = (Report) arr[0];
-            Member member = (Member) arr[1];
+        reportList.forEach(report -> {
 
-            long reportCnt = reportRepository.countByMemberId(member.getMemberId());
+            Member toMember = report.getToMember();
 
-            reportPolicy(report, member, (int)reportCnt);
+            long reportCnt = reportRepository.countByMemberId(toMember.getMemberId());
+
+            reportPolicy(report, toMember, (int)reportCnt);
         });
     }
 
