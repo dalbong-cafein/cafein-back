@@ -1,5 +1,7 @@
 package com.dalbong.cafein.dto.review;
 
+import com.dalbong.cafein.domain.review.DetailEvaluation;
+import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -20,6 +22,10 @@ public class MyReviewResDto {
 
     private long visitCnt;
 
+    private Recommendation recommendation;
+
+    private DetailEvaluation detailEvaluation;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime regDateTime;
 
@@ -36,6 +42,8 @@ public class MyReviewResDto {
         this.reviewId = review.getReviewId();
         this.content = review.getContent();
         this.visitCnt = visitCnt;
+        this.recommendation = review.getRecommendation();
+        this.detailEvaluation = review.getDetailEvaluation();
         this.regDateTime = review.getRegDateTime();
         this.reviewImageDto = reviewImageDto;
         this.storeId = review.getStore().getStoreId();
