@@ -2,6 +2,7 @@ package com.dalbong.cafein.dataSet;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +29,7 @@ public class DataSetController {
     private final KakaoService kakaoService;
     private final RestTemplate rt;
     private final NaverCloudService naverCloudService;
+    private final StoreRepository storeRepository;
 
     @Value("${dataSet.naver.clientId}")
     private String clientId;
@@ -135,6 +137,47 @@ public class DataSetController {
         }
 
         return new ResponseEntity<>(new CMRespDto<>(1, "카카오로부터 추가 데이터를 얻은 카페 리스트",updateStoreResDtoList), HttpStatus.OK);
+    }
+
+    @GetMapping("/data/kakao-mapping")
+    public ResponseEntity<?> kakaoMapping() throws JsonProcessingException {
+
+        List<Store> allStoreList = storeRepository.findAll();
+
+        for(Store store : allStoreList){
+            //HttpHeader 오브젝트 생성 (엔티티) - 헤더, 바디
+            HttpHeaders headers = new HttpHeaders();
+
+            headers.add("Authorization","KakaoAK "+kakaoApiKey);
+
+            //HttpHeader와 HttpBody를 하나의 오브젝트에 담기
+            HttpEntity<MultiValueMap<String,String>> kakaoSearchRequest =
+                    new HttpEntity<>(null, headers);
+
+
+            //Http요청하기 - Post방식으로 -그리고 response 변수의 응답 받음.
+            ResponseEntity<String> response = rt.exchange(
+                    "https://dapi.kakao.com/v2/local/search/keyword.json?query=" + store.getStoreName() +"&size=15",
+                    HttpMethod.GET,
+                    kakaoSearchRequest,
+                    String.class
+            );
+
+            Map<String,Object> searchData = objectMapper.readValue(response.getBody(),Map.class);
+
+            List<Store> updateStoreList = kakaoService.searchPlace(searchData);
+
+//            List<SaveStoreResDto> updateStoreResDtoList = new ArrayList<>();
+//            if(updateStoreList != null){
+//                for (Store store : updateStoreList){
+//                    updateStoreResDtoList.add(new SaveStoreResDto(store.getStoreName()));
+//                }
+//            }
+        }
+
+
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "카카오로부터 추가 데이터를 얻은 카페 리스트",null), HttpStatus.OK);
     }
 
     @PatchMapping("/data/naver-cloud-xy")
