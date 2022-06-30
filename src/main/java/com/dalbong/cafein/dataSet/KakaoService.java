@@ -17,6 +17,7 @@ public class KakaoService {
 
     private final StoreRepository storeRepository;
 
+    @Transactional
     public List<Store> searchPlace(Map<String,Object> searchData){
 
         List<Store> findStoreList = storeRepository.findAll();
@@ -40,6 +41,9 @@ public class KakaoService {
         for (KakaoStoreDto dto : kakaoStoreDtoList){
             System.out.println(dto);
             for (Store store : findStoreList){
+                if(dto.getAddress() == null){
+                    break;
+                }
                 if(dto.getAddress().getSggNm().equals(store.getAddress().getSggNm())
                         && dto.getAddress().getRNm().equals(store.getAddress().getRNm())
                         && dto.getAddress().getRNum().equals(store.getAddress().getRNum())){

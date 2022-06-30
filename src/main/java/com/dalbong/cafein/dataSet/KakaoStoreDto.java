@@ -4,6 +4,7 @@ import com.dalbong.cafein.domain.address.Address;
 import lombok.Data;
 
 import javax.persistence.Embedded;
+import java.util.Arrays;
 import java.util.Map;
 
 @Data
@@ -17,9 +18,20 @@ public class KakaoStoreDto {
 
         String[] roadAddressArray = roadAddress.split(" ",4);
 
-        this.address = new Address(
-                roadAddressArray[0],roadAddressArray[1], roadAddressArray[2],
-                roadAddressArray[3],null);
+        System.out.println(Arrays.toString(roadAddressArray));
+
+        if(roadAddress != null && !roadAddress.equals("")){
+
+            if(roadAddressArray.length < 4){
+                this.address = new Address(
+                        roadAddressArray[0],roadAddressArray[1], roadAddressArray[2],
+                        null,null);
+            }else{
+                this.address = new Address(
+                        roadAddressArray[0],roadAddressArray[1], roadAddressArray[2],
+                        roadAddressArray[3],null);
+            }
+        }
 
         String stringX = (String) attributes.get("x");
         String stringY = (String) attributes.get("y");

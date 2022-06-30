@@ -25,9 +25,9 @@ public class JwtUtil implements InitializingBean {
     //테스트용
     public final static int accountUniteTokenExpire = 10*600;
 
-    public final static int accessTokenExpire = 3*60;
+    public final static int accessTokenExpire = 30*60;
 
-    public final static int refreshTokenExpire = 5*60;
+    public final static int refreshTokenExpire = 50*60;
 
     public final static String accountUniteTokenName = "accountUniteToken";
 
