@@ -2,6 +2,7 @@ package com.dalbong.cafein.dataSet;
 
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.handler.exception.CustomException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +51,17 @@ public class NaverCloudService {
 
     }
 
+    @Transactional
+    public void saveLatAndLngSearch(String storeName) throws JsonProcessingException {
+
+        NaverCloudDto naverCloudDto = getLatAndLngByNaverCloud(storeName);
+
+        System.out.println(naverCloudDto);
+
+        Store findStore = storeRepository.findByStoreName(storeName).orElseThrow(() ->
+                new CustomException("존재하지 않는 카페입니다."));
+    }
+
     private NaverCloudDto getLatAndLngByNaverCloud(String keyword) throws JsonProcessingException {
 
         //POST 방식으로 key=value 데이터를 요청
@@ -91,7 +103,7 @@ public class NaverCloudService {
 
             String x = (String) address.get("x");
             String y = (String) address.get("y");
-            return new NaverCloudDto(Double.parseDouble(x), Double.parseDouble(y));
+            return new NaverCloudDto(Double.parseDouble(x), Double.parseDouble(y), roadAddress);
 
         }catch (Exception e){
             System.out.println("결과 값이 없습니다.");

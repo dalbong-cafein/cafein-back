@@ -139,6 +139,8 @@ public class DataSetController {
         return new ResponseEntity<>(new CMRespDto<>(1, "카카오로부터 추가 데이터를 얻은 카페 리스트",updateStoreResDtoList), HttpStatus.OK);
     }
 
+
+
     @GetMapping("/data/kakao-mapping")
     public ResponseEntity<?> kakaoMapping(@RequestParam("keyword") String sggNm) throws JsonProcessingException {
 
@@ -185,6 +187,14 @@ public class DataSetController {
     public String saveLatAndLng() throws JsonProcessingException {
 
         naverCloudService.saveLatAndLng();
+
+        return "위도 경도 저장 성공";
+    }
+
+    @PatchMapping("/data/naver-cloud-xy/find-store-name")
+    public String findLatAndLngByStoreName(@RequestParam("keyword") String storeName) throws JsonProcessingException {
+
+        naverCloudService.saveLatAndLngSearch(storeName);
 
         return "위도 경도 저장 성공";
     }
