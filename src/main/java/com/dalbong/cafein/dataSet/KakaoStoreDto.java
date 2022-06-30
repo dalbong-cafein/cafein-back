@@ -23,9 +23,7 @@ public class KakaoStoreDto {
         if(roadAddress != null && !roadAddress.equals("")){
 
             if(roadAddressArray.length < 4){
-                this.address = new Address(
-                        roadAddressArray[0],roadAddressArray[1], roadAddressArray[2],
-                        null,null);
+                this.address = null;
             }else{
                 this.address = new Address(
                         roadAddressArray[0],roadAddressArray[1], roadAddressArray[2],
