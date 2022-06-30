@@ -140,11 +140,12 @@ public class DataSetController {
     }
 
     @GetMapping("/data/kakao-mapping")
-    public ResponseEntity<?> kakaoMapping() throws JsonProcessingException {
+    public ResponseEntity<?> kakaoMapping(@RequestParam("keyword") String sggNm) throws JsonProcessingException {
 
-        List<Store> allStoreList = storeRepository.findAll();
+        List<Store> sggStoreList = storeRepository.findByAddress_SggNm(sggNm);
 
-        for(Store store : allStoreList){
+
+        for(Store store : sggStoreList){
             //HttpHeader 오브젝트 생성 (엔티티) - 헤더, 바디
             HttpHeaders headers = new HttpHeaders();
 

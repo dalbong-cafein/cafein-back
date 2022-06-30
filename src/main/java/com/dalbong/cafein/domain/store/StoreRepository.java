@@ -14,4 +14,6 @@ public interface StoreRepository extends JpaRepository<Store, Long>, StoreReposi
     @Query("select s from Store s where s.latY is null AND s.lngX is null")
     List<Store> findByLatYAndLngXIsNull();
 
+    List<Store> findByAddress_SggNm(String sggNm);
+
 }
