@@ -429,18 +429,25 @@ public class StoreServiceImpl implements StoreService{
 
         Store store = (Store) arr[0];
 
+        //totalImageList (review 이미지 + store 이미지)
+        List<ImageDto> totalImageDtoList = new ArrayList<>();
 
-        //storeImageDtoList
-        List<ImageDto> storeImageDtoList = new ArrayList<>();
+        //review 이미지 리스트
+        List<ReviewImage> reviewImageList = reviewImageRepository.findByStoreId(storeId);
+        if(!reviewImageList.isEmpty()){
+            for(ReviewImage reviewImage : reviewImageList){
+                totalImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+            }
+        }
 
         //store 이미지 리스트
         if(store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()){
             for (StoreImage storeImage : store.getStoreImageList()){
-                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                totalImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
             }
         }
 
-        return new AdminDetailStoreResDto(store, (int)arr[1], (long) arr[2], (int)arr[3], storeImageDtoList);
+        return new AdminDetailStoreResDto(store, (int)arr[1], (long) arr[2], (int)arr[3], totalImageDtoList);
     }
 
     /**
