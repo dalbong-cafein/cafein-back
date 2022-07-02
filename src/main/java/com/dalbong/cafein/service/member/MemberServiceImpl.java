@@ -14,6 +14,7 @@ import com.dalbong.cafein.domain.sticker.StickerRepository;
 import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberResDto;
+import com.dalbong.cafein.dto.admin.member.AdminMemberUpdateDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
@@ -174,6 +175,21 @@ public class MemberServiceImpl implements MemberService{
         }
 
         return new MemberInfoDto((Member) arr[0], imageDto);
+    }
+
+    /**
+     * 관리지단 회원 정보 수정 (생년월일, 성별, 휴대폰 번호)
+     */
+    @Transactional
+    @Override
+    public void modifyOfAdmin(AdminMemberUpdateDto adminMemberUpdateDto) {
+
+        Member member = memberRepository.findById(adminMemberUpdateDto.getMemberId()).orElseThrow(() ->
+                new CustomException("존재하지 않는 회원입니다."));
+
+        member.changeBirth(adminMemberUpdateDto.getBirth());
+        member.changeGender(adminMemberUpdateDto.getGenderType());
+        member.changePhone(adminMemberUpdateDto.getPhone());
     }
 
     /**
