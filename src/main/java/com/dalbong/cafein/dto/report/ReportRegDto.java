@@ -20,6 +20,7 @@ public class ReportRegDto {
     @NotNull
     private Long reviewId;
 
+    @NotNull
     private Long reportCategoryId;
 
     private String content;
@@ -27,18 +28,12 @@ public class ReportRegDto {
 
     public Report toEntity(Review review){
 
-        if(this.reportCategoryId != null){
-            return Report.builder()
-                    .review(review)
-                    .toMember(Member.builder().memberId(review.getMember().getMemberId()).build())
-                    .reportCategory(ReportCategory.builder().reportCategoryId(reportCategoryId).build())
-                    .build();
-        }else{ //기타
-            return Report.builder()
-                    .review(review)
-                    .toMember(Member.builder().memberId(review.getMember().getMemberId()).build())
-                    .content(this.content)
-                    .build();
-        }
+        return Report.builder()
+                .review(review)
+                .toMember(Member.builder().memberId(review.getMember().getMemberId()).build())
+                .reportCategory(ReportCategory.builder().reportCategoryId(reportCategoryId).build())
+                .content(this.content)
+                .build();
+
     }
 }
