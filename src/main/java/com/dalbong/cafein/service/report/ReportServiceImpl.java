@@ -75,7 +75,7 @@ public class ReportServiceImpl implements ReportService{
 
             Member toMember = report.getToMember();
 
-            long reportCnt = reportRepository.countByMemberId(toMember.getMemberId());
+            long reportCnt = reportRepository.countByMemberIdAndLtReportId(toMember.getMemberId(), report.getReportId());
 
             reportPolicy(report, toMember, (int)reportCnt);
         });
