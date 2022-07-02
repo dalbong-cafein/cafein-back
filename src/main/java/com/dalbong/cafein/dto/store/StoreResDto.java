@@ -1,6 +1,7 @@
 package com.dalbong.cafein.dto.store;
 
 import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.dto.businessHours.BusinessHoursInfoDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class StoreResDto {
 
     private Double recommendPercent;
 
-    private Boolean isOpen;
+    private BusinessHoursInfoDto businessHoursInfoDto;
 
     private double lngX;
 
@@ -31,13 +32,13 @@ public class StoreResDto {
 
     private List<ImageDto> storeImageDtoList;
 
-    public StoreResDto(Store store, Double recommendPercent, Boolean isOpen,
+    public StoreResDto(Store store, Double recommendPercent, BusinessHoursInfoDto businessHoursInfoDto,
                        List<ImageDto> storeImageDtoList, long heartCnt, Double congestionScoreAvg ){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
         this.recommendPercent = recommendPercent;
-        this.isOpen = isOpen;
+        this.businessHoursInfoDto = businessHoursInfoDto;
         this.lngX = store.getLngX();
         this.latY = store.getLatY();
         this.heartCnt = heartCnt;

@@ -1,9 +1,8 @@
 package com.dalbong.cafein.dto.admin.store;
 
 import com.dalbong.cafein.domain.address.Address;
-import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.store.Store;
-import com.dalbong.cafein.dto.businessHours.BusinessHoursResDto;
+import com.dalbong.cafein.dto.businessHours.TotalBusinessHoursResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -32,7 +31,7 @@ public class AdminDetailStoreResDto {
 
     private String website;
 
-    private BusinessHoursResDto businessHoursResDto;
+    private TotalBusinessHoursResDto totalBusinessHoursResDto;
 
     private int viewCnt;
 
@@ -60,7 +59,7 @@ public class AdminDetailStoreResDto {
         this.wifiPassword = store.getWifiPassword();
         this.phone = store.getPhone();
         this.website = store.getWebsite();
-        this.businessHoursResDto = store.getBusinessHours() != null? new BusinessHoursResDto(store.getBusinessHours()) : null;
+        this.totalBusinessHoursResDto = store.getBusinessHours() != null? new TotalBusinessHoursResDto(store.getBusinessHours()) : null;
         this.viewCnt = store.getViewCnt();
         this.heartCnt = heartCnt;
         this.congestionCnt = congestionCnt;

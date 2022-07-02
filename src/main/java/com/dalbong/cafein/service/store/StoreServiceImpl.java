@@ -17,6 +17,7 @@ import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreResDto;
+import com.dalbong.cafein.dto.businessHours.BusinessHoursInfoDto;
 import com.dalbong.cafein.dto.businessHours.BusinessHoursUpdateDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
@@ -37,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -213,8 +215,9 @@ public class StoreServiceImpl implements StoreService{
             //리뷰 추천율
             Double recommendPercent = store.getRecommendPercent();
 
-            //카페 영업중 체크
-            Boolean isOpen = store.checkIsOpen();
+            //카페 영업시간 데이터
+            Map<String, Object> businessInfoMap = store.getBusinessInfo();
+            BusinessHoursInfoDto businessHoursInfoDto = new BusinessHoursInfoDto(businessInfoMap);
 
             //최대 이미지 4개 불러오기
             List<ImageDto> imageDtoList = new ArrayList<>();
@@ -227,7 +230,7 @@ public class StoreServiceImpl implements StoreService{
                  }
             }
 
-            return new StoreResDto(store, recommendPercent, isOpen, imageDtoList, (int) arr[1], (Double) arr[2]);
+            return new StoreResDto(store, recommendPercent, businessHoursInfoDto, imageDtoList, (int) arr[1], (Double) arr[2]);
         }).collect(Collectors.toList());
     }
 
@@ -244,8 +247,9 @@ public class StoreServiceImpl implements StoreService{
 
             Store store = (Store) arr[0];
 
-            //카페 영업중 체크
-            Boolean isOpen = store.checkIsOpen();
+            //카페 영업시간 데이터
+            Map<String, Object> businessInfoMap = store.getBusinessInfo();
+            BusinessHoursInfoDto businessHoursInfoDto = new BusinessHoursInfoDto(businessInfoMap);
 
             //첫번째 이미지 불러오기
             ImageDto imageDto = null;
@@ -256,7 +260,7 @@ public class StoreServiceImpl implements StoreService{
                 imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
             }
 
-            return new MyStoreResDto(store, isOpen, imageDto, (Double) arr[1]);
+            return new MyStoreResDto(store, businessHoursInfoDto, imageDto, (Double) arr[1]);
         }).collect(Collectors.toList());
 
         return new StoreListResDto<>(myStoredResDtoList.size(), myStoredResDtoList);
@@ -275,8 +279,9 @@ public class StoreServiceImpl implements StoreService{
 
             Store store = (Store) arr[0];
 
-            //카페 영업중 체크
-            Boolean isOpen = store.checkIsOpen();
+            //카페 영업시간 데이터
+            Map<String, Object> businessInfoMap = store.getBusinessInfo();
+            BusinessHoursInfoDto businessHoursInfoDto = new BusinessHoursInfoDto(businessInfoMap);
 
             //첫번째 이미지 불러오기
             ImageDto imageDto = null;
@@ -287,7 +292,7 @@ public class StoreServiceImpl implements StoreService{
                 imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
             }
 
-            return new MyStoreResDto(store, isOpen, imageDto, (Double) arr[1]);
+            return new MyStoreResDto(store, businessHoursInfoDto, imageDto, (Double) arr[1]);
         }).collect(Collectors.toList());
 
         return new StoreListResDto<>(myStoredResDtoList.size(), myStoredResDtoList);
@@ -306,6 +311,10 @@ public class StoreServiceImpl implements StoreService{
 
             Store store = (Store) arr[0];
 
+            //카페 영업시간 데이터
+            Map<String, Object> businessInfoMap = store.getBusinessInfo();
+            BusinessHoursInfoDto businessHoursInfoDto = new BusinessHoursInfoDto(businessInfoMap);
+
             //첫번째 이미지 불러오기
             ImageDto imageDto = null;
             if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
@@ -315,7 +324,7 @@ public class StoreServiceImpl implements StoreService{
                 imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
             }
 
-            return new MyRegisterStoreResDto(store, store.checkIsOpen(), (Double) arr[1], imageDto, principalId);
+            return new MyRegisterStoreResDto(store, businessHoursInfoDto, (Double) arr[1], imageDto);
         }).collect(Collectors.toList());
 
         return new StoreListResDto<>(results.size(), myRegisterStoreResDtoList);

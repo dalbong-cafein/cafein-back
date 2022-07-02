@@ -1,12 +1,11 @@
 package com.dalbong.cafein.dto.store;
 
 import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.dto.businessHours.BusinessHoursInfoDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +16,7 @@ public class MyStoreResDto {
 
     private String storeName;
 
-    private Boolean isOpen;
+    private BusinessHoursInfoDto businessHoursInfoDto;
 
     private double lngX;
 
@@ -27,11 +26,11 @@ public class MyStoreResDto {
 
     private ImageDto storeImageDto;
 
-    public MyStoreResDto(Store store, Boolean isOpen, ImageDto storeImageDto, Double congestionScoreAvg){
+    public MyStoreResDto(Store store, BusinessHoursInfoDto businessHoursInfoDto, ImageDto storeImageDto, Double congestionScoreAvg){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
-        this.isOpen = isOpen;
+        this.businessHoursInfoDto = businessHoursInfoDto;
         this.lngX = store.getLngX();
         this.latY = store.getLatY();
         this.congestionScoreAvg = congestionScoreAvg != null ? congestionScoreAvg : 99;
