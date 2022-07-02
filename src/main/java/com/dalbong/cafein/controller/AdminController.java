@@ -10,6 +10,7 @@ import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 
 import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
+import com.dalbong.cafein.dto.admin.member.AdminMemberUpdateDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
@@ -248,6 +249,18 @@ public class AdminController {
 
         return new ResponseEntity<>(
                 new CMRespDto<>(1, "관리자단 상세 회원 조회 성공", adminDetailMemberResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 회원 정보 수정 (생년월일, 성별, 휴대폰 번호)
+     */
+    @PutMapping("/members")
+    public ResponseEntity<?> modifyMemberInfo(@Validated @RequestBody AdminMemberUpdateDto adminMemberUpdateDto,
+                                              BindingResult bindingResult){
+
+        memberService.modifyOfAdmin(adminMemberUpdateDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 회원 정보 수정 성공",null), HttpStatus.OK);
     }
 
     /**
