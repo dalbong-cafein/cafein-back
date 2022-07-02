@@ -22,6 +22,8 @@ import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoRegDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoUpdateDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
+import com.dalbong.cafein.dto.report.ReportRegDto;
+import com.dalbong.cafein.dto.reportCategory.ReportCategoryResDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.board.BoardService;
@@ -30,6 +32,7 @@ import com.dalbong.cafein.service.image.ImageService;
 import com.dalbong.cafein.service.member.MemberService;
 import com.dalbong.cafein.service.memo.MemoService;
 import com.dalbong.cafein.service.report.ReportService;
+import com.dalbong.cafein.service.reportCategory.ReportCategoryService;
 import com.dalbong.cafein.service.review.ReviewService;
 import com.dalbong.cafein.service.sticker.StickerService;
 import com.dalbong.cafein.service.store.StoreService;
@@ -59,6 +62,7 @@ public class AdminController {
     private final MemoService memoService;
     private final StickerService stickerService;
     private final ImageService imageService;
+    private final ReportCategoryService reportCategoryService;
 
     /**
      * 관리자단 리뷰 리스트 조회
@@ -226,6 +230,29 @@ public class AdminController {
         AdminReportListResDto adminReportListResDto = reportService.getReportListOfAdmin(memberId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 회원별 신고내역 조회 성공", adminReportListResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 리뷰 신고하기
+     */
+    @PostMapping("reviews/{reviewId}/reports")
+    public ResponseEntity<?> report(@Validated @RequestBody ReportRegDto reportRegDto, BindingResult bindingResult){
+
+        reportService.report(reportRegDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 신고하기 성공",null), HttpStatus.CREATED);
+    }
+
+
+    /**
+     * 관리자단 신고사유 리스트 조회
+     */
+    @GetMapping("/reportCategorys")
+    public ResponseEntity<?> getReportCategoryList(){
+
+        List<ReportCategoryResDto> reportCategoryResDtoList = reportCategoryService.getReportCategoryList();
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 신고사유 카테고리 리스트 조회 성공", reportCategoryResDtoList), HttpStatus.OK);
     }
 
     /**

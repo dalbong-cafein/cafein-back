@@ -45,6 +45,7 @@ public class AdminMemberResDto {
         this.email = member.getEmail();
         this.memberState = member.getState() != null ? member.getState() : null;
         this.memoId = memoId;
+        this.regDateTime = member.getRegDateTime();
 
         //소셜타입
         this.socialTypeList = new ArrayList<>();
