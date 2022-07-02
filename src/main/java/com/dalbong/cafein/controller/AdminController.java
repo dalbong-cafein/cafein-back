@@ -22,6 +22,7 @@ import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoRegDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoUpdateDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
+import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.dto.reportCategory.ReportCategoryResDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.handler.exception.CustomException;
@@ -234,6 +235,13 @@ public class AdminController {
     /**
      * 관리자단 리뷰 신고하기
      */
+    @PostMapping("reviews/{reviewId}/reports")
+    public ResponseEntity<?> report(@Validated @RequestBody ReportRegDto reportRegDto, BindingResult bindingResult){
+
+        reportService.report(reportRegDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 신고하기 성공",null), HttpStatus.CREATED);
+    }
 
 
     /**
@@ -244,7 +252,7 @@ public class AdminController {
 
         List<ReportCategoryResDto> reportCategoryResDtoList = reportCategoryService.getReportCategoryList();
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "신고사유 카테고리 리스트 조회 성공", reportCategoryResDtoList), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 신고사유 카테고리 리스트 조회 성공", reportCategoryResDtoList), HttpStatus.OK);
     }
 
     /**
