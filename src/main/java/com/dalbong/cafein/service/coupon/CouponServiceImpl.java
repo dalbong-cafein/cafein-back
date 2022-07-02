@@ -7,6 +7,7 @@ import com.dalbong.cafein.domain.sticker.StickerRepository;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 import com.dalbong.cafein.dto.coupon.CouponRegDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponResDto;
+import com.dalbong.cafein.dto.coupon.CouponResDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.handler.exception.CustomException;
@@ -68,6 +69,18 @@ public class CouponServiceImpl implements CouponService{
         coupon.issue();
 
         noticeService.registerCouponNotice(coupon, coupon.getMember());
+    }
+
+    /**
+     * 회원별 쿠폰 리스트 조회
+     */
+    @Transactional
+    @Override
+    public List<CouponResDto> getCouponList(Long principalId) {
+
+        List<Coupon> couponList = couponRepository.getCouponByMemberId(principalId);
+
+        return couponList.stream().map(CouponResDto::new).collect(Collectors.toList());
     }
 
     /**

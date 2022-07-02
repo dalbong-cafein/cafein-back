@@ -4,10 +4,7 @@ import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
 import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.domain.congestion.CongestionRepository;
-import com.dalbong.cafein.domain.image.MemberImage;
-import com.dalbong.cafein.domain.image.ReviewImage;
-import com.dalbong.cafein.domain.image.ReviewImageRepository;
-import com.dalbong.cafein.domain.image.StoreImage;
+import com.dalbong.cafein.domain.image.*;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.member.MemberState;
@@ -219,16 +216,18 @@ public class StoreServiceImpl implements StoreService{
             //카페 영업중 체크
             Boolean isOpen = store.checkIsOpen();
 
-            //첫번째 이미지 불러오기
-            ImageDto imageDto = null;
+            //최대 이미지 4개 불러오기
+            List<ImageDto> imageDtoList = new ArrayList<>();
             if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
-
-                StoreImage storeImage = store.getStoreImageList().get(0);
-
-                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+                int count = 0;
+                for(Image storeImage : store.getStoreImageList()){
+                    imageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                    count += 1;
+                    if(count >= 4) break;
+                 }
             }
 
-            return new StoreResDto(store, recommendPercent, isOpen, imageDto, (int) arr[1], (Double) arr[2]);
+            return new StoreResDto(store, recommendPercent, isOpen, imageDtoList, (int) arr[1], (Double) arr[2]);
         }).collect(Collectors.toList());
     }
 
@@ -430,18 +429,25 @@ public class StoreServiceImpl implements StoreService{
 
         Store store = (Store) arr[0];
 
+        //totalImageList (review 이미지 + store 이미지)
+        List<ImageDto> totalImageDtoList = new ArrayList<>();
 
-        //storeImageDtoList
-        List<ImageDto> storeImageDtoList = new ArrayList<>();
+        //review 이미지 리스트
+        List<ReviewImage> reviewImageList = reviewImageRepository.findByStoreId(storeId);
+        if(!reviewImageList.isEmpty()){
+            for(ReviewImage reviewImage : reviewImageList){
+                totalImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+            }
+        }
 
         //store 이미지 리스트
         if(store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()){
             for (StoreImage storeImage : store.getStoreImageList()){
-                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                totalImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
             }
         }
 
-        return new AdminDetailStoreResDto(store, (int)arr[1], (long) arr[2], (int)arr[3], storeImageDtoList);
+        return new AdminDetailStoreResDto(store, (int)arr[1], (long) arr[2], (int)arr[3], totalImageDtoList);
     }
 
     /**

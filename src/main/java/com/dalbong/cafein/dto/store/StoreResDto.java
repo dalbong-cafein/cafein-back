@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -27,9 +29,10 @@ public class StoreResDto {
 
     private double congestionScoreAvg;
 
-    private ImageDto storeImageDto;
+    private List<ImageDto> storeImageDtoList;
 
-    public StoreResDto(Store store, Double recommendPercent, Boolean isOpen, ImageDto storeImageDto, long heartCnt, Double congestionScoreAvg ){
+    public StoreResDto(Store store, Double recommendPercent, Boolean isOpen,
+                       List<ImageDto> storeImageDtoList, long heartCnt, Double congestionScoreAvg ){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
@@ -39,7 +42,7 @@ public class StoreResDto {
         this.latY = store.getLatY();
         this.heartCnt = heartCnt;
         this.congestionScoreAvg = congestionScoreAvg != null ? congestionScoreAvg : 99;
-        this.storeImageDto = storeImageDto;
+        this.storeImageDtoList = storeImageDtoList;
     }
 
 }
