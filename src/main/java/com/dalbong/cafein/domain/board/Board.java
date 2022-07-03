@@ -34,7 +34,7 @@ public class Board extends BaseEntity {
     private String title;
 
     @Builder.Default
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
     private String content = "";
 
     @Builder.Default
