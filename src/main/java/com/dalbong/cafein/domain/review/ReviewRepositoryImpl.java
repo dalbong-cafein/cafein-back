@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.memo.QMemo.memo;
 import static com.dalbong.cafein.domain.memo.QReviewMemo.reviewMemo;
@@ -41,6 +42,22 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
+    /**
+     * 당일 리뷰 등록 여부 확인
+     */
+    @Override
+    public boolean existRegisterToday(Long storeId, Long memberId) {
+
+        Integer fetchOne = queryFactory.selectOne()
+                .from(review)
+                .where(review.store.storeId.eq(storeId),
+                        review.member.memberId.eq(memberId),
+                        review.regDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
+                                LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59))))
+                .fetchOne();
+
+        return fetchOne != null;
+    }
 
     /**
      * 가게별 리뷰 리스트 조회

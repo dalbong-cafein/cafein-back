@@ -75,6 +75,15 @@ public class ReviewServiceImpl implements ReviewService{
         Store store = storeRepository.findById(reviewRegDto.getStoreId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 매장입니다."));
 
+
+        //금일 해당 카페에 리뷰 작성 여부 확인
+        boolean existResult = reviewRepository.existRegisterToday(store.getStoreId(), principalId);
+
+        if(existResult){
+            throw new CustomException("하루당 한 카페에 리뷰 등록은 한번만 가능합니다.");
+        }
+
+
         Review review = reviewRegDto.toEntity(principalId, store);
 
         reviewRepository.save(review);
