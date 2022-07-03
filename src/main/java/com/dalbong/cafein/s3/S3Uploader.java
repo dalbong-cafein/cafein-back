@@ -78,9 +78,21 @@ public class S3Uploader {
      */
     public String s3UploadOfStore(Store store, MultipartFile multipartFile) throws IOException {
 
-
+        String folderPath = null;
         //폴더 경로
-        String folderPath = "store/" + store.getAddress().getSggNm();
+        if(store.getAddress().getSggNm().equals("노원구")){
+            folderPath = "store/nowon";
+        }else if(store.getAddress().getSggNm().equals("강남구")){
+            folderPath = "store/gangnam";
+        }else if(store.getAddress().getSggNm().equals("서대문구")){
+            folderPath = "store/seodaemoon";
+        }else if(store.getAddress().getSggNm().equals("마포구")){
+            folderPath = "store/mapo";
+        }else if(store.getAddress().getSggNm().equals("동대문구")){
+            folderPath = "store/dongdaemoon";
+        }else if(store.getAddress().getSggNm().equals("종로구")){
+            folderPath = "store/jongro";
+        }
 
         //파일 이름
         String frontName = store.getStoreId().toString();
