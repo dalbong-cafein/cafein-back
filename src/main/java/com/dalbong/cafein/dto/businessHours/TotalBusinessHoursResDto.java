@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class BusinessHoursResDto {
+public class TotalBusinessHoursResDto {
 
     private Day onMon;
 
@@ -27,7 +27,7 @@ public class BusinessHoursResDto {
 
     private String etcTime;
 
-    public BusinessHoursResDto(BusinessHours businessHours){
+    public TotalBusinessHoursResDto(BusinessHours businessHours){
         this.onMon = businessHours.getOnMon();
         this.onTue = businessHours.getOnTue();
         this.onWed = businessHours.getOnWed();

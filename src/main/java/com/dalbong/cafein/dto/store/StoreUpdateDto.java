@@ -22,27 +22,17 @@ import java.util.List;
 @Data
 public class StoreUpdateDto {
 
+    @NotNull
     private Long storeId;
 
-    private String storeName;
-
-    private String siNm; //시도명
-    private String sggNm; //시군구
-    private String rNm; //도로명
-    private String rNum; //도로 number
-    private String detail; //상세주소
-
+    @NotNull
     private String phone;
 
+    @NotNull
     private String wifiPassword;
 
+    @NotNull
     private String website;
-
-    @NotNull
-    private Double lngX;
-
-    @NotNull
-    private Double latY;
 
     //이미지 추가
     private List<MultipartFile> updateImageFiles = new ArrayList<>();
@@ -85,11 +75,9 @@ public class StoreUpdateDto {
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime sunClosed;
 
+    @NotNull
     private String etcTime;
 
-    public Address getAddress(){
-        return new Address(siNm, sggNm, rNm, rNum, detail);
-    }
 
     public BusinessHours toBusinessHoursEntity(){
 

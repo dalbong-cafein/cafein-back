@@ -1,6 +1,7 @@
 package com.dalbong.cafein.dto.store;
 
 import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.dto.businessHours.BusinessHoursInfoDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class MyRegisterStoreResDto {
 
     private String storeName;
 
-    private Boolean isOpen;
+    private BusinessHoursInfoDto businessHoursInfoDto;
 
     private double congestionScoreAvg;
 
@@ -27,11 +28,12 @@ public class MyRegisterStoreResDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime regDateTime;
 
-    public MyRegisterStoreResDto(Store store, Boolean isOpen, Double congestionScoreAvg, ImageDto storeImageDto, Long principalId){
+    public MyRegisterStoreResDto(Store store, BusinessHoursInfoDto businessHoursInfoDto,
+                                 Double congestionScoreAvg, ImageDto storeImageDto){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
-        this.isOpen = isOpen;
+        this.businessHoursInfoDto = businessHoursInfoDto;
         this.congestionScoreAvg = congestionScoreAvg != null ? congestionScoreAvg : 99;
         this.storeImageDto = storeImageDto;
         this.regDateTime = store.getRegDateTime();
