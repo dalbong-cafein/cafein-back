@@ -75,6 +75,7 @@ public class StoreUpdateDto {
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime sunClosed;
 
+    @NotNull
     private String etcTime;
 
 
