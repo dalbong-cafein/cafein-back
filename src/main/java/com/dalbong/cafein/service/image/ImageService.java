@@ -8,6 +8,11 @@ import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.dto.admin.eventImage.AdminEventImageListResDto;
+import com.dalbong.cafein.dto.admin.eventImage.AdminEventImageResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
+import com.dalbong.cafein.dto.page.PageRequestDto;
+import com.dalbong.cafein.dto.page.PageResultDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -24,6 +29,8 @@ public interface ImageService {
     List<BoardImage> saveBoardImage(Board board, List<MultipartFile> imageFiles) throws IOException;
 
     Image saveEventImage(MultipartFile imageFile) throws IOException;
+
+    AdminEventImageListResDto<?> getEventImageListOfAdmin(PageRequestDto pageRequestDto);
 
     void remove(Long imageId);
 }
