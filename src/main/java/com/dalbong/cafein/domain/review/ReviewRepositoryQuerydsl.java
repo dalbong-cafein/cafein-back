@@ -11,6 +11,11 @@ import java.util.Optional;
 public interface ReviewRepositoryQuerydsl {
 
     /**
+     * 당일 리뷰 등록 여부 확인
+     */
+    boolean existRegisterToday(Long storeId, Long memberId);
+
+    /**
      * 가게별 리뷰 리스트 조회
      */
     Page<Object[]> getReviewListOfStore(Long storeId, Boolean isOnlyImage, Pageable pageable);

@@ -8,6 +8,7 @@ import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 
+import com.dalbong.cafein.dto.admin.eventImage.AdminEventImageListResDto;
 import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberUpdateDto;
@@ -415,6 +416,16 @@ public class AdminController {
 
         return new ResponseEntity<>(new CMRespDto<>(
                 1, "관리자단 회원별 스티커 내역 조회 성공", adminStickerResDtoList), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 이벤트 이미지 리스트 조회
+     */
+    @GetMapping("/event-images")
+    public ResponseEntity<?> getEventImageList(PageRequestDto requestDto){
+        AdminEventImageListResDto<?> adminEventImageListResDto = imageService.getEventImageListOfAdmin(requestDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 이미지 리스트 조회", adminEventImageListResDto), HttpStatus.OK);
     }
 
     /**
