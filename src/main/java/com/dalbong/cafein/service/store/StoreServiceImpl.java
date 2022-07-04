@@ -104,12 +104,9 @@ public class StoreServiceImpl implements StoreService{
                 new CustomException("존재하지 않는 카페입니다."));
 
         //카페 데이터 수정
-        store.changeStoreName(storeUpdateDto.getStoreName());
-        store.changeAddress(storeUpdateDto.getAddress());
         store.changeWebsite(storeUpdateDto.getWebsite());
         store.changePhone(storeUpdateDto.getPhone());
         store.changeWifiPassword(storeUpdateDto.getWifiPassword());
-        store.changeLatAndLng(storeUpdateDto.getLngX(), storeUpdateDto.getLatY());
 
         //영업시간 수정
         BusinessHours FindBusinessHours = store.getBusinessHours();
@@ -132,7 +129,6 @@ public class StoreServiceImpl implements StoreService{
             businessHoursRepository.save(businessHours);
             store.changeBusinessHours(businessHours);
         }
-
 
         //이미지 추가
         updateStoreImage(store, storeUpdateDto.getUpdateImageFiles(), storeUpdateDto.getDeleteImageIdList());
