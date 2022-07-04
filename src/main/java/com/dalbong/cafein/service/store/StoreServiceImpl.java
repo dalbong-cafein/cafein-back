@@ -360,29 +360,27 @@ public class StoreServiceImpl implements StoreService{
             memberImageDto = new ImageDto(imageId, imageUrl);
         }
 
-
-        //totalImageList (review 이미지 + store 이미지)
-        List<ImageDto> totalImageDtoList = new ArrayList<>();
-
         //review 이미지 리스트
+        List<ImageDto> reviewImageDtoList = new ArrayList<>();
         List<ReviewImage> reviewImageList = reviewImageRepository.findByStoreId(storeId);
         if(!reviewImageList.isEmpty()){
             for(ReviewImage reviewImage : reviewImageList){
-                totalImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
             }
         }
 
         //store 이미지 리스트
+        List<ImageDto> storeImageDtoList = new ArrayList<>();
         if(store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()){
             for (StoreImage storeImage : store.getStoreImageList()){
-                totalImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
             }
         }
 
         //조회수 증가
         store.increaseViewCnt();
 
-        return new DetailStoreResDto(store, memberImageDto, totalImageDtoList, principalId);
+        return new DetailStoreResDto(store, memberImageDto, reviewImageDtoList, storeImageDtoList, principalId);
     }
 
     /**
