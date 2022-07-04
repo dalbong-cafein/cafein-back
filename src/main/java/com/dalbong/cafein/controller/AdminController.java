@@ -8,6 +8,7 @@ import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 
+import com.dalbong.cafein.dto.admin.eventImage.AdminEventImageListResDto;
 import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberUpdateDto;
@@ -25,6 +26,7 @@ import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.dto.reportCategory.ReportCategoryResDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
+import com.dalbong.cafein.dto.store.StoreUpdateDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.board.BoardService;
 import com.dalbong.cafein.service.coupon.CouponService;
@@ -110,7 +112,7 @@ public class AdminController {
     }
 
     /**
-     * 관리자단 가게 등록
+     * 관리자단 카페 등록
      */
     @PostMapping("/stores")
     public ResponseEntity<?> registerStore(@Validated StoreRegDto storeRegDto, BindingResult bindingResult,
@@ -118,18 +120,31 @@ public class AdminController {
 
         storeService.register(storeRegDto, 7L);
 
-        return new ResponseEntity<>(new CMRespDto<>(1,"관리자단 가게 등록 성공",null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CMRespDto<>(1,"관리자단 카페 등록 성공",null), HttpStatus.CREATED);
     }
 
     /**
-     * 관리자단 가게 삭제
+     * 관리자단 카페 수정
+     */
+    @PutMapping("/stores/{storeId}")
+    public ResponseEntity<?> modifyStore(@Validated StoreUpdateDto storeUpdateDto, BindingResult bindingResult,
+                                         @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+
+        storeService.modify(storeUpdateDto, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 카페 수정 성공", null), HttpStatus.OK);
+
+    }
+
+    /**
+     * 관리자단 카페 삭제
      */
     @DeleteMapping("/stores/{storeId}")
     public ResponseEntity<?> removeStore(@PathVariable("storeId") Long storeId){
 
         storeService.remove(storeId);
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 가게 삭제 성공", null), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 카페 삭제 성공", null), HttpStatus.OK);
     }
 
     /**
@@ -415,6 +430,16 @@ public class AdminController {
 
         return new ResponseEntity<>(new CMRespDto<>(
                 1, "관리자단 회원별 스티커 내역 조회 성공", adminStickerResDtoList), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 이벤트 이미지 리스트 조회
+     */
+    @GetMapping("/event-images")
+    public ResponseEntity<?> getEventImageList(PageRequestDto requestDto){
+        AdminEventImageListResDto<?> adminEventImageListResDto = imageService.getEventImageListOfAdmin(requestDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 이미지 리스트 조회", adminEventImageListResDto), HttpStatus.OK);
     }
 
     /**

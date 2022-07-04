@@ -104,6 +104,24 @@ public class DataSetController {
         return "검색 성공";
     }
 
+    @GetMapping("/data/google-mapping")
+    public String googleMapping(@RequestParam("keyword") String sggNm) throws IOException {
+
+        List<Store> sggStoreList = storeRepository.findByAddress_SggNm(sggNm);
+
+        for (Store store : sggStoreList){
+            Map<String,Object> searchPlace =  rt.getForObject("https://maps.googleapis.com/maps/api/place/textsearch/json?query="
+                            + store.getStoreName() + "&key="+googleApiKey,
+                    Map.class);
+
+            googleSearchService.placeSearch(searchPlace);
+        }
+
+        //System.out.println(searchPlace);
+
+        return "검색 성공";
+    }
+
     @GetMapping("/data/kakao-search")
     public ResponseEntity<?> kakaoSearch(@RequestParam("keyword") String keyword) throws JsonProcessingException {
 

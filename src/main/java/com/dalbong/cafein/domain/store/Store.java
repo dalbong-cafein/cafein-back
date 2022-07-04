@@ -14,7 +14,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Builder
 @AllArgsConstructor
@@ -130,67 +132,113 @@ public class Store extends BaseEntity {
         return (recommendCnt / totalSize) * 100;
     }
 
-    public Boolean checkIsOpen(){
+    public Map<String,Object> getBusinessInfo(){
+
+        Map<String,Object> businessHoursInfoMap = new HashMap<>();
+        businessHoursInfoMap.put("isOpen", null);
+        businessHoursInfoMap.put("closed", null);
+        businessHoursInfoMap.put("tmrOpen", null);
 
         //영업시간 데이터 없는 경우
-        if(this.businessHours == null){
-            return null;
+        if(this.businessHours == null) {
+            return businessHoursInfoMap;
         }
 
         LocalDateTime now = LocalDateTime.now();
         LocalTime nowTime = now.toLocalTime();
-
         //현재 요일
-       int dayOfWeekNumber = now.getDayOfWeek().getValue();
+        int dayOfWeekNumber = now.getDayOfWeek().getValue();
 
-       boolean isOpen = false;
-
-       //영업중 체크
-       switch(dayOfWeekNumber){
-           case 0: //일
-               if(this.businessHours.getOnSun() == null){
-                   return null;
-               }
-               isOpen = nowTime.isAfter(this.businessHours.getOnSun().getOpen()) && nowTime.isBefore(this.businessHours.getOnSun().getClosed());
-               break ;
-           case 1:
-               if(this.businessHours.getOnMon() == null){
-                   return null;
-               }
-               isOpen = nowTime.isAfter(this.businessHours.getOnMon().getOpen()) && nowTime.isBefore(this.businessHours.getOnMon().getClosed());
-               break ;
-           case 2:
-               if(this.businessHours.getOnTue() == null){
-                   return null;
-               }
-               isOpen = nowTime.isAfter(this.businessHours.getOnTue().getOpen()) && nowTime.isBefore(this.businessHours.getOnTue().getClosed());
-               break ;
-           case 3:
-               if(this.businessHours.getOnWed() == null){
-                   return null;
-               }
-               isOpen = nowTime.isAfter(this.businessHours.getOnWed().getOpen()) && nowTime.isBefore(this.businessHours.getOnWed().getClosed());
-               break ;
-           case 4:
-               if(this.businessHours.getOnThu() == null){
-                   return null;
-               }
-               isOpen = nowTime.isAfter(this.businessHours.getOnThu().getOpen()) && nowTime.isBefore(this.businessHours.getOnThu().getClosed());
-               break ;
-           case 5:
-               if(this.businessHours.getOnFri() == null){
-                   return null;
-               }
-               isOpen = nowTime.isAfter(this.businessHours.getOnFri().getOpen()) && nowTime.isBefore(this.businessHours.getOnFri().getClosed());
-               break ;
-           case 6:
-               if(this.businessHours.getOnSat() == null){
-                   return null;
-               }
-               isOpen = nowTime.isAfter(this.businessHours.getOnSat().getOpen()) && nowTime.isBefore(this.businessHours.getOnSat().getClosed());
-               break ;
+        System.out.println(dayOfWeekNumber);
+        boolean isOpen;
+        //요일별
+        switch(dayOfWeekNumber){
+            case 7: //일
+                //영업중 체크, 금일 영업 종료 시간
+                if(this.businessHours.getOnSun() != null) {
+                    isOpen = nowTime.isAfter(this.businessHours.getOnSun().getOpen()) && nowTime.isBefore(this.businessHours.getOnSun().getClosed());
+                    businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("closed", this.businessHours.getOnSun().getClosed());
+                }
+                //내일 영업 시작 시간
+                if(this.businessHours.getOnMon() != null){
+                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnMon().getOpen());
+                }
+                break ;
+            case 1:
+                //영업중 체크, 금일 영업 종료 시간
+                if(this.businessHours.getOnMon() != null) {
+                    isOpen = nowTime.isAfter(this.businessHours.getOnMon().getOpen()) && nowTime.isBefore(this.businessHours.getOnMon().getClosed());
+                    businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("closed", this.businessHours.getOnMon().getClosed());
+                }
+                //내일 영업 시작 시간
+                if(this.businessHours.getOnTue() != null){
+                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnTue().getOpen());
+                }
+                break ;
+            case 2:
+                //영업중 체크, 금일 영업 종료 시간
+                if(this.businessHours.getOnTue() != null) {
+                    isOpen = nowTime.isAfter(this.businessHours.getOnTue().getOpen()) && nowTime.isBefore(this.businessHours.getOnTue().getClosed());
+                    businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("closed", this.businessHours.getOnTue().getClosed());
+                }
+                //내일 영업 시작 시간
+                if(this.businessHours.getOnWed() != null){
+                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnWed().getOpen());
+                }
+                break ;
+            case 3:
+                //영업중 체크, 금일 영업 종료 시간
+                if(this.businessHours.getOnWed() != null) {
+                    isOpen = nowTime.isAfter(this.businessHours.getOnWed().getOpen()) && nowTime.isBefore(this.businessHours.getOnWed().getClosed());
+                    businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("closed", this.businessHours.getOnWed().getClosed());
+                }
+                //내일 영업 시작 시간
+                if(this.businessHours.getOnThu() != null){
+                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnThu().getOpen());
+                }
+                break ;
+            case 4:
+                //영업중 체크, 금일 영업 종료 시간
+                if(this.businessHours.getOnThu() != null) {
+                    isOpen = nowTime.isAfter(this.businessHours.getOnThu().getOpen()) && nowTime.isBefore(this.businessHours.getOnThu().getClosed());
+                    businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("closed", this.businessHours.getOnThu().getClosed());
+                }
+                //내일 영업 시작 시간
+                if(this.businessHours.getOnFri() != null){
+                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnFri().getOpen());
+                }
+                break ;
+            case 5:
+                //영업중 체크, 금일 영업 종료 시간
+                if(this.businessHours.getOnFri() != null) {
+                    isOpen = nowTime.isAfter(this.businessHours.getOnFri().getOpen()) && nowTime.isBefore(this.businessHours.getOnFri().getClosed());
+                    businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("closed", this.businessHours.getOnFri().getClosed());
+                }
+                //내일 영업 시작 시간
+                if(this.businessHours.getOnSat() != null){
+                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnSat().getOpen());
+                }
+                break ;
+            case 6:
+                //영업중 체크, 금일 영업 종료 시간
+                if(this.businessHours.getOnSat() != null) {
+                    isOpen = nowTime.isAfter(this.businessHours.getOnSat().getOpen()) && nowTime.isBefore(this.businessHours.getOnSat().getClosed());
+                    businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("closed", this.businessHours.getOnSat().getClosed());
+                }
+                //내일 영업 시작 시간
+                if(this.businessHours.getOnSun() != null){
+                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnSun().getOpen());
+                }
+                break ;
         }
 
-        return isOpen;
+        return businessHoursInfoMap;
     }
 }
