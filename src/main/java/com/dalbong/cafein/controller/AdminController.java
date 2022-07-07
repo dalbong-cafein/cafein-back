@@ -22,6 +22,7 @@ import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoRegDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoUpdateDto;
+import com.dalbong.cafein.dto.event.EventRegDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.dto.reportCategory.ReportCategoryResDto;
@@ -29,6 +30,7 @@ import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.board.BoardService;
 import com.dalbong.cafein.service.coupon.CouponService;
+import com.dalbong.cafein.service.event.EventService;
 import com.dalbong.cafein.service.image.ImageService;
 import com.dalbong.cafein.service.member.MemberService;
 import com.dalbong.cafein.service.memo.MemoService;
@@ -64,6 +66,7 @@ public class AdminController {
     private final StickerService stickerService;
     private final ImageService imageService;
     private final ReportCategoryService reportCategoryService;
+    private final EventService eventService;
 
     /**
      * 관리자단 리뷰 리스트 조회
@@ -432,13 +435,9 @@ public class AdminController {
      * 관리자단 이벤트 이미지 저장
      */
     @PostMapping("/event-image")
-    public ResponseEntity<?> registerEventImage(@ModelAttribute MultipartFile imageFile) throws IOException {
+    public ResponseEntity<?> registerEventImage(@Validated EventRegDto eventRegDto, BindingResult bindingResult) throws IOException {
 
-        if(imageFile == null){
-            throw new CustomException("이미지 파일이 전송되지 않았습니다.");
-        }
-
-        imageService.saveEventImage(imageFile);
+        eventService.register(eventRegDto.getImageFile(), eventRegDto.getBoardId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 이미지 저장 성공", null), HttpStatus.CREATED);
     }

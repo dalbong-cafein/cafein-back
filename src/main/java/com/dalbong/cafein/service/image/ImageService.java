@@ -1,6 +1,7 @@
 package com.dalbong.cafein.service.image;
 
 import com.dalbong.cafein.domain.board.Board;
+import com.dalbong.cafein.domain.event.Event;
 import com.dalbong.cafein.domain.image.BoardImage;
 import com.dalbong.cafein.domain.image.Image;
 import com.dalbong.cafein.domain.image.ReviewImage;
@@ -28,7 +29,7 @@ public interface ImageService {
 
     List<BoardImage> saveBoardImage(Board board, List<MultipartFile> imageFiles) throws IOException;
 
-    Image saveEventImage(MultipartFile imageFile) throws IOException;
+    Image saveEventImage(Event event, MultipartFile imageFile) throws IOException;
 
     AdminEventImageListResDto<?> getEventImageListOfAdmin(PageRequestDto pageRequestDto);
 

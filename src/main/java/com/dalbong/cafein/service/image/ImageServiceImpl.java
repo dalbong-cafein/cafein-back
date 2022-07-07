@@ -1,6 +1,7 @@
 package com.dalbong.cafein.service.image;
 
 import com.dalbong.cafein.domain.board.Board;
+import com.dalbong.cafein.domain.event.Event;
 import com.dalbong.cafein.domain.image.*;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
@@ -130,13 +131,13 @@ public class ImageServiceImpl implements ImageService{
      */
     @Transactional
     @Override
-    public Image saveEventImage(MultipartFile imageFile) throws IOException {
+    public Image saveEventImage(Event event, MultipartFile imageFile) throws IOException {
 
         //s3업로드
         String eventImageUrl = s3Uploader.s3UploadOfEvent(imageFile);
 
         //eventImage 저장
-        EventImage eventImage = new EventImage(eventImageUrl);
+        EventImage eventImage = new EventImage(event, eventImageUrl);
 
         return eventImageRepository.save(eventImage);
     }
