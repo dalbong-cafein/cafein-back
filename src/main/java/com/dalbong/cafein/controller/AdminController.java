@@ -8,7 +8,7 @@ import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 
-import com.dalbong.cafein.dto.admin.eventImage.AdminEventImageListResDto;
+import com.dalbong.cafein.dto.admin.event.AdminEventListResDto;
 import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberUpdateDto;
@@ -422,24 +422,25 @@ public class AdminController {
     }
 
     /**
-     * 관리자단 이벤트 이미지 리스트 조회
+     * 관리자단 이벤트 배너 리스트 조회
      */
-    @GetMapping("/event-images")
+    @GetMapping("/events")
     public ResponseEntity<?> getEventImageList(PageRequestDto requestDto){
-        AdminEventImageListResDto<?> adminEventImageListResDto = imageService.getEventImageListOfAdmin(requestDto);
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 이미지 리스트 조회", adminEventImageListResDto), HttpStatus.OK);
+        AdminEventListResDto<?> adminEventListResDto = eventService.getEventListOfAdmin(requestDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 배너 리스트 조회", adminEventListResDto), HttpStatus.OK);
     }
 
     /**
-     * 관리자단 이벤트 이미지 저장
+     * 관리자단 이벤트 배너 저장
      */
-    @PostMapping("/event-image")
+    @PostMapping("/events")
     public ResponseEntity<?> registerEventImage(@Validated EventRegDto eventRegDto, BindingResult bindingResult) throws IOException {
 
         eventService.register(eventRegDto.getImageFile(), eventRegDto.getBoardId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 이미지 저장 성공", null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 배너 저장 성공", null), HttpStatus.CREATED);
     }
 
     /**
