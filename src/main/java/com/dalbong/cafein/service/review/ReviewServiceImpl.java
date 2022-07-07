@@ -385,16 +385,8 @@ public class ReviewServiceImpl implements ReviewService{
 
             Review review = (Review) arr[0];
 
-            ImageDto imageDto = null;
-            //리뷰 이미지
-            if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()) {
 
-                ReviewImage reviewImage = review.getReviewImageList().get(0);
-
-                imageDto = new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl());
-            }
-
-            return new AdminReviewResDto(review, imageDto, (Long) arr[1]);
+            return new AdminReviewResDto(review, (Long) arr[1]);
         });
 
         return new AdminReviewListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
