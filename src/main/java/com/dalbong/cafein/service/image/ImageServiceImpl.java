@@ -1,24 +1,15 @@
 package com.dalbong.cafein.service.image;
 
 import com.dalbong.cafein.domain.board.Board;
+import com.dalbong.cafein.domain.event.Event;
 import com.dalbong.cafein.domain.image.*;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.store.Store;
-import com.dalbong.cafein.dto.admin.eventImage.AdminEventImageListResDto;
-import com.dalbong.cafein.dto.admin.eventImage.AdminEventImageResDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
-import com.dalbong.cafein.dto.image.ImageDto;
-import com.dalbong.cafein.dto.page.PageRequestDto;
-import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.s3.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 @Transactional
 @RequiredArgsConstructor
@@ -130,38 +120,15 @@ public class ImageServiceImpl implements ImageService{
      */
     @Transactional
     @Override
-    public Image saveEventImage(MultipartFile imageFile) throws IOException {
+    public Image saveEventImage(Event event, MultipartFile imageFile) throws IOException {
 
         //s3업로드
         String eventImageUrl = s3Uploader.s3UploadOfEvent(imageFile);
 
         //eventImage 저장
-        EventImage eventImage = new EventImage(eventImageUrl);
+        EventImage eventImage = new EventImage(event, eventImageUrl);
 
         return eventImageRepository.save(eventImage);
-    }
-
-    /**
-     * 관리자단 이벤트 이미지 리스트 조회
-     */
-    @Transactional(readOnly = true)
-    @Override
-    public AdminEventImageListResDto<?> getEventImageListOfAdmin(PageRequestDto pageRequestDto) {
-
-        Pageable pageable;
-
-        if(pageRequestDto.getSort().equals("ASC")){
-            pageable = pageRequestDto.getPageable(Sort.by("imageId").ascending());
-        }else{
-            pageable = pageRequestDto.getPageable(Sort.by("imageId").descending());
-        }
-
-        Page<EventImage> results = imageRepository.getEventImageList(pageable);
-
-        Function<EventImage, AdminEventImageResDto> fn = (AdminEventImageResDto::new);
-
-
-        return new AdminEventImageListResDto<>(results.getTotalElements(), new PageResultDTO<>(results, fn));
     }
 
     /**

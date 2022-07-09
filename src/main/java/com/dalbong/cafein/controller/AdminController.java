@@ -8,7 +8,7 @@ import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 
-import com.dalbong.cafein.dto.admin.eventImage.AdminEventImageListResDto;
+import com.dalbong.cafein.dto.admin.event.AdminEventListResDto;
 import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberUpdateDto;
@@ -22,6 +22,7 @@ import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoRegDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoUpdateDto;
+import com.dalbong.cafein.dto.event.EventRegDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.dto.reportCategory.ReportCategoryResDto;
@@ -30,6 +31,7 @@ import com.dalbong.cafein.dto.store.StoreUpdateDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.board.BoardService;
 import com.dalbong.cafein.service.coupon.CouponService;
+import com.dalbong.cafein.service.event.EventService;
 import com.dalbong.cafein.service.image.ImageService;
 import com.dalbong.cafein.service.member.MemberService;
 import com.dalbong.cafein.service.memo.MemoService;
@@ -65,6 +67,7 @@ public class AdminController {
     private final StickerService stickerService;
     private final ImageService imageService;
     private final ReportCategoryService reportCategoryService;
+    private final EventService eventService;
 
     /**
      * 관리자단 리뷰 리스트 조회
@@ -433,28 +436,25 @@ public class AdminController {
     }
 
     /**
-     * 관리자단 이벤트 이미지 리스트 조회
+     * 관리자단 이벤트 배너 리스트 조회
      */
-    @GetMapping("/event-images")
+    @GetMapping("/events")
     public ResponseEntity<?> getEventImageList(PageRequestDto requestDto){
-        AdminEventImageListResDto<?> adminEventImageListResDto = imageService.getEventImageListOfAdmin(requestDto);
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 이미지 리스트 조회", adminEventImageListResDto), HttpStatus.OK);
+        AdminEventListResDto<?> adminEventListResDto = eventService.getEventListOfAdmin(requestDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 배너 리스트 조회", adminEventListResDto), HttpStatus.OK);
     }
 
     /**
-     * 관리자단 이벤트 이미지 저장
+     * 관리자단 이벤트 배너 저장
      */
-    @PostMapping("/event-image")
-    public ResponseEntity<?> registerEventImage(@ModelAttribute MultipartFile imageFile) throws IOException {
+    @PostMapping("/events")
+    public ResponseEntity<?> registerEventImage(@Validated EventRegDto eventRegDto, BindingResult bindingResult) throws IOException {
 
-        if(imageFile == null){
-            throw new CustomException("이미지 파일이 전송되지 않았습니다.");
-        }
+        eventService.register(eventRegDto.getImageFile(), eventRegDto.getBoardId());
 
-        imageService.saveEventImage(imageFile);
-
-        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 이미지 저장 성공", null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 배너 저장 성공", null), HttpStatus.CREATED);
     }
 
     /**
