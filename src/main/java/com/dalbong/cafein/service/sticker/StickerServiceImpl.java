@@ -137,53 +137,19 @@ public class StickerServiceImpl implements StickerService{
     }
 
     /**
-     * 카페 스티커 회수
+     * 스티커 회수
      */
     @Transactional
     @Override
-    public void recoverStoreSticker(Long storeId, Long principalId) {
+    public void recover(Long stickerId) {
 
-        Sticker sticker = stickerRepository.findByStoreIdAndMemberId(storeId, principalId).orElseThrow(() ->
+        Sticker sticker = stickerRepository.findById(stickerId).orElseThrow(() ->
                 new CustomException("존재하지 않는 스티커입니다."));
 
-        //해당 알림 삭제
+        //스티커 알림 삭제
         stickerNoticeRepository.deleteBySticker(sticker);
 
-        storeStickerRepository.delete((StoreSticker) sticker);
-    }
-
-    /**
-     * 리뷰 스티커 회수
-     */
-    @Transactional
-    @Override
-    public void recoverReviewSticker(Long reviewId, Long principalId) {
-
-        Sticker sticker = stickerRepository.findByReviewIdAndMemberId(reviewId,principalId).orElseThrow(() ->
-                new CustomException("존재하지 않는 스티커입니다."));
-
-        //해당 알림 삭제
-        stickerNoticeRepository.deleteBySticker(sticker);
-
-        reviewStickerRepository.delete((ReviewSticker) sticker);
-
-    }
-
-    /**
-     * 혼잡도 스티커 회수
-     */
-    @Transactional
-    @Override
-    public void recoverCongestionSticker(Long congestionId, Long principalId) {
-
-        Sticker sticker = stickerRepository.findByCongestionIdAndMemberId(congestionId, principalId).orElseThrow(() ->
-                new CustomException("존재하지 않는 스티커입니다."));
-
-        //해당 알림 삭제
-        stickerNoticeRepository.deleteBySticker(sticker);
-
-        congestionStickerRepository.delete((CongestionSticker) sticker);
-
+        stickerRepository.deleteById(stickerId);
     }
 
     /**
