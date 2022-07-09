@@ -17,11 +17,7 @@ public interface StickerService {
 
     Sticker issueCongestionSticker(Long congestionId, Long principalId);
 
-    void recoverStoreSticker(Long storeId, Long principalId);
-
-    void recoverReviewSticker(Long reviewId, Long principalId);
-
-    void recoverCongestionSticker(Long congestionId, Long principalId);
+    void recover(Long stickerId);
 
     void removeStickerList(int limit, Long principalId);
 

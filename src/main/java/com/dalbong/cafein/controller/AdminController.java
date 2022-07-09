@@ -391,36 +391,14 @@ public class AdminController {
     }
 
     /**
-     * 관리자단 카페 타입 스티커 회수
+     * 관리자단 스티커 회수
      */
-    @DeleteMapping("/stickers/storeType")
-    public ResponseEntity<?> recoverStoreSticker(@RequestParam("storeId") Long storeId, @RequestParam("memberId") Long memberId){
+    @DeleteMapping("/stickers/{stickerId}")
+    public ResponseEntity<?> recoverSticker(@PathVariable("stickerId") Long stickerId){
 
-        stickerService.recoverStoreSticker(storeId, memberId);
+        stickerService.recover(stickerId);
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "카페 타입 스티커 회수 성공", null), HttpStatus.OK);
-    }
-
-    /**
-     * 관리자단 리뷰 타입 스티커 회수
-     */
-    @DeleteMapping("/stickers/reviewType")
-    public ResponseEntity<?> recoverReviewSticker(@RequestParam("reviewId") Long reviewId, @RequestParam("memberId") Long memberId){
-
-        stickerService.recoverReviewSticker(reviewId, memberId);
-
-        return new ResponseEntity<>(new CMRespDto<>(1, "리뷰 타입 스티커 회수 성공", null), HttpStatus.OK);
-    }
-
-    /**
-     * 관리자단 혼잡도 타입 스티커 회수
-     */
-    @DeleteMapping("/stickers/congestionType")
-    public ResponseEntity<?> recoverCongestionSticker(@RequestParam("congestionId") Long congestionId, @RequestParam("memberId") Long memberId){
-
-        stickerService.recoverCongestionSticker(congestionId, memberId);
-
-        return new ResponseEntity<>(new CMRespDto<>(1, "혼잡도 타입 스티커 회수 성공", null), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "스티커 회수 성공", null), HttpStatus.OK);
     }
 
     /**
