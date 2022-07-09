@@ -21,7 +21,7 @@ public class EventController {
     @GetMapping("/events/latest")
     public ResponseEntity<?> getLatestEvent(){
 
-        EventResDto eventResDto = eventService.latestEvent();
+        EventResDto eventResDto = eventService.getLatestEvent();
 
         return new ResponseEntity<>(new CMRespDto<>(1, "가장 최신 이벤트 배너 조회 성공", eventResDto), HttpStatus.OK);
     }

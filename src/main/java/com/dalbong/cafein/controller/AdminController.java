@@ -460,12 +460,12 @@ public class AdminController {
     /**
      * 관리자단 이벤트 이미지 삭제
      */
-    @DeleteMapping("/event-image")
-    public ResponseEntity<?> removeEventImage(@RequestParam("eventImageId") Long eventImageId){
+    @DeleteMapping("/events/{eventId}")
+    public ResponseEntity<?> removeEventImage(@PathVariable("eventId") Long eventId){
 
-        imageService.remove(eventImageId);
+        eventService.remove(eventId);
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 이미지 삭제 성공", null), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 이벤트 삭제 성공", null), HttpStatus.OK);
     }
 
 }

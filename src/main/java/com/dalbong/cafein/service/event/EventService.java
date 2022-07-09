@@ -13,7 +13,9 @@ public interface EventService {
 
     Event register(MultipartFile imageFile, Long boardId) throws IOException;
 
-    EventResDto latestEvent();
+    void remove(Long eventId);
+
+    EventResDto getLatestEvent();
 
     AdminEventListResDto<?> getEventListOfAdmin(PageRequestDto pageRequestDto);
 

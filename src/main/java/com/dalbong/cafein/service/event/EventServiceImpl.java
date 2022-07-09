@@ -6,6 +6,7 @@ import com.dalbong.cafein.domain.coupon.Coupon;
 import com.dalbong.cafein.domain.event.Event;
 import com.dalbong.cafein.domain.event.EventRepository;
 import com.dalbong.cafein.domain.image.EventImage;
+import com.dalbong.cafein.domain.image.EventImageRepository;
 import com.dalbong.cafein.domain.image.Image;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponResDto;
 import com.dalbong.cafein.dto.admin.event.AdminEventListResDto;
@@ -37,6 +38,7 @@ public class EventServiceImpl implements EventService{
 
     private final EventRepository eventRepository;
     private final ImageService imageService;
+    private final EventImageRepository eventImageRepository;
     private final BoardRepository boardRepository;
 
     /**
@@ -61,11 +63,27 @@ public class EventServiceImpl implements EventService{
     }
 
     /**
+     * 이벤트 삭제
+     */
+    @Transactional
+    @Override
+    public void remove(Long eventId) {
+
+        //이벤트 이미지 삭제
+        EventImage eventImage = eventImageRepository.findByEvent_EventId(eventId).orElseThrow(() ->
+                new CustomException("존재하지 않는 이벤트 이미지입니다."));
+        imageService.remove(eventImage.getImageId());
+
+        //이벤트 삭제
+        eventRepository.deleteById(eventId);
+    }
+
+    /**
      * 가장 최신의 이벤트 배너 조회
      */
     @Transactional(readOnly = true)
     @Override
-    public EventResDto latestEvent() {
+    public EventResDto getLatestEvent() {
 
         Object[] arr = eventRepository.latestEvent().orElseThrow(() ->
                 new CustomException("이벤트 배너가 존재하지 않습니다."));
