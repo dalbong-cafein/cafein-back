@@ -15,6 +15,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import javax.persistence.EntityManager;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.dalbong.cafein.domain.event.QEvent.event;
@@ -63,5 +64,21 @@ public class EventRepositoryImpl implements EventRepositoryQuerydsl {
          * 날릴 필요가 없음.
          */
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchCount());
+    }
+
+    /**
+     * 가장 최신의 이벤트 배너 조회
+     */
+    @Override
+    public Optional<Object[]> latestEvent() {
+
+        Tuple tuple = queryFactory.select(event, eventImage)
+                .from(event)
+                .leftJoin(eventImage).on(eventImage.event.eventId.eq(event.eventId))
+                .orderBy(event.eventId.desc())
+                .limit(1)
+                .fetchOne();
+
+        return tuple != null ? Optional.of(tuple.toArray()) : Optional.empty();
     }
 }

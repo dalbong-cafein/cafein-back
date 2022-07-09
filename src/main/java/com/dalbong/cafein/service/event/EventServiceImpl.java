@@ -61,6 +61,28 @@ public class EventServiceImpl implements EventService{
     }
 
     /**
+     * 가장 최신의 이벤트 배너 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public EventResDto latestEvent() {
+
+        Object[] arr = eventRepository.latestEvent().orElseThrow(() ->
+                new CustomException("이벤트 배너가 존재하지 않습니다."));
+
+        Event event = (Event) arr[0];
+        EventImage eventImage = (EventImage) arr[1];
+
+        //이벤트 배너 이미지
+        ImageDto eventImageDto = null;
+        if(eventImage != null){
+            eventImageDto = new ImageDto(eventImage.getImageId(), eventImage.getImageUrl());
+        }
+
+        return new EventResDto(event, eventImageDto);
+    }
+
+    /**
      * 관리자단 이벤트 배너 리스트 조회
      */
     @Transactional(readOnly = true)
@@ -95,12 +117,5 @@ public class EventServiceImpl implements EventService{
 
     /**
      * 이벤트 삭제
-     */
-
-
-
-
-    /**
-     * 앱단 최신 이벤트 배너 조회
      */
 }
