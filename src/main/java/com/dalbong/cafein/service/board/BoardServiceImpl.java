@@ -2,6 +2,8 @@ package com.dalbong.cafein.service.board;
 
 import com.dalbong.cafein.domain.board.Board;
 import com.dalbong.cafein.domain.board.BoardRepository;
+import com.dalbong.cafein.domain.event.Event;
+import com.dalbong.cafein.domain.event.EventRepository;
 import com.dalbong.cafein.domain.image.BoardImage;
 import com.dalbong.cafein.domain.image.BoardImageRepository;
 import com.dalbong.cafein.domain.member.Member;
@@ -15,6 +17,7 @@ import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.handler.exception.CustomException;
+import com.dalbong.cafein.service.event.EventService;
 import com.dalbong.cafein.service.image.ImageService;
 import com.dalbong.cafein.service.notice.NoticeService;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +44,8 @@ public class BoardServiceImpl implements BoardService{
     private final NoticeService noticeService;
     private final MemberRepository memberRepository;
     private final BoardNoticeRepository boardNoticeRepository;
+    private final EventService eventService;
+    private final EventRepository eventRepository;
 
     /**
      * 게시글 등록
@@ -81,6 +86,15 @@ public class BoardServiceImpl implements BoardService{
 
         for (BoardImage boardImage : boardImageList){
             imageService.remove(boardImage.getImageId());
+        }
+
+        //이벤트 삭제
+        List<Event> eventList = eventRepository.findByBoard(board);
+
+        if (eventList != null && !eventList.isEmpty()){
+            for(Event event : eventList){
+                eventService.remove(event.getEventId());
+            }
         }
 
         //공지사항 알림 삭제
