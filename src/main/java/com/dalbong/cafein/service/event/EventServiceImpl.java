@@ -132,8 +132,4 @@ public class EventServiceImpl implements EventService{
 
         return new AdminEventListResDto<>(results.getTotalElements(), new PageResultDTO<>(results, fn));
     }
-
-    /**
-     * 이벤트 삭제
-     */
 }
