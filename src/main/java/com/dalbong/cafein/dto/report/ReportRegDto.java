@@ -26,11 +26,12 @@ public class ReportRegDto {
     private String content;
 
 
-    public Report toEntity(Review review){
+    public Report toEntity(Review review, Member fromMember){
 
         return Report.builder()
                 .review(review)
                 .toMember(Member.builder().memberId(review.getMember().getMemberId()).build())
+                .fromMember(fromMember)
                 .reportCategory(ReportCategory.builder().reportCategoryId(reportCategoryId).build())
                 .content(this.content)
                 .build();
