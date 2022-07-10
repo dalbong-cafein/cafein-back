@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -24,7 +26,7 @@ public class MemberController {
      * 휴대폰 번호 수정
      */
     @PatchMapping("/members/{memberId}/phone")
-    public ResponseEntity<?> modifyPhone(@RequestBody PhoneUpdateDto phoneUpdateDto,
+    public ResponseEntity<?> modifyPhone(@Validated @RequestBody PhoneUpdateDto phoneUpdateDto, BindingResult bindingResult,
                                          @AuthenticationPrincipal PrincipalDetails principalDetails){
 
         memberService.modifyPhone(phoneUpdateDto.getPhone(), principalDetails.getMember().getMemberId());
@@ -36,7 +38,7 @@ public class MemberController {
      * 프로필 사진 및 닉네임 수정
      */
     @PatchMapping("/members/{memberId}/ImageAndNickname")
-    public ResponseEntity<?> modifyImageAndNinckanme(MemberUpdateDto memberUpdateDto,
+    public ResponseEntity<?> modifyImageAndNinckanme(@Validated MemberUpdateDto memberUpdateDto, BindingResult bindingResult,
                                                      @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
         memberService.modifyImageAndNickname(memberUpdateDto, principalDetails.getMember().getMemberId());
