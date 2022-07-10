@@ -12,7 +12,15 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"review","reportCategory"})
+@ToString(exclude = {"review","toMember","fromMember","reportCategory"})
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name="report_uk",
+                        columnNames={"review_id", "from_member_id"}
+                )
+        }
+)
 @Entity
 public class Report extends BaseEntity {
 
@@ -27,6 +35,10 @@ public class Report extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_member_id", nullable = false)
     private Member toMember;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "from_member_id", nullable = false)
+    private Member fromMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "report_category_id")

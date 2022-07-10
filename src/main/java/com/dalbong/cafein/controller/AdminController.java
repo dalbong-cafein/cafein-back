@@ -255,9 +255,10 @@ public class AdminController {
      * 관리자단 리뷰 신고하기
      */
     @PostMapping("reviews/{reviewId}/reports")
-    public ResponseEntity<?> report(@Validated @RequestBody ReportRegDto reportRegDto, BindingResult bindingResult){
+    public ResponseEntity<?> report(@Validated @RequestBody ReportRegDto reportRegDto, BindingResult bindingResult,
+                                    @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        reportService.report(reportRegDto);
+        reportService.report(reportRegDto, principalDetails.getMember());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 신고하기 성공",null), HttpStatus.CREATED);
     }

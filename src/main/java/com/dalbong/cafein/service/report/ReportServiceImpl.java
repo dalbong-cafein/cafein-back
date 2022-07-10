@@ -37,12 +37,12 @@ public class ReportServiceImpl implements ReportService{
      */
     @Transactional
     @Override
-    public Report report(ReportRegDto reportRegDto) {
+    public Report report(ReportRegDto reportRegDto, Member fromMember) {
 
         Review review = reviewRepository.findById(reportRegDto.getReviewId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 리뷰입니다."));
 
-        Report report = reportRegDto.toEntity(review);
+        Report report = reportRegDto.toEntity(review, fromMember);
 
         reportRepository.save(report);
 
