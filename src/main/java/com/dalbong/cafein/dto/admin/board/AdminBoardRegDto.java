@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +21,10 @@ public class AdminBoardRegDto {
     @NotBlank
     private String title;
 
+    @NotBlank
     private String content = "";
 
+    @NotNull
     private Long boardCategoryId;
 
     private List<MultipartFile> imageFiles = new ArrayList<>();

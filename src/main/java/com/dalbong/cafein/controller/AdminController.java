@@ -209,7 +209,8 @@ public class AdminController {
      * 관리자단 게시글 등록
      */
     @PostMapping("/boards")
-    public ResponseEntity<?> registerBoard(AdminBoardRegDto adminBoardRegDto, @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+    public ResponseEntity<?> registerBoard(@Validated AdminBoardRegDto adminBoardRegDto, BindingResult bindingResult,
+                                           @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
         boardService.register(adminBoardRegDto, principalDetails.getMember().getMemberId());
 
@@ -333,7 +334,7 @@ public class AdminController {
      * 관리자단 메모 수정
      */
     @PutMapping("/memos/{memoId}")
-    public ResponseEntity<?> modifyMemo(@RequestBody AdminMemoUpdateDto adminMemoUpdateDto){
+    public ResponseEntity<?> modifyMemo(@Validated @RequestBody AdminMemoUpdateDto adminMemoUpdateDto, BindingResult bindingResult){
 
         memoService.modify(adminMemoUpdateDto);
 
