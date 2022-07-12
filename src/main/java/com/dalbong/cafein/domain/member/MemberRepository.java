@@ -19,8 +19,6 @@ public interface MemberRepository extends JpaRepository<Member,Long>, MemberRepo
     @EntityGraph(attributePaths = {"roleSet"}, type = EntityGraph.EntityGraphType.LOAD)
     Optional<Member> findWithRoleSetByMemberId(Long memberId);
 
-    Optional<Member> findByNickname(String nickname);
-
     @Query("select m from Member m where m.state <> 'LEAVE'")
     List<Member> findAllNotLeave();
 }

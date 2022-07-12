@@ -88,9 +88,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public Boolean isDuplicateNickname(String nickname) {
 
-        Optional<Member> result = memberRepository.findByNickname(nickname);
-
-        return result.isEmpty();
+        return !memberRepository.existNickname(nickname);
     }
 
     /**

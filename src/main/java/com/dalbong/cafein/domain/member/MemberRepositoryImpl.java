@@ -77,6 +77,21 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
     }
 
     /**
+     * 닉네임 중복확인
+     */
+    @Override
+    public boolean existNickname(String nickname) {
+
+        Integer fetchOne = queryFactory.selectOne()
+                .from(member)
+                .where(member.nickname.eq(nickname),
+                        member.state.ne(MemberState.LEAVE))
+                .fetchOne();
+
+        return fetchOne != null;
+    }
+
+    /**
      * 관리자단 전체 회원 리스트 조회
      */
     @Override

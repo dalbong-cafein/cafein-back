@@ -17,6 +17,11 @@ public interface MemberRepositoryQuerydsl {
     Optional<Member> findByNaverIdAndNotLeave(String naverId);
 
     /**
+     * 닉네임 중복확인
+     */
+    boolean existNickname(String nickname);
+
+    /**
      * 관리자단 전체 회원 리스트 조회
      */
     Page<Object[]> getAllMemberListOfAdmin(String[] searchType, String keyword, Pageable pageable);
@@ -35,4 +40,5 @@ public interface MemberRepositoryQuerydsl {
      * 회원 정지기간 만료 회원 리스트 조회
      */
     List<Member> findByReportExpiredToday();
+
 }
