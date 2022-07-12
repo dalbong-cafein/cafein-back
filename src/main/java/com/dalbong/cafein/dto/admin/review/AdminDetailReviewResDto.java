@@ -1,5 +1,7 @@
 package com.dalbong.cafein.dto.admin.review;
 
+import com.dalbong.cafein.domain.review.DetailEvaluation;
+import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -27,6 +29,10 @@ public class AdminDetailReviewResDto {
 
     private String storeName;
 
+    private Recommendation recommendation;
+
+    private DetailEvaluation detailEvaluation;
+
     private String content;
 
     private List<ImageDto> reviewImageDtoList;
@@ -44,6 +50,8 @@ public class AdminDetailReviewResDto {
         this.visitCnt = visitCnt;
         this.storeId = review.getStore().getStoreId();
         this.storeName = review.getStore().getStoreName();
+        this.recommendation = review.getRecommendation();
+        this.detailEvaluation = review.getDetailEvaluation();
         this.content = review.getContent();
         this.regDateTime = review.getRegDateTime();
         this.modDateTime = review.getModDateTime();
