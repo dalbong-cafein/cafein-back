@@ -465,6 +465,23 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     /**
+     * 관리자단 회원별 리뷰 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<AdminReviewResDto> getReviewListByMemberIdOfAdmin(Long memberId) {
+
+        List<Object[]> results = reviewRepository.getReviewListOfMember(memberId);
+
+        return results.stream().map(arr -> {
+            Review review = (Review) arr[0];
+            Long memoId = (Long) arr[1];
+
+            return new AdminReviewResDto(review, memoId);
+        }).collect(Collectors.toList());
+    }
+
+    /**
      * 오늘 등록된 리뷰 수 조회
      */
     @Transactional(readOnly = true)

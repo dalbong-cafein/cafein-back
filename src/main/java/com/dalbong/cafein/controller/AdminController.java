@@ -17,6 +17,7 @@ import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewEvaluationOfStoreResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
 import com.dalbong.cafein.dto.admin.sticker.AdminStickerResDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
@@ -102,6 +103,17 @@ public class AdminController {
 
         return new ResponseEntity<>(new CMRespDto<>(
                 1, "관리자단 카페 리뷰 상세 평가 정보 조회 성공", adminReviewEvaluationOfStoreResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 회원별 리뷰리스트 조회
+     */
+    @GetMapping("/members/{memberId}/reviews")
+    public ResponseEntity<?> getReviewListOfMember(@PathVariable("memberId") Long memberId){
+
+        List<AdminReviewResDto> adminReviewResDtoList = reviewService.getReviewListByMemberIdOfAdmin(memberId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 회원별 리뷰 리스트 조회 성공", adminReviewResDtoList), HttpStatus.OK);
     }
 
     /**
