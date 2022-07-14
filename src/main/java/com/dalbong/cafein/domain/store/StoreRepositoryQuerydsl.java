@@ -50,6 +50,11 @@ public interface StoreRepositoryQuerydsl {
     Optional<Object[]> getDetailStoreOfAdmin(Long storeId);
 
     /**
+     * 관리자단 회원별 내 카페 리스트 조회
+     */
+    List<Store> getMyStoreByMemberIdOfAdmin(Long memberId);
+
+    /**
      * 오늘 등록된 카페 개수 조회
      */
     Long getRegisterCountOfToday();

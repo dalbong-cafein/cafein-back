@@ -2,6 +2,7 @@ package com.dalbong.cafein.service.store;
 
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
+import com.dalbong.cafein.dto.admin.store.AdminMyStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.store.*;
@@ -32,6 +33,8 @@ public interface StoreService {
     AdminStoreListDto getStoreListOfAdmin(PageRequestDto pageRequestDto);
 
     AdminDetailStoreResDto getDetailStoreOfAdmin(Long storeId);
+
+    List<AdminMyStoreResDto> getMyStoreByMemberIdOfAdmin(Long memberId);
 
     Long getRegisterCountOfToday();
 

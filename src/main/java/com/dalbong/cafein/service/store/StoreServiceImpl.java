@@ -15,6 +15,7 @@ import com.dalbong.cafein.domain.sticker.StoreStickerRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
+import com.dalbong.cafein.dto.admin.store.AdminMyStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreResDto;
 import com.dalbong.cafein.dto.businessHours.BusinessHoursInfoDto;
@@ -450,6 +451,18 @@ public class StoreServiceImpl implements StoreService{
         }
 
         return new AdminDetailStoreResDto(store, (int)arr[1], (long) arr[2], (int)arr[3], reviewImageDtoList, storeImageDtoList);
+    }
+
+    /**
+     * 관리자단 회원별 내 카페 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<AdminMyStoreResDto> getMyStoreByMemberIdOfAdmin(Long memberId) {
+
+        List<Store> storeList = storeRepository.getMyStoreByMemberIdOfAdmin(memberId);
+
+        return storeList.stream().map(store -> new AdminMyStoreResDto(store)).collect(Collectors.toList());
     }
 
     /**

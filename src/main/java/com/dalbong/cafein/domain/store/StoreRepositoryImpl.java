@@ -230,6 +230,19 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     }
 
     /**
+     * 관리자단 회원별 내 카페 리스트 조회
+     */
+    @Override
+    public List<Store> getMyStoreByMemberIdOfAdmin(Long memberId){
+
+        return queryFactory.select(store)
+                .from(store)
+                .join(heart).on(heart.store.storeId.eq(store.storeId))
+                .where(heart.member.memberId.eq(memberId))
+                .fetch();
+    }
+
+    /**
      * 오늘 등록된 카페 개수
      */
     @Override
