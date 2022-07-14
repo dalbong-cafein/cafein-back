@@ -41,6 +41,11 @@ public interface ReviewRepositoryQuerydsl {
     Optional<Object[]> getDetailReview(Long reviewId);
 
     /**
+     * 관리자단 회원별 리뷰 리스트 조회
+     */
+    List<Object[]> getReviewListOfMember(Long memberId);
+
+    /**
      * 관리자단 오늘 등록된 리뷰 개수 조회
      */
     Long getRegisterCountOfToday();

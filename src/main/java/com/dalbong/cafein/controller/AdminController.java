@@ -17,8 +17,10 @@ import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewEvaluationOfStoreResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
 import com.dalbong.cafein.dto.admin.sticker.AdminStickerResDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
+import com.dalbong.cafein.dto.admin.store.AdminMyStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoRegDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoUpdateDto;
@@ -105,6 +107,17 @@ public class AdminController {
     }
 
     /**
+     * 관리자단 회원별 리뷰리스트 조회
+     */
+    @GetMapping("/members/{memberId}/reviews")
+    public ResponseEntity<?> getReviewListOfMember(@PathVariable("memberId") Long memberId){
+
+        List<AdminReviewResDto> adminReviewResDtoList = reviewService.getReviewListByMemberIdOfAdmin(memberId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 회원별 리뷰 리스트 조회 성공", adminReviewResDtoList), HttpStatus.OK);
+    }
+
+    /**
      * 관리자단 리뷰 삭제
      */
     @DeleteMapping("/reviews/{reviewId}")
@@ -170,6 +183,17 @@ public class AdminController {
         AdminDetailStoreResDto adminDetailStoreResDto = storeService.getDetailStoreOfAdmin(storeId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 카페 상세 조회 성공", adminDetailStoreResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 회원별 내 카페 리스트 조회
+     */
+    @GetMapping("/members/{memberId}/hearts")
+    public ResponseEntity<?> getMyStoreListByMemberId(@PathVariable("memberId") Long memberId){
+
+        List<AdminMyStoreResDto> adminMyStoreResDtoList = storeService.getMyStoreByMemberIdOfAdmin(memberId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 회원별 내 카페 리스트 조회 성공", adminMyStoreResDtoList), HttpStatus.OK);
     }
 
     /**

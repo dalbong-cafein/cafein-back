@@ -225,6 +225,24 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
     }
 
     /**
+     * 관리자단 회원별 리뷰 리스트 조회
+     */
+    @Override
+    public List<Object[]> getReviewListOfMember(Long memberId) {
+
+        List<Tuple> result = queryFactory.select(review, reviewMemo.memoId)
+                .from(review)
+                .leftJoin(review.member).fetchJoin()
+                .leftJoin(review.store).fetchJoin()
+                .leftJoin(reviewMemo).on(reviewMemo.review.reviewId.eq(review.reviewId))
+                .where(review.member.memberId.eq(memberId))
+                .fetch();
+
+
+        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
+    }
+
+    /**
      * 관리자단 오늘 등록된 리뷰 개수 조회
      */
     @Override
