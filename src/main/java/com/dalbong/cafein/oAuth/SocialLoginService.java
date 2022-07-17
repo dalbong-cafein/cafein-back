@@ -11,17 +11,26 @@ import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.dto.login.AccountUniteResDto;
 import com.dalbong.cafein.handler.exception.AlreadyExistedAccountException;
 import com.dalbong.cafein.handler.exception.CustomException;
+import com.dalbong.cafein.util.JwtUtil;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.math.BigInteger;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.KeySpec;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.*;
 
 import static com.dalbong.cafein.domain.member.AuthProvider.KAKAO;
 import static com.dalbong.cafein.domain.member.AuthProvider.NAVER;
@@ -173,6 +182,9 @@ public class SocialLoginService {
             case NAVER:
                 return getNaverUserInfo(oAuthAccessToken);
 
+            case APPLE:
+                return getAppleUserInfo(oAuthAccessToken);
+
             default:
                 throw new CustomException(authProvider + "은 지원하지 않는 소셜 제공자입니다.");
         }
@@ -202,5 +214,66 @@ public class SocialLoginService {
                 "https://kapi.kakao.com/v2/user/me", new HttpEntity<>(headers), Map.class);
 
         return OAuthUserInfoFactory.getOAuth2UserInfo(AuthProvider.KAKAO, attributes, memberRepository);
+    }
+
+    private OAuthUserInfo getAppleUserInfo(String oAuthAccessToken){
+
+        //Http요청하기 - GET 방식으로 -그리고 response 변수의 응답 받음.
+        Keys keys = restTemplate.getForObject("https://appleid.apple.com/auth/keys", Keys.class);
+
+        String[] decodeArray = oAuthAccessToken.split("\\.");
+
+
+        String header = new String(Base64.getDecoder().decode(decodeArray[0]));
+        String alg = new String(Base64.getDecoder().decode(decodeArray[1]));
+
+
+
+        System.out.println(Arrays.toString(decodeArray));
+        System.out.println(header);
+        System.out.println(alg);
+
+        Key findKey = null;
+        if(keys.getKeys() != null){
+            for (Key key : keys.getKeys()){
+                System.out.println(key);
+            }
+            System.out.println(findKey);
+        }
+
+        PublicKey publicKey = getPublicKey(keys.getKeys().get(2));
+        Claims claims = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(oAuthAccessToken).getBody();
+
+        System.out.println(claims.toString());
+
+
+        return null;
+    }
+
+    public PublicKey getPublicKey(Key key) {
+
+        String nStr = key.getN();
+        String eStr = key.getE();
+        System.out.println(nStr);
+        System.out.println(eStr);
+
+        byte[] nBytes = Base64.getUrlDecoder().decode(nStr);
+        byte[] eBytes = Base64.getUrlDecoder().decode(eStr);
+
+        BigInteger n = new BigInteger(1, nBytes);
+        BigInteger e = new BigInteger(1, eBytes);
+
+        try{
+
+            RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(n, e);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePublic(rsaPublicKeySpec);
+
+
+        }catch (Exception exception) {
+
+        }
+
+        return null;
     }
 }
