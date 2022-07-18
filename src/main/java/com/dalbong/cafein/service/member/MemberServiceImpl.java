@@ -123,8 +123,10 @@ public class MemberServiceImpl implements MemberService{
         if (memberUpdateDto.getImageFile() != null && !memberUpdateDto.getImageFile().isEmpty()){
 
             //기존 프로필 이미지 삭제
-            imageService.remove(memberUpdateDto.getDeleteImageId());
-
+            if(memberUpdateDto.getDeleteImageId() != null){
+                imageService.remove(memberUpdateDto.getDeleteImageId());
+            }
+            
             //새로운 이미지로 갱신
             imageService.saveMemberImage(member, memberUpdateDto.getImageFile());
         }
