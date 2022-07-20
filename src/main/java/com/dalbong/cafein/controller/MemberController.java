@@ -2,6 +2,7 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.member.MemberInfoDto;
 import com.dalbong.cafein.dto.member.MemberUpdateDto;
 import com.dalbong.cafein.dto.member.PhoneUpdateDto;
@@ -41,9 +42,9 @@ public class MemberController {
     public ResponseEntity<?> modifyImageAndNinckanme(@Validated MemberUpdateDto memberUpdateDto, BindingResult bindingResult,
                                                      @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        memberService.modifyImageAndNickname(memberUpdateDto, principalDetails.getMember().getMemberId());
+        ImageDto imageDto = memberService.modifyImageAndNickname(memberUpdateDto, principalDetails.getMember().getMemberId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "프로필 사진 및 닉네임 수정 성공",null), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "프로필 사진 및 닉네임 수정 성공", imageDto), HttpStatus.OK);
     }
 
     /**
