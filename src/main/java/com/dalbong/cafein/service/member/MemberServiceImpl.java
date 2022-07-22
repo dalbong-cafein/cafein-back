@@ -109,30 +109,35 @@ public class MemberServiceImpl implements MemberService{
      */
     @Transactional
     @Override
-    public void modifyImageAndNickname(MemberUpdateDto memberUpdateDto, Long principalId) throws IOException {
-
-        System.out.println(memberUpdateDto);
+    public ImageDto modifyImageAndNickname(MemberUpdateDto memberUpdateDto, Long principalId) throws IOException {
 
         Member member = memberRepository.findById(principalId).orElseThrow(() ->
                 new CustomException("존재하는 회원이 아닙니다."));
 
         member.changeNickname(memberUpdateDto.getNickname());
 
+        ImageDto memberImageDto = null;
 
         //프로필 이미지 갱신
         if (memberUpdateDto.getImageFile() != null && !memberUpdateDto.getImageFile().isEmpty()){
 
             //기존 프로필 이미지 삭제
-            imageService.remove(memberUpdateDto.getDeleteImageId());
-
+            if(memberUpdateDto.getDeleteImageId() != null){
+                imageService.remove(memberUpdateDto.getDeleteImageId());
+            }
+            
             //새로운 이미지로 갱신
-            imageService.saveMemberImage(member, memberUpdateDto.getImageFile());
+            Image image = imageService.saveMemberImage(member, memberUpdateDto.getImageFile());
+
+            memberImageDto = new ImageDto(image.getImageId(), image.getImageUrl());
         }
         //기본 이미지로 변경
         else if(memberUpdateDto.getDeleteImageId() != null){
             //기존 프로필 이미지 삭제
             imageService.remove(memberUpdateDto.getDeleteImageId());
         }
+
+        return memberImageDto;
     }
 
     /**
