@@ -42,7 +42,7 @@ public class AuthController {
     @PostMapping("/auth/social-login")
     public ResponseEntity<?> oAuthLogin(@RequestHeader("authProvider")AuthProvider authProvider,
                                         @RequestHeader("oAuthAccessToken") String oAuthAccessToken,
-                                        HttpServletResponse response){
+                                        HttpServletResponse response) throws JsonProcessingException {
 
         //로그인 진행
         Member member = socialLoginService.login(authProvider, oAuthAccessToken);

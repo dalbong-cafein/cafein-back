@@ -12,9 +12,12 @@ import com.dalbong.cafein.dto.login.AccountUniteResDto;
 import com.dalbong.cafein.handler.exception.AlreadyExistedAccountException;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.util.JwtUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigInteger;
@@ -49,7 +53,7 @@ public class SocialLoginService {
      * 소셜 로그인
      */
     @Transactional
-    public Member login(AuthProvider authProvider, String oAuthAccessToken){
+    public Member login(AuthProvider authProvider, String oAuthAccessToken) throws JsonProcessingException {
 
         OAuthUserInfo userInfo = getOAuthUserInfo(authProvider, oAuthAccessToken);
 
@@ -173,7 +177,7 @@ public class SocialLoginService {
     /**
      * OAuthUserInfo 조회
      */
-    private OAuthUserInfo getOAuthUserInfo(AuthProvider authProvider, String oAuthAccessToken){
+    private OAuthUserInfo getOAuthUserInfo(AuthProvider authProvider, String oAuthAccessToken) throws JsonProcessingException {
 
         switch (authProvider){
             case KAKAO:
@@ -216,7 +220,7 @@ public class SocialLoginService {
         return OAuthUserInfoFactory.getOAuth2UserInfo(AuthProvider.KAKAO, attributes, memberRepository);
     }
 
-    private OAuthUserInfo getAppleUserInfo(String oAuthAccessToken){
+    private OAuthUserInfo getAppleUserInfo(String oAuthAccessToken) throws JsonProcessingException {
 
         //Http요청하기 - GET 방식으로 -그리고 response 변수의 응답 받음.
         Keys keys = restTemplate.getForObject("https://appleid.apple.com/auth/keys", Keys.class);
@@ -225,23 +229,33 @@ public class SocialLoginService {
 
 
         String header = new String(Base64.getDecoder().decode(decodeArray[0]));
-        String alg = new String(Base64.getDecoder().decode(decodeArray[1]));
+        String payload = new String(Base64.getDecoder().decode(decodeArray[1]));
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String,String> headerMap = objectMapper.readValue(header, Map.class);
+        Map<String,Object> map = objectMapper.readValue(payload, Map.class);
+        String email = (String) map.get("email");
+
 
 
 
         System.out.println(Arrays.toString(decodeArray));
+        System.out.println("------------------");
         System.out.println(header);
-        System.out.println(alg);
+        System.out.println(payload);
+        System.out.println(email);
 
         Key findKey = null;
         if(keys.getKeys() != null){
             for (Key key : keys.getKeys()){
-                System.out.println(key);
+                String kid = headerMap.get("kid");
+                if(kid.equals(key.getKid())){
+                    findKey = key;
+                }
             }
             System.out.println(findKey);
         }
 
-        PublicKey publicKey = getPublicKey(keys.getKeys().get(2));
+        PublicKey publicKey = getPublicKey(findKey);
         Claims claims = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(oAuthAccessToken).getBody();
 
         System.out.println(claims.toString());
