@@ -1,4 +1,4 @@
-package com.dalbong.cafein.oAuth;
+package com.dalbong.cafein.oAuth.apple;
 
 import lombok.Data;
 

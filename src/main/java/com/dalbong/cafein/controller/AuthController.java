@@ -4,6 +4,7 @@ import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.login.AccountUniteRegDto;
+import com.dalbong.cafein.dto.login.LoginDto;
 import com.dalbong.cafein.dto.member.MemberInfoDto;
 import com.dalbong.cafein.oAuth.SocialLoginService;
 import com.dalbong.cafein.redis.RedisService;
@@ -17,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,12 +43,11 @@ public class AuthController {
      * 소셜 로그인
      */
     @PostMapping("/auth/social-login")
-    public ResponseEntity<?> oAuthLogin(@RequestHeader("authProvider")AuthProvider authProvider,
-                                        @RequestHeader("oAuthAccessToken") String oAuthAccessToken,
+    public ResponseEntity<?> oAuthLogin(@Validated @RequestBody LoginDto loginDto, BindingResult bindingResult,
                                         HttpServletResponse response) throws JsonProcessingException {
 
         //로그인 진행
-        Member member = socialLoginService.login(authProvider, oAuthAccessToken);
+        Member member = socialLoginService.login(loginDto);
 
         //accessToken, refreshToken 토큰 생성
         String accessToken = jwtUtil.generateAccessToken(member.getMemberId());

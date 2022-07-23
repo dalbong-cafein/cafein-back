@@ -44,14 +44,14 @@ public class KakaoOAuthUserInfo extends OAuthUserInfo {
     }
 
     @Override
-    public LocalDate getBirth() {
+    public Optional<LocalDate> getBirth() {
         String birthday = (String) kakaoAccount.get("birthday");
 
         //TODO 출생연도 데이터 권한 받을 시 수정 필요
         if (birthday == null){
-            birthday = "0231";
+            return Optional.empty();
         }
-        return LocalDate.parse("9999"+birthday, DateTimeFormatter.ofPattern("yyyyMMdd"));
+        return Optional.ofNullable(LocalDate.parse("9999"+birthday, DateTimeFormatter.ofPattern("yyyyMMdd")));
     }
 
     @Override

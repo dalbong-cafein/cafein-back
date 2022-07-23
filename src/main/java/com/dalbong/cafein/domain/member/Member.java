@@ -34,6 +34,8 @@ public class Member extends BaseEntity {
 
     private String naverId;
 
+    private String appleId;
+
     @Column(nullable = false)
     private String email;
 

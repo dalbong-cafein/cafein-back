@@ -1,6 +1,9 @@
 package com.dalbong.cafein.oAuth;
 
 import com.dalbong.cafein.domain.member.MemberState;
+import com.dalbong.cafein.dto.login.LoginDto;
+import com.dalbong.cafein.oAuth.apple.AppleTokenService;
+import com.dalbong.cafein.oAuth.apple.Keys;
 import com.dalbong.cafein.oAuth.userInfo.OAuthUserInfo;
 import com.dalbong.cafein.oAuth.userInfo.OAuthUserInfoFactory;
 import com.dalbong.cafein.domain.image.MemberImage;
@@ -8,36 +11,19 @@ import com.dalbong.cafein.domain.image.MemberImageRepository;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
-import com.dalbong.cafein.dto.login.AccountUniteResDto;
-import com.dalbong.cafein.handler.exception.AlreadyExistedAccountException;
 import com.dalbong.cafein.handler.exception.CustomException;
-import com.dalbong.cafein.util.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigInteger;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.spec.KeySpec;
-import java.security.spec.RSAPublicKeySpec;
 import java.util.*;
 
-import static com.dalbong.cafein.domain.member.AuthProvider.KAKAO;
-import static com.dalbong.cafein.domain.member.AuthProvider.NAVER;
+import static com.dalbong.cafein.domain.member.AuthProvider.*;
 
 @RequiredArgsConstructor
 @Transactional
@@ -48,14 +34,15 @@ public class SocialLoginService {
     private final MemberRepository memberRepository;
     private final MemberImageRepository memberImageRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AppleTokenService appleTokenService;
 
     /**
      * 소셜 로그인
      */
     @Transactional
-    public Member login(AuthProvider authProvider, String oAuthAccessToken) throws JsonProcessingException {
+    public Member login(LoginDto loginDto) throws JsonProcessingException {
 
-        OAuthUserInfo userInfo = getOAuthUserInfo(authProvider, oAuthAccessToken);
+        OAuthUserInfo userInfo = getOAuthUserInfo(loginDto);
 
         //DB : Member 조회 - 탈퇴 회원 제외
         Optional<Member> memberResult = userInfo.getMember();
@@ -68,7 +55,7 @@ public class SocialLoginService {
 
             //해당 email을 사용 중인 계정이 없는 경우
            // if (emailDuplicateResult.isEmpty()){
-                return signUp(authProvider, userInfo);
+                return signUp(loginDto.getAuthProvider(), userInfo);
            // }
             //해당 email을 사용 중인 계정이 있는 경우
            // else{
@@ -83,7 +70,7 @@ public class SocialLoginService {
         else{
             Member findMember = memberResult.get();
 
-            if (findMember.getMainAuthProvider().equals(authProvider)){
+            if (findMember.getMainAuthProvider().equals(loginDto.getAuthProvider())){
 
                 //사용자정보에 변경이 있다면 사용자 정보를 업데이트 해준다.
                 updateMember(findMember, userInfo);
@@ -102,8 +89,8 @@ public class SocialLoginService {
 
 
         //생년월일 변경
-        if(userInfo.getBirth() != null && !member.getBirth().equals(userInfo.getBirth())){
-            member.changeBirth(userInfo.getBirth());
+        if(userInfo.getBirth().isPresent() && !member.getBirth().equals(userInfo.getBirth().get())){
+            member.changeBirth(userInfo.getBirth().get());
         }
 
         //프로필 이미지 변경
@@ -114,7 +101,6 @@ public class SocialLoginService {
 
     private Member signUp(AuthProvider authProvider, OAuthUserInfo userInfo) {
         Member member;
-        MemberImage memberImage;
 
         //랜덤값 비밀번호 생성
         String password = passwordEncoder.encode(UUID.randomUUID().toString());
@@ -125,7 +111,6 @@ public class SocialLoginService {
                         .kakaoId(userInfo.getId())
                         .password(password)
                         .username(userInfo.getName())
-                        .birth(userInfo.getBirth())
                         .mainAuthProvider(KAKAO)
                         .state(MemberState.NORMAL)
                         .build();
@@ -148,7 +133,6 @@ public class SocialLoginService {
                         .password(password)
                         .username(userInfo.getName())
                         .email(userInfo.getEmail())
-                        .birth(userInfo.getBirth())
                         .mainAuthProvider(NAVER)
                         .state(MemberState.NORMAL)
                         .build();
@@ -161,14 +145,38 @@ public class SocialLoginService {
                 memberRepository.save(member);
                 break;
 
+            case APPLE:
+                //username 값 체크
+                if(userInfo.getName() == null || userInfo.getName().isBlank()){
+                    throw new CustomException("애플 계정 회원가입에 실패하였습니다. - username");
+                }
+
+                member = Member.builder()
+                        .naverId(userInfo.getId())
+                        .password(password)
+                        .username(userInfo.getName())
+                        .email(userInfo.getEmail())
+                        .mainAuthProvider(APPLE)
+                        .state(MemberState.NORMAL)
+                        .build();
+
+                memberRepository.save(member);
+                break;
+
             default:
                 throw new IllegalStateException("Unexpected value: " + authProvider);
         }
 
         //프로필 사진 저장
-        memberImage = new MemberImage(member, userInfo.getImageUrl(), true);
+        if(userInfo.getImageUrl() != null){
+            MemberImage memberImage = new MemberImage(member, userInfo.getImageUrl(), true);
+            memberImageRepository.save(memberImage);
+        }
 
-        memberImageRepository.save(memberImage);
+        //생년월일 저장
+        if (userInfo.getBirth().isPresent()){
+            member.changeBirth(userInfo.getBirth().get());
+        }
 
         return member;
     }
@@ -177,17 +185,20 @@ public class SocialLoginService {
     /**
      * OAuthUserInfo 조회
      */
-    private OAuthUserInfo getOAuthUserInfo(AuthProvider authProvider, String oAuthAccessToken) throws JsonProcessingException {
+    private OAuthUserInfo getOAuthUserInfo(LoginDto loginDto) throws JsonProcessingException {
+
+        AuthProvider authProvider = loginDto.getAuthProvider();
+        String authToken = loginDto.getAuthToken();
 
         switch (authProvider){
             case KAKAO:
-                return getKakaoUserInfo(oAuthAccessToken);
+                return getKakaoUserInfo(authToken);
 
             case NAVER:
-                return getNaverUserInfo(oAuthAccessToken);
+                return getNaverUserInfo(authToken);
 
             case APPLE:
-                return getAppleUserInfo(oAuthAccessToken);
+                return getAppleUserInfo(authToken, loginDto.getUsername());
 
             default:
                 throw new CustomException(authProvider + "은 지원하지 않는 소셜 제공자입니다.");
@@ -196,10 +207,10 @@ public class SocialLoginService {
 
 
 
-    private OAuthUserInfo getNaverUserInfo(String oAuthAccessToken) {
+    private OAuthUserInfo getNaverUserInfo(String authToken) {
 
         HttpHeaders header = new HttpHeaders();
-        header.add("Authorization", "Bearer " + oAuthAccessToken);
+        header.add("Authorization", "Bearer " + authToken);
 
         Map<String,Object> attributes = restTemplate.postForObject(
                 "https://openapi.naver.com/v1/nid/me", new HttpEntity<>(header), Map.class);
@@ -207,12 +218,12 @@ public class SocialLoginService {
         return OAuthUserInfoFactory.getOAuth2UserInfo(AuthProvider.NAVER, attributes, memberRepository);
     }
 
-    private OAuthUserInfo getKakaoUserInfo(String oAuthAccessToken){
+    private OAuthUserInfo getKakaoUserInfo(String authToken){
 
         HttpHeaders headers = new HttpHeaders();
 
         headers.add("Content-type","application/x-www-form-urlencoded;charset=utf-8");
-        headers.add("Authorization", "Bearer " + oAuthAccessToken);
+        headers.add("Authorization", "Bearer " + authToken);
 
         Map<String,Object> attributes = restTemplate.postForObject(
                 "https://kapi.kakao.com/v2/user/me", new HttpEntity<>(headers), Map.class);
@@ -220,74 +231,15 @@ public class SocialLoginService {
         return OAuthUserInfoFactory.getOAuth2UserInfo(AuthProvider.KAKAO, attributes, memberRepository);
     }
 
-    private OAuthUserInfo getAppleUserInfo(String oAuthAccessToken) throws JsonProcessingException {
+    private OAuthUserInfo getAppleUserInfo(String authToken, String username) throws JsonProcessingException {
 
         //Http요청하기 - GET 방식으로 -그리고 response 변수의 응답 받음.
         Keys keys = restTemplate.getForObject("https://appleid.apple.com/auth/keys", Keys.class);
 
-        String[] decodeArray = oAuthAccessToken.split("\\.");
+        Map<String, Object> attributes = appleTokenService.verify(authToken, keys);
 
+        attributes.put("username", username);
 
-        String header = new String(Base64.getDecoder().decode(decodeArray[0]));
-        String payload = new String(Base64.getDecoder().decode(decodeArray[1]));
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String,String> headerMap = objectMapper.readValue(header, Map.class);
-        Map<String,Object> map = objectMapper.readValue(payload, Map.class);
-        String email = (String) map.get("email");
-
-
-
-
-        System.out.println(Arrays.toString(decodeArray));
-        System.out.println("------------------");
-        System.out.println(header);
-        System.out.println(payload);
-        System.out.println(email);
-
-        Key findKey = null;
-        if(keys.getKeys() != null){
-            for (Key key : keys.getKeys()){
-                String kid = headerMap.get("kid");
-                if(kid.equals(key.getKid())){
-                    findKey = key;
-                }
-            }
-            System.out.println(findKey);
-        }
-
-        PublicKey publicKey = getPublicKey(findKey);
-        Claims claims = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(oAuthAccessToken).getBody();
-
-        System.out.println(claims.toString());
-
-
-        return null;
-    }
-
-    public PublicKey getPublicKey(Key key) {
-
-        String nStr = key.getN();
-        String eStr = key.getE();
-        System.out.println(nStr);
-        System.out.println(eStr);
-
-        byte[] nBytes = Base64.getUrlDecoder().decode(nStr);
-        byte[] eBytes = Base64.getUrlDecoder().decode(eStr);
-
-        BigInteger n = new BigInteger(1, nBytes);
-        BigInteger e = new BigInteger(1, eBytes);
-
-        try{
-
-            RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(n, e);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            return keyFactory.generatePublic(rsaPublicKeySpec);
-
-
-        }catch (Exception exception) {
-
-        }
-
-        return null;
+        return OAuthUserInfoFactory.getOAuth2UserInfo(APPLE, attributes, memberRepository);
     }
 }
