@@ -13,6 +13,7 @@ public class OAuthUserInfoFactory {
         switch (provider) {
             case KAKAO: return new KakaoOAuthUserInfo(attributes, memberRepository);
             case NAVER: return new NaverOAuthUserInfo(attributes, memberRepository);
+            case APPLE: return new AppleOAuthUserInfo(attributes, memberRepository);
             default: throw new IllegalArgumentException("Invalid Provider Type.");
         }
     }

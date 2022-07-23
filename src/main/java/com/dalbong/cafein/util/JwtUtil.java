@@ -1,20 +1,17 @@
 package com.dalbong.cafein.util;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Component
 @Log4j2
-public class JwtUtil implements InitializingBean {
+public class JwtUtil implements Serializable {
 
     @Value("${app.token.secretKey}")
     private String secretKey;
@@ -35,14 +32,6 @@ public class JwtUtil implements InitializingBean {
 
     public final static String refreshTokenName = "refreshToken";
 
-    private Key key;
-
-    @Override
-    public void afterPropertiesSet() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
-    }
-
     //accountUniteToken 생성
     public String generateAccountUniteToken(String email) {
 
@@ -50,7 +39,7 @@ public class JwtUtil implements InitializingBean {
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(accountUniteTokenExpire).toInstant()))
                 .claim("email", email)
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
@@ -61,7 +50,7 @@ public class JwtUtil implements InitializingBean {
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(accessTokenExpire).toInstant()))
                 .claim("memberId", memberId)
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
@@ -72,17 +61,17 @@ public class JwtUtil implements InitializingBean {
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(refreshTokenExpire).toInstant()))
                 .claim("memberId", memberId)
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
     //accountUniteToken 토큰 검증
     public String validateAndExtractAccountUniteToken(String tokenStr){
         try{
-            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(tokenStr).getBody();
+            Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(tokenStr).getBody();
             String email = claims.get("email", String.class);
             return email;
-        }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+        }catch (MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
             log.info("만료된 JWT 토큰입니다.");
@@ -97,10 +86,10 @@ public class JwtUtil implements InitializingBean {
     //accessToken, refreshToken 토큰 검증
     public Long validateAndExtractLoginToken(String tokenStr){
         try{
-            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(tokenStr).getBody();
+            Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(tokenStr).getBody();
             Long memberId= claims.get("memberId", Long.class);
             return memberId;
-        }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+        }catch (MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
             log.info("만료된 JWT 토큰입니다.");

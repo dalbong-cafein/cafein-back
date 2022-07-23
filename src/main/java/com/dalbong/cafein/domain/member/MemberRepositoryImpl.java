@@ -77,6 +77,21 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
     }
 
     /**
+     * 애플 계정 기존 회원 찾기
+     */
+    @Override
+    public Optional<Member> findByAppleIdAndNotLeave(String appleId) {
+
+        Member findMember = queryFactory.selectFrom(member)
+                .join(member.roleSet)
+                .where(member.appleId.eq(appleId), member.state.ne(MemberState.LEAVE))
+                .fetchOne();
+
+        return findMember != null ? Optional.of(findMember) : Optional.empty();
+    }
+
+
+    /**
      * 닉네임 중복확인
      */
     @Override

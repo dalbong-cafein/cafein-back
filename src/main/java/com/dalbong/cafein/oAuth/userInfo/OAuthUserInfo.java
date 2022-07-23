@@ -27,7 +27,7 @@ public abstract class OAuthUserInfo {
 
     public abstract String getImageUrl();
 
-    public abstract LocalDate getBirth();
+    public abstract Optional<LocalDate> getBirth();
 
     public abstract Optional<GenderType> getGender();
 

@@ -16,6 +16,8 @@ public interface MemberRepositoryQuerydsl {
 
     Optional<Member> findByNaverIdAndNotLeave(String naverId);
 
+    Optional<Member> findByAppleIdAndNotLeave(String appleId);
+
     /**
      * 닉네임 중복확인
      */

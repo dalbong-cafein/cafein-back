@@ -41,12 +41,12 @@ public class NaverOAuthUserInfo extends OAuthUserInfo {
     }
 
     @Override
-    public LocalDate getBirth() {
+    public Optional<LocalDate> getBirth() {
 
         String birthday = (String) response.get("birthday");
         String birthyear = (String) response.get("birthyear");
 
-        return LocalDate.parse(birthyear+"-"+birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return Optional.ofNullable(LocalDate.parse(birthyear+"-"+birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
     @Override
