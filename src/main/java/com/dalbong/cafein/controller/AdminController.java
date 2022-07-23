@@ -134,7 +134,7 @@ public class AdminController {
     public ResponseEntity<?> registerStore(@Validated StoreRegDto storeRegDto, BindingResult bindingResult,
                                       @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        storeService.register(storeRegDto, 7L);
+        storeService.register(storeRegDto, principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1,"관리자단 카페 등록 성공",null), HttpStatus.CREATED);
     }
@@ -236,7 +236,7 @@ public class AdminController {
     public ResponseEntity<?> registerBoard(@Validated AdminBoardRegDto adminBoardRegDto, BindingResult bindingResult,
                                            @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        boardService.register(adminBoardRegDto,7L);
+        boardService.register(adminBoardRegDto,principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "게시글 등록 성공", null), HttpStatus.CREATED);
     }
@@ -350,7 +350,7 @@ public class AdminController {
     @PostMapping("/memos")
     public ResponseEntity<?> registerMemo(@RequestBody AdminMemoRegDto adminMemoRegDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        memoService.register(adminMemoRegDto, 7L);
+        memoService.register(adminMemoRegDto, principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 생성 성공", null), HttpStatus.CREATED);
     }
