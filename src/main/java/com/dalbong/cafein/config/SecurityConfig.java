@@ -52,11 +52,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/members/*","/stores/*","/reviews/*", "/boards/*",
+                .antMatchers("/members/*","/reviews/*", "/boards/*",
                         "/hearts/*", "/stickers/*", "/reports/*", "/congestions/*",
                         "/coupons/*", "/notices/*").authenticated()
                 //.antMatchers("/admin/**/*").access("hasRole('ROLE_ADMIN')")
                 //.antMatchers("/data/*").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("/stores/*").permitAll()
                 .anyRequest().permitAll()
 
                 .and()
