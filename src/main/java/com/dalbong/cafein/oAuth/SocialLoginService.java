@@ -158,7 +158,7 @@ public class SocialLoginService {
                 }
 
                 member = Member.builder()
-                        .naverId(userInfo.getId())
+                        .appleId(userInfo.getId())
                         .password(password)
                         .username(userInfo.getName())
                         .email(userInfo.getEmail())
