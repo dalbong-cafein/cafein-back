@@ -105,7 +105,7 @@ public class AuthController {
      * 닉네임 중복확인
      */
     @GetMapping("/auth/duplicate-nickname")
-    public ResponseEntity<?> CheckDuplicate(@RequestParam("nickname") String nickname){
+    public ResponseEntity<?> checkDuplicate(@RequestParam("nickname") String nickname){
 
         Boolean result = memberService.isDuplicateNickname(nickname);
 
