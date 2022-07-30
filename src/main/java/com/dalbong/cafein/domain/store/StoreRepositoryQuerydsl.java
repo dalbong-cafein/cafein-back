@@ -59,4 +59,9 @@ public interface StoreRepositoryQuerydsl {
      */
     Long getRegisterCountOfToday();
 
+    /**
+     * 웹 - 카페 리스트 조회
+     */
+    List<Store> getStoreListOfWeb(String keyword);
+
 }
