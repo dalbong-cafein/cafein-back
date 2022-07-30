@@ -12,11 +12,11 @@ public class RecommendRegDto {
 
     private Recommendation recommendation;
 
-    public Recommend toEntity(String clientIp){
+    public Recommend toEntity(String sessionId){
 
         return Recommend.builder()
                 .store(Store.builder().storeId(this.storeId).build())
-                .clientIp(clientIp)
+                .sessionId(sessionId)
                 .recommendation(this.recommendation)
                 .build();
 

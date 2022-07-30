@@ -10,6 +10,7 @@ import java.time.LocalTime;
 
 import static com.dalbong.cafein.web.domain.QRecommend.recommend;
 
+
 public class RecommendRepositoryImpl implements RecommendRepositoryQuerydsl{
 
     private final JPAQueryFactory queryFactory;
@@ -23,12 +24,12 @@ public class RecommendRepositoryImpl implements RecommendRepositoryQuerydsl{
      * 해당 IP의 일정 시간내(하루) 추천 데이터 등록 여부 조회
      */
     @Override
-    public boolean existWithinTime(Long storeId, String ip) {
+    public boolean existWithinTime(Long storeId, String sessionId) {
 
         Integer fetchOne = queryFactory.selectOne()
                 .from(recommend)
                 .where(recommend.store.storeId.eq(storeId),
-                        recommend.clientIp.eq(ip),
+                        recommend.sessionId.eq(sessionId),
                         recommend.regDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
                                 LocalDateTime.now()))
                 .fetchOne();

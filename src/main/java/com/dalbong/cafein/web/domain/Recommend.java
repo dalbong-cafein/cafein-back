@@ -23,7 +23,7 @@ public class Recommend extends BaseEntity {
     private Store store;
 
     @Column(nullable = false)
-    private String clientIp;
+    private String sessionId;
 
     @Enumerated(EnumType.STRING)
     private Recommendation recommendation;

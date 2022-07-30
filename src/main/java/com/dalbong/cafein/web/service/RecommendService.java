@@ -16,17 +16,17 @@ public class RecommendService {
     /**
      * 추천 데이터 등록
      */
-    public Recommend recommend(RecommendRegDto recommendRegDto, String clientIp){
+    public Recommend recommend(RecommendRegDto recommendRegDto, String sessionId){
 
         //하루내 등록 여부 체크
-        boolean result = recommendRepository.existWithinTime(recommendRegDto.getStoreId(), clientIp);
+        boolean result = recommendRepository.existWithinTime(recommendRegDto.getStoreId(), sessionId);
 
         if(result){
-            throw new CustomException("한 카페에 추천 데이터 등록은 하루 한번만 가능합니다.");
+            throw new CustomException("한 카페에 추천 데이터 등록은 한번만 가능합니다.");
         }
 
         //추천 데이터 등록
-        return recommendRepository.save(recommendRegDto.toEntity(clientIp));
+        return recommendRepository.save(recommendRegDto.toEntity(sessionId));
     }
 
 }
