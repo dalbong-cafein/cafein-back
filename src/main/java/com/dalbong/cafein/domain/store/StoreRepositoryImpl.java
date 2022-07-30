@@ -59,7 +59,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                                 subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .where(containStoreNameOrAddress(keyword))
+                .where(keywordSearch(keyword))
                 .groupBy(store.storeId)
                 .fetch();
 
@@ -295,7 +295,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
         if(!isEmpty(keyword)){
             //키워드에 구 데이터가 있는 체크
-            for(String sgg : sggList){
+            for(String sgg : sggArr){
                 if(keyword.contains(sgg)){
                     //구에 해당하는 카페 조건 추가
                     return store.address.sggNm.contains(sgg);
@@ -334,7 +334,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
             System.out.println("------");
             System.out.println(replaceWord);
             //키워드에 구 데이터가 있는 체크
-            for(String sgg : sggList){
+            for(String sgg : sggArr){
                 if(replaceWord.contains(sgg)){
                     //구 이름이 있으면 띄어쓰기 전까지 문자 삭제
                     int startIdx = replaceWord.indexOf(sgg);
@@ -366,5 +366,33 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     }
 
-    private final String[] sggList = {"서대문","마포","노원","동대문","종로","강남"};
+    private BooleanBuilder keywordSearch(String keyword){
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (!isEmpty(keyword)){
+
+            if(keyword.contains("투썸 플레이스")){
+                keyword = keyword.replace("투썸 플레이스", "투썸");
+            }else if (keyword.contains("스벅")){
+                keyword = keyword.replace("스벅", "스타벅스");
+            }
+
+            String[] wordArr = keyword.split(" ");
+
+            for(String word : wordArr){
+
+                builder.and(store.storeName.contains(word));
+
+                for (String sgg : sggArr){
+                    if (word.equals(sgg) || word.equals(sgg+"구")){
+                        builder.or(store.address.fullAddress.contains(sgg));
+                        break;
+                    }
+                }
+            }
+        }
+        return builder;
+    }
+
+    private final String[] sggArr = {"서대문","마포","노원","동대문","종로","강남"};
 }
