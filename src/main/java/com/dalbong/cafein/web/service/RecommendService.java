@@ -6,10 +6,12 @@ import com.dalbong.cafein.web.domain.Recommend;
 import com.dalbong.cafein.web.domain.RecommendRepository;
 import com.dalbong.cafein.web.dto.RecommendRegDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
+@Transactional
 @RequiredArgsConstructor
 @RestController
 public class RecommendService {
@@ -19,6 +21,7 @@ public class RecommendService {
     /**
      * 추천 데이터 등록
      */
+    @Transactional
     public Recommend recommend(RecommendRegDto recommendRegDto, String sessionId){
 
         //하루내 등록 여부 체크
@@ -35,6 +38,7 @@ public class RecommendService {
     /**
      * 웹 - 본인의 카페 추천 데이터 조회
      */
+    @Transactional
     public Recommendation getRecommendation(Long storeId, String sessionId){
 
         Optional<Recommend> result = recommendRepository.findByStoreStoreIdAndSessionId(storeId, sessionId);

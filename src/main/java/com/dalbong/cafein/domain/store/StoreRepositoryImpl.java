@@ -256,6 +256,19 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 .fetchOne();
     }
 
+    /**
+     * 웹 - 카페 리스트 조회
+     */
+    @Override
+    public List<Store> getStoreListOfWeb(String keyword) {
+
+        return queryFactory.select(store)
+                .from(store)
+                .leftJoin(store.businessHours).fetchJoin()
+                .where(keywordSearch(keyword))
+                .fetch();
+    }
+
 
     private BooleanBuilder searchKeyword(String[] searchType, String keyword) {
 
