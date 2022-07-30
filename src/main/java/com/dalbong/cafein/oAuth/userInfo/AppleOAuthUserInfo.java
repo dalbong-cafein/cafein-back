@@ -56,6 +56,6 @@ public class AppleOAuthUserInfo extends OAuthUserInfo{
 
     @Override
     public Optional<Member> getMember() {
-        return memberRepository.findByNaverIdAndNotLeave(getId());
+        return memberRepository.findByAppleIdAndNotLeave(getId());
     }
 }

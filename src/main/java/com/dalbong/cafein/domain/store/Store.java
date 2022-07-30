@@ -149,7 +149,6 @@ public class Store extends BaseEntity {
         //현재 요일
         int dayOfWeekNumber = now.getDayOfWeek().getValue();
 
-        System.out.println(dayOfWeekNumber);
         boolean isOpen;
         //요일별
         switch(dayOfWeekNumber){

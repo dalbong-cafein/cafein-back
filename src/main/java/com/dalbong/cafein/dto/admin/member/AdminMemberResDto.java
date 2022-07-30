@@ -50,12 +50,16 @@ public class AdminMemberResDto {
         //소셜타입
         this.socialTypeList = new ArrayList<>();
 
-        if(member.getKakaoId() != null){
+        if(member.getKakaoId() != null && !member.getKakaoId().isBlank()){
             this.socialTypeList.add(AuthProvider.KAKAO);
         }
 
-        if(member.getNaverId() != null){
+        if(member.getNaverId() != null && !member.getNaverId().isBlank()){
             this.socialTypeList.add(AuthProvider.NAVER);
+        }
+
+        if(member.getAppleId() != null && !member.getAppleId().isBlank()){
+            this.socialTypeList.add(AuthProvider.APPLE);
         }
     }
 
