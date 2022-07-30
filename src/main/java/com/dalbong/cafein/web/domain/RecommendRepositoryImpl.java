@@ -29,9 +29,7 @@ public class RecommendRepositoryImpl implements RecommendRepositoryQuerydsl{
         Integer fetchOne = queryFactory.selectOne()
                 .from(recommend)
                 .where(recommend.store.storeId.eq(storeId),
-                        recommend.sessionId.eq(sessionId),
-                        recommend.regDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
-                                LocalDateTime.now()))
+                        recommend.sessionId.eq(sessionId))
                 .fetchOne();
 
         return fetchOne != null;
