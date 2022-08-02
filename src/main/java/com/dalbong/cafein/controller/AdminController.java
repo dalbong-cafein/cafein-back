@@ -6,6 +6,7 @@ import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.admin.RegisterDataCountOfTodayDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
+import com.dalbong.cafein.dto.admin.board.AdminBoardUpdateDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 
 import com.dalbong.cafein.dto.admin.event.AdminEventListResDto;
@@ -239,6 +240,17 @@ public class AdminController {
         boardService.register(adminBoardRegDto, principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "게시글 등록 성공", null), HttpStatus.CREATED);
+    }
+
+    /**
+     * 관리자단 게시글 수정
+     */
+    @PutMapping("/boards/{boardId}")
+    public ResponseEntity<?> modifyBoard(@Validated AdminBoardUpdateDto adminBoardUpdateDto, BindingResult bindingResult) throws IOException {
+
+        boardService.modify(adminBoardUpdateDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "게시글 수정 성공", null), HttpStatus.OK);
     }
 
     /**

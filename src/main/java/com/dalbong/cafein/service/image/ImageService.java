@@ -24,6 +24,8 @@ public interface ImageService {
 
     List<BoardImage> saveBoardImage(Board board, List<MultipartFile> imageFiles) throws IOException;
 
+    BoardImage saveBoardImage(Board board, MultipartFile imageFile) throws IOException;
+
     Image saveEventImage(Event event, MultipartFile imageFile) throws IOException;
 
     void remove(Long imageId);
