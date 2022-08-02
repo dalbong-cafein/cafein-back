@@ -93,8 +93,9 @@ public class ImageServiceImpl implements ImageService{
         return imageList;
     }
 
+
     /**
-     * 게시글 이미지 저장
+     * 게시글 이미지 리스트 저장
      */
     @Transactional
     @Override
@@ -104,7 +105,7 @@ public class ImageServiceImpl implements ImageService{
 
         List<BoardImage> imageList = new ArrayList<>();
 
-        //ReviewImage 저장
+        //boardImage 저장
         if(!imageUrlList.isEmpty()){
             for(String imageUrl : imageUrlList){
                 BoardImage boardImage =
@@ -113,6 +114,19 @@ public class ImageServiceImpl implements ImageService{
             }
         }
         return imageList;
+    }
+
+    /**
+     * 게시글 이미지 저장
+     */
+    @Override
+    public BoardImage saveBoardImage(Board board, MultipartFile imageFile) throws IOException {
+
+        String imageUrl = s3Uploader.s3UploadOfBoard(board, imageFile);
+
+        BoardImage boardImage = new BoardImage(board, imageUrl);
+
+        return boardImageRepository.save(boardImage);
     }
 
     /**

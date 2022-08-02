@@ -6,12 +6,14 @@ import com.dalbong.cafein.domain.event.Event;
 import com.dalbong.cafein.domain.event.EventRepository;
 import com.dalbong.cafein.domain.image.BoardImage;
 import com.dalbong.cafein.domain.image.BoardImageRepository;
+import com.dalbong.cafein.domain.image.Image;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.notice.BoardNoticeRepository;
 import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardResDto;
+import com.dalbong.cafein.dto.admin.board.AdminBoardUpdateDto;
 import com.dalbong.cafein.dto.board.BoardResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
@@ -69,6 +71,32 @@ public class BoardServiceImpl implements BoardService{
         }
 
         return board;
+    }
+
+    /**
+     * 게시글 등록
+     */
+    @Transactional
+    @Override
+    public void modify(AdminBoardUpdateDto adminBoardUpdateDto) throws IOException {
+
+        Board board = boardRepository.findById(adminBoardUpdateDto.getBoardId()).orElseThrow(() ->
+                new CustomException("존재하지 않는 게시글입니다."));
+
+        board.changeTitle(adminBoardUpdateDto.getTitle());
+        board.changeContent(adminBoardUpdateDto.getContent());
+
+        //기존 이미지 삭제
+        if(adminBoardUpdateDto.getDeleteImageId() != null){
+            imageService.remove(adminBoardUpdateDto.getDeleteImageId());
+        }
+
+        //이미지 추가
+        if(adminBoardUpdateDto.getImageFile() != null && !adminBoardUpdateDto.getImageFile().isEmpty()){
+
+            //새로운 이미지 갱신
+            imageService.saveBoardImage(board, adminBoardUpdateDto.getImageFile());
+        }
     }
 
     /**
