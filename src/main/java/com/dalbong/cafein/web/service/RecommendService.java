@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -36,18 +37,49 @@ public class RecommendService {
     }
 
     /**
-     * 웹 - 본인의 카페 추천 데이터 조회
+     * 웹 - 본인이 등록한 카페 추천 데이터 조회
      */
-    @Transactional
-    public Recommendation getRecommendation(Long storeId, String sessionId){
+    @Transactional(readOnly = true)
+    public Optional<Recommendation> getRecommendation(Long storeId, String sessionId){
 
-        Optional<Recommend> result = recommendRepository.findByStoreStoreIdAndSessionId(storeId, sessionId);
+        Recommend recommend = recommendRepository.findByStoreStoreIdAndSessionId(storeId, sessionId);
 
-        if(result.isPresent()){
-            return result.get().getRecommendation();
+        if(recommend != null){
+            return Optional.of(recommend.getRecommendation());
         }else{
-            throw new CustomException("등록한 데이터가 존재하지 않습니다.");
+            return Optional.empty();
         }
+    }
+
+    /**
+     * 웹 - 카페 추천율 조회
+     */
+    @Transactional(readOnly = true)
+    public Double getRecommendPercent(Long storeId){
+
+        List<Recommend> recommendList = recommendRepository.findByStoreId(storeId);
+
+        return getRecommendPercent(recommendList);
+    }
+
+    private Double getRecommendPercent(List<Recommend> recommendList) {
+
+        int totalSize = recommendList.size();
+
+        //추천 데이터가 없을 경우
+        if (totalSize == 0){
+            return null;
+        }
+
+        double recommendCnt = 0;
+
+        for(Recommend recommend : recommendList){
+            if(recommend.getRecommendation().equals(Recommendation.GOOD)){
+                recommendCnt += 1;
+            }
+        }
+
+        return (recommendCnt / totalSize) * 100;
     }
 
 }
