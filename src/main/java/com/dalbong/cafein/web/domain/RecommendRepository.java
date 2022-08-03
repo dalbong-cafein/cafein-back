@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface RecommendRepository extends JpaRepository<Recommend, Long>, RecommendRepositoryQuerydsl {
 
-    Optional<Recommend> findByStoreStoreIdAndSessionId(Long storeId, String sessionId);
+    Recommend findByStoreStoreIdAndSessionId(Long storeId, String sessionId);
 
     @Query("select rec from Recommend rec where rec.store.storeId =:storeId")
     List<Recommend> findByStoreId(@Param("storeId") Long storeId);

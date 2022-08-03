@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -43,9 +44,18 @@ public class RecommendController {
         Double recommendPercentOfStore = recommendService.getRecommendPercent(storeId);
 
         //본인이 등록한 추천 데이터
-        Recommendation recommendation = recommendService.getRecommendation(storeId, httpSession.getId());
+        Optional<Recommendation> result = recommendService.getRecommendation(storeId, httpSession.getId());
 
-        RecommendResDto recommendResDto = new RecommendResDto(recommendPercentOfStore, recommendation);
+        RecommendResDto recommendResDto;
+
+        //추천 데이터를 등록한 경우
+        if(result.isPresent()){
+            recommendResDto = new RecommendResDto(recommendPercentOfStore, result.get());
+        }
+        //추천 데이터를 등록하지 않은 경우
+        else {
+            recommendResDto = new RecommendResDto(recommendPercentOfStore, null);
+        }
 
         return new ResponseEntity<>(new CMRespDto<>(1, "카페별 추천 관련 데이터 조회 성공", recommendResDto), HttpStatus.OK);
     }

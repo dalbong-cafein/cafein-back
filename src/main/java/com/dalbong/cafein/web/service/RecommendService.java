@@ -37,17 +37,17 @@ public class RecommendService {
     }
 
     /**
-     * 웹 - 본인의 카페 추천 데이터 조회
+     * 웹 - 본인이 등록한 카페 추천 데이터 조회
      */
     @Transactional(readOnly = true)
-    public Recommendation getRecommendation(Long storeId, String sessionId){
+    public Optional<Recommendation> getRecommendation(Long storeId, String sessionId){
 
-        Optional<Recommend> result = recommendRepository.findByStoreStoreIdAndSessionId(storeId, sessionId);
+        Recommend recommend = recommendRepository.findByStoreStoreIdAndSessionId(storeId, sessionId);
 
-        if(result.isPresent()){
-            return result.get().getRecommendation();
+        if(recommend != null){
+            return Optional.of(recommend.getRecommendation());
         }else{
-            throw new CustomException("등록한 데이터가 존재하지 않습니다.");
+            return Optional.empty();
         }
     }
 
