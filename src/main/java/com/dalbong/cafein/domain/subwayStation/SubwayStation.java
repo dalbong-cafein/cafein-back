@@ -13,7 +13,7 @@ import javax.persistence.*;
         uniqueConstraints = {
                 @UniqueConstraint(
                         name="subwayStation_uk",
-                        columnNames={"stationName", "route"}
+                        columnNames={"station_name", "route"}
                 )
         }
 )
@@ -23,7 +23,7 @@ public class SubwayStation {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long subwayStationId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "station_name")
     private String stationName;
 
     @Column(nullable = false)
@@ -35,12 +35,20 @@ public class SubwayStation {
     @Column(nullable = false)
     private Double latY;
 
+    @Column(unique = true)
     private Integer stationId;
+
+    private String sggNm;
 
     @Builder.Default
     private Boolean isUse = false;
 
+    public void use(){
+        this.isUse = true;
+    }
 
-
+    public void changeSggNm(String sgg){
+        this.sggNm = sgg;
+    }
 
 }

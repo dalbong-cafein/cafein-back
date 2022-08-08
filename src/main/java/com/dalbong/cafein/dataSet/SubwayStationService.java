@@ -4,9 +4,11 @@ import com.dalbong.cafein.domain.subwayStation.SubwayStation;
 import com.dalbong.cafein.domain.subwayStation.SubwayStationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class SubwayStationService {
@@ -16,6 +18,7 @@ public class SubwayStationService {
     /**
      * 지하철역 데이터 저장
      */
+    @Transactional
     public void save(List<SubwayStationDto> subwayStationDtoList){
 
         for(SubwayStationDto subwayStationDto : subwayStationDtoList){

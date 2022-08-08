@@ -215,4 +215,12 @@ public class DataSetController {
 
         return "지하철역 데이터 저장 성공";
     }
+
+    @PatchMapping("/data/subwayStations/isUse")
+    public String modifyIsUser() throws JsonProcessingException {
+
+        naverCloudService.modifyStationIsUse();
+
+        return "지하철역 데이터 사용여부 수정 성공";
+    }
 }
