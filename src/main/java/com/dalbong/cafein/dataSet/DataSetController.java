@@ -223,4 +223,12 @@ public class DataSetController {
 
         return "지하철역 데이터 사용여부 수정 성공";
     }
+
+    @PostMapping("/data/nearStoreToSubwayStations")
+    public String saveDistance(){
+
+        subwayStationService.saveNearStoreToSubwayStation();
+
+        return "역과 가까운 카페 데이터 저장 성공";
+    }
 }
