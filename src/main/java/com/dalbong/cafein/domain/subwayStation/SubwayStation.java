@@ -1,23 +1,29 @@
 package com.dalbong.cafein.domain.subwayStation;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @ToString
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name="subwayStation_uk",
+                        columnNames={"stationName", "route"}
+                )
+        }
+)
 @Entity
 public class SubwayStation {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long subwayStationId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String stationName;
 
     @Column(nullable = false)
@@ -29,7 +35,10 @@ public class SubwayStation {
     @Column(nullable = false)
     private Double latY;
 
+    private Integer stationId;
 
+    @Builder.Default
+    private Boolean isUse = false;
 
 
 

@@ -30,6 +30,7 @@ public class DataSetController {
     private final RestTemplate rt;
     private final NaverCloudService naverCloudService;
     private final StoreRepository storeRepository;
+    private final SubwayStationService subwayStationService;
 
     @Value("${dataSet.naver.clientId}")
     private String clientId;
@@ -205,5 +206,13 @@ public class DataSetController {
         naverCloudService.saveLatAndLng();
 
         return "위도 경도 저장 성공";
+    }
+
+    @PostMapping("/data/subwayStations")
+    public String saveSubwayStation(@RequestBody SubwayStationRegDto subwayStationRegDto){
+
+        subwayStationService.save(subwayStationRegDto.getData());
+
+        return "지하철역 데이터 저장 성공";
     }
 }
