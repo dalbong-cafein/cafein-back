@@ -201,7 +201,7 @@ public class StoreServiceImpl implements StoreService{
      */
     @Transactional(readOnly = true)
     @Override
-    public List<StoreResDto> getStoreList(String keyword) {
+    public List<StoreResDto> getStoreList(String keyword, Long principal) {
 
         List<Object[]> results = storeRepository.getStoreList(keyword);
 
@@ -227,7 +227,7 @@ public class StoreServiceImpl implements StoreService{
                  }
             }
 
-            return new StoreResDto(store, recommendPercent, businessHoursInfoDto, imageDtoList, (int) arr[1], (Double) arr[2]);
+            return new StoreResDto(store, recommendPercent, businessHoursInfoDto, imageDtoList, (int) arr[1], (Double) arr[2], principal);
         }).collect(Collectors.toList());
     }
 

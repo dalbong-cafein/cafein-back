@@ -28,12 +28,14 @@ public class StoreResDto {
 
     private long heartCnt;
 
+    private Boolean isHeart;
+
     private double congestionScoreAvg;
 
     private List<ImageDto> storeImageDtoList;
 
     public StoreResDto(Store store, Double recommendPercent, BusinessHoursInfoDto businessHoursInfoDto,
-                       List<ImageDto> storeImageDtoList, long heartCnt, Double congestionScoreAvg ){
+                       List<ImageDto> storeImageDtoList, long heartCnt, Double congestionScoreAvg, Long principalId){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
@@ -42,6 +44,7 @@ public class StoreResDto {
         this.lngX = store.getLngX();
         this.latY = store.getLatY();
         this.heartCnt = heartCnt;
+        this.isHeart = store.getHeartList().stream().anyMatch(h -> h.getMember().getMemberId().equals(principalId) ? true : false);
         this.congestionScoreAvg = congestionScoreAvg != null ? congestionScoreAvg : 99;
         this.storeImageDtoList = storeImageDtoList;
     }
