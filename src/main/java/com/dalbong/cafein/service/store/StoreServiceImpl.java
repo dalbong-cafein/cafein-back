@@ -27,6 +27,7 @@ import com.dalbong.cafein.dto.store.*;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.congestion.CongestionService;
 import com.dalbong.cafein.service.image.ImageService;
+import com.dalbong.cafein.service.nearStoreToSubwayStation.NearStoreToSubWayStationService;
 import com.dalbong.cafein.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -59,6 +60,7 @@ public class StoreServiceImpl implements StoreService{
     private final StoreStickerRepository storeStickerRepository;
     private final CongestionService congestionService;
     private final CongestionRepository congestionRepository;
+    private final NearStoreToSubWayStationService nearStoreToSubWayStationService;
 
 
     /**
@@ -90,6 +92,9 @@ public class StoreServiceImpl implements StoreService{
 
         //리뷰 자동 등록
         reviewService.register(storeRegDto.toReviewRegDto(store.getStoreId()), principalId);
+
+        //가까운 역 데이터 저장
+        nearStoreToSubWayStationService.save(store);
 
         return store;
     }
@@ -179,7 +184,7 @@ public class StoreServiceImpl implements StoreService{
             imageService.remove(storeImage.getImageId());
         }
 
-        //store 삭제 (Cascade.Remove - Heart, businessHours)
+        //store 삭제 (Cascade.Remove - Heart, businessHours, nearStoreToSubwayStation)
         storeRepository.deleteById(storeId);
     }
 

@@ -2,6 +2,8 @@ package com.dalbong.cafein.dataSet;
 
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.domain.subwayStation.SubwayStation;
+import com.dalbong.cafein.domain.subwayStation.SubwayStationRepository;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +33,7 @@ public class NaverCloudService {
 
     private final ObjectMapper objectMapper;
     private final StoreRepository storeRepository;
+    private final SubwayStationRepository subwayStationRepository;
 
     @Transactional
     public void saveLatAndLng() throws JsonProcessingException {
@@ -46,9 +49,63 @@ public class NaverCloudService {
                 store.changeLatAndLng(naverCloudDto.getX(), naverCloudDto.getY());
             }
         }
+    }
+
+    private final String[] sggArr = {"서대문구","마포구","노원구","동대문구","종로구","강남구"};
+
+    @Transactional
+    public void modifyStationIsUse() throws JsonProcessingException {
+
+        List<SubwayStation> subwayStationList = subwayStationRepository.findAll();
+
+        for(SubwayStation subwayStation : subwayStationList){
+            String sggOfStation = getSgg(subwayStation);
+
+            subwayStation.changeSggNm(sggOfStation);
+
+            for (String sgg : sggArr){
+                if(sgg.equals(sggOfStation)){
+                    subwayStation.use();
+                    break;
+                }
+            }
+
+        }
+
+    }
+
+    private String getSgg(SubwayStation subwayStation) throws JsonProcessingException {
+
+        RestTemplate rt = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.add("X-NCP-APIGW-API-KEY-ID",cloudClientId);
+        headers.add("X-NCP-APIGW-API-KEY",cloudSecretId);
+
+        //HttpHeader와 HttpBody를 하나의 오브젝트에 담기
+        HttpEntity<MultiValueMap<String,String>> naverSearchRequest =
+                new HttpEntity<>(null, headers);
 
 
+        //Http요청하기 - get방식으로 -그리고 response 변수의 응답 받음.
+        ResponseEntity<String> response = rt.exchange(
+                "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords="+subwayStation.getLngX()+","+ subwayStation.getLatY()+
+                        "&sourcecrs=epsg:4326&orders=legalcode,admcode&output=json",
+                HttpMethod.GET,
+                naverSearchRequest,
+                String.class
+        );
 
+        Map<String,Object> searchData = objectMapper.readValue(response.getBody(),Map.class);
+
+        List<Map<String, Object>> results = (List<Map<String, Object>>) searchData.get("results");
+
+        Map<String, Object> region = (Map<String, Object>) results.get(0).get("region");
+
+        Map<String,Object> area2 = (Map<String,Object>)region.get("area2");
+
+        return (String) area2.get("name");
     }
 
     @Transactional

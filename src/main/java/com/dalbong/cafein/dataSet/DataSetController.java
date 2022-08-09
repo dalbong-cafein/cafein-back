@@ -30,6 +30,7 @@ public class DataSetController {
     private final RestTemplate rt;
     private final NaverCloudService naverCloudService;
     private final StoreRepository storeRepository;
+    private final SubwayStationService subwayStationService;
 
     @Value("${dataSet.naver.clientId}")
     private String clientId;
@@ -209,11 +210,27 @@ public class DataSetController {
         return "위도 경도 저장 성공";
     }
 
-    @PatchMapping("/data/naver-cloud-xy/find-store-name")
-    public String findLatAndLngByStoreName(@RequestParam("keyword") String storeName) throws JsonProcessingException {
+    @PostMapping("/data/subwayStations")
+    public String saveSubwayStation(@RequestBody SubwayStationRegDto subwayStationRegDto){
 
-        naverCloudService.saveLatAndLngSearch(storeName);
+        subwayStationService.save(subwayStationRegDto.getData());
 
-        return "위도 경도 저장 성공";
+        return "지하철역 데이터 저장 성공";
+    }
+
+    @PatchMapping("/data/subwayStations/isUse")
+    public String modifyIsUser() throws JsonProcessingException {
+
+        naverCloudService.modifyStationIsUse();
+
+        return "지하철역 데이터 사용여부 수정 성공";
+    }
+
+    @PostMapping("/data/nearStoreToSubwayStations")
+    public String saveDistance(){
+
+        subwayStationService.saveNearStoreToSubwayStation();
+
+        return "역과 가까운 카페 데이터 저장 성공";
     }
 }
