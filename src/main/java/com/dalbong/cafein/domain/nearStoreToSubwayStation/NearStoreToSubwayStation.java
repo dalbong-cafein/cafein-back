@@ -36,6 +36,11 @@ public class NearStoreToSubwayStation {
     @Column(nullable = false)
     private Double distance;
 
+    //연관관계 메서드
+    public void setStore(Store store){
+        this.store = store;
+        store.getNearStoreToSubwayStationArrayList().add(this);
+    }
 
 
 }
