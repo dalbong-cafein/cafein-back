@@ -179,7 +179,7 @@ public class StoreServiceImpl implements StoreService{
             imageService.remove(storeImage.getImageId());
         }
 
-        //store 삭제 (Cascade.Remove - Heart, businessHours)
+        //store 삭제 (Cascade.Remove - Heart, businessHours, nearStoreToSubwayStation)
         storeRepository.deleteById(storeId);
     }
 

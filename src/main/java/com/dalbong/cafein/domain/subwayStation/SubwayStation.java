@@ -1,5 +1,6 @@
 package com.dalbong.cafein.domain.subwayStation;
 
+import com.dalbong.cafein.domain.store.Store;
 import lombok.*;
 
 import javax.persistence.*;
@@ -50,5 +51,4 @@ public class SubwayStation {
     public void changeSggNm(String sgg){
         this.sggNm = sgg;
     }
-
 }

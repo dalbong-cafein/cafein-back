@@ -6,6 +6,7 @@ import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.heart.Heart;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.nearStoreToSubwayStation.NearStoreToSubwayStation;
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
 import lombok.*;
@@ -72,6 +73,10 @@ public class Store extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "store",fetch = FetchType.LAZY)
     private List<StoreImage> storeImageList = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "store",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<NearStoreToSubwayStation> nearStoreToSubwayStationArrayList = new ArrayList<>();
 
     public void changeStoreName(String storeName){
         this.storeName = storeName;
