@@ -26,9 +26,20 @@ public class StoreController {
      * 카페 리스트 조회
      */
     @GetMapping("/stores")
-    public ResponseEntity<?> getStoreList(@RequestParam(value = "keyword", required = false) String keyword){
+    public ResponseEntity<?> getStoreList(@RequestParam(value = "keyword", required = false) String keyword,
+                                          @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        List<StoreResDto> storeResDtoList = storeService.getStoreList(keyword);
+        List<StoreResDto> storeResDtoList;
+
+        //비로그인 상태
+        if(principalDetails == null){
+            storeResDtoList = storeService.getStoreList(keyword, null);
+        }
+        //로그인 상태
+        else{
+            storeResDtoList = storeService.getStoreList(keyword, principalDetails.getMember().getMemberId());
+        }
+
 
         return new ResponseEntity<>(new CMRespDto<>(1, "카페 리스트 조회 성공", storeResDtoList), HttpStatus.OK);
     }
