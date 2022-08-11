@@ -14,6 +14,7 @@ import com.dalbong.cafein.domain.sticker.StoreSticker;
 import com.dalbong.cafein.domain.sticker.StoreStickerRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.domain.store.dto.NearStoreDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminMyStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
@@ -29,6 +30,7 @@ import com.dalbong.cafein.service.congestion.CongestionService;
 import com.dalbong.cafein.service.image.ImageService;
 import com.dalbong.cafein.service.nearStoreToSubwayStation.NearStoreToSubWayStationService;
 import com.dalbong.cafein.service.review.ReviewService;
+import com.dalbong.cafein.util.DistanceUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -330,6 +332,48 @@ public class StoreServiceImpl implements StoreService{
         }).collect(Collectors.toList());
 
         return new StoreListResDto<>(results.size(), myRegisterStoreResDtoList);
+    }
+
+    /**
+     * 근처 카공 카페 리스트 조회 - 조회중인 카페 기준
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<NearStoreResDto> getNearStoreList(Long storeId, Long principalId) {
+
+        Store findStore = storeRepository.findById(storeId).orElseThrow(() ->
+                new CustomException("존재하지 않는 카페입니다."));
+
+        List<NearStoreDto> nearStoreDtoList = storeRepository.recommendNearStore(storeId, findStore.getLatY(), findStore.getLngX());
+
+//        nearStoreDtoList.stream().map(nearStoreDto -> {
+//
+//            //리뷰 추천율
+//            Double recommendPercent = store.getRecommendPercent();
+//
+//            //카페 영업시간 데이터
+//            Map<String, Object> businessInfoMap = store.getBusinessInfo();
+//            BusinessHoursInfoDto businessHoursInfoDto = new BusinessHoursInfoDto(businessInfoMap);
+//
+//            //최대 이미지 4개 불러오기
+//            List<ImageDto> storeImageDtoList = new ArrayList<>();
+//            if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
+//                int count = 0;
+//                for(Image storeImage : store.getStoreImageList()){
+//                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+//                    count += 1;
+//                    if(count >= 4) break;
+//                }
+//            }
+//
+//            double distance = DistanceUtil.calculateDistance(store.getLatY(), store.getLngX(), findStore.getLatY(), findStore.getLngX(), "meter");
+//
+//            new NearStoreResDto(store, recommendPercent, businessHoursInfoDto, storeImageDtoList, distance, principalId);
+//        })
+
+
+
+        return null;
     }
 
     /**
