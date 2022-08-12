@@ -9,6 +9,7 @@ import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.nearStoreToSubwayStation.NearStoreToSubwayStation;
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.domain.store.dto.NearStoreDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,6 +20,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+@NamedNativeQuery(name = "recommendNearStore",
+        query = "select *, (6371*acos(cos(radians(:latY))*cos(radians(s.latY))*cos(radians(s.lngX) " +
+                "-radians(:lngX))+sin(radians(:latY))*sin(radians(s.latY)))) AS distance " +
+                "from store s " +
+                "where s.store_id <> :storeId " +
+                "having distance < 0.5 " +
+                "order by distance",
+        resultSetMapping = "recommendNearStore")
+@SqlResultSetMapping(
+        name = "recommendNearStore",
+        classes = {@ConstructorResult(
+                targetClass = NearStoreDto.class,
+                columns = {
+                        @ColumnResult(name = "store", type = Store.class),
+                        @ColumnResult(name="distance", type = Double.class)})}
+       )
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

@@ -12,6 +12,6 @@ public class NearStoreDto {
 
     private Store store;
 
- //   private Integer distance;
+    private Double distance;
 
 }

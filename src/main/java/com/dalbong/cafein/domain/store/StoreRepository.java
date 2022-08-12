@@ -21,7 +21,7 @@ public interface StoreRepository extends JpaRepository<Store, Long>, StoreReposi
     List<Store> findByAddress_SggNm(String sggNm);
 
 
-    @Query(value = "select *, (6371*acos(cos(radians(:latY))*cos(radians(s.latY))*cos(radians(s.lngX) " +
+    @Query(value = "select * , (6371*acos(cos(radians(:latY))*cos(radians(s.latY))*cos(radians(s.lngX) " +
             "-radians(:lngX))+sin(radians(:latY))*sin(radians(s.latY)))) AS distance " +
             "from store s " +
             "where s.store_id <> :storeId " +

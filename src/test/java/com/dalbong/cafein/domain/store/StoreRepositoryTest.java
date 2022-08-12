@@ -27,8 +27,8 @@ class StoreRepositoryTest {
 
         //then
         System.out.println(nearStoreDtoList.size());
-        for (NearStoreDto nearStoreDto : nearStoreDtoList){
-            System.out.println(nearStoreDto);
+        for (NearStoreDto store : nearStoreDtoList){
+            System.out.println(store);
         }
     }
 
