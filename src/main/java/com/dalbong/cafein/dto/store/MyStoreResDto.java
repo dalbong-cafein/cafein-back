@@ -22,7 +22,7 @@ public class MyStoreResDto {
 
     private double latY;
 
-    private double congestionScoreAvg;
+    private Double congestionScoreAvg;
 
     private ImageDto storeImageDto;
 
@@ -33,7 +33,7 @@ public class MyStoreResDto {
         this.businessHoursInfoDto = businessHoursInfoDto;
         this.lngX = store.getLngX();
         this.latY = store.getLatY();
-        this.congestionScoreAvg = congestionScoreAvg != null ? congestionScoreAvg : 99;
+        this.congestionScoreAvg = congestionScoreAvg;
         this.storeImageDto = storeImageDto;
     }
 }
