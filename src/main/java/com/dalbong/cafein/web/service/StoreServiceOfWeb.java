@@ -40,7 +40,7 @@ public class StoreServiceOfWeb {
 
         return storeList.stream().map(store -> {
 
-            List<Recommend> recommendList = recommendRepository.findByStoreId(store.getStoreId());
+            List<Recommend> recommendList = store.getRecommendList();
 
             //카페 추천율
             Double recommendPercent = getRecommendPercent(recommendList);

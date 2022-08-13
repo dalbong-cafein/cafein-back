@@ -27,4 +27,10 @@ public class Recommend extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Recommendation recommendation;
+
+    //연관관계 메서드
+    public void setStore(Store store){
+        this.store = store;
+        store.getRecommendList().add(this);
+    }
 }
