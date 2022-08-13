@@ -10,6 +10,7 @@ import com.dalbong.cafein.domain.nearStoreToSubwayStation.NearStoreToSubwayStati
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.store.dto.NearStoreDto;
+import com.dalbong.cafein.web.domain.Recommend;
 import lombok.*;
 
 import javax.persistence.*;
@@ -95,6 +96,10 @@ public class Store extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "store",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<NearStoreToSubwayStation> nearStoreToSubwayStationArrayList = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Recommend> recommendList = new ArrayList<>();
 
     public void changeStoreName(String storeName){
         this.storeName = storeName;
