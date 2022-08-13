@@ -50,7 +50,7 @@ public class NaverCloudService {
         }
     }
 
-    private final String[] sggArr = {"서대문구","마포구","노원구","동대문구","종로구","강남구"};
+    private final String[] sggArr = {"서대문구","마포구","성북구","동대문구","종로구","강남구"};
 
     @Transactional
     public void modifyStationIsUse() throws JsonProcessingException {

@@ -87,6 +87,67 @@ public class DataSetController {
         return new ResponseEntity<>(new CMRespDto<>(1, "저장된 카페 리스트",saveStoreResDtoList), HttpStatus.OK);
     }
 
+    @PostMapping("/data/naver-mapping")
+    public ResponseEntity<?> naverMapping(@AuthenticationPrincipal PrincipalDetails principalDetails) throws JsonProcessingException {
+
+        //POST 방식으로 key=value 데이터를 요청
+        RestTemplate rt = new RestTemplate();
+
+        //HttpHeader 오브젝트 생성 (엔티티) - 헤더, 바디
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.add("X-Naver-Client-Id",clientId);
+        headers.add("X-Naver-Client-Secret",secretId);
+
+        //HttpHeader와 HttpBody를 하나의 오브젝트에 담기
+        HttpEntity<MultiValueMap<String,String>> naverSearchRequest =
+                new HttpEntity<>(null, headers);
+
+
+        String[] aList = {"스타벅스", "투썸플레이스", "할리스", "이디야 커피", "탐앤탐스",
+                "커피빈", "빽다방", "메가커피", "더벤티", "컴포즈커피", "매머드", "요거프레소",
+                "엔젤리너스", "커피니", "카페", "커피"};
+
+        String[] bList = {"서대문구","마포구","성북구","동대문구","종로구","강남구"};
+
+        List<SaveStoreResDto> saveStoreResDtoList = new ArrayList<>();
+
+        for (String a : aList){
+            for(String b : bList){
+
+                String keyword = a + " " + b;
+
+                //Http요청하기 - Post방식으로 -그리고 response 변수의 응답 받음.
+                ResponseEntity<String> response = rt.exchange(
+                        "https://openapi.naver.com/v1/search/local.json?query=" + keyword +"&display=20",
+                        HttpMethod.GET,
+                        naverSearchRequest,
+                        String.class
+                );
+
+                System.out.println(response.getStatusCode());
+                System.out.println(response.getBody());
+
+                Map<String,Object> searchData = objectMapper.readValue(response.getBody(),Map.class);
+
+                System.out.println("========================");
+                System.out.println(searchData);
+
+
+                List<Store> saveStoreList = naverSearchService.createStore(searchData, principalDetails.getMember().getMemberId());
+
+
+                if(saveStoreList != null){
+                    for (Store store : saveStoreList){
+                        saveStoreResDtoList.add(new SaveStoreResDto(store.getStoreName()));
+                    }
+                }
+            }
+        }
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "저장된 카페 리스트",saveStoreResDtoList), HttpStatus.OK);
+    }
+
     @GetMapping("/data/google-search")
     public String googleSearch(@RequestParam("keyword") String keyword) throws IOException {
 

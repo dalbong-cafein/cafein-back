@@ -71,7 +71,7 @@ public class NaverSearchService {
         }
 
 
-        String[] pattern = {"서대문구","마포구","노원구","동대문구","종로구","강남구"};
+        String[] pattern = {"서대문구","마포구","성북구","동대문구","종로구","강남구"};
         String[] ignorePattern = {"*배스킨라빈스*"};
         List<NaverStoreDto> newNaverStoreDtoList = new ArrayList<>();
         for (NaverStoreDto dto : naverStoreDtoList){
