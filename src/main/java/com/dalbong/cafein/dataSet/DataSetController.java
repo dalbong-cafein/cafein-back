@@ -88,7 +88,7 @@ public class DataSetController {
     }
 
     @PostMapping("/data/naver-mapping")
-    public ResponseEntity<?> naverMapping(@AuthenticationPrincipal PrincipalDetails principalDetails) throws JsonProcessingException {
+    public ResponseEntity<?> naverMapping(@AuthenticationPrincipal PrincipalDetails principalDetails) throws JsonProcessingException, InterruptedException {
 
         //POST 방식으로 key=value 데이터를 요청
         RestTemplate rt = new RestTemplate();
@@ -103,19 +103,35 @@ public class DataSetController {
         HttpEntity<MultiValueMap<String,String>> naverSearchRequest =
                 new HttpEntity<>(null, headers);
 
+        List<Store> storeList = storeRepository.findAll();
+        String[] aList = {"스벅", "투썸", "이디야", "탐탐" ,"컴포즈"};
 
-        String[] aList = {"스타벅스", "투썸플레이스", "할리스", "이디야 커피", "탐앤탐스",
-                "커피빈", "빽다방", "메가커피", "더벤티", "컴포즈커피", "매머드", "요거프레소",
-                "엔젤리너스", "커피니", "카페", "커피"};
-
-        String[] bList = {"서대문구","마포구","성북구","동대문구","종로구","강남구"};
+        String[] bList = {
+                "공덕동","아현동", "도화동", "용강동", "대흥동",
+                "염리동", "신수동", "서강동", "서교동", "합정동", "망원1동", "망원2동", "연남동", "성산1동",
+                "성단2동", "상암동", "충현동", "천연동", "북아현동", "신촌동", "연희동", "홍제 1동", "홍제 2동", "홍제 3동", "홍은 1동",
+                "홍은 2동", "남가좌 1동", "남가좌 2동", "북가좌 1동", "북가좌 2동", "용신동", "제기동", "전농제1동",
+                "전농제2동", "답십리제1동", "답십리제2동", "장안제1동", "장안제2동", "청량리동",
+                "회기동", "휘경제1동", "휘경제2동", "이문제1동", "이문제2동", "성북동", "삼선동", "동선동", "돈암 1동",
+                "돈암 2동", "안암동", "보문동", "정릉 1동", "정릉 2동", "정릉 3동", "정릉 4동", "종암동",
+                "길음 1동", "길음 2동", "월곡 1동", "월곡 2동", "장위 1동", "장위 2동", "장위 3동",
+                "석관동", "청운효자동", "사직동", "삼청동", "부암동", "평창동", "무악동", "교남동","가회동",
+                "종로1가동", "종로2가동", "종로3가동", "종로4가동", "종로5가동", "종로5가동", "이화동",
+                "혜화동", "창신1동", "창신2동", "창신3동", "숭인1동", "숭인2동", "신사동", "압구정동",
+                "논현 1동", "논현 2동", "청담동", "삼성 1동", "삼성 2동", "대치 1동", "대치 2동", "대치 4동",
+                "역삼 1동", "역삼 2동", "도곡 1동", "도곡 2동", "개포 1동", "개포 2동", "개포 4동", "일원본동",
+                "일원 1동", "일원 2동", "수서동", "세곡동"
+        };
 
         List<SaveStoreResDto> saveStoreResDtoList = new ArrayList<>();
 
-        for (String a : aList){
+        for (Store findStore : storeList){
             for(String b : bList){
 
-                String keyword = a + " " + b;
+                String keyword = findStore.getStoreName() + " " + b;
+                System.out.println("--------------");
+                System.out.println(keyword);
+                Thread.sleep(50);
 
                 //Http요청하기 - Post방식으로 -그리고 response 변수의 응답 받음.
                 ResponseEntity<String> response = rt.exchange(
@@ -132,7 +148,6 @@ public class DataSetController {
 
                 System.out.println("========================");
                 System.out.println(searchData);
-
 
                 List<Store> saveStoreList = naverSearchService.createStore(searchData, principalDetails.getMember().getMemberId());
 

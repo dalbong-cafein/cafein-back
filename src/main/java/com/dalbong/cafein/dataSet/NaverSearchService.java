@@ -75,10 +75,13 @@ public class NaverSearchService {
         String[] ignorePattern = {"*배스킨라빈스*"};
         List<NaverStoreDto> newNaverStoreDtoList = new ArrayList<>();
         for (NaverStoreDto dto : naverStoreDtoList){
-            if(PatternMatchUtils.simpleMatch(pattern,dto.getAddress().getSggNm())
-                    && !PatternMatchUtils.simpleMatch(ignorePattern, dto.getStoreName())){
-                newNaverStoreDtoList.add(dto);
+            if(dto.getAddress() != null){
+                if(PatternMatchUtils.simpleMatch(pattern,dto.getAddress().getSggNm())
+                        && !PatternMatchUtils.simpleMatch(ignorePattern, dto.getStoreName())){
+                    newNaverStoreDtoList.add(dto);
+                }
             }
+
         }
 
         System.out.println("생성된 naverStoreDtoList 출력--------------------");
