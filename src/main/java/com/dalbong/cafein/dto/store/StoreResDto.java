@@ -30,7 +30,7 @@ public class StoreResDto {
 
     private Boolean isHeart;
 
-    private double congestionScoreAvg;
+    private Double congestionScoreAvg;
 
     private List<ImageDto> storeImageDtoList;
 
@@ -45,7 +45,7 @@ public class StoreResDto {
         this.latY = store.getLatY();
         this.heartCnt = heartCnt;
         this.isHeart = store.getHeartList().stream().anyMatch(h -> h.getMember().getMemberId().equals(principalId) ? true : false);
-        this.congestionScoreAvg = congestionScoreAvg != null ? congestionScoreAvg : 99;
+        this.congestionScoreAvg = congestionScoreAvg;
         this.storeImageDtoList = storeImageDtoList;
     }
 
