@@ -60,7 +60,7 @@ public class StoreController {
     /**
      * 근처 카공 카페 리스트 조회 - 조회중인 카페 기준
      */
-    @GetMapping("/stores/{storeId}/recommend")
+    @GetMapping("/stores/{storeId}/near-stores")
     public ResponseEntity<?> getRecommendStoreList(@PathVariable("storeId") Long storeId,
                                                    @AuthenticationPrincipal PrincipalDetails principalDetails){
 
