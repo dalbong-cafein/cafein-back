@@ -21,7 +21,7 @@ public class MyRegisterStoreResDto {
 
     private BusinessHoursInfoDto businessHoursInfoDto;
 
-    private double congestionScoreAvg;
+    private Double congestionScoreAvg;
 
     private ImageDto storeImageDto;
 
@@ -34,7 +34,7 @@ public class MyRegisterStoreResDto {
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
         this.businessHoursInfoDto = businessHoursInfoDto;
-        this.congestionScoreAvg = congestionScoreAvg != null ? congestionScoreAvg : 99;
+        this.congestionScoreAvg = congestionScoreAvg;
         this.storeImageDto = storeImageDto;
         this.regDateTime = store.getRegDateTime();
     }
