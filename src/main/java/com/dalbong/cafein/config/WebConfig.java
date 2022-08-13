@@ -32,7 +32,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://dalbong-cafein.github.io/cafein_admin/","http://localhost:3000","https://cafeinofficial.com")
+                .allowedOrigins("https://dalbong-cafein.github.io/cafein_admin/","http://localhost:3000",
+                        "https://admin.cafeinofficial.com","https://cafeinofficial.com")
                 .allowedMethods("GET", "POST", "DELETE", "PUT","PATCH","OPTIONS")
                 .allowedHeaders("*")
                 .exposedHeaders("Set-Cookie")
