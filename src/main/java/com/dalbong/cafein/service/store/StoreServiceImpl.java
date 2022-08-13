@@ -344,36 +344,33 @@ public class StoreServiceImpl implements StoreService{
         Store findStore = storeRepository.findById(storeId).orElseThrow(() ->
                 new CustomException("존재하지 않는 카페입니다."));
 
-        List<Store> nearStoreDtoList = storeRepository.recommendNearStore(storeId, findStore.getLatY(), findStore.getLngX());
+        List<Store> storeList = storeRepository.recommendNearStore(storeId, findStore.getLatY(), findStore.getLngX());
 
-//        nearStoreDtoList.stream().map(nearStoreDto -> {
-//
-//            //리뷰 추천율
-//            Double recommendPercent = store.getRecommendPercent();
-//
-//            //카페 영업시간 데이터
-//            Map<String, Object> businessInfoMap = store.getBusinessInfo();
-//            BusinessHoursInfoDto businessHoursInfoDto = new BusinessHoursInfoDto(businessInfoMap);
-//
-//            //최대 이미지 4개 불러오기
-//            List<ImageDto> storeImageDtoList = new ArrayList<>();
-//            if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
-//                int count = 0;
-//                for(Image storeImage : store.getStoreImageList()){
-//                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
-//                    count += 1;
-//                    if(count >= 4) break;
-//                }
-//            }
-//
-//            double distance = DistanceUtil.calculateDistance(store.getLatY(), store.getLngX(), findStore.getLatY(), findStore.getLngX(), "meter");
-//
-//            new NearStoreResDto(store, recommendPercent, businessHoursInfoDto, storeImageDtoList, distance, principalId);
-//        })
+        return storeList.stream().map(store -> {
 
+            //리뷰 추천율
+            Double recommendPercent = store.getRecommendPercent();
 
+            //카페 영업시간 데이터
+            Map<String, Object> businessInfoMap = store.getBusinessInfo();
+            BusinessHoursInfoDto businessHoursInfoDto = new BusinessHoursInfoDto(businessInfoMap);
 
-        return null;
+            //최대 이미지 3개 불러오기
+            List<ImageDto> storeImageDtoList = new ArrayList<>();
+            if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
+                int count = 0;
+                for(Image storeImage : store.getStoreImageList()){
+                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                    count += 1;
+                    if(count >= 3) break;
+                }
+            }
+
+            double distance = DistanceUtil.calculateDistance(store.getLatY(), store.getLngX(), findStore.getLatY(), findStore.getLngX(), "meter");
+
+            return new NearStoreResDto(store, recommendPercent, businessHoursInfoDto, storeImageDtoList, null, distance, principalId);
+        }).collect(Collectors.toList());
+
     }
 
     /**

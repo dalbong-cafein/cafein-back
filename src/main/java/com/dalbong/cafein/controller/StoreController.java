@@ -58,6 +58,18 @@ public class StoreController {
     }
 
     /**
+     * 근처 카공 카페 리스트 조회 - 조회중인 카페 기준
+     */
+    @GetMapping("/stores/{storeId}/recommend")
+    public ResponseEntity<?> getRecommendStoreList(@PathVariable("storeId") Long storeId,
+                                                   @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        List<NearStoreResDto> nearStoreResList = storeService.getNearStoreList(storeId, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "근처 카공 카페 리스트 조회 성공", nearStoreResList), HttpStatus.OK);
+    }
+
+    /**
      * 앱단 본인이 등록한 가게 리스트 조회
      */
     @GetMapping("/stores/my-registered")

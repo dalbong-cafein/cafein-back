@@ -31,14 +31,14 @@ public class NearStoreResDto {
 
     private Boolean isHeart;
 
-    private double congestionScoreAvg;
+    private Double congestionScoreAvg;
 
-    private Integer distance;
+    private Double distance;
 
     private List<ImageDto> storeImageDtoList;
 
     public NearStoreResDto(Store store, Double recommendPercent, BusinessHoursInfoDto businessHoursInfoDto,
-                       List<ImageDto> storeImageDtoList, long heartCnt, Double congestionScoreAvg, int distance, Long principalId){
+                       List<ImageDto> storeImageDtoList, Double congestionScoreAvg, double distance, Long principalId){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
@@ -48,7 +48,7 @@ public class NearStoreResDto {
         this.latY = store.getLatY();
         this.heartCnt = store.getHeartList().size();
         this.isHeart = store.getHeartList().stream().anyMatch(h -> h.getMember().getMemberId().equals(principalId) ? true : false);
-        this.congestionScoreAvg = congestionScoreAvg != null ? congestionScoreAvg : 99;
+        this.congestionScoreAvg = congestionScoreAvg;
         this.distance = distance;
         this.storeImageDtoList = storeImageDtoList;
     }
