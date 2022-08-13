@@ -23,11 +23,11 @@ class StoreRepositoryTest {
         
         //when
 
-        List<NearStoreDto> nearStoreDtoList = storeRepository.recommendNearStore(1L, 37.65640383683467, 127.0626695058445);
+        List<Store> nearStoreDtoList = storeRepository.recommendNearStore(1L, 37.65640383683467, 127.0626695058445);
 
         //then
         System.out.println(nearStoreDtoList.size());
-        for (NearStoreDto store : nearStoreDtoList){
+        for (Store store : nearStoreDtoList){
             System.out.println(store);
         }
     }

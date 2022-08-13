@@ -28,7 +28,7 @@ public interface StoreRepository extends JpaRepository<Store, Long>, StoreReposi
             "having distance < 0.5 " +
             "order by distance " +
             "limit 10", nativeQuery = true)
-    List<NearStoreDto> recommendNearStore(@Param("storeId") Long storeId, @Param("latY") double latY, @Param("lngX") double lngX);
+    List<Store> recommendNearStore(@Param("storeId") Long storeId, @Param("latY") double latY, @Param("lngX") double lngX);
 
 
 

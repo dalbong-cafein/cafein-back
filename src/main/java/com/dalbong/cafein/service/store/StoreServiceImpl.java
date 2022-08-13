@@ -344,7 +344,7 @@ public class StoreServiceImpl implements StoreService{
         Store findStore = storeRepository.findById(storeId).orElseThrow(() ->
                 new CustomException("존재하지 않는 카페입니다."));
 
-        List<NearStoreDto> nearStoreDtoList = storeRepository.recommendNearStore(storeId, findStore.getLatY(), findStore.getLngX());
+        List<Store> nearStoreDtoList = storeRepository.recommendNearStore(storeId, findStore.getLatY(), findStore.getLngX());
 
 //        nearStoreDtoList.stream().map(nearStoreDto -> {
 //
