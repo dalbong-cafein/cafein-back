@@ -1,6 +1,8 @@
-package com.dalbong.cafein.dataSet.store;
+package com.dalbong.cafein.dataSet;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
+import com.dalbong.cafein.dataSet.review.ExcelReviewDataService;
+import com.dalbong.cafein.dataSet.store.*;
 import com.dalbong.cafein.dataSet.subwayStation.SubwayStationRegDto;
 import com.dalbong.cafein.dataSet.subwayStation.SubwayStationService;
 import com.dalbong.cafein.domain.store.Store;
@@ -15,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,6 +36,7 @@ public class DataSetController {
     private final NaverCloudService naverCloudService;
     private final StoreRepository storeRepository;
     private final SubwayStationService subwayStationService;
+    private final ExcelReviewDataService excelReviewDataService;
 
     @Value("${dataSet.naver.clientId}")
     private String clientId;
@@ -293,5 +297,13 @@ public class DataSetController {
         subwayStationService.saveNearStoreToSubwayStation();
 
         return "역과 가까운 카페 데이터 저장 성공";
+    }
+
+    @PostMapping("/data/reviews")
+    public String registerReview(MultipartFile excelFile) throws IOException {
+
+        excelReviewDataService.register(excelFile);
+
+        return "엑셀 리뷰 데이터 추가 성공";
     }
 }
