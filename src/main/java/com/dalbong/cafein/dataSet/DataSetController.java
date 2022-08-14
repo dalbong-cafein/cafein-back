@@ -300,9 +300,10 @@ public class DataSetController {
     }
 
     @PostMapping("/data/reviews")
-    public String registerReview(MultipartFile excelFile) throws IOException {
+    public String registerReview(MultipartFile excelFile,
+                                 @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        excelReviewDataService.register(excelFile);
+        excelReviewDataService.register(excelFile, principalDetails.getMember());
 
         return "엑셀 리뷰 데이터 추가 성공";
     }
