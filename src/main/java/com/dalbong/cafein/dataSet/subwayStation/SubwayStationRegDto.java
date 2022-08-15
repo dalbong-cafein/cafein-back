@@ -1,4 +1,4 @@
-package com.dalbong.cafein.dataSet;
+package com.dalbong.cafein.dataSet.subwayStation;
 
 import lombok.Data;
 

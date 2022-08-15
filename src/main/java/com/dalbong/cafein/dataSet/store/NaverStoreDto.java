@@ -1,4 +1,4 @@
-package com.dalbong.cafein.dataSet;
+package com.dalbong.cafein.dataSet.store;
 
 import com.dalbong.cafein.domain.address.Address;
 import lombok.Data;
@@ -38,9 +38,6 @@ public class NaverStoreDto {
                     roadAddressArray[0],roadAddressArray[1], roadAddressArray[2],
                     roadAddressArray[3], detail);
         }
-
-
-
     }
 
     private String storeName;
