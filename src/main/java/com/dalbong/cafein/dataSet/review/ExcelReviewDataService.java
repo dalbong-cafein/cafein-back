@@ -43,7 +43,7 @@ public class ExcelReviewDataService {
     private final NaverSearchService naverSearchService;
 
     @Transactional
-    public void register(MultipartFile excelFile, Member member) throws IOException {
+    public void register(MultipartFile excelFile, Member member) throws IOException, InterruptedException {
 
         //파일 읽기
         List<ExcelReviewDataDto> excelReviewDataDtoList = excelRead.read(excelFile);
@@ -85,7 +85,7 @@ public class ExcelReviewDataService {
         }
     }
 
-    private Map<String,Object> requestNaverSearchApi(String keyword) throws JsonProcessingException {
+    private Map<String,Object> requestNaverSearchApi(String keyword) throws JsonProcessingException, InterruptedException {
 
 //POST 방식으로 key=value 데이터를 요청
         RestTemplate rt = new RestTemplate();
@@ -100,6 +100,7 @@ public class ExcelReviewDataService {
         HttpEntity<MultiValueMap<String,String>> naverSearchRequest =
                 new HttpEntity<>(null, headers);
 
+        Thread.sleep(150);
 
         //Http요청하기 - Post방식으로 -그리고 response 변수의 응답 받음.
         ResponseEntity<String> response = rt.exchange(

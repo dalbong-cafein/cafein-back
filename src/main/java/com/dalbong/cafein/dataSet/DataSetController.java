@@ -301,7 +301,7 @@ public class DataSetController {
 
     @PostMapping("/data/reviews")
     public String registerReview(MultipartFile excelFile,
-                                 @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+                                 @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException, InterruptedException {
 
         excelReviewDataService.register(excelFile, principalDetails.getMember());
 

@@ -24,18 +24,20 @@ public class NaverStoreDto {
 
         String roadAddress = (String) attributes.get("roadAddress");
 
-        String[] roadAddressArray = roadAddress.split(" ",5);
+        if(!roadAddress.isBlank()){
+            String[] roadAddressArray = roadAddress.split(" ",5);
 
-        String detail = "";
-        try{
-            detail = roadAddressArray[4];
-        }catch (ArrayIndexOutOfBoundsException e){
-            e.getMessage();
+            String detail = "";
+            try{
+                detail = roadAddressArray[4];
+            }catch (ArrayIndexOutOfBoundsException e){
+                e.getMessage();
+            }
+
+            this.address = new Address(
+                    roadAddressArray[0],roadAddressArray[1], roadAddressArray[2],
+                    roadAddressArray[3], detail);
         }
-
-        this.address = new Address(
-                roadAddressArray[0],roadAddressArray[1], roadAddressArray[2],
-                roadAddressArray[3], detail);
 
     }
 
