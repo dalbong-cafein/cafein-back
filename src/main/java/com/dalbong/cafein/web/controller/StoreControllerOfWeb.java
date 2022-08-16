@@ -1,12 +1,14 @@
 package com.dalbong.cafein.web.controller;
 
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.web.dto.NearStoreResDtoOfWeb;
 import com.dalbong.cafein.web.dto.StoreResDtoOfWeb;
 import com.dalbong.cafein.web.service.StoreServiceOfWeb;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,5 +29,16 @@ public class StoreControllerOfWeb {
         List<StoreResDtoOfWeb> storeResDtoOfWebList = storeServiceOfWeb.getStoreListOfWeb(keyword);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "카페 리스트 조회 성공", storeResDtoOfWebList), HttpStatus.OK);
+    }
+
+    /**
+     * 근처 카공 카페 리스트 조회 - 조회중인 카페 기준
+     */
+    @GetMapping("/web/stores/{storeId}/near-stores")
+    public ResponseEntity<?> getNearStoreList(@PathVariable("storeId") Long storeId){
+
+        List<NearStoreResDtoOfWeb> newStoreResDtoOfWebList = storeServiceOfWeb.getNearStoreList(storeId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "근처 카공 카페 리스트 조회 성공", newStoreResDtoOfWebList), HttpStatus.OK);
     }
 }
