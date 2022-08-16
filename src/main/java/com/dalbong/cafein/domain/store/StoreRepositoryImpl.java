@@ -407,32 +407,42 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
             for(String word : wordArr){
 
-                //카페명 검색
-                builder.and(store.storeName.contains(word));
+                boolean ctn = false;
 
                 //구 검색
                 for (String sgg : sggArr){
                     if (word.equals(sgg) || word.equals(sgg+"구")){
-                        builder.or(store.address.fullAddress.contains(sgg));
+                        builder.and(store.address.fullAddress.contains(sgg));
+
+                        ctn = true;
                         break;
                     }
                 }
+
+                //구로 필터링 했을 경우
+                if(ctn) continue;
 
                 QSubwayStation subSubwayStation = new QSubwayStation("subSubwayStation");
 
                 for(String stationName : subwayStationNameList){
-                    if(word.equals(stationName)){
+                    if(word.equals(stationName) || word.equals(stationName + "역")){
                         //역 근처 카페 필터링
-                        builder.and(store.storeId.eq(JPAExpressions.select(nearStoreToSubwayStation.store.storeId)
+                        builder.and(store.storeId.in(JPAExpressions.select(nearStoreToSubwayStation.store.storeId)
                                 .from(nearStoreToSubwayStation)
                                 .join(subSubwayStation).on(subSubwayStation.eq(nearStoreToSubwayStation.subwayStation))
                                 .where(subSubwayStation.isUse.isTrue(),
-                                        subSubwayStation.stationName.eq(word))));
+                                        subSubwayStation.stationName.eq(stationName))));
 
+                        ctn = true;
                         break;
                     }
                 }
 
+                //지하철역으로 필터링 했을 경우
+                if(ctn) continue;
+
+                //카페명 검색
+                builder.and(store.storeName.contains(word));
             }
         }
         return builder;
