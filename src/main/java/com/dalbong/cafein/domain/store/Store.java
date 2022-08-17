@@ -42,7 +42,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"regMember","modMember","reviewList","storeImageList","heartList","nearStoreToSubwayStationArrayList"})
+@ToString(exclude = {"regMember","modMember","reviewList","storeImageList","heartList","nearStoreToSubwayStationArrayList","recommendList"})
 @Entity
 public class Store extends BaseEntity {
 
