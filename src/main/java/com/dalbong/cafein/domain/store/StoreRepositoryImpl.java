@@ -2,7 +2,10 @@ package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.congestion.QCongestion;
 import com.dalbong.cafein.domain.member.QMember;
+import com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSubwayStation;
 import com.dalbong.cafein.domain.review.QReview;
+import com.dalbong.cafein.domain.subwayStation.QSubwayStation;
+import com.dalbong.cafein.domain.subwayStation.SubwayStation;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
@@ -31,8 +34,10 @@ import static com.dalbong.cafein.domain.heart.QHeart.heart;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.member.QMember.member;
 import static com.dalbong.cafein.domain.memo.QStoreMemo.storeMemo;
+import static com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSubwayStation.nearStoreToSubwayStation;
 import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
+import static com.dalbong.cafein.domain.subwayStation.QSubwayStation.subwayStation;
 import static org.aspectj.util.LangUtil.isEmpty;
 
 public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
@@ -49,9 +54,13 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     @Override
     public List<Object[]> getStoreList(String keyword) {
 
+        //지하철역 검색
+        List<String> stationNameList = queryFactory.select(subwayStation.stationName).from(subwayStation)
+                .where(subwayStation.isUse.isTrue()).fetch();
+
         QCongestion subCongestion = new QCongestion("sub");
 
-       List<Tuple> result = queryFactory
+        List<Tuple> result = queryFactory
                 .select(store , store.heartList.size(), JPAExpressions
                         .select(subCongestion.congestionScore.avg())
                         .from(subCongestion)
@@ -59,7 +68,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                                 subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .where(keywordSearch(keyword))
+                .where(keywordSearch(keyword, stationNameList))
                 .groupBy(store.storeId)
                 .fetch();
 
@@ -262,10 +271,14 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     @Override
     public List<Store> getStoreListOfWeb(String keyword) {
 
+        //지하철역 검색
+        List<String> stationNameList = queryFactory.select(subwayStation.stationName).from(subwayStation)
+                .where(subwayStation.isUse.isTrue()).fetch();
+
         return queryFactory.select(store)
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .where(keywordSearch(keyword))
+                .where(keywordSearch(keyword,stationNameList))
                 .fetch();
     }
 
@@ -379,7 +392,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     }
 
-    private BooleanBuilder keywordSearch(String keyword){
+    private BooleanBuilder keywordSearch(String keyword, List<String> subwayStationNameList){
         BooleanBuilder builder = new BooleanBuilder();
 
         if (!isEmpty(keyword)){
@@ -394,18 +407,46 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
             for(String word : wordArr){
 
-                builder.and(store.storeName.contains(word));
+                boolean ctn = false;
 
+                //구 검색
                 for (String sgg : sggArr){
                     if (word.equals(sgg) || word.equals(sgg+"구")){
-                        builder.or(store.address.fullAddress.contains(sgg));
+                        builder.and(store.address.fullAddress.contains(sgg));
+
+                        ctn = true;
                         break;
                     }
                 }
+
+                //구로 필터링 했을 경우
+                if(ctn) continue;
+
+                QSubwayStation subSubwayStation = new QSubwayStation("subSubwayStation");
+
+                for(String stationName : subwayStationNameList){
+                    if(word.equals(stationName) || word.equals(stationName + "역")){
+                        //역 근처 카페 필터링
+                        builder.and(store.storeId.in(JPAExpressions.select(nearStoreToSubwayStation.store.storeId)
+                                .from(nearStoreToSubwayStation)
+                                .join(subSubwayStation).on(subSubwayStation.eq(nearStoreToSubwayStation.subwayStation))
+                                .where(subSubwayStation.isUse.isTrue(),
+                                        subSubwayStation.stationName.eq(stationName))));
+
+                        ctn = true;
+                        break;
+                    }
+                }
+
+                //지하철역으로 필터링 했을 경우
+                if(ctn) continue;
+
+                //카페명 검색
+                builder.and(store.storeName.contains(word));
             }
         }
         return builder;
     }
 
-    private final String[] sggArr = {"서대문","마포","노원","동대문","종로","강남"};
+    private final String[] sggArr = {"서대문","마포","성북","동대문","종로","강남"};
 }
