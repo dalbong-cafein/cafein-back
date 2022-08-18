@@ -37,4 +37,6 @@ public interface ReviewService {
     List<AdminReviewResDto> getReviewListByMemberIdOfAdmin(Long memberId);
 
     Long getRegisterCountOfToday();
+
+    int countMyReview(Long memberId);
 }

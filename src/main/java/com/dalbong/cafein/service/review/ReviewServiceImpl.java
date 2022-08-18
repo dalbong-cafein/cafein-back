@@ -73,7 +73,7 @@ public class ReviewServiceImpl implements ReviewService{
         }
 
         Store store = storeRepository.findById(reviewRegDto.getStoreId()).orElseThrow(() ->
-                new CustomException("존재하지 않는 매장입니다."));
+                new CustomException("존재하지 않는 카페입니다."));
 
 
         //금일 해당 카페에 리뷰 작성 여부 확인
@@ -488,5 +488,15 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public Long getRegisterCountOfToday() {
         return (Long) reviewRepository.getRegisterCountOfToday();
+    }
+
+    /**
+     * 본인 등록한 리뷰 수 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public int countMyReview(Long memberId) {
+
+        return reviewRepository.countByMemberId(memberId);
     }
 }

@@ -40,4 +40,6 @@ public interface StoreService {
 
     Long getRegisterCountOfToday();
 
+    int countMyRegisterStore(Long memberId);
+
 }

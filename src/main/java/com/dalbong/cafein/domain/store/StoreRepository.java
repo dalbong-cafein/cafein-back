@@ -30,6 +30,9 @@ public interface StoreRepository extends JpaRepository<Store, Long>, StoreReposi
             "limit 10", nativeQuery = true)
     List<Store> recommendNearStore(@Param("storeId") Long storeId, @Param("latY") double latY, @Param("lngX") double lngX);
 
+    @Query("select count(s) from Store s where s.regMember.memberId =:memberId")
+    int countByRegMemberId(@Param("memberId") Long regMemberId);
+
 
 
 }
