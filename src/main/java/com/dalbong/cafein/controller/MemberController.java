@@ -6,7 +6,10 @@ import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.member.MemberInfoDto;
 import com.dalbong.cafein.dto.member.MemberUpdateDto;
 import com.dalbong.cafein.dto.member.PhoneUpdateDto;
+import com.dalbong.cafein.dto.member.StoreAndReviewCntResDto;
 import com.dalbong.cafein.service.member.MemberService;
+import com.dalbong.cafein.service.review.ReviewService;
+import com.dalbong.cafein.service.store.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,8 @@ import java.io.IOException;
 public class MemberController {
 
     private final MemberService memberService;
+    private final StoreService storeService;
+    private final ReviewService reviewService;
 
     /**
      * 휴대폰 번호 수정
@@ -67,5 +72,21 @@ public class MemberController {
         MemberInfoDto memberInfoDto = memberService.getMemberInfo(principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "회원 정보 조회 성공", memberInfoDto), HttpStatus.OK);
+    }
+
+    /**
+     * 본인이 등록한 카페, 리뷰 개수 조회
+     */
+    @GetMapping("members/storesAndReviews/count")
+    public ResponseEntity<?> getCountStoresAndReview(@AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        int storeCnt = storeService.countMyRegisterStore(principalDetails.getMember().getMemberId());
+
+        int reviewCnt = reviewService.countMyReview(principalDetails.getMember().getMemberId());
+
+        StoreAndReviewCntResDto storeAndReviewCntResDto = new StoreAndReviewCntResDto(storeCnt, reviewCnt);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "내가 등록한 카페, 리뷰 개수 조회 성공", storeAndReviewCntResDto), HttpStatus.OK);
+
     }
 }

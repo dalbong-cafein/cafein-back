@@ -517,7 +517,19 @@ public class StoreServiceImpl implements StoreService{
     @Transactional(readOnly = true)
     @Override
     public Long getRegisterCountOfToday() {
-        return (Long)storeRepository.getRegisterCountOfToday();
+        return (Long) storeRepository.getRegisterCountOfToday();
     }
+
+    /**
+     * 본인이 등록한 카페 수 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public int countMyRegisterStore(Long memberId) {
+
+        return storeRepository.countByRegMemberId(memberId);
+    }
+
+
 }
 
