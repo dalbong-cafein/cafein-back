@@ -120,6 +120,9 @@ public class StoreRegDto {
 
     public Store toEntity(Long principalId){
 
+        System.out.println("------------------");
+        System.out.println(phone);
+
         Address address = new Address(siNm, sggNm, rNm, rNum, detail);
 
         return Store.builder()
