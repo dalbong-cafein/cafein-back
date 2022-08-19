@@ -144,7 +144,7 @@ public class StoreRegDto {
                 .onFri(new Day(friOpen, friClosed))
                 .onSat(new Day(satOpen, satClosed))
                 .onSun(new Day(sunOpen, sunClosed))
-                .etcTime(etcTime)
+                .etcTime(this.etcTime.isBlank() ? null : this.etcTime)
                 .build();
     }
 
