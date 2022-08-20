@@ -1,5 +1,6 @@
 package com.dalbong.cafein.dto.member;
 
+import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -26,6 +27,8 @@ public class MemberInfoDto {
 
     private LocalDate birth;
 
+    private AuthProvider mainAuthProvider;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime joinDateTime;
 
@@ -36,6 +39,7 @@ public class MemberInfoDto {
         this.email = member.getEmail();
         this.birth = member.getBirth();
         this.imageDto = imageDto;
+        this.mainAuthProvider = member.getMainAuthProvider();
         this.joinDateTime = member.getRegDateTime();
     }
 }
