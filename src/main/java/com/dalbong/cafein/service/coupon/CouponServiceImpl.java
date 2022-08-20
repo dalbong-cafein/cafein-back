@@ -42,7 +42,7 @@ public class CouponServiceImpl implements CouponService{
     @Override
     public Coupon requestCoupon(CouponRegDto couponRegDto, Long principalId) {
 
-        Long stickerCnt = stickerRepository.getCountStickerOfMember(principalId);
+        int stickerCnt = stickerRepository.getCountStickerOfMember(principalId);
 
         if(stickerCnt < 20){
             throw new CustomException("스티커 보유량이 20개 미만 입니다.");

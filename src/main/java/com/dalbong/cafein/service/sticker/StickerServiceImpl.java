@@ -176,7 +176,7 @@ public class StickerServiceImpl implements StickerService{
     @Transactional(readOnly = true)
     @Override
     public int countStickerOfMember(Long principalId) {
-        return (int)stickerRepository.getCountStickerToday(principalId);
+        return stickerRepository.getCountStickerOfMember(principalId);
 
     }
 
