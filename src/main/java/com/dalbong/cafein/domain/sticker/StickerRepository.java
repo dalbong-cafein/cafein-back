@@ -16,7 +16,7 @@ public interface StickerRepository extends JpaRepository<Sticker, Long>, Sticker
     void deleteByMember(@Param("member") Member member);
 
     @Query("select count(s) from Sticker s where s.member.memberId =:memberId")
-    Long getCountStickerOfMember(@Param("memberId") Long memberId);
+    int getCountStickerOfMember(@Param("memberId") Long memberId);
 
     @Query("select s from Sticker s where s.member.memberId =:memberId order by s.stickerId desc ")
     List<Sticker> getStickerList(@Param("memberId") Long memberId);
