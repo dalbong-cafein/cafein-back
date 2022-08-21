@@ -15,6 +15,7 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -430,7 +431,11 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 QSubwayStation subSubwayStation = new QSubwayStation("subSubwayStation");
 
                 for(String stationName : subwayStationNameList){
-                    if(word.equals(stationName) || word.equals(stationName + "역")){
+
+                    stationName = StringUtils.removeEnd(stationName,"입구");
+
+                    if(word.equals(stationName) || word.equals(stationName + "역")
+                            || word.equals(stationName + "입구") || word.equals(stationName + "입구역")){
                         //역 근처 카페 필터링
                         builder.and(store.storeId.in(JPAExpressions.select(nearStoreToSubwayStation.store.storeId)
                                 .from(nearStoreToSubwayStation)
