@@ -80,6 +80,13 @@ public class StoreServiceImpl implements StoreService{
             throw new CustomException("활동이 정지된 회원입니다.");
         }
 
+        System.out.println( storeRegDto.getAddress());
+
+        //카페 중복 등록 예외 처리
+        if(storeRepository.existAddress(storeRegDto.getAddress())){
+            throw new CustomException("이미 등록된 카페입니다.");
+        }
+
         //businessHours 엔티티 저장
         BusinessHours businessHours = storeRegDto.toBusinessHoursEntity();
         businessHoursRepository.save(businessHours);

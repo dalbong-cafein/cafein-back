@@ -1,6 +1,8 @@
 package com.dalbong.cafein.domain.store;
 
+import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.congestion.QCongestion;
+import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.domain.member.QMember;
 import com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSubwayStation;
 import com.dalbong.cafein.domain.review.QReview;
@@ -47,6 +49,22 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     public StoreRepositoryImpl(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
+    }
+
+    /**
+     * 기존 카페 주소 등록 여부 확인
+     */
+    @Override
+    public boolean existAddress(Address address) {
+
+        Integer fetchOne = queryFactory.selectOne()
+                .from(store)
+                .where(store.address.sggNm.eq(address.getSggNm()),
+                        store.address.rNm.eq(address.getRNm()),
+                        store.address.rNum.eq(address.getRNum()))
+                .fetchOne();
+
+        return fetchOne != null;
     }
 
     /**

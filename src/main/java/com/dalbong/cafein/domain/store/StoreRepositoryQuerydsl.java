@@ -1,5 +1,6 @@
 package com.dalbong.cafein.domain.store;
 
+import com.dalbong.cafein.domain.address.Address;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -7,6 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StoreRepositoryQuerydsl {
+
+    /**
+     * 기존 카페 주소 등록 여부 확인
+     */
+    boolean existAddress(Address address);
 
     /**
      * 앱단 가게 리스트 조회
