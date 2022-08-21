@@ -118,9 +118,13 @@ public class StoreRegDto {
     @Max(value = 4) @Min(value = 1)
     private int tableSize;
 
+    public Address getAddress(){
+        return new Address(this.siNm, this.sggNm, this.rNm, this.rNum, this.detail);
+    }
+
     public Store toEntity(Long principalId){
 
-        Address address = new Address(siNm, sggNm, rNm, rNum, detail);
+        Address address = getAddress();
 
         return Store.builder()
                 .regMember(Member.builder().memberId(principalId).build())
