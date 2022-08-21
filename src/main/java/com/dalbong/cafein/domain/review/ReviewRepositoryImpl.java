@@ -22,6 +22,8 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -197,6 +199,13 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .where(review.member.memberId.eq(principalId))
                 .orderBy(review.reviewId.desc())
                 .fetch();
+
+
+        Object[] arr = result.get(0).toArray();
+        
+        if(arr[0] == null){
+            return new ArrayList<>();
+        }
 
         return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
