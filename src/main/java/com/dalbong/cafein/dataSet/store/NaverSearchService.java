@@ -42,8 +42,10 @@ public class NaverSearchService {
         if(!storeList.isEmpty()){
             for(Store store : storeList){
                 System.out.println(store);
-                Optional<Store> result = storeRepository.findByStoreName(store.getStoreName());
-                if (result.isEmpty()){
+
+                boolean result = storeRepository.existAddress(store.getAddress());
+
+                if(!result){
                     saveStoreList.add(store);
                     storeRepository.save(store);
                 }
