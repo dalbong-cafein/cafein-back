@@ -407,6 +407,11 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
             for(String word : wordArr){
 
+                //"카페" 단어 통과
+                if(word.equals("카페")){
+                    continue;
+                }
+
                 boolean ctn = false;
 
                 //구 검색
