@@ -432,10 +432,10 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
                 for(String stationName : subwayStationNameList){
 
-                    stationName = StringUtils.removeEnd(stationName,"입구");
+                    String compareStationName = StringUtils.removeEnd(stationName,"입구");
 
-                    if(word.equals(stationName) || word.equals(stationName + "역")
-                            || word.equals(stationName + "입구") || word.equals(stationName + "입구역")){
+                    if(word.equals(compareStationName) || word.equals(compareStationName + "역")
+                            || word.equals(compareStationName + "입구") || word.equals(compareStationName + "입구역")){
                         //역 근처 카페 필터링
                         builder.and(store.storeId.in(JPAExpressions.select(nearStoreToSubwayStation.store.storeId)
                                 .from(nearStoreToSubwayStation)
