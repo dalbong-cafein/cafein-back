@@ -120,12 +120,12 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
         QReview reviewSub = new QReview("reviewSub");
 
         List<Tuple> results = queryFactory
-                .select(review, memberImage,
-                        JPAExpressions
-                                .select(review.member.memberId.count())
-                                .from(reviewSub)
-                                .where(reviewSub.store.storeId.eq(storeId),
-                                        reviewSub.member.memberId.eq(review.member.memberId)))
+                .select(review, memberImage, JPAExpressions
+                        .select(reviewSub.count())
+                        .from(reviewSub)
+                        .where(reviewSub.store.storeId.eq(storeId),
+                                reviewSub.member.memberId.eq(review.member.memberId))
+                )
                 .from(review)
                 .leftJoin(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
@@ -133,6 +133,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .orderBy(review.reviewId.desc())
                 .limit(limit)
                 .fetch();
+
+
 
         return results.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
