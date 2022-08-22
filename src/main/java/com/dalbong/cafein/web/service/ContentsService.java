@@ -26,7 +26,7 @@ public class ContentsService {
     private final StoreRepository storeRepository;
 
     /**
-     * 지역별 컨텐츠 카페 추천 리스트 조회
+     * 지역별 컨텐츠 추천 카페 리스트 조회
      */
     @Transactional(readOnly = true)
     public List<StoreResDtoOfWeb> getContentsStoreList(String sggNm, ContentsType type){

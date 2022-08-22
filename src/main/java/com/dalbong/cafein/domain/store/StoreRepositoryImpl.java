@@ -305,7 +305,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     }
 
     /**
-     * 웹 - 지역별 컨텐츠 카페 추천 리스트 조회
+     * 웹 - 지역별 컨텐츠 추천 카페 리스트 조회
      */
     @Override
     public List<Store> getContentsStoreListOfWeb(String sggNm, ContentsType type) {
