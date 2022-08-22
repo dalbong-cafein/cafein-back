@@ -1,4 +1,4 @@
-package com.dalbong.cafein.web.domain;
+package com.dalbong.cafein.web.domain.recommend;
 
 public interface RecommendRepositoryQuerydsl {
 

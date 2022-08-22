@@ -2,7 +2,7 @@ package com.dalbong.cafein.web.dto;
 
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.store.Store;
-import com.dalbong.cafein.web.domain.Recommend;
+import com.dalbong.cafein.web.domain.recommend.Recommend;
 import lombok.Data;
 
 @Data

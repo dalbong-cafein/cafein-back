@@ -10,7 +10,7 @@ import com.dalbong.cafein.domain.nearStoreToSubwayStation.NearStoreToSubwayStati
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.store.dto.NearStoreDto;
-import com.dalbong.cafein.web.domain.Recommend;
+import com.dalbong.cafein.web.domain.recommend.Recommend;
 import lombok.*;
 
 import javax.persistence.*;

@@ -1,6 +1,7 @@
 package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.address.Address;
+import com.dalbong.cafein.web.domain.contents.ContentsType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -69,5 +70,10 @@ public interface StoreRepositoryQuerydsl {
      * 웹 - 카페 리스트 조회
      */
     List<Store> getStoreListOfWeb(String keyword);
+
+    /**
+     * 웹 - 지역별 컨텐츠 카페 추천 리스트 조회
+     */
+    List<Store> getContentsStoreListOfWeb(String sggNm, ContentsType type);
 
 }

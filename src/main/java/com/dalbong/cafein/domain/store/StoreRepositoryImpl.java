@@ -8,6 +8,8 @@ import com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSubwayStat
 import com.dalbong.cafein.domain.review.QReview;
 import com.dalbong.cafein.domain.subwayStation.QSubwayStation;
 import com.dalbong.cafein.domain.subwayStation.SubwayStation;
+import com.dalbong.cafein.web.domain.contents.ContentsType;
+import com.dalbong.cafein.web.domain.contents.QContents;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
@@ -41,6 +43,7 @@ import static com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSub
 import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
 import static com.dalbong.cafein.domain.subwayStation.QSubwayStation.subwayStation;
+import static com.dalbong.cafein.web.domain.contents.QContents.contents;
 import static org.aspectj.util.LangUtil.isEmpty;
 
 public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
@@ -298,6 +301,20 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
                 .where(keywordSearch(keyword,stationNameList))
+                .fetch();
+    }
+
+    /**
+     * 웹 - 지역별 컨텐츠 추천 카페 리스트 조회
+     */
+    @Override
+    public List<Store> getContentsStoreListOfWeb(String sggNm, ContentsType type) {
+
+        return queryFactory.select(store)
+                .from(store)
+                .leftJoin(store.businessHours).fetchJoin()
+                .join(contents).on(contents.store.eq(store))
+                .where(store.address.sggNm.eq(sggNm), contents.contentsType.eq(type))
                 .fetch();
     }
 
