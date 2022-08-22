@@ -1,4 +1,4 @@
-package com.dalbong.cafein.web.domain;
+package com.dalbong.cafein.web.domain.recommend;
 
 import com.dalbong.cafein.domain.BaseEntity;
 import com.dalbong.cafein.domain.review.Recommendation;

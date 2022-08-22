@@ -1,12 +1,8 @@
-package com.dalbong.cafein.web.domain;
+package com.dalbong.cafein.web.domain.recommend;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import static com.dalbong.cafein.web.domain.QRecommend.recommend;
 
