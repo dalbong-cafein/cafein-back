@@ -4,7 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
 
-import static com.dalbong.cafein.web.domain.QRecommend.recommend;
+import static com.dalbong.cafein.web.domain.recommend.QRecommend.recommend;
 
 
 public class RecommendRepositoryImpl implements RecommendRepositoryQuerydsl{
