@@ -9,7 +9,7 @@ import com.dalbong.cafein.domain.review.QReview;
 import com.dalbong.cafein.domain.subwayStation.QSubwayStation;
 import com.dalbong.cafein.domain.subwayStation.SubwayStation;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
-import com.dalbong.cafein.web.domain.contents.QContents;
+import com.dalbong.cafein.web.domain.contents.QContentsStore;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
@@ -43,7 +43,7 @@ import static com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSub
 import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
 import static com.dalbong.cafein.domain.subwayStation.QSubwayStation.subwayStation;
-import static com.dalbong.cafein.web.domain.contents.QContents.contents;
+import static com.dalbong.cafein.web.domain.contents.QContentsStore.contentsStore;
 import static org.aspectj.util.LangUtil.isEmpty;
 
 public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
@@ -313,8 +313,8 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         return queryFactory.select(store)
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .join(contents).on(contents.store.eq(store))
-                .where(store.address.sggNm.eq(sggNm), contents.contentsType.eq(type))
+                .join(contentsStore).on(contentsStore.store.eq(store))
+                .where(store.address.sggNm.eq(sggNm), contentsStore.contentsType.eq(type))
                 .fetch();
     }
 
