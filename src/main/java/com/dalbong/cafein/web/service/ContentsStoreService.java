@@ -6,7 +6,6 @@ import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.businessHours.BusinessHoursInfoDto;
 import com.dalbong.cafein.dto.image.ImageDto;
-import com.dalbong.cafein.web.domain.contents.ContentsRepository;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
 import com.dalbong.cafein.web.domain.recommend.Recommend;
 import com.dalbong.cafein.web.dto.StoreResDtoOfWeb;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 @Service
-public class ContentsService {
+public class ContentsStoreService {
 
     private final StoreRepository storeRepository;
 

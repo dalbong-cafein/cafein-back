@@ -11,10 +11,10 @@ import javax.persistence.*;
 @Getter
 @ToString(exclude = {"store"})
 @Entity
-public class Contents {
+public class ContentsStore {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long contentsId;
+    private Long contentsStoreId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
