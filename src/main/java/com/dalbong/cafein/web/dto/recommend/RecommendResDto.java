@@ -1,4 +1,4 @@
-package com.dalbong.cafein.web.dto;
+package com.dalbong.cafein.web.dto.recommend;
 
 import com.dalbong.cafein.domain.review.Recommendation;
 import lombok.AllArgsConstructor;

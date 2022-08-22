@@ -8,7 +8,7 @@ import com.dalbong.cafein.dto.businessHours.BusinessHoursInfoDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
 import com.dalbong.cafein.web.domain.recommend.Recommend;
-import com.dalbong.cafein.web.dto.StoreResDtoOfWeb;
+import com.dalbong.cafein.web.dto.store.StoreResDtoOfWeb;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

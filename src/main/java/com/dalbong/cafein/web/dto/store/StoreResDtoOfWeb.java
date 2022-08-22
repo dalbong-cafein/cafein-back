@@ -1,4 +1,4 @@
-package com.dalbong.cafein.web.dto;
+package com.dalbong.cafein.web.dto.store;
 
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.dto.businessHours.BusinessHoursInfoDto;

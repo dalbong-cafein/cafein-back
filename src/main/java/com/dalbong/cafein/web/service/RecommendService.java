@@ -4,7 +4,7 @@ import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.web.domain.recommend.Recommend;
 import com.dalbong.cafein.web.domain.recommend.RecommendRepository;
-import com.dalbong.cafein.web.dto.RecommendRegDto;
+import com.dalbong.cafein.web.dto.recommend.RecommendRegDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
