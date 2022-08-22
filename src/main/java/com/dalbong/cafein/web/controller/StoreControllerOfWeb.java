@@ -2,8 +2,8 @@ package com.dalbong.cafein.web.controller;
 
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
-import com.dalbong.cafein.web.dto.NearStoreResDtoOfWeb;
-import com.dalbong.cafein.web.dto.StoreResDtoOfWeb;
+import com.dalbong.cafein.web.dto.store.NearStoreResDtoOfWeb;
+import com.dalbong.cafein.web.dto.store.StoreResDtoOfWeb;
 import com.dalbong.cafein.web.service.ContentsStoreService;
 import com.dalbong.cafein.web.service.StoreServiceOfWeb;
 import lombok.RequiredArgsConstructor;

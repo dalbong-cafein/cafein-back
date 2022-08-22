@@ -2,15 +2,14 @@ package com.dalbong.cafein.web.controller;
 
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.dto.CMRespDto;
-import com.dalbong.cafein.web.dto.RecommendRegDto;
-import com.dalbong.cafein.web.dto.RecommendResDto;
+import com.dalbong.cafein.web.dto.recommend.RecommendRegDto;
+import com.dalbong.cafein.web.dto.recommend.RecommendResDto;
 import com.dalbong.cafein.web.service.RecommendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
