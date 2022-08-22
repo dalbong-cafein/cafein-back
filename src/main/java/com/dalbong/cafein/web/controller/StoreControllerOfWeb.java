@@ -4,7 +4,7 @@ import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
 import com.dalbong.cafein.web.dto.NearStoreResDtoOfWeb;
 import com.dalbong.cafein.web.dto.StoreResDtoOfWeb;
-import com.dalbong.cafein.web.service.ContentsService;
+import com.dalbong.cafein.web.service.ContentsStoreService;
 import com.dalbong.cafein.web.service.StoreServiceOfWeb;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ import java.util.List;
 public class StoreControllerOfWeb {
 
     private final StoreServiceOfWeb storeServiceOfWeb;
-    private final ContentsService contentsService;
+    private final ContentsStoreService contentsStoreService;
 
      /**
      * 웹 - 카페 리스트 조회
@@ -51,7 +51,7 @@ public class StoreControllerOfWeb {
     @GetMapping("/web/stores/contents")
     public ResponseEntity<?> getContentsStoreList(@RequestParam("sggNm") String sggNm, @RequestParam("type") ContentsType contentsType){
 
-        List<StoreResDtoOfWeb> storeResDtoOfWebList = contentsService.getContentsStoreList(sggNm, contentsType);
+        List<StoreResDtoOfWeb> storeResDtoOfWebList = contentsStoreService.getContentsStoreList(sggNm, contentsType);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "지역별 컨텐츠 카페 추천 리스트 조회 성공", storeResDtoOfWebList), HttpStatus.OK);
     }
