@@ -1,5 +1,6 @@
 package com.dalbong.cafein.web.service;
 
+import com.dalbong.cafein.domain.image.Image;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.store.Store;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,14 +45,19 @@ public class ContentsStoreService {
             Map<String, Object> businessInfoMap = store.getBusinessInfo();
             BusinessHoursInfoDto businessHoursInfoDto = new BusinessHoursInfoDto(businessInfoMap);
 
-            //첫번째 이미지 불러오기
-            ImageDto storeImageDto = null;
+            //이미지 최대 3개 불러오기
+            List<ImageDto> storeImageDtoList = new ArrayList<>();
+
             if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
-                StoreImage storeImage = store.getStoreImageList().get(0);
-                storeImageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+                int count = 0;
+                for(Image storeImage : store.getStoreImageList()){
+                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                    count += 1;
+                    if(count >= 3) break;
+                }
             }
 
-            return new StoreResDtoOfWeb(store, recommendPercent, businessHoursInfoDto, storeImageDto);
+            return new StoreResDtoOfWeb(store, recommendPercent, businessHoursInfoDto, storeImageDtoList);
         }).collect(Collectors.toList());
     }
 
