@@ -393,33 +393,10 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
             }else if (keyword.contains("스벅")){
                 replaceWord = keyword.replace("스벅", "스타벅스");
             }
-            System.out.println("------");
             System.out.println(replaceWord);
-            //키워드에 구 데이터가 있는 체크
-            for(String sgg : sggArr){
-                if(replaceWord.contains(sgg)){
-                    //구 이름이 있으면 띄어쓰기 전까지 문자 삭제
-                    int startIdx = replaceWord.indexOf(sgg);
-                    int endIdx = replaceWord.indexOf(" ", startIdx);
-
-                    String deleteWord;
-                    if(endIdx < 0){
-                        deleteWord = replaceWord.substring(startIdx);
-                    }else {
-                        deleteWord = replaceWord.substring(startIdx, endIdx);
-                    }
-                    System.out.println("startIdx: " + startIdx + " endIdx: " + endIdx);
-
-                    String result = replaceWord.replace(deleteWord, "").strip();
-
-                    return !isEmpty(result) ? store.storeName.contains(result) : store.storeName.contains(replaceWord.replace(sgg, ""));
-                }
-            }
             return store.storeName.contains(replaceWord);
         }
-
         return null;
-
     }
 
     private BooleanExpression containAddress(String keyword) {
