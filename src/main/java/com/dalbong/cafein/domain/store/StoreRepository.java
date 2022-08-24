@@ -33,6 +33,7 @@ public interface StoreRepository extends JpaRepository<Store, Long>, StoreReposi
     @Query("select count(s) from Store s where s.regMember.memberId =:memberId")
     int countByRegMemberId(@Param("memberId") Long regMemberId);
 
-
+    @Query("select s from Store s where s.phone is null or s.phone = ''")
+    List<Store> findByPhoneIsNullOrBlank();
 
 }
