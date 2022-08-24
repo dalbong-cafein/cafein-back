@@ -1,4 +1,4 @@
-package com.dalbong.cafein.dataSet.store;
+package com.dalbong.cafein.dataSet.store.google;
 
 import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;

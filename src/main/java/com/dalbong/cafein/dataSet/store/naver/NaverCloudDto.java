@@ -1,4 +1,4 @@
-package com.dalbong.cafein.dataSet.store;
+package com.dalbong.cafein.dataSet.store.naver;
 
 import lombok.Data;
 

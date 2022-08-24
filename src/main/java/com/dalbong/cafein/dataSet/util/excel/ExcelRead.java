@@ -18,7 +18,7 @@ import java.util.Map;
 @Component
 public class ExcelRead {
 
-    public List<ExcelReviewDataDto> read(MultipartFile excelFile) throws IOException {
+    public List<ExcelReviewDataDto> readReviewData(MultipartFile excelFile) throws IOException {
 
         //엑셀파일을 읽어 들인다.
         Workbook wb = ExcelFileType.getWorkbook(excelFile);

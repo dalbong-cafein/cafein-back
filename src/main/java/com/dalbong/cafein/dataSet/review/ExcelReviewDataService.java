@@ -1,6 +1,6 @@
 package com.dalbong.cafein.dataSet.review;
 
-import com.dalbong.cafein.dataSet.store.NaverSearchService;
+import com.dalbong.cafein.dataSet.store.naver.NaverSearchService;
 import com.dalbong.cafein.dataSet.util.excel.ExcelRead;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
@@ -46,7 +46,7 @@ public class ExcelReviewDataService {
     public void register(MultipartFile excelFile, Member member) throws IOException, InterruptedException {
 
         //파일 읽기
-        List<ExcelReviewDataDto> excelReviewDataDtoList = excelRead.read(excelFile);
+        List<ExcelReviewDataDto> excelReviewDataDtoList = excelRead.readReviewData(excelFile);
 
         //데이터 매핑
         for (ExcelReviewDataDto dataDto : excelReviewDataDtoList){

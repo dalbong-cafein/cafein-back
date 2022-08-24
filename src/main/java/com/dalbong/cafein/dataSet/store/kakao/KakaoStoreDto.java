@@ -1,4 +1,4 @@
-package com.dalbong.cafein.dataSet.store;
+package com.dalbong.cafein.dataSet.store.kakao;
 
 import com.dalbong.cafein.domain.address.Address;
 import lombok.Data;
