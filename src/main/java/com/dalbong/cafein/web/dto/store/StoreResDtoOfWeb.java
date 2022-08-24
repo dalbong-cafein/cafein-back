@@ -24,18 +24,18 @@ public class StoreResDtoOfWeb {
 
     private double latY;
 
-    private ImageDto storeImageDto;
+    private List<ImageDto> storeImageDtoList;
 
     public StoreResDtoOfWeb(Store store, Double recommendPercent, BusinessHoursInfoDto businessHoursInfoDto,
-                            ImageDto storeImageDto){
+                            List<ImageDto> storeImageDtoList){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
         this.fullAddress = store.getAddress().getFullAddress();
         this.recommendPercent = recommendPercent;
         this.businessHoursInfoDto = businessHoursInfoDto;
-        this.lngX = store.getLngX();
-        this.latY = store.getLatY();
-        this.storeImageDto = storeImageDto;
+//        this.lngX = store.getLngX();
+  //      this.latY = store.getLatY();
+        this.storeImageDtoList = storeImageDtoList;
     }
 }
