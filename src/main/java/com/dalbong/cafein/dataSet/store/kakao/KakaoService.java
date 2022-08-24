@@ -1,4 +1,4 @@
-package com.dalbong.cafein.dataSet.store;
+package com.dalbong.cafein.dataSet.store.kakao;
 
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;

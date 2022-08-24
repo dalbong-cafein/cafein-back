@@ -34,8 +34,8 @@ public class StoreResDtoOfWeb {
         this.fullAddress = store.getAddress().getFullAddress();
         this.recommendPercent = recommendPercent;
         this.businessHoursInfoDto = businessHoursInfoDto;
-//        this.lngX = store.getLngX();
-  //      this.latY = store.getLatY();
+        this.lngX = store.getLngX();
+        this.latY = store.getLatY();
         this.storeImageDtoList = storeImageDtoList;
     }
 }

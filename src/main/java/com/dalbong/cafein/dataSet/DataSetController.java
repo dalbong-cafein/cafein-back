@@ -3,6 +3,10 @@ package com.dalbong.cafein.dataSet;
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dataSet.review.ExcelReviewDataService;
 import com.dalbong.cafein.dataSet.store.*;
+import com.dalbong.cafein.dataSet.store.google.GoogleSearchService;
+import com.dalbong.cafein.dataSet.store.kakao.KakaoService;
+import com.dalbong.cafein.dataSet.store.naver.NaverCloudService;
+import com.dalbong.cafein.dataSet.store.naver.NaverSearchService;
 import com.dalbong.cafein.dataSet.subwayStation.SubwayStationRegDto;
 import com.dalbong.cafein.dataSet.subwayStation.SubwayStationService;
 import com.dalbong.cafein.domain.store.Store;
@@ -37,6 +41,7 @@ public class DataSetController {
     private final StoreRepository storeRepository;
     private final SubwayStationService subwayStationService;
     private final ExcelReviewDataService excelReviewDataService;
+    private final ExcelStoreDataService excelStoreDataService;
 
     @Value("${dataSet.naver.clientId}")
     private String clientId;
@@ -323,5 +328,14 @@ public class DataSetController {
         excelReviewDataService.register(excelFile, principalDetails.getMember());
 
         return "엑셀 리뷰 데이터 추가 성공";
+    }
+
+    @PatchMapping("/data/stores/phone")
+    public String updatePhoneOfStore(MultipartFile excelFile,
+                                     @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+
+        excelStoreDataService.updatePhoneData(excelFile, principalDetails.getMember());
+
+        return "엑셀 카페 전화번호 데이터 추가 성공";
     }
 }
