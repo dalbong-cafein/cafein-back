@@ -56,7 +56,6 @@ public class ExcelRead {
 
             ExcelReviewDataDto excelReviewDataDto = new ExcelReviewDataDto(storeName, socket, wifi, restroom, tableSize, recommendation);
 
-            System.out.println(excelReviewDataDto);
             excelReviewDataDtoList.add(excelReviewDataDto);
 
         }
