@@ -64,7 +64,16 @@ public class StoreController {
     public ResponseEntity<?> getRecommendStoreList(@PathVariable("storeId") Long storeId,
                                                    @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        List<NearStoreResDto> nearStoreResList = storeService.getNearStoreList(storeId, principalDetails.getMember().getMemberId());
+        List<NearStoreResDto> nearStoreResList;
+
+        //비로그인 상태
+        if (principalDetails == null){
+            nearStoreResList = storeService.getNearStoreList(storeId, null);
+        }
+        //로그인 상태
+        else{
+            nearStoreResList = storeService.getNearStoreList(storeId, principalDetails.getMember().getMemberId());
+        }
 
         return new ResponseEntity<>(new CMRespDto<>(1, "근처 카공 카페 리스트 조회 성공", nearStoreResList), HttpStatus.OK);
     }
