@@ -38,7 +38,7 @@ public class ExcelStoreDataService {
                         //하이픈 추가
                         String hyphenPhone = insertHyphen(excelStoreDataDto.getPhone());
 
-                        store.changePhone(excelStoreDataDto.getPhone());
+                        store.changePhone(hyphenPhone);
 
                         System.out.println("storeName: " + store.getStoreName() + " | " +
                                 "phone: " + hyphenPhone);
