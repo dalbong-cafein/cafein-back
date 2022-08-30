@@ -3,10 +3,7 @@ package com.dalbong.cafein.dataSet.util.excel;
 import com.dalbong.cafein.dataSet.review.ExcelReviewDataDto;
 import com.dalbong.cafein.dataSet.store.ExcelStoreDataDto;
 import com.dalbong.cafein.domain.review.Recommendation;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -91,7 +88,13 @@ public class ExcelRead {
 
             String storeName = row.getCell(0).getStringCellValue();
             String fullAddress = row.getCell(1).getStringCellValue();
-            String phone = row.getCell(2).getStringCellValue();
+
+            String phone;
+            if(row.getCell(2).getCellType().equals(CellType.NUMERIC)){
+                phone = String.valueOf(row.getCell(2).getNumericCellValue());
+            }else{
+                phone = row.getCell(2).getStringCellValue();
+            }
 
             ExcelStoreDataDto excelStoreDataDto = new ExcelStoreDataDto(storeName, fullAddress, phone);
 
