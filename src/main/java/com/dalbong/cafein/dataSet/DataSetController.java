@@ -168,7 +168,6 @@ public class DataSetController {
                         + keyword + "&key="+googleApiKey,
                 Map.class);
 
-
         googleSearchService.placeSearch(searchPlace);
 
 
