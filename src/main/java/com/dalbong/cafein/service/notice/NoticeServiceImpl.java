@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -112,6 +113,16 @@ public class NoticeServiceImpl implements NoticeService{
     public void remove(Long noticeId) {
 
         noticeRepository.deleteById(noticeId);
+    }
+
+    /**
+     * 회원별 전체 알림 삭제
+     */
+    @Transactional
+    @Override
+    public void removeAll(Long principalId) {
+
+        noticeRepository.deleteByMemberId(principalId);
     }
 
     /**
