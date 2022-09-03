@@ -3,6 +3,7 @@ package com.dalbong.cafein.service.report;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.member.MemberState;
+import com.dalbong.cafein.domain.notice.NoticeRepository;
 import com.dalbong.cafein.domain.report.Report;
 import com.dalbong.cafein.domain.report.ReportRepository;
 import com.dalbong.cafein.domain.review.Review;
