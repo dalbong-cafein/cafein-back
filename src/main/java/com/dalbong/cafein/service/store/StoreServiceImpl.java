@@ -434,7 +434,7 @@ public class StoreServiceImpl implements StoreService{
         //조회수 증가
         store.increaseViewCnt();
 
-        return new DetailStoreResDto(store, memberImageDto, reviewImageDtoList, storeImageDtoList, principalId);
+        return new DetailStoreResDto(store, (Double) arr[2], memberImageDto, reviewImageDtoList, storeImageDtoList, principalId);
     }
 
     /**

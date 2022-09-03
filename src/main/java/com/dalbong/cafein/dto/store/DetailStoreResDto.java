@@ -32,6 +32,8 @@ public class DetailStoreResDto {
 
     private Boolean isHeart;
 
+    private Double congestionScoreAvg;
+
     private BusinessHoursInfoDto businessHoursInfoDto;
 
     private TotalBusinessHoursResDto totalBusinessHoursResDto;
@@ -44,7 +46,7 @@ public class DetailStoreResDto {
 
     private List<ImageDto> storeImageList;
 
-    public DetailStoreResDto(Store store, ImageDto memberImageDto,
+    public DetailStoreResDto(Store store, Double congestionScoreAvg, ImageDto memberImageDto,
                              List<ImageDto> reviewImageDtoList, List<ImageDto> storeImageDtoList,Long principalId){
 
         this.storeId = store.getStoreId();
@@ -57,6 +59,7 @@ public class DetailStoreResDto {
         this.isHeart = store.getHeartList().stream().anyMatch(h -> h.getMember().getMemberId().equals(principalId) ? true : false);
         this.businessHoursInfoDto = new BusinessHoursInfoDto(store.getBusinessInfo());
         this.totalBusinessHoursResDto = store.getBusinessHours() != null? new TotalBusinessHoursResDto(store.getBusinessHours()) : null;
+        this.congestionScoreAvg = congestionScoreAvg;
         this.lngX = store.getLngX();
         this.latY = store.getLatY();
         this.reviewImageList = reviewImageDtoList;

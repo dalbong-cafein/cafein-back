@@ -86,7 +86,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 .select(store , store.heartList.size(), JPAExpressions
                         .select(subCongestion.congestionScore.avg())
                         .from(subCongestion)
-                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
+                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
                                 subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
@@ -108,7 +108,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 .select(store, JPAExpressions
                         .select(subCongestion.congestionScore.avg())
                         .from(subCongestion)
-                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
+                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
                                 subCongestion.store.storeId.eq(store.storeId))
                         .groupBy(subCongestion.store.storeId))
                 .from(store)
@@ -132,7 +132,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 .select(store, JPAExpressions
                         .select(subCongestion.congestionScore.avg())
                         .from(subCongestion)
-                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
+                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
                                 subCongestion.store.storeId.eq(store.storeId))
                         .groupBy(subCongestion.store.storeId))
                 .from(store)
@@ -157,7 +157,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         List<Tuple> result = queryFactory.select(store, JPAExpressions
                 .select(subCongestion.congestionScore.avg())
                 .from(subCongestion)
-                .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
+                .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
                         subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .where(store.regMember.memberId.eq(principalId))
@@ -172,7 +172,13 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     @Override
     public Optional<Object[]> getDetailStore(Long storeId) {
 
-        Tuple tuple = queryFactory.select(store, memberImage)
+        QCongestion subCongestion = new QCongestion("sub");
+
+        Tuple tuple = queryFactory.select(store, memberImage, JPAExpressions
+                .select(subCongestion.congestionScore.avg())
+                .from(subCongestion)
+                .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
+                        subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
                 .leftJoin(store.modMember).fetchJoin()
@@ -207,7 +213,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 .select(store, store.reviewList.size(), JPAExpressions
                         .select(subCongestion.congestionScore.avg())
                         .from(subCongestion)
-                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
+                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
                                 subCongestion.store.storeId.eq(store.storeId)),
                         storeMemo.memoId)
                 .from(store)
@@ -228,11 +234,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
         //count 쿼리
         JPAQuery<Tuple> countQuery = queryFactory
-                .select(store, store.reviewList.size(), JPAExpressions
-                        .select(subCongestion.congestionScore.avg())
-                        .from(subCongestion)
-                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(1), LocalDateTime.now()),
-                                subCongestion.store.storeId.eq(store.storeId)))
+                .select(store, store.reviewList.size())
                 .from(store)
                 .where(searchKeyword(searchType, keyword))
                 .groupBy(store.storeId);
