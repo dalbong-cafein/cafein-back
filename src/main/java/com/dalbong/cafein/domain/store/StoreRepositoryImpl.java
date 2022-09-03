@@ -172,7 +172,13 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     @Override
     public Optional<Object[]> getDetailStore(Long storeId) {
 
-        Tuple tuple = queryFactory.select(store, memberImage)
+        QCongestion subCongestion = new QCongestion("sub");
+
+        Tuple tuple = queryFactory.select(store, memberImage, JPAExpressions
+                .select(subCongestion.congestionScore.avg())
+                .from(subCongestion)
+                .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
+                        subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
                 .leftJoin(store.modMember).fetchJoin()
