@@ -1,9 +1,7 @@
 package com.dalbong.cafein.dto.notice;
 
-import com.dalbong.cafein.domain.notice.BoardNotice;
-import com.dalbong.cafein.domain.notice.CouponNotice;
-import com.dalbong.cafein.domain.notice.Notice;
-import com.dalbong.cafein.domain.notice.StickerNotice;
+import com.dalbong.cafein.domain.notice.*;
+import com.dalbong.cafein.domain.report.Report;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,6 +27,8 @@ public class NoticeResDto {
     private Long couponId;
 
     private Long boardId;
+
+    private Long reportId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime regDateTime;
@@ -56,6 +56,12 @@ public class NoticeResDto {
         if(notice instanceof BoardNotice){
             this.noticeType = "공지사항";
             this.boardId = ((BoardNotice) notice).getBoard().getBoardId();
+        }
+
+        //신고 알림일 경우
+        if(notice instanceof ReportNotice){
+            this.noticeType = "신고";
+            this.reportId = ((ReportNotice) notice).getReport().getReportId();
         }
 
 
