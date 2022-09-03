@@ -51,5 +51,16 @@ public class NoticeController {
         return new ResponseEntity<>(new CMRespDto<>(1, "알림 삭제 성공", null), HttpStatus.OK);
     }
 
+    /**
+     * 회원별 전체 알림 삭제
+     */
+    @DeleteMapping("/notices")
+    public ResponseEntity<?> removeAll(@AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        noticeService.removeAll(principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "회원별 전체 알림 삭제 성공", null), HttpStatus.OK);
+    }
+
 
 }

@@ -8,6 +8,7 @@ import com.dalbong.cafein.domain.report.Report;
 import com.dalbong.cafein.domain.sticker.Sticker;
 import com.dalbong.cafein.dto.notice.NoticeResDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface NoticeService {
@@ -23,6 +24,8 @@ public interface NoticeService {
     void read(Long noticeId);
 
     void remove(Long noticeId);
+
+    void removeAll(Long principalId);
 
     List<NoticeResDto> getNoticeList(Long principalId);
 
