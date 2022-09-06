@@ -9,6 +9,7 @@ import com.dalbong.cafein.dataSet.store.naver.NaverCloudService;
 import com.dalbong.cafein.dataSet.store.naver.NaverSearchService;
 import com.dalbong.cafein.dataSet.subwayStation.SubwayStationRegDto;
 import com.dalbong.cafein.dataSet.subwayStation.SubwayStationService;
+import com.dalbong.cafein.dataSet.util.json.JsonUtil;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.CMRespDto;
@@ -42,6 +43,7 @@ public class DataSetController {
     private final SubwayStationService subwayStationService;
     private final ExcelReviewDataService excelReviewDataService;
     private final ExcelStoreDataService excelStoreDataService;
+    private final JsonUtil jsonUtil;
 
     @Value("${dataSet.naver.clientId}")
     private String clientId;
@@ -319,5 +321,15 @@ public class DataSetController {
         excelStoreDataService.updatePhoneData(excelFile, principalDetails.getMember());
 
         return "엑셀 카페 전화번호 데이터 추가 성공";
+    }
+
+    @GetMapping("/data/stores/json-file")
+    public String getJsonFileOfStoreList(@RequestParam("sggNm") String sggNm){
+
+        List<Store> storeList = storeRepository.findByAddress_SggNm(sggNm);
+
+        jsonUtil.write(storeList, sggNm);
+
+        return "구별 카페 리스트 json 파일 생성 성공";
     }
 }
