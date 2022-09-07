@@ -42,7 +42,7 @@ public class DataSetController {
     private final StoreRepository storeRepository;
     private final SubwayStationService subwayStationService;
     private final ExcelReviewDataService excelReviewDataService;
-    private final ExcelStoreDataService excelStoreDataService;
+    private final StoreDataService storeDataService;
     private final JsonUtil jsonUtil;
 
     @Value("${dataSet.naver.clientId}")
@@ -332,10 +332,9 @@ public class DataSetController {
     }
 
     @PatchMapping("/data/stores/phone")
-    public String updatePhoneOfStore(MultipartFile excelFile,
-                                     @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+    public String updatePhoneOfStore(MultipartFile excelFile) throws IOException {
 
-        excelStoreDataService.updatePhoneData(excelFile, principalDetails.getMember());
+        storeDataService.updatePhoneDataByExcel(excelFile);
 
         return "엑셀 카페 전화번호 데이터 추가 성공";
     }
@@ -348,5 +347,13 @@ public class DataSetController {
         jsonUtil.write(storeList, sggNm);
 
         return "구별 카페 리스트 json 파일 생성 성공";
+    }
+
+    @PostMapping("data/stores/image")
+    public String saveStoreImage() throws IOException {
+
+        storeDataService.saveStoreImageByLocal();
+
+        return "로컬 카페 이미지 저장 성공";
     }
 }

@@ -39,10 +39,6 @@ public class S3Uploader {
     private final ImageRepository imageRepository;
 
     /**
-     * 이벤트 이미지 S3 업로드
-     */
-
-    /**
      * 프로필 이미지 S3 업로드
      */
     public String s3UploadOfProfileImage(Member member, MultipartFile multipartFile) throws IOException {
@@ -58,7 +54,7 @@ public class S3Uploader {
     }
 
     /**
-     * 가게 이미지 S3 다중업로드
+     * 카페 이미지 S3 다중업로드
      */
     public List<String> s3MultipleUploadOfStore(Store store, List<MultipartFile> multipartFiles) throws IOException {
 
@@ -74,10 +70,9 @@ public class S3Uploader {
     }
 
     /**
-     * 가게 이미지 S3 업로드
+     * 카페 이미지 S3 업로드
      */
     public String s3UploadOfStore(Store store, MultipartFile multipartFile) throws IOException {
-
 
         //폴더 경로
         String folderPath = "store/" + store.getAddress().getSggNm();
@@ -88,6 +83,22 @@ public class S3Uploader {
 
         return s3Upload(folderPath, storeFileName, multipartFile);
     }
+
+    /**
+     * 로컬 카페 이미지 S3 업로드
+     */
+    public String s3UploadOfStore(Store store, File imageFile){
+
+        //폴더 경로
+        String folderPath = "store/" + store.getAddress().getSggNm();
+
+        //파일 이름
+        String frontName = store.getStoreId().toString();
+        String storeFileName = createFileName(frontName, imageFile.getName());
+
+        return s3Upload(folderPath, storeFileName, imageFile);
+    }
+
 
     /**
      * 리뷰 이미지 S3 다중업로드
@@ -185,6 +196,18 @@ public class S3Uploader {
         removeNewFile(uploadFile);
 
         return imageUrl;
+    }
+
+    /**
+     * S3 업로드 - 로컬 이미지
+     */
+    private String s3Upload(String folderPath, String fileNm, File uploadFile){
+
+        //S3에 저장될 위치 + 저장파일명
+        String storeKey = folderPath + "/" + fileNm;
+
+        //s3로 업로드
+        return putS3(uploadFile, storeKey);
     }
 
     /**

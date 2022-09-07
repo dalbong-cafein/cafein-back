@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +68,18 @@ public class ImageServiceImpl implements ImageService{
         }
 
         return imageList;
+    }
+
+    /**
+     * 로컬 카페 이미지 저장
+     */
+    @Transactional
+    @Override
+    public StoreImage saveStoreImage(Store store, File imageFile) {
+
+        String imageUrl = s3Uploader.s3UploadOfStore(store, imageFile);
+
+        return storeImageRepository.save(new StoreImage(store, imageUrl));
     }
 
 
