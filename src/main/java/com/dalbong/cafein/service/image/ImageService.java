@@ -11,6 +11,7 @@ import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.store.Store;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -19,6 +20,8 @@ public interface ImageService {
     Image saveMemberImage(Member member, MultipartFile imageFile) throws IOException;
 
     List<StoreImage> saveStoreImage(Store store, List<MultipartFile> imageFiles) throws IOException;
+
+    StoreImage saveStoreImage(Store store, File imageFile);
 
     List<ReviewImage> saveReviewImage(Review review, List<MultipartFile> imageFiles) throws IOException;
 

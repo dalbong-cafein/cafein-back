@@ -331,4 +331,12 @@ public class DataSetController {
 
         return "구별 카페 리스트 json 파일 생성 성공";
     }
+
+    @PostMapping("data/stores/image")
+    public String saveStoreImage() throws IOException {
+
+        storeDataService.saveStoreImageByLocal();
+
+        return "로컬 카페 이미지 저장 성공";
+    }
 }
