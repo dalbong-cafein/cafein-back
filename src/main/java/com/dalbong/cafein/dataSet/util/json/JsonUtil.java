@@ -1,12 +1,14 @@
 package com.dalbong.cafein.dataSet.util.json;
 
 import com.dalbong.cafein.domain.store.Store;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 @Component
@@ -40,5 +42,14 @@ public class JsonUtil {
         }catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    public Object read(String path) throws IOException, ParseException {
+
+        JSONParser parser = new JSONParser();
+        // JSON 파일 읽기
+        Reader reader = new FileReader(path);
+
+        return parser.parse(reader);
     }
 }
