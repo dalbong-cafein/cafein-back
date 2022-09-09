@@ -1,25 +1,27 @@
 package com.dalbong.cafein.dataSet.store;
 
 import com.dalbong.cafein.dataSet.util.excel.ExcelRead;
+import com.dalbong.cafein.dataSet.util.json.JsonUtil;
+import com.dalbong.cafein.domain.businessHours.BusinessHours;
+import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
+import com.dalbong.cafein.domain.businessHours.Day;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.businessHours.BusinessHoursUpdateDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.image.ImageService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.IOUtils;
 
-import org.apache.tomcat.util.http.fileupload.FileItem;
-import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
 import java.util.List;
 
 @Transactional
@@ -30,6 +32,9 @@ public class StoreDataService {
     private final ExcelRead excelRead;
     private final StoreRepository storeRepository;
     private final ImageService imageService;
+    private final JsonUtil jsonUtil;
+    private final ObjectMapper objectMapper;
+    private final BusinessHoursRepository businessHoursRepository;
 
     @Transactional
     public void updatePhoneDataByExcel(MultipartFile excelFile) throws IOException {
@@ -78,6 +83,48 @@ public class StoreDataService {
                         new CustomException("존재하지 않는 카페입니다."));
 
                 imageService.saveStoreImage(store, file);
+            }
+        }
+    }
+
+    @Transactional
+    public void savePhoneAndBusinessHours() throws IOException, ParseException {
+
+        Object obj = jsonUtil.read("c:/cafein_crawling/store_info_data.json");
+
+
+        JSONArray jsonArray = (JSONArray) obj;
+
+        if (jsonArray.size() > 0) {
+
+            for(int i = 0; i < jsonArray.size(); i++) {
+
+                JSONObject jsonObj = (JSONObject) jsonArray.get(i);
+
+                JsonStoreDataDto jsonStoreDataDto = objectMapper.readValue(jsonObj.toJSONString(), JsonStoreDataDto.class);
+
+                Store store = storeRepository.findByStoreName(jsonStoreDataDto.getStoreName()).orElseThrow(() ->
+                        new CustomException("존재하지 않는 카페입니다."));
+
+                //phone 데이터
+
+                //영업시간 데이터
+                BusinessHoursUpdateDto businessHoursUpdateDto = jsonStoreDataDto.getBusinessHours();
+
+                BusinessHours.builder()
+                        .onMon(businessHoursUpdateDto.getOnMon())
+                        .onTue(businessHoursUpdateDto.getOnTue())
+                        .onWed(businessHoursUpdateDto.getOnWed())
+                        .onThu(businessHoursUpdateDto.getOnThu())
+                        .onFri(businessHoursUpdateDto.getOnFri())
+                        .onSat(businessHoursUpdateDto.getOnSat())
+                        .onSun(businessHoursUpdateDto.getOnSun())
+                        .etcTime("")
+                        .build();
+
+                businessHoursRepository.save(businessHours);
+                store.changeBusinessHours(businessHours);
+
             }
         }
     }

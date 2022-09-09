@@ -16,6 +16,7 @@ import com.dalbong.cafein.dto.CMRespDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -349,11 +350,21 @@ public class DataSetController {
         return "구별 카페 리스트 json 파일 생성 성공";
     }
 
-    @PostMapping("data/stores/image")
+    @PostMapping("/data/stores/image")
     public String saveStoreImage() throws IOException {
 
         storeDataService.saveStoreImageByLocal();
 
         return "로컬 카페 이미지 저장 성공";
     }
+
+
+    @PostMapping("data/stores/json-file")
+    public String getJsonFileOfStoreList() throws IOException, ParseException {
+
+        storeDataService.savePhoneAndBusinessHours();
+
+        return "전화번호, 영업시간 데이터 저장 성공";
+    }
+
 }
