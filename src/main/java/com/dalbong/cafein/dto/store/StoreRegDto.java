@@ -148,7 +148,7 @@ public class StoreRegDto {
                 .onFri(new Day(friOpen, friClosed))
                 .onSat(new Day(satOpen, satClosed))
                 .onSun(new Day(sunOpen, sunClosed))
-                .etcTime(this.etcTime.isBlank() ? null : this.etcTime)
+                .etcTime(this.etcTime)
                 .build();
     }
 
@@ -158,7 +158,6 @@ public class StoreRegDto {
                 .storeId(storeId)
                 .recommendation(recommendation)
                 .socket(socket).wifi(wifi).restroom(restroom).tableSize(tableSize)
-           //     .imageFiles(imageFiles)
                 .build();
 
     }
