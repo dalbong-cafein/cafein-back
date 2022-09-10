@@ -107,24 +107,43 @@ public class StoreDataService {
                         new CustomException("존재하지 않는 카페입니다."));
 
                 //phone 데이터
+                if(store.getPhone() == null || store.getPhone().isBlank()){
+                    store.changePhone(jsonStoreDataDto.getPhone());
+                }
 
                 //영업시간 데이터
+                BusinessHours findBusinessHours = store.getBusinessHours();
                 BusinessHoursUpdateDto businessHoursUpdateDto = jsonStoreDataDto.getBusinessHours();
 
-                BusinessHours.builder()
-                        .onMon(businessHoursUpdateDto.getOnMon())
-                        .onTue(businessHoursUpdateDto.getOnTue())
-                        .onWed(businessHoursUpdateDto.getOnWed())
-                        .onThu(businessHoursUpdateDto.getOnThu())
-                        .onFri(businessHoursUpdateDto.getOnFri())
-                        .onSat(businessHoursUpdateDto.getOnSat())
-                        .onSun(businessHoursUpdateDto.getOnSun())
-                        .etcTime("")
-                        .build();
+                //기존 영업시간 데이터가 있는 경우
+                if(findBusinessHours != null){
+                    findBusinessHours.changeOnMon(businessHoursUpdateDto.getOnMon());
+                    findBusinessHours.changeOnTue(businessHoursUpdateDto.getOnTue());
+                    findBusinessHours.changeOnWed(businessHoursUpdateDto.getOnWed());
+                    findBusinessHours.changeOnThu(businessHoursUpdateDto.getOnThu());
+                    findBusinessHours.changeOnFri(businessHoursUpdateDto.getOnFri());
+                    findBusinessHours.changeOnSat(businessHoursUpdateDto.getOnSat());
+                    findBusinessHours.changeOnSun(businessHoursUpdateDto.getOnSun());
+                    findBusinessHours.changeEtcTime("");
+                }
+                //기존 영업시간 데이터가 없는 경우
+                else{
+                    System.out.println("--------------");
+                    System.out.println(businessHoursUpdateDto.getOnMon());
+                    BusinessHours businessHours = BusinessHours.builder()
+                            .onMon(businessHoursUpdateDto.getOnMon())
+                            .onTue(businessHoursUpdateDto.getOnTue())
+                            .onWed(businessHoursUpdateDto.getOnWed())
+                            .onThu(businessHoursUpdateDto.getOnThu())
+                            .onFri(businessHoursUpdateDto.getOnFri())
+                            .onSat(businessHoursUpdateDto.getOnSat())
+                            .onSun(businessHoursUpdateDto.getOnSun())
+                            .etcTime("")
+                            .build();
 
-                businessHoursRepository.save(businessHours);
-                store.changeBusinessHours(businessHours);
-
+                    businessHoursRepository.save(businessHours);
+                    store.changeBusinessHours(businessHours);
+                }
             }
         }
     }

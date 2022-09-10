@@ -78,7 +78,7 @@ public class Store extends BaseEntity {
     private int viewCnt = 0;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JoinColumn(name = "businessHours")
+    @JoinColumn(name = "business_hours_id")
     private BusinessHours businessHours;
 
     @Builder.Default
