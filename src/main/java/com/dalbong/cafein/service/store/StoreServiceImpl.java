@@ -40,10 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -234,6 +231,9 @@ public class StoreServiceImpl implements StoreService{
             List<ImageDto> imageDtoList = new ArrayList<>();
             if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
                 int count = 0;
+                List<StoreImage> storeImageList = store.getStoreImageList();
+
+
                 for(StoreImage storeImage : store.getStoreImageList()){
                     imageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
                     count += 1;
@@ -535,6 +535,43 @@ public class StoreServiceImpl implements StoreService{
     public int countMyRegisterStore(Long memberId) {
 
         return storeRepository.countByRegMemberId(memberId);
+    }
+
+    public List<ImageDto> getCustomSizeStoreImageList(Store store, int size){
+
+        //size 개수 만큼 이미지 불러오기
+        List<ImageDto> storeImageDtoList = new ArrayList<>();
+        List<StoreImage> storeImageList = store.getStoreImageList();
+
+        //최신순 조회
+        Collections.reverse(storeImageList);
+
+        int cnt = 0;
+
+        for(StoreImage storeImage : storeImageList){
+            storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
+            cnt += 1;
+            if(cnt >= size) break;
+        }
+
+        return storeImageDtoList;
+    }
+
+    public List<ImageDto> getCustomSizeReviewImageList(Store store, int size){
+
+        //review 이미지 리스트
+        List<ImageDto> reviewImageDtoList = new ArrayList<>();
+        List<ReviewImage> reviewImageList = reviewImageRepository.findByStoreId(store.getStoreId());
+
+        //최신순 조회
+        Collections.reverse(reviewImageList);
+
+        if(!reviewImageList.isEmpty()){
+            for(ReviewImage reviewImage : reviewImageList){
+                reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+            }
+        }
+
     }
 
 
