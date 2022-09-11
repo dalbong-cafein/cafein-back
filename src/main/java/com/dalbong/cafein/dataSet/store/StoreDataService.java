@@ -107,7 +107,7 @@ public class StoreDataService {
                         new CustomException("존재하지 않는 카페입니다."));
 
                 //phone 데이터
-                if(store.getPhone() == null || store.getPhone().isBlank()){
+                if(jsonStoreDataDto.getPhone() != null && !jsonStoreDataDto.getPhone().isBlank()){
                     store.changePhone(jsonStoreDataDto.getPhone());
                 }
 
