@@ -50,8 +50,8 @@ public class ContentsStoreService {
 
             if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
                 int count = 0;
-                for(Image storeImage : store.getStoreImageList()){
-                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                for(StoreImage storeImage : store.getStoreImageList()){
+                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
                     count += 1;
                     if(count >= 3) break;
                 }

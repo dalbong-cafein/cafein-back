@@ -234,8 +234,8 @@ public class StoreServiceImpl implements StoreService{
             List<ImageDto> imageDtoList = new ArrayList<>();
             if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
                 int count = 0;
-                for(Image storeImage : store.getStoreImageList()){
-                    imageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                for(StoreImage storeImage : store.getStoreImageList()){
+                    imageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
                     count += 1;
                     if(count >= 4) break;
                  }
@@ -268,7 +268,7 @@ public class StoreServiceImpl implements StoreService{
 
                 StoreImage storeImage = store.getStoreImageList().get(0);
 
-                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle());
             }
 
             return new MyStoreResDto(store, businessHoursInfoDto, imageDto, (Double) arr[1]);
@@ -300,7 +300,7 @@ public class StoreServiceImpl implements StoreService{
 
                 StoreImage storeImage = store.getStoreImageList().get(0);
 
-                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle());
             }
 
             return new MyStoreResDto(store, businessHoursInfoDto, imageDto, (Double) arr[1]);
@@ -332,7 +332,7 @@ public class StoreServiceImpl implements StoreService{
 
                 StoreImage storeImage = store.getStoreImageList().get(0);
 
-                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle());
             }
 
             return new MyRegisterStoreResDto(store, businessHoursInfoDto, (Double) arr[1], imageDto);
@@ -366,8 +366,8 @@ public class StoreServiceImpl implements StoreService{
             List<ImageDto> storeImageDtoList = new ArrayList<>();
             if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
                 int count = 0;
-                for(Image storeImage : store.getStoreImageList()){
-                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                for(StoreImage storeImage : store.getStoreImageList()){
+                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
                     count += 1;
                     if(count >= 3) break;
                 }
@@ -427,7 +427,7 @@ public class StoreServiceImpl implements StoreService{
         List<ImageDto> storeImageDtoList = new ArrayList<>();
         if(store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()){
             for (StoreImage storeImage : store.getStoreImageList()){
-                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
             }
         }
 
@@ -465,7 +465,7 @@ public class StoreServiceImpl implements StoreService{
 
                 StoreImage storeImage = store.getStoreImageList().get(0);
 
-                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+                imageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle());
             }
 
             return new AdminStoreResDto(store, reviewCnt, (Double) arr[2], imageDto, (Long) arr[3]);
@@ -499,7 +499,7 @@ public class StoreServiceImpl implements StoreService{
         List<ImageDto> storeImageDtoList = new ArrayList<>();
         if(store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()){
             for (StoreImage storeImage : store.getStoreImageList()){
-                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
             }
         }
 

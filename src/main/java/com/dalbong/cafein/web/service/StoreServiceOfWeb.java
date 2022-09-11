@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 public class StoreServiceOfWeb {
 
     private final StoreRepository storeRepository;
-    private final RecommendRepository recommendRepository;
 
     /**
      * 웹 - 카페 리스트 조회
@@ -53,8 +52,8 @@ public class StoreServiceOfWeb {
             List<ImageDto> storeImageDtoList = new ArrayList<>();
             if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
                 int count = 0;
-                for(Image storeImage : store.getStoreImageList()){
-                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                for(StoreImage storeImage : store.getStoreImageList()){
+                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
                     count += 1;
                     if(count >= 3) break;
                 }
@@ -88,8 +87,8 @@ public class StoreServiceOfWeb {
             List<ImageDto> storeImageDtoList = new ArrayList<>();
             if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
                 int count = 0;
-                for(Image storeImage : store.getStoreImageList()){
-                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                for(StoreImage storeImage : store.getStoreImageList()){
+                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
                     count += 1;
                     if(count >= 3) break;
                 }
