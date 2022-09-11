@@ -24,6 +24,11 @@ public class StoreImage extends Image{
     public StoreImage(Store store, String imageUrl){
         super(imageUrl);
         this.store = store;
+        this.isGoogle = false;
     }
 
+    public StoreImage(Store store, String imageUrl, boolean isGoogle){
+        this(store, imageUrl);
+        this.isGoogle = isGoogle;
+    }
 }
