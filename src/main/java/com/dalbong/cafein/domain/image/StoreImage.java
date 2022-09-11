@@ -17,6 +17,8 @@ public class StoreImage extends Image{
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
+    private Boolean isGoogle;
+
     protected StoreImage(){}
 
     public StoreImage(Store store, String imageUrl){

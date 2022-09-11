@@ -238,6 +238,7 @@ public class ReviewServiceImpl implements ReviewService{
             }
 
             //store 이미지
+            //TODO storeImage 화면 존재 유무
             ImageDto storeImageDto = null;
 
             if (review.getStore().getStoreImageList() != null && !review.getStore().getStoreImageList().isEmpty()) {

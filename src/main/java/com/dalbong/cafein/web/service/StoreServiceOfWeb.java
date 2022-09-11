@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,7 +29,6 @@ import java.util.stream.Collectors;
 public class StoreServiceOfWeb {
 
     private final StoreRepository storeRepository;
-    private final RecommendRepository recommendRepository;
 
     /**
      * 웹 - 카페 리스트 조회
@@ -51,10 +51,16 @@ public class StoreServiceOfWeb {
 
             //이미지 최대 3개 불러오기
             List<ImageDto> storeImageDtoList = new ArrayList<>();
-            if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
+
+            List<StoreImage> storeImageList = store.getStoreImageList();
+            if (storeImageList != null && !storeImageList.isEmpty()) {
+
+                //최신순 조회
+                Collections.reverse(storeImageList);
+
                 int count = 0;
-                for(Image storeImage : store.getStoreImageList()){
-                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                for(StoreImage storeImage : store.getStoreImageList()){
+                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
                     count += 1;
                     if(count >= 3) break;
                 }
@@ -86,10 +92,16 @@ public class StoreServiceOfWeb {
 
             //이미지 최대 3개 불러오기
             List<ImageDto> storeImageDtoList = new ArrayList<>();
-            if (store.getStoreImageList() != null && !store.getStoreImageList().isEmpty()) {
+
+            List<StoreImage> storeImageList = store.getStoreImageList();
+            if (storeImageList != null && !storeImageList.isEmpty()) {
+
+                //최신순 조회
+                Collections.reverse(storeImageList);
+                
                 int count = 0;
-                for(Image storeImage : store.getStoreImageList()){
-                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl()));
+                for(StoreImage storeImage : store.getStoreImageList()){
+                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
                     count += 1;
                     if(count >= 3) break;
                 }
