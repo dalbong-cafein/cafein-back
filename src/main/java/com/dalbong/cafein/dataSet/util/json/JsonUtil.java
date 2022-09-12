@@ -14,7 +14,7 @@ import java.util.List;
 @Component
 public class JsonUtil {
 
-    public void write(List<Store> storeList, String sggNm){
+    public void write(List<Store> storeList){
 
         JSONObject totalJsonObject = new JSONObject();
 
@@ -35,7 +35,7 @@ public class JsonUtil {
 
         //json 파일 생성
         try {
-            FileWriter file = new FileWriter("c:/cafein_crawling/store_list_"+sggNm+".json");
+            FileWriter file = new FileWriter("c:/cafein_crawling/store_list_.json");
             file.write(totalJsonObject.toJSONString());
             file.flush();
             file.close();

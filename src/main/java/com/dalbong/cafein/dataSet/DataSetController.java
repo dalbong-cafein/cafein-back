@@ -341,13 +341,13 @@ public class DataSetController {
     }
 
     @GetMapping("/data/stores/json-file")
-    public String getJsonFileOfStoreList(@RequestParam("sggNm") String sggNm){
+    public String saveJsonFileOfStoreList(){
 
-        List<Store> storeList = storeRepository.findByAddress_SggNm(sggNm);
+        List<Store> storeList = storeRepository.findAll();
 
-        jsonUtil.write(storeList, sggNm);
+        jsonUtil.write(storeList);
 
-        return "구별 카페 리스트 json 파일 생성 성공";
+        return "전체 카페 리스트 json 파일 생성 성공";
     }
 
     @PostMapping("/data/stores/image")
