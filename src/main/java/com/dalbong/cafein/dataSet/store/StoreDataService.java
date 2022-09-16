@@ -124,12 +124,10 @@ public class StoreDataService {
                     findBusinessHours.changeOnFri(businessHoursUpdateDto.getOnFri());
                     findBusinessHours.changeOnSat(businessHoursUpdateDto.getOnSat());
                     findBusinessHours.changeOnSun(businessHoursUpdateDto.getOnSun());
-                    findBusinessHours.changeEtcTime("");
+                    findBusinessHours.changeEtcTime(businessHoursUpdateDto.getEtcTime());
                 }
                 //기존 영업시간 데이터가 없는 경우
                 else{
-                    System.out.println("--------------");
-                    System.out.println(businessHoursUpdateDto.getOnMon());
                     BusinessHours businessHours = BusinessHours.builder()
                             .onMon(businessHoursUpdateDto.getOnMon())
                             .onTue(businessHoursUpdateDto.getOnTue())
@@ -138,7 +136,7 @@ public class StoreDataService {
                             .onFri(businessHoursUpdateDto.getOnFri())
                             .onSat(businessHoursUpdateDto.getOnSat())
                             .onSun(businessHoursUpdateDto.getOnSun())
-                            .etcTime("")
+                            .etcTime(businessHoursUpdateDto.getEtcTime())
                             .build();
 
                     businessHoursRepository.save(businessHours);

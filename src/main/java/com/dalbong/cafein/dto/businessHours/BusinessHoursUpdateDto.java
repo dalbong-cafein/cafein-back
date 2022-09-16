@@ -27,6 +27,6 @@ public class BusinessHoursUpdateDto {
 
     private Day onSun;
 
-    private String etcTime;
+    private String etcTime = "";
 
 }
