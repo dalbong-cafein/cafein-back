@@ -5,10 +5,12 @@ import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.dto.businessHours.BusinessHoursInfoDto;
 import com.dalbong.cafein.dto.businessHours.TotalBusinessHoursResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -46,6 +48,12 @@ public class DetailStoreResDto {
 
     private List<ImageDto> storeImageList;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
+    private LocalDateTime regDateTime;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
+    private LocalDateTime modDateTime;
+
     public DetailStoreResDto(Store store, Double congestionScoreAvg, ImageDto memberImageDto,
                              List<ImageDto> reviewImageDtoList, List<ImageDto> storeImageDtoList,Long principalId){
 
@@ -64,6 +72,8 @@ public class DetailStoreResDto {
         this.latY = store.getLatY();
         this.reviewImageList = reviewImageDtoList;
         this.storeImageList = storeImageDtoList;
+        this.regDateTime = store.getRegDateTime();
+        this.modDateTime = store.getModDateTime();
 
     }
 }
