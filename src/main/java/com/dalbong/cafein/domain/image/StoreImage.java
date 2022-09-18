@@ -19,16 +19,20 @@ public class StoreImage extends Image{
 
     private Boolean isGoogle;
 
+    private Boolean isCafein;
+
     protected StoreImage(){}
 
     public StoreImage(Store store, String imageUrl){
         super(imageUrl);
         this.store = store;
         this.isGoogle = false;
+        this.isCafein = false;
     }
 
-    public StoreImage(Store store, String imageUrl, boolean isGoogle){
+    public StoreImage(Store store, String imageUrl, boolean isGoogle, boolean isCafein){
         this(store, imageUrl);
         this.isGoogle = isGoogle;
+        this.isCafein = isCafein;
     }
 }

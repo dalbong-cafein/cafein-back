@@ -13,18 +13,22 @@ public class ImageDto {
 
     private Boolean isGoogle;
 
+    private Boolean isCafein;
+
     private String imageUrl;
 
     public ImageDto(Long imageId, String imageUrl){
         this.imageId = imageId;
         this.imageUrl = imageUrl;
         this.isGoogle = false;
+        this.isCafein = false;
     }
 
-    public ImageDto(Long imageId, String imageUrl, boolean isGoogle){
+    public ImageDto(Long imageId, String imageUrl, boolean isGoogle, boolean isCafein){
         this.imageId = imageId;
         this.imageUrl = imageUrl;
         this.isGoogle = isGoogle;
+        this.isCafein = isCafein;
     }
 
 
