@@ -9,6 +9,7 @@ import com.dalbong.cafein.redis.RedisService;
 import com.dalbong.cafein.util.CookieUtil;
 import com.dalbong.cafein.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -65,6 +66,12 @@ public class ControllerExceptionHandler {
 
         return new ResponseEntity<>(new CMRespDto<>(-1, e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
 
+    }
+
+    //파일 최대 사이즈 초과 에러
+    @ExceptionHandler(FileSizeLimitExceededException.class)
+    public ResponseEntity<CMRespDto<?>> fileSizeLimitExceededException(FileSizeLimitExceededException e){
+        return new ResponseEntity<>(new CMRespDto<>(-1, "파일 최대 사이즈를 초과하였습니다.", null), HttpStatus.BAD_REQUEST);
     }
 
 }
