@@ -237,7 +237,7 @@ public class GoogleSearchService {
 
                 String imageUrl = s3Upload(store, response);
 
-                storeImageRepository.save(new StoreImage(store,imageUrl, true));
+                storeImageRepository.save(new StoreImage(store,imageUrl, true, false));
 
                 i++;
                 if (i == 5) break;

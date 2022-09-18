@@ -79,7 +79,7 @@ public class ImageServiceImpl implements ImageService{
 
         String imageUrl = s3Uploader.s3UploadOfStore(store, imageFile);
 
-        return storeImageRepository.save(new StoreImage(store, imageUrl));
+        return storeImageRepository.save(new StoreImage(store, imageUrl, false, true));
     }
 
 

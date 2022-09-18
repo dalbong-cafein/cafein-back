@@ -60,7 +60,8 @@ public class StoreServiceOfWeb {
 
                 int count = 0;
                 for(StoreImage storeImage : store.getStoreImageList()){
-                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
+                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(),
+                            storeImage.getIsGoogle(), storeImage.getIsCafein()));
                     count += 1;
                     if(count >= 3) break;
                 }
@@ -101,7 +102,8 @@ public class StoreServiceOfWeb {
                 
                 int count = 0;
                 for(StoreImage storeImage : store.getStoreImageList()){
-                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
+                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(),
+                            storeImage.getIsGoogle(), storeImage.getIsCafein()));
                     count += 1;
                     if(count >= 3) break;
                 }

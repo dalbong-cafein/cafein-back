@@ -421,7 +421,8 @@ public class StoreServiceImpl implements StoreService{
             Collections.reverse(storeImageList);
 
             for (StoreImage storeImage : store.getStoreImageList()){
-                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
+                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(),
+                        storeImage.getIsGoogle(), storeImage.getIsCafein()));
             }
         }
 
@@ -503,7 +504,8 @@ public class StoreServiceImpl implements StoreService{
             Collections.reverse(storeImageList);
 
             for (StoreImage storeImage : store.getStoreImageList()){
-                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
+                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(),
+                        storeImage.getIsGoogle(), storeImage.getIsCafein()));
             }
         }
 
@@ -553,7 +555,8 @@ public class StoreServiceImpl implements StoreService{
         int cnt = 0;
 
         for(StoreImage storeImage : storeImageList){
-            imageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsGoogle()));
+            imageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(),
+                    storeImage.getIsGoogle(), storeImage.getIsCafein()));
             cnt += 1;
             if(cnt >= size) break;
         }
