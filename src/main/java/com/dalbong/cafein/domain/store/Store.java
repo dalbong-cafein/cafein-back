@@ -14,6 +14,7 @@ import com.dalbong.cafein.web.domain.recommend.Recommend;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -172,20 +173,25 @@ public class Store extends BaseEntity {
             return businessHoursInfoMap;
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalTime nowTime = now.toLocalTime();
+        //현재 일시
+        LocalDateTime nowDateTime = LocalDateTime.now();
+
         //현재 요일
-        int dayOfWeekNumber = now.getDayOfWeek().getValue();
+        int dayOfWeekNumber = nowDateTime.getDayOfWeek().getValue();
 
         boolean isOpen;
+
         //요일별
         switch(dayOfWeekNumber){
             case 7: //일
                 //영업중 체크, 금일 영업 종료 시간
                 if(this.businessHours.getOnSun() != null) {
-                    isOpen = nowTime.isAfter(this.businessHours.getOnSun().getOpen()) && nowTime.isBefore(this.businessHours.getOnSun().getClosed());
+                    LocalTime openTime = this.businessHours.getOnSun().getOpen();
+                    LocalTime closedTime = this.businessHours.getOnSun().getClosed();
+
+                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
-                    businessHoursInfoMap.put("closed", this.businessHours.getOnSun().getClosed());
+                    businessHoursInfoMap.put("closed", closedTime);
                 }
                 //내일 영업 시작 시간
                 if(this.businessHours.getOnMon() != null){
@@ -195,7 +201,11 @@ public class Store extends BaseEntity {
             case 1:
                 //영업중 체크, 금일 영업 종료 시간
                 if(this.businessHours.getOnMon() != null) {
-                    isOpen = nowTime.isAfter(this.businessHours.getOnMon().getOpen()) && nowTime.isBefore(this.businessHours.getOnMon().getClosed());
+
+                    LocalTime openTime = this.businessHours.getOnMon().getOpen();
+                    LocalTime closedTime = this.businessHours.getOnMon().getClosed();
+
+                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
                     businessHoursInfoMap.put("closed", this.businessHours.getOnMon().getClosed());
                 }
@@ -207,9 +217,14 @@ public class Store extends BaseEntity {
             case 2:
                 //영업중 체크, 금일 영업 종료 시간
                 if(this.businessHours.getOnTue() != null) {
-                    isOpen = nowTime.isAfter(this.businessHours.getOnTue().getOpen()) && nowTime.isBefore(this.businessHours.getOnTue().getClosed());
+
+                    LocalTime openTime = this.businessHours.getOnTue().getOpen();
+                    LocalTime closedTime = this.businessHours.getOnTue().getClosed();
+
+                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
-                    businessHoursInfoMap.put("closed", this.businessHours.getOnTue().getClosed());
+                    businessHoursInfoMap.put("closed", closedTime);
+
                 }
                 //내일 영업 시작 시간
                 if(this.businessHours.getOnWed() != null){
@@ -219,7 +234,11 @@ public class Store extends BaseEntity {
             case 3:
                 //영업중 체크, 금일 영업 종료 시간
                 if(this.businessHours.getOnWed() != null) {
-                    isOpen = nowTime.isAfter(this.businessHours.getOnWed().getOpen()) && nowTime.isBefore(this.businessHours.getOnWed().getClosed());
+
+                    LocalTime openTime = this.businessHours.getOnWed().getOpen();
+                    LocalTime closedTime = this.businessHours.getOnWed().getClosed();
+
+                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
                     businessHoursInfoMap.put("closed", this.businessHours.getOnWed().getClosed());
                 }
@@ -231,7 +250,11 @@ public class Store extends BaseEntity {
             case 4:
                 //영업중 체크, 금일 영업 종료 시간
                 if(this.businessHours.getOnThu() != null) {
-                    isOpen = nowTime.isAfter(this.businessHours.getOnThu().getOpen()) && nowTime.isBefore(this.businessHours.getOnThu().getClosed());
+
+                    LocalTime openTime = this.businessHours.getOnThu().getOpen();
+                    LocalTime closedTime = this.businessHours.getOnThu().getClosed();
+
+                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
                     businessHoursInfoMap.put("closed", this.businessHours.getOnThu().getClosed());
                 }
@@ -243,7 +266,11 @@ public class Store extends BaseEntity {
             case 5:
                 //영업중 체크, 금일 영업 종료 시간
                 if(this.businessHours.getOnFri() != null) {
-                    isOpen = nowTime.isAfter(this.businessHours.getOnFri().getOpen()) && nowTime.isBefore(this.businessHours.getOnFri().getClosed());
+
+                    LocalTime openTime = this.businessHours.getOnFri().getOpen();
+                    LocalTime closedTime = this.businessHours.getOnFri().getClosed();
+
+                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
                     businessHoursInfoMap.put("closed", this.businessHours.getOnFri().getClosed());
                 }
@@ -255,7 +282,11 @@ public class Store extends BaseEntity {
             case 6:
                 //영업중 체크, 금일 영업 종료 시간
                 if(this.businessHours.getOnSat() != null) {
-                    isOpen = nowTime.isAfter(this.businessHours.getOnSat().getOpen()) && nowTime.isBefore(this.businessHours.getOnSat().getClosed());
+
+                    LocalTime openTime = this.businessHours.getOnSat().getOpen();
+                    LocalTime closedTime = this.businessHours.getOnSat().getClosed();
+
+                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
                     businessHoursInfoMap.put("closed", this.businessHours.getOnSat().getClosed());
                 }
@@ -267,5 +298,17 @@ public class Store extends BaseEntity {
         }
 
         return businessHoursInfoMap;
+    }
+
+    private boolean checkIsOpen(LocalDateTime nowDateTime, LocalTime openTime, LocalTime closedTime) {
+
+        LocalDateTime openDateTime = LocalDate.now().atTime(openTime);
+        LocalDateTime closedDateTime = LocalDate.now().atTime(closedTime);
+
+        //영업 종료 시간이 다음 날짜로 넘어갈 경우
+        if(openDateTime.isAfter(closedDateTime) || openDateTime.isEqual(closedDateTime)){
+            closedDateTime = closedDateTime.plusHours(24);
+        }
+        return nowDateTime.isAfter(openDateTime) && nowDateTime.isBefore(closedDateTime);
     }
 }
