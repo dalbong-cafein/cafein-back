@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -48,13 +49,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .formLogin().disable()
-                .httpBasic().disable();
+                .httpBasic().disable()
+                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout/a"));
 
         http
                 .authorizeRequests()
                 .antMatchers("/members/*","/members","/reviews/*", "/boards/*",
                         "/hearts/*", "/stickers/*", "/reports/*", "/congestions/*",
-                        "/coupons/*", "/notices/*").authenticated()
+                        "/coupons/*", "/notices/*","/logout").authenticated()
                 //.antMatchers("/admin/**/*").access("hasRole('ROLE_ADMIN')")
                 //.antMatchers("/data/*").access("hasRole('ROLE_ADMIN')")
                 .antMatchers("/stores/*").permitAll()
