@@ -28,6 +28,10 @@ public class DetailStoreResDto {
 
     private Address address;
 
+    private String website;
+
+    private String phone;
+
     private String wifiPassword;
 
     private int heartCnt;
@@ -62,6 +66,8 @@ public class DetailStoreResDto {
         this.nicknameOfModMember = store.getModMember().getNickname();
         this.memberImageDto = memberImageDto;
         this.address = store.getAddress();
+        this.website = store.getWebsite();
+        this.phone = store.getPhone();
         this.wifiPassword = store.getWifiPassword();
         this.heartCnt = store.getHeartList().size();
         this.isHeart = store.getHeartList().stream().anyMatch(h -> h.getMember().getMemberId().equals(principalId) ? true : false);
