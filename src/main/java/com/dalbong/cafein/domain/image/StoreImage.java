@@ -17,8 +17,6 @@ public class StoreImage extends Image{
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    private Boolean isGoogle;
-
     private Boolean isCafein;
 
     protected StoreImage(){}
@@ -26,13 +24,11 @@ public class StoreImage extends Image{
     public StoreImage(Store store, String imageUrl){
         super(imageUrl);
         this.store = store;
-        this.isGoogle = false;
         this.isCafein = false;
     }
 
-    public StoreImage(Store store, String imageUrl, boolean isGoogle, boolean isCafein){
+    public StoreImage(Store store, String imageUrl, boolean isCafein){
         this(store, imageUrl);
-        this.isGoogle = isGoogle;
         this.isCafein = isCafein;
     }
 }

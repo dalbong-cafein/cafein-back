@@ -58,8 +58,7 @@ public class ContentsStoreService {
 
                 int count = 0;
                 for(StoreImage storeImage : store.getStoreImageList()){
-                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(),
-                            storeImage.getIsGoogle(), storeImage.getIsCafein()));
+                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
                     count += 1;
                     if(count >= 3) break;
                 }
