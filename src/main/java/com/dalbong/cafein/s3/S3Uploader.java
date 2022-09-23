@@ -20,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -221,10 +223,7 @@ public class S3Uploader {
             String imageUrl = image.getImageUrl();
             String storeKey = imageUrl.replace("https://"+bucket+".s3.ap-northeast-2.amazonaws.com/", "");
 
-            System.out.println("imageUrl: " + imageUrl);
-            System.out.println("storeKey: "+ storeKey);
-
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, storeKey));
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, URLDecoder.decode(storeKey, StandardCharsets.UTF_8)));
 
         }catch(Exception e) {
             log.error("delete file error"+e.getMessage());

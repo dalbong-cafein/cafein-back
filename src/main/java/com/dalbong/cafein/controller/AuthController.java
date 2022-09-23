@@ -1,5 +1,6 @@
 package com.dalbong.cafein.controller;
 
+import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.dto.CMRespDto;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
@@ -68,6 +70,21 @@ public class AuthController {
 //        response.addHeader("Set-Cookie",cookieString);
 
         return new ResponseEntity<>(new CMRespDto<>(1,"소셜 로그인 성공",memberInfoDto),HttpStatus.OK);
+    }
+
+    /**
+     * 로그아웃
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response,
+                                    @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        redisService.delValues(principalDetails.getMember().getMemberId());
+
+        cookieUtil.createCookie(response, jwtUtil.accessTokenName, null, 0);
+        cookieUtil.createCookie(response, jwtUtil.refreshTokenName, null,0);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "로그아웃 성공",null), HttpStatus.OK);
     }
 
     /**
