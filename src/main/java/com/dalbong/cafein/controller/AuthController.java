@@ -75,7 +75,7 @@ public class AuthController {
     /**
      * 로그아웃
      */
-    @PostMapping("/logout")
+    @PostMapping("/auth/logout")
     public ResponseEntity<?> logout(HttpServletResponse response,
                                     @AuthenticationPrincipal PrincipalDetails principalDetails){
 
