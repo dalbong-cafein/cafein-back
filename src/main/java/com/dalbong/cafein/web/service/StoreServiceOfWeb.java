@@ -83,8 +83,10 @@ public class StoreServiceOfWeb {
 
         return storeList.stream().map(store -> {
 
-            //리뷰 추천율
-            Double recommendPercent = store.getRecommendPercent();
+            List<Recommend> recommendList = store.getRecommendList();
+
+            //카페 추천율
+            Double recommendPercent = getRecommendPercent(recommendList);
 
             //카페 영업시간 데이터
             Map<String, Object> businessInfoMap = store.getBusinessInfo();
@@ -132,4 +134,6 @@ public class StoreServiceOfWeb {
 
         return (recommendCnt / totalSize) * 100;
     }
+
+
 }
