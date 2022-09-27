@@ -12,6 +12,7 @@ import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.handler.exception.CustomException;
+import com.dalbong.cafein.service.member.MemberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -35,12 +36,13 @@ public class SocialLoginService {
     private final MemberImageRepository memberImageRepository;
     private final PasswordEncoder passwordEncoder;
     private final AppleTokenService appleTokenService;
+    private final MemberService memberService;
 
     /**
      * 소셜 로그인
      */
     @Transactional
-    public Member login(LoginDto loginDto) throws JsonProcessingException {
+    public Member login(LoginDto loginDto, String clientIp) throws JsonProcessingException {
 
         OAuthUserInfo userInfo = getOAuthUserInfo(loginDto);
 

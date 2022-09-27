@@ -6,6 +6,8 @@ import com.dalbong.cafein.domain.image.Image;
 import com.dalbong.cafein.domain.image.MemberImage;
 import com.dalbong.cafein.domain.image.MemberImageRepository;
 import com.dalbong.cafein.domain.image.ReviewImage;
+import com.dalbong.cafein.domain.loginHistory.LoginHistory;
+import com.dalbong.cafein.domain.loginHistory.LoginHistoryRepository;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
@@ -51,7 +53,24 @@ public class MemberServiceImpl implements MemberService{
     private final StickerRepository stickerRepository;
     private final CouponRepository couponRepository;
     private final HeartRepository heartRepository;
+    private final LoginHistoryRepository loginHistoryRepository;
 
+    /**
+     * 로그인 기록 저장
+     */
+    @Transactional
+    @Override
+    public void saveLoginHistory(Member member, AuthProvider authProvider, String clientIp) {
+
+        LoginHistory loginHistory = LoginHistory.builder()
+                .member(member)
+                .authProvider(authProvider)
+                .ip(clientIp)
+                .build();
+
+        //TODO MEMBER DB 삭제 시 - loginHistory 처리
+        loginHistoryRepository.save(loginHistory);
+    }
 
     /**
      * 계정 통합

@@ -46,10 +46,13 @@ public class AuthController {
      */
     @PostMapping("/auth/social-login")
     public ResponseEntity<?> oAuthLogin(@Validated @RequestBody LoginDto loginDto, BindingResult bindingResult,
-                                        HttpServletResponse response) throws JsonProcessingException {
+                                        HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
+
+        //Client Ip
+        String clientIp = getClientRemoteIp(request);
 
         //로그인 진행
-        Member member = socialLoginService.login(loginDto);
+        Member member = socialLoginService.login(loginDto, clientIp);
 
         //accessToken, refreshToken 토큰 생성
         String accessToken = jwtUtil.generateAccessToken(member.getMemberId());
@@ -66,6 +69,27 @@ public class AuthController {
         MemberInfoDto memberInfoDto = memberService.getMemberInfo(member.getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1,"소셜 로그인 성공",memberInfoDto),HttpStatus.OK);
+    }
+
+    private String getClientRemoteIp(HttpServletRequest request) {
+
+        String ip = request.getHeader("X-FORWARDED-FOR");
+
+        //proxy 환경일 경우
+        if (ip == null || ip.length() == 0) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+
+        //웹로직 서버일 경우
+        if (ip == null || ip.length() == 0) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+
+        if (ip == null || ip.length() == 0) {
+            ip = request.getRemoteAddr() ;
+        }
+
+        return ip;
     }
 
     /**
