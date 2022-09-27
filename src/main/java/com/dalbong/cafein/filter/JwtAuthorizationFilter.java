@@ -56,7 +56,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 
         //인증이 필요 없는 uri 일 경우 바로 통과
-        if (PatternMatchUtils.simpleMatch(pattern,request.getRequestURI())) {
+        if (PatternMatchUtils.simpleMatch(pattern,request.getRequestURI()) && !PatternMatchUtils.simpleMatch("/auth/logout",request.getRequestURI())) {
             chain.doFilter(request, response);
             return;
         }
