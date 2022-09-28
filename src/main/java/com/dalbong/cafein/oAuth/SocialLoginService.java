@@ -53,12 +53,17 @@ public class SocialLoginService {
         if(memberResult.isEmpty()){
 
             //기존 회원 중 같은 email을 사용하고 있는 회원이 있는 지 체크
-           // Optional<Member> emailDuplicateResult = memberRepository.findByEmail(userInfo.getEmail());
+            // Optional<Member> emailDuplicateResult = memberRepository.findByEmail(userInfo.getEmail());
 
             //해당 email을 사용 중인 계정이 없는 경우
-           // if (emailDuplicateResult.isEmpty()){
-                return signUp(loginDto.getAuthProvider(), userInfo);
-           // }
+            // if (emailDuplicateResult.isEmpty()){
+            Member member = signUp(loginDto.getAuthProvider(), userInfo);
+
+            //로그인 기록 저장
+            memberService.saveLoginHistory(member, loginDto.getAuthProvider(), clientIp);
+
+            return member;
+            // }
             //해당 email을 사용 중인 계정이 있는 경우
            // else{
             //    AccountUniteResDto accountUniteResDto = new AccountUniteResDto(
@@ -77,6 +82,8 @@ public class SocialLoginService {
                 //사용자정보에 변경이 있다면 사용자 정보를 업데이트 해준다.
                 updateMember(findMember, userInfo);
             }
+
+            memberService.saveLoginHistory(findMember, loginDto.getAuthProvider(), clientIp);
 
             return findMember;
         }

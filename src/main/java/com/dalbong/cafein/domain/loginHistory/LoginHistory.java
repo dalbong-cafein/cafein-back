@@ -19,6 +19,7 @@ public class LoginHistory {
     private Long login_history_id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Column(nullable = false)
@@ -29,5 +30,6 @@ public class LoginHistory {
     private String ip;
 
     @Builder.Default
+    @Column(nullable = false)
     private final LocalDateTime loginDateTime = LocalDateTime.now();
 }
