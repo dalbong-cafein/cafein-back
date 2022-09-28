@@ -1,5 +1,6 @@
 package com.dalbong.cafein.service.member;
 
+import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
@@ -14,6 +15,8 @@ import com.dalbong.cafein.dto.page.PageRequestDto;
 import java.io.IOException;
 
 public interface MemberService {
+
+    void saveLoginHistory(Member member, AuthProvider authProvider, String ClientIp);
 
     Long uniteAccount(String email, AccountUniteRegDto accountUniteRegDto);
 
