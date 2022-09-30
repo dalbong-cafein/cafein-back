@@ -77,7 +77,7 @@ public class MemberController {
     /**
      * 본인이 등록한 카페, 리뷰 개수 조회
      */
-    @GetMapping("members/storesAndReviews/count")
+    @GetMapping("/members/storesAndReviews/count")
     public ResponseEntity<?> getCountStoresAndReview(@AuthenticationPrincipal PrincipalDetails principalDetails){
 
         int storeCnt = storeService.countMyRegisterStore(principalDetails.getMember().getMemberId());
