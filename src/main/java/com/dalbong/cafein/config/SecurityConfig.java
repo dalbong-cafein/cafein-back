@@ -6,6 +6,7 @@ import com.dalbong.cafein.filter.JwtAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -53,12 +54,53 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/auth/logout","/members/*","/members","/reviews/*", "/boards/*",
-                        "/hearts/*", "/stickers/*", "/reports/*", "/congestions/*",
-                        "/coupons/*", "/notices/*").authenticated()
+                .antMatchers(
+                        // 인증 관련
+                        "/auth/logout",
+
+                        // 회원 관련
+                        "/members", "/members/*",
+
+                        // 카페 관련
+                        "/stores", "/stores/*",
+
+                        // 리뷰 관련
+                        "/reviews","/reviews/*", "/stores/{storeId}/reviews",
+
+                        // 신고 관련
+                        "/reports/*",
+
+                        // 하트 관련
+                        "/hearts", "/hearts/*", "/stores/{storeId}/hearts",
+
+                        // 쿠폰 관련
+                        "/coupons",
+
+                        // 혼잡도 관련
+                        "/congestion","congestion/*",
+
+                        // 신고 관련
+                        "/stickers", "/stickers/*",
+
+                        // 게시글 관련
+                        "/boards",
+
+                        // 알림 관련
+                        "/notices", "/notices/*"
+                         ).authenticated()
+                .antMatchers(
+                        //비로그인 조회 관련 url
+                        HttpMethod.GET,
+
+                        //카페 관련
+                        "/stores", "/stores/{storeId}/near-stores", "/stores/{storeId}",
+
+                        //리뷰 관련
+                        "/stores/{storeId}/detail-review-score"
+                        ).permitAll()
                 //.antMatchers("/admin/**/*").access("hasRole('ROLE_ADMIN')")
                 //.antMatchers("/data/*").access("hasRole('ROLE_ADMIN')")
-                .antMatchers("/stores/*").permitAll()
+                .antMatchers("/web/*").permitAll()
                 .anyRequest().permitAll()
 
                 .and()

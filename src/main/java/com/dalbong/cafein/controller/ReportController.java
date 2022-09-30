@@ -24,7 +24,7 @@ public class ReportController {
     /**
      * 리뷰 신고하기
      */
-    @PostMapping("reviews/{reviewId}/reports")
+    @PostMapping("/reviews/{reviewId}/reports")
     public ResponseEntity<?> report(@Validated @RequestBody ReportRegDto reportRegDto, BindingResult bindingResult,
                                     @AuthenticationPrincipal PrincipalDetails principalDetails){
 
