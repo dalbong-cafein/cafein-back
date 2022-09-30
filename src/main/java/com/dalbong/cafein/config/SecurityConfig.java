@@ -55,40 +55,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers(
-                        // 인증 관련
-                        "/auth/logout",
-
-                        // 회원 관련
-                        "/members", "/members/*",
-
-                        // 카페 관련
-                        "/stores", "/stores/*",
-
-                        // 리뷰 관련
-                        "/reviews","/reviews/*", "/stores/{storeId}/reviews",
-
-                        // 신고 관련
-                        "/reports/*",
-
-                        // 하트 관련
-                        "/hearts", "/hearts/*", "/stores/{storeId}/hearts",
-
-                        // 쿠폰 관련
-                        "/coupons",
-
-                        // 혼잡도 관련
-                        "/congestion","congestion/*",
-
-                        // 신고 관련
-                        "/stickers", "/stickers/*",
-
-                        // 게시글 관련
-                        "/boards",
-
-                        // 알림 관련
-                        "/notices", "/notices/*"
-                         ).authenticated()
-                .antMatchers(
                         //비로그인 조회 관련 url
                         HttpMethod.GET,
 
@@ -97,10 +63,44 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                         //리뷰 관련
                         "/stores/{storeId}/detail-review-score"
-                        ).permitAll()
+                ).permitAll()
+                .antMatchers(
+                        // 인증 관련
+                        "/auth/logout",
+
+                        // 회원 관련
+                        "/members", "/members/**",
+
+                        // 카페 관련
+                        "/stores", "/stores/**",
+
+                        // 리뷰 관련
+                        "/reviews","/reviews/**", "/stores/{storeId}/reviews",
+
+                        // 신고 관련
+                        "reviews/**/reports",
+
+                        // 하트 관련
+                        "/hearts", "/hearts/**", "/stores/{storeId}/hearts",
+
+                        // 쿠폰 관련
+                        "/coupons",
+
+                        // 혼잡도 관련
+                        "/congestion","congestion/**",
+
+                        // 신고 관련
+                        "/stickers", "/stickers/**",
+
+                        // 게시글 관련
+                        "/boards",
+
+                        // 알림 관련
+                        "/notices", "/notices/**"
+                         ).authenticated()
                 //.antMatchers("/admin/**/*").access("hasRole('ROLE_ADMIN')")
                 //.antMatchers("/data/*").access("hasRole('ROLE_ADMIN')")
-                .antMatchers("/web/*").permitAll()
+                .antMatchers("/web/**").permitAll()
                 .anyRequest().permitAll()
 
                 .and()
