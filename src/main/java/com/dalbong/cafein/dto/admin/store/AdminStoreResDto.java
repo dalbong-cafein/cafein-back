@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 public class AdminStoreResDto {
+
     private Long storeId;
 
     private String storeName;
@@ -23,6 +24,8 @@ public class AdminStoreResDto {
     private String phone;
 
     private int reviewCnt;
+
+    private Double recommendPercent;
 
     private Double congestionScoreAvg;
 
@@ -40,7 +43,7 @@ public class AdminStoreResDto {
 
     private Long memoId;
 
-    public AdminStoreResDto(Store store, int reviewCnt, Double congestionScoreAvg, ImageDto storeImageDto, Long memoId){
+    public AdminStoreResDto(Store store, int reviewCnt,Double recommendPercent, Double congestionScoreAvg, ImageDto storeImageDto, Long memoId){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
@@ -48,6 +51,7 @@ public class AdminStoreResDto {
         this.phone = store.getPhone();
         this.congestionScoreAvg = congestionScoreAvg;
         this.reviewCnt = reviewCnt;
+        this.recommendPercent = recommendPercent;
         this.storeImageDto = storeImageDto;
         this.regMemberId = store.getRegMember().getMemberId();
         this.modMemberId = store.getModMember().getMemberId();
