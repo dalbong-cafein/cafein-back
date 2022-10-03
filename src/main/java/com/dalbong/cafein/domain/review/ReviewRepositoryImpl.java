@@ -189,7 +189,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
         QReview reviewSub = new QReview("reviewSub");
 
         List<Tuple> result = queryFactory.select(review,
-                                        JPAExpressions.select(review.member.memberId.count())
+                                        JPAExpressions.select(reviewSub.count())
                                                 .from(reviewSub)
                                                 .where(reviewSub.store.storeId.eq(review.store.storeId),
                                                         reviewSub.member.memberId.eq(review.member.memberId)))
