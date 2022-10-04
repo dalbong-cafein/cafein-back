@@ -122,7 +122,7 @@ public class DataSetController {
                 "커피빈", "빽다방", "메가커피", "더벤티", "컴포즈커피", "매머드", "요거프레소",
                 "엔젤리너스", "커피니", "카페", "커피"};
 
-        String[] bList = {"서대문구","마포구","성북구","동대문구","종로구","강남구"};
+        String[] bList = {"서대문구","마포구","성북구","동대문구","종로구","강남구","중구","광진구","서초구"};
 
         List<SaveStoreResDto> saveStoreResDtoList = new ArrayList<>();
 

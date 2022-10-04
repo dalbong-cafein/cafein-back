@@ -472,5 +472,5 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         return builder;
     }
 
-    private final String[] sggArr = {"서대문","마포","성북","동대문","종로","강남"};
+    private final String[] sggArr = {"서대문","마포","성북","동대문","종로","강남","중","광진","서초"};
 }
