@@ -117,8 +117,11 @@ public class DataSetController {
         HttpEntity<MultiValueMap<String,String>> naverSearchRequest =
                 new HttpEntity<>(null, headers);
 
+
         List<Store> storeList = storeRepository.findAll();
-        String[] aList = {"스벅", "투썸", "이디야", "탐탐" ,"컴포즈"};
+        String[] aList = {"스타벅스", "투썸플레이스", "할리스", "이디야 커피", "탐앤탐스",
+                "커피빈", "빽다방", "메가커피", "더벤티", "컴포즈커피", "매머드", "요거프레소",
+                "엔젤리너스", "커피니", "카페", "커피"};
 
         String[] bList = {
                 "공덕동","아현동", "도화동", "용강동", "대흥동",
@@ -136,7 +139,7 @@ public class DataSetController {
                 "역삼 1동", "역삼 2동", "도곡 1동", "도곡 2동", "개포 1동", "개포 2동", "개포 4동", "일원본동",
                 "일원 1동", "일원 2동", "수서동", "세곡동"
         };
-
+        
         List<SaveStoreResDto> saveStoreResDtoList = new ArrayList<>();
 
         for (Store findStore : storeList){
