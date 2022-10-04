@@ -453,6 +453,9 @@ public class StoreServiceImpl implements StoreService{
             Store store = (Store) arr[0];
             int reviewCnt = (int) arr[1];
 
+            //리뷰 추천율
+            Double recommendPercent = store.getRecommendPercent();
+
             //첫번째 이미지 불러오기
             ImageDto imageDto = null;
 
@@ -462,7 +465,7 @@ public class StoreServiceImpl implements StoreService{
                 imageDto = imageDtoList.get(0);
             }
 
-            return new AdminStoreResDto(store, reviewCnt, (Double) arr[2], imageDto, (Long) arr[3]);
+            return new AdminStoreResDto(store, reviewCnt, recommendPercent, (Double) arr[2], imageDto, (Long) arr[3]);
         });
 
         return new AdminStoreListDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
