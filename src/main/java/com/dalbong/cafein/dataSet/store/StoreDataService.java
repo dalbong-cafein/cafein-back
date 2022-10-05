@@ -22,6 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Transactional
@@ -95,6 +98,8 @@ public class StoreDataService {
 
         JSONArray jsonArray = (JSONArray) obj;
 
+        List<String> failMappingList = new ArrayList<>();
+
         if (jsonArray.size() > 0) {
 
             for(int i = 0; i < jsonArray.size(); i++) {
@@ -103,8 +108,16 @@ public class StoreDataService {
 
                 JsonStoreDataDto jsonStoreDataDto = objectMapper.readValue(jsonObj.toJSONString(), JsonStoreDataDto.class);
 
-                Store store = storeRepository.findByStoreName(jsonStoreDataDto.getStoreName()).orElseThrow(() ->
-                        new CustomException("존재하지 않는 카페입니다."));
+                Store store;
+
+                try{
+                    store = storeRepository.findByStoreName(jsonStoreDataDto.getStoreName()).orElseThrow(() ->
+                            new CustomException("존재하지 않는 카페입니다."));
+                }catch (RuntimeException e){
+                    failMappingList.add(jsonStoreDataDto.getStoreName());
+                    continue;
+                }
+
 
                 //phone 데이터
                 if(jsonStoreDataDto.getPhone() != null && !jsonStoreDataDto.getPhone().isBlank()){
@@ -144,6 +157,8 @@ public class StoreDataService {
                 }
             }
         }
+
+        System.out.println(failMappingList);
     }
 
     private String insertHyphen(String phone) {
