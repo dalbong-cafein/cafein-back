@@ -46,6 +46,16 @@ public class Report extends BaseEntity {
 
     private String content;
 
+    @Builder.Default
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ReportStatus reportStatus = ReportStatus.WAIT;
+
+
+    public void reject(){
+        this.reportStatus = ReportStatus.REJECT;
+    }
+
     public void changeNullReview(){
         this.review = null;
     }

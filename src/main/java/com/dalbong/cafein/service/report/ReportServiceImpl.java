@@ -51,6 +51,32 @@ public class ReportServiceImpl implements ReportService{
     }
 
     /**
+     * 신고 승인하기
+     */
+    @Transactional
+    @Override
+    public void approve(Long reportId) {
+
+        //Report 조회 (fetch toMember)
+
+        //reportPolicy(report, toMember);
+
+    }
+
+    /**
+     * 신고 반려하기
+     */
+    @Transactional
+    @Override
+    public void reject(Long reportId) {
+
+        Report report = reportRepository.findById(reportId).orElseThrow(() ->
+                new CustomException("존재하지 않는 신고입니다."));
+
+        report.reject();
+    }
+
+    /**
      * 자정에 정지 회원 변동 기능 실행
      */
     @Scheduled(cron = "00 00 00 * * ?")
@@ -59,7 +85,7 @@ public class ReportServiceImpl implements ReportService{
     public void autoModifyMemberState() {
 
         autoModifyToNormal();
-        autoModifyToSuspension();
+        //autoModifyToSuspension();
     }
 
 
@@ -76,21 +102,21 @@ public class ReportServiceImpl implements ReportService{
 
             Member toMember = report.getToMember();
 
-            long reportCnt = reportRepository.countByMemberIdAndLtReportId(toMember.getMemberId(), report.getReportId());
-
-            reportPolicy(report, toMember, (int)reportCnt);
+            reportPolicy(report, toMember);
         });
     }
 
-    private void reportPolicy(Report report, Member member, int reportCnt) {
+    private void reportPolicy(Report report, Member toMember) {
+
+        int reportCnt = (int) reportRepository.countByMemberIdAndLtReportId(toMember.getMemberId(), report.getReportId());
 
         //회원정지
         if (reportCnt > 0){
-            member.suspension(reportCnt);
+            toMember.suspend(reportCnt);
         }
 
         //회원정지 알림 생성
-        noticeService.registerReportNotice(report, member, reportCnt);
+        noticeService.registerReportNotice(report, toMember, reportCnt);
     }
 
     /**

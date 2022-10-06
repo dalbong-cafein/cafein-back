@@ -98,7 +98,7 @@ public class Member extends BaseEntity {
         this.genderType = genderType;
     }
 
-    public void suspension(int reportCnt){
+    public void suspend(int reportCnt){
 
         switch (reportCnt){
             case 1:

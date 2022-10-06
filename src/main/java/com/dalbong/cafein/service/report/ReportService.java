@@ -9,6 +9,10 @@ public interface ReportService {
 
     Report report(ReportRegDto reportRegDto, Member fromMember);
 
+    void approve(Long reportId);
+
+    void reject(Long reportId);
+
     void autoModifyMemberState();
 
     void autoModifyToSuspension();
