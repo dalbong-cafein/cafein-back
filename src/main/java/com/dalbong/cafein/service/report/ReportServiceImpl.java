@@ -11,11 +11,17 @@ import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
+import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.notice.NoticeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -152,14 +159,29 @@ public class ReportServiceImpl implements ReportService{
 
 
     /**
-     * 관리자단 신고 내역 조회
+     * 관리자단 신고 리스트 조회
      */
     @Transactional(readOnly = true)
     @Override
     public AdminReportListResDto getReportListOfAdmin(PageRequestDto pageRequestDto) {
 
+        Pageable pageable;
 
+        if(pageRequestDto.getSort().equals("ASC")){
+            pageable = pageRequestDto.getPageable(Sort.by("reportId").ascending());
+        }else{
+            pageable = pageRequestDto.getPageable(Sort.by("reportId").descending());
+        }
 
-        return null;
+        Page<Object[]> results = reportRepository.getReportListOfAdmin(pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
+
+        Function<Object[], AdminReportResDto> fn = (arr -> {
+
+            Report report = (Report) arr[0];
+
+            return new AdminReportResDto(report, (Long) arr[1]);
+        });
+
+        return new AdminReportListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
     }
 }

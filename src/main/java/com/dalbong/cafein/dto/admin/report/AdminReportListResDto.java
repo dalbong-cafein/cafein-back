@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 public class AdminReportListResDto {
 
-    private int reportCnt;
+    private long reportCnt;
 
     private PageResultDTO<AdminReportResDto, Object[]> reportResDtoList;
 }

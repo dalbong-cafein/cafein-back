@@ -281,11 +281,22 @@ public class AdminController {
      * 관리자단 회원별 신고내역 조회
      */
     @GetMapping("/members/{memberId}/reports")
-    public ResponseEntity<?> getReportList(@PathVariable("memberId") Long memberId){
+    public ResponseEntity<?> getReportListOfMember(@PathVariable("memberId") Long memberId){
 
         List<AdminReportResDto> adminReportResDtoList = reportService.getReportListOfAdminByMemberId(memberId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 회원별 신고내역 조회 성공", adminReportResDtoList), HttpStatus.OK);
+    }
+
+    /**
+     * 관리지단 신고 리스트 조회
+     */
+    @GetMapping("/reports")
+    public ResponseEntity<?> getReportList(PageRequestDto requestDto){
+
+        AdminReportListResDto adminReportListResDto = reportService.getReportListOfAdmin(requestDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 신고 리스트 조회 성공", adminReportListResDto), HttpStatus.OK);
     }
 
     /**
@@ -322,7 +333,7 @@ public class AdminController {
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 신고 반려하기 성공", null), HttpStatus.OK);
     }
 
-    /**event_image
+    /**
      * 관리자단 신고사유 리스트 조회
      */
     @GetMapping("/reportCategorys")
