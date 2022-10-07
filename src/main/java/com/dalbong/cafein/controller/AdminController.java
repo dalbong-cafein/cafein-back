@@ -15,6 +15,7 @@ import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberUpdateDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
+import com.dalbong.cafein.dto.admin.report.AdminReportResDto;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewEvaluationOfStoreResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
@@ -282,9 +283,9 @@ public class AdminController {
     @GetMapping("/members/{memberId}/reports")
     public ResponseEntity<?> getReportList(@PathVariable("memberId") Long memberId){
 
-        AdminReportListResDto adminReportListResDto = reportService.getReportListOfAdmin(memberId);
+        List<AdminReportResDto> adminReportResDtoList = reportService.getReportListOfAdminByMemberId(memberId);
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 회원별 신고내역 조회 성공", adminReportListResDto), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 회원별 신고내역 조회 성공", adminReportResDtoList), HttpStatus.OK);
     }
 
     /**

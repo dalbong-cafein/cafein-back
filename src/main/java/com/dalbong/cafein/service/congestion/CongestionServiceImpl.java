@@ -67,7 +67,7 @@ public class CongestionServiceImpl implements CongestionService{
                 new CustomException("존재하지 않는 혼잡도입니다.")
         );
 
-        //memo - congestionId null
+        //sticker - congestionId null
         Optional<CongestionSticker> result = congestionStickerRepository.findByCongestion(congestion);
 
         if(result.isPresent()){

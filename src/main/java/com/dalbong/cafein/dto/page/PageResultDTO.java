@@ -20,6 +20,7 @@ public class PageResultDTO<DTO, EN> {
 
     //현재 페이지 번호
     private int page;
+
     //목록 사이즈
     private int size;
 

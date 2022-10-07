@@ -3,6 +3,7 @@ package com.dalbong.cafein.service.report;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.member.MemberState;
+import com.dalbong.cafein.domain.memo.ReportMemo;
 import com.dalbong.cafein.domain.notice.NoticeRepository;
 import com.dalbong.cafein.domain.report.Report;
 import com.dalbong.cafein.domain.report.ReportRepository;
@@ -10,6 +11,7 @@ import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportResDto;
+import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.notice.NoticeService;
@@ -140,13 +142,24 @@ public class ReportServiceImpl implements ReportService{
      */
     @Transactional(readOnly = true)
     @Override
-    public AdminReportListResDto getReportListOfAdmin(Long memberId) {
+    public List<AdminReportResDto> getReportListOfAdminByMemberId(Long memberId) {
 
-        List<Report> reportList = reportRepository.getReportListByMemberId(memberId);
+        List<Object[]> reportList = reportRepository.getReportListOfAdminByMemberId(memberId);
 
-        List<AdminReportResDto> adminReportResDtoList =
-                reportList.stream().map(report -> new AdminReportResDto(report)).collect(Collectors.toList());
+        return reportList.stream().map(arr -> new AdminReportResDto((Report) arr[0], (Long) arr[1]))
+                        .collect(Collectors.toList());
+    }
 
-        return new AdminReportListResDto(reportList.size(), adminReportResDtoList);
+
+    /**
+     * 관리자단 신고 내역 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminReportListResDto getReportListOfAdmin(PageRequestDto pageRequestDto) {
+
+
+
+        return null;
     }
 }
