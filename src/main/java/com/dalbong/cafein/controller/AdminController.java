@@ -290,7 +290,7 @@ public class AdminController {
     /**
      * 관리자단 리뷰 신고하기
      */
-    @PostMapping("reviews/{reviewId}/reports")
+    @PostMapping("/reviews/{reviewId}/reports")
     public ResponseEntity<?> report(@Validated @RequestBody ReportRegDto reportRegDto, BindingResult bindingResult,
                                     @AuthenticationPrincipal PrincipalDetails principalDetails){
 
@@ -299,8 +299,18 @@ public class AdminController {
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 신고하기 성공",null), HttpStatus.CREATED);
     }
 
-
     /**
+     * 관리자단 리뷰 신고 반려하기
+     */
+    @PatchMapping("/reports/{reportId}/reject")
+    public ResponseEntity<?> rejectReport(@PathVariable("reportId") Long reportId){
+
+        reportService.reject(reportId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 신고 반려하기 성공", null), HttpStatus.OK);
+    }
+
+    /**event_image
      * 관리자단 신고사유 리스트 조회
      */
     @GetMapping("/reportCategorys")
