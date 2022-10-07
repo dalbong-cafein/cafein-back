@@ -51,6 +51,10 @@ public class Report extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ReportStatus reportStatus = ReportStatus.WAIT;
 
+    public void approve(){
+        this.reportStatus = ReportStatus.APPROVAL;
+
+    }
 
     public void reject(){
         this.reportStatus = ReportStatus.REJECT;

@@ -58,9 +58,13 @@ public class ReportServiceImpl implements ReportService{
     public void approve(Long reportId) {
 
         //Report 조회 (fetch toMember)
+        Report report = reportRepository.findWithToMemberById(reportId).orElseThrow(() ->
+                new CustomException("존재하지 않는 신고입니다."));
 
-        //reportPolicy(report, toMember);
+        report.approve();
 
+        //리뷰 정책 적용
+        reportPolicy(report, report.getToMember());
     }
 
     /**
@@ -108,7 +112,7 @@ public class ReportServiceImpl implements ReportService{
 
     private void reportPolicy(Report report, Member toMember) {
 
-        int reportCnt = (int) reportRepository.countByMemberIdAndLtReportId(toMember.getMemberId(), report.getReportId());
+        int reportCnt = (int) reportRepository.countApprovalStatusByMemberIdAndLtReportId(toMember.getMemberId(), report.getReportId());
 
         //회원정지
         if (reportCnt > 0){

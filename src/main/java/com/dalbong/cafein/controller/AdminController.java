@@ -300,6 +300,17 @@ public class AdminController {
     }
 
     /**
+     * 관리자단 리뷰 신고 승인하기
+     */
+    @PatchMapping("/reports/{reportId}/approve")
+    public ResponseEntity<?> approveReport(@PathVariable("reportId") Long reportId){
+
+        reportService.approve(reportId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 신고 승인하기 성공", null), HttpStatus.OK);
+    }
+
+    /**
      * 관리자단 리뷰 신고 반려하기
      */
     @PatchMapping("/reports/{reportId}/reject")

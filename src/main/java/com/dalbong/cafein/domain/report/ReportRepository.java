@@ -18,8 +18,9 @@ public interface ReportRepository extends JpaRepository<Report, Long>, ReportRep
     List<Report> getReportListByMemberId(@Param("memberId") Long memberId);
 
     @Query("select count(rp) from Report rp " +
-            "where rp.toMember.memberId =:memberId and rp.reportId < :reportId")
-    long countByMemberIdAndLtReportId(@Param("memberId") Long memberId, @Param("reportId") Long reportId);
+            "where rp.reportStatus = 'APPROVAL' " +
+            "and rp.toMember.memberId =:memberId and rp.reportId < :reportId")
+    long countApprovalStatusByMemberIdAndLtReportId(@Param("memberId") Long memberId, @Param("reportId") Long reportId);
 
     List<Report> findByReview(Review review);
 }

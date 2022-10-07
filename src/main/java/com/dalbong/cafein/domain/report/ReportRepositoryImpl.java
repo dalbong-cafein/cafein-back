@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.dalbong.cafein.domain.member.QMember.member;
@@ -36,5 +37,20 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
                 .leftJoin(report.toMember).fetchJoin()
                 .where(report.regDateTime.between(LocalDateTime.now().minusDays(1).toLocalDate().atStartOfDay(), LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(23, 59, 59))))
                 .fetch();
+    }
+
+    /**
+     * 신고 단일 조회 - fetch ToMember
+     */
+    @Override
+    public Optional<Report> findWithToMemberById(Long reportId) {
+
+        Report findReport = queryFactory.select(report)
+                .from(report)
+                .join(report.toMember).fetchJoin()
+                .where(report.reportId.eq(reportId))
+                .fetchOne();
+
+        return findReport != null ? Optional.of(findReport) : Optional.empty();
     }
 }
