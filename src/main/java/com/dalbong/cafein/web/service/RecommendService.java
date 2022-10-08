@@ -37,6 +37,14 @@ public class RecommendService {
     }
 
     /**
+     * 추천 데이터 삭제
+     */
+    public void remove(Long storeId, String sessionId){
+
+        recommendRepository.deleteRecommend(storeId, sessionId);
+    }
+
+    /**
      * 웹 - 본인이 등록한 카페 추천 데이터 조회
      */
     @Transactional(readOnly = true)

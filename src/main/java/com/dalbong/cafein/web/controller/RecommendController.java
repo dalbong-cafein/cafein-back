@@ -34,6 +34,20 @@ public class RecommendController {
     }
 
     /**
+     * 카페 추천 데이터 삭제
+     */
+    @DeleteMapping("/web/stores/{storeId}/recommendations")
+    public ResponseEntity<?> remove(@PathVariable("storeId") Long storeId,
+                                    HttpSession httpSession){
+
+        String sessionId = httpSession.getId();
+
+        recommendService.remove(storeId, sessionId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "추천 데이터 삭제 성공", null), HttpStatus.OK);
+    }
+
+    /**
      * 웹 - 카페별 추천 관련 데이터 조회
      */
     @GetMapping("/web/stores/{storeId}/recommendations")
