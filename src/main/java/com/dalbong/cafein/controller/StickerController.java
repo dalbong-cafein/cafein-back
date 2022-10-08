@@ -42,6 +42,18 @@ public class StickerController {
     }
 
     /**
+     * 혼잡도 스티커 발급 가능 여부
+     */
+    @GetMapping("/stores/{storeId}/stickers/congestionType/check-possible-issue")
+    public ResponseEntity<?> check(@PathVariable("storeId") Long storeId,
+                                   @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        boolean isPossibleIssue = stickerService.checkPossibleIssueCongestionSticker(storeId, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "혼잡도 스티커 발급 여부 조회 성공", isPossibleIssue), HttpStatus.OK);
+    }
+
+    /**
      * 혼잡도 등록시 스티커 발급
      */
     @PostMapping("/stickers/congestionType")

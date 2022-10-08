@@ -40,6 +40,18 @@ public class StickerServiceImpl implements StickerService{
     private final StickerNoticeRepository stickerNoticeRepository;
 
     /**
+     * 혼잡도 스티커 발급 가능 여부
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public boolean checkPossibleIssueCongestionSticker(Long storeId, Long principalId) {
+
+        boolean isExist = stickerRepository.existWithinTimeOfCongestionType(storeId, principalId);
+
+        return !isExist;
+    }
+
+    /**
      * 카페 등록 시 스티커 발급
      */
     @Transactional
@@ -120,7 +132,7 @@ public class StickerServiceImpl implements StickerService{
                 new CustomException("존재하지 않는 혼잡도입니다."));
 
         //혼잡도 스티커일 경우 시간 체크 - 3시간 이내 스티커 발급 체크
-        checkLimitTimeOfCongestionSticker(congestion, principalId);
+        checkLimitTimeOfCongestionSticker(congestion.getStore().getStoreId(), principalId);
 
         Member member = memberRepository.findById(principalId).orElseThrow(() ->
                 new CustomException("존재하지 않는 회원입니다."));
@@ -204,8 +216,8 @@ public class StickerServiceImpl implements StickerService{
         return results.stream().map(s -> new AdminStickerResDto(s)).collect(Collectors.toList());
     }
 
-    private void checkLimitTimeOfCongestionSticker(Congestion congestion, Long principalId) {
-        boolean isExist = stickerRepository.existWithinTimeOfCongestionType(congestion, principalId);
+    private void checkLimitTimeOfCongestionSticker(Long storeId, Long principalId) {
+        boolean isExist = stickerRepository.existWithinTimeOfCongestionType(storeId, principalId);
 
         if(isExist){
             throw new CustomException("동일한 카페의 3시간 이내 혼잡도 등록은 스티커 발급할 수 없습니다.");

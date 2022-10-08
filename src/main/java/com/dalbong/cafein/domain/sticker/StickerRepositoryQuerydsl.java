@@ -9,11 +9,10 @@ import java.util.Optional;
 
 public interface StickerRepositoryQuerydsl {
 
-
     /**
-     * 3시간 이내 혼잡도 타입 스티커 존재 여부
+     * 3시간 이내 혼잡도 타입 스티커 존재 여부 - congestion으로 검색
      */
-    boolean existWithinTimeOfCongestionType(Congestion congestion, Long principalId);
+    boolean existWithinTimeOfCongestionType(Long storeId, Long principalId);
 
     /**
      * 회원별 금일 스티커 수 조회
