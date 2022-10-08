@@ -2,6 +2,7 @@ package com.dalbong.cafein.web.controller;
 
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.web.dto.recommend.CountByRecommendTypeResDto;
 import com.dalbong.cafein.web.dto.recommend.RecommendRegDto;
 import com.dalbong.cafein.web.dto.recommend.RecommendResDto;
 import com.dalbong.cafein.web.service.RecommendService;
@@ -56,6 +57,9 @@ public class RecommendController {
         //카페 추천율
         Double recommendPercentOfStore = recommendService.getRecommendPercent(storeId);
 
+        //항목별 추천 데이터 세기
+        CountByRecommendTypeResDto countByRecommendTypeResDto = recommendService.getCountByRecommendType(storeId);
+
         //본인이 등록한 추천 데이터
         Optional<Recommendation> result = recommendService.getRecommendation(storeId, httpSession.getId());
 
@@ -63,11 +67,11 @@ public class RecommendController {
 
         //추천 데이터를 등록한 경우
         if(result.isPresent()){
-            recommendResDto = new RecommendResDto(recommendPercentOfStore, result.get());
+            recommendResDto = new RecommendResDto(recommendPercentOfStore, countByRecommendTypeResDto, result.get());
         }
         //추천 데이터를 등록하지 않은 경우
         else {
-            recommendResDto = new RecommendResDto(recommendPercentOfStore, null);
+            recommendResDto = new RecommendResDto(recommendPercentOfStore, countByRecommendTypeResDto,null);
         }
 
         return new ResponseEntity<>(new CMRespDto<>(1, "카페별 추천 관련 데이터 조회 성공", recommendResDto), HttpStatus.OK);

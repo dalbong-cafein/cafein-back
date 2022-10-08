@@ -17,4 +17,10 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long>, Rec
     @Modifying(clearAutomatically = true)
     @Query("delete from Recommend rec where rec.store.storeId =:storeId and rec.sessionId =:sessionId")
     void deleteRecommend(@Param("storeId") Long storeId, @Param("sessionId") String sessionId);
+
+    @Query("select rec.recommendation, count(rec.recommendation) from Recommend rec " +
+            "where rec.store.storeId =:storeId " +
+            "group by rec.recommendation")
+    List<Object[]> countByRecommendationType(@Param("storeId") Long storeId);
+
 }
