@@ -15,6 +15,7 @@ import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberUpdateDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
+import com.dalbong.cafein.dto.admin.report.AdminReportResDto;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewEvaluationOfStoreResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
@@ -280,17 +281,28 @@ public class AdminController {
      * 관리자단 회원별 신고내역 조회
      */
     @GetMapping("/members/{memberId}/reports")
-    public ResponseEntity<?> getReportList(@PathVariable("memberId") Long memberId){
+    public ResponseEntity<?> getReportListOfMember(@PathVariable("memberId") Long memberId){
 
-        AdminReportListResDto adminReportListResDto = reportService.getReportListOfAdmin(memberId);
+        List<AdminReportResDto> adminReportResDtoList = reportService.getReportListOfAdminByMemberId(memberId);
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 회원별 신고내역 조회 성공", adminReportListResDto), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 회원별 신고내역 조회 성공", adminReportResDtoList), HttpStatus.OK);
+    }
+
+    /**
+     * 관리지단 신고 리스트 조회
+     */
+    @GetMapping("/reports")
+    public ResponseEntity<?> getReportList(PageRequestDto requestDto){
+
+        AdminReportListResDto adminReportListResDto = reportService.getReportListOfAdmin(requestDto);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 신고 리스트 조회 성공", adminReportListResDto), HttpStatus.OK);
     }
 
     /**
      * 관리자단 리뷰 신고하기
      */
-    @PostMapping("reviews/{reviewId}/reports")
+    @PostMapping("/reviews/{reviewId}/reports")
     public ResponseEntity<?> report(@Validated @RequestBody ReportRegDto reportRegDto, BindingResult bindingResult,
                                     @AuthenticationPrincipal PrincipalDetails principalDetails){
 
@@ -299,6 +311,27 @@ public class AdminController {
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 신고하기 성공",null), HttpStatus.CREATED);
     }
 
+    /**
+     * 관리자단 리뷰 신고 승인하기
+     */
+    @PatchMapping("/reports/{reportId}/approve")
+    public ResponseEntity<?> approveReport(@PathVariable("reportId") Long reportId){
+
+        reportService.approve(reportId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 신고 승인하기 성공", null), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 리뷰 신고 반려하기
+     */
+    @PatchMapping("/reports/{reportId}/reject")
+    public ResponseEntity<?> rejectReport(@PathVariable("reportId") Long reportId){
+
+        reportService.reject(reportId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 신고 반려하기 성공", null), HttpStatus.OK);
+    }
 
     /**
      * 관리자단 신고사유 리스트 조회

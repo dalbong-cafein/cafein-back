@@ -1,5 +1,7 @@
 package com.dalbong.cafein.dto.admin.report;
 
+import com.dalbong.cafein.dto.admin.store.AdminStoreResDto;
+import com.dalbong.cafein.dto.page.PageResultDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,8 +13,7 @@ import java.util.List;
 @Data
 public class AdminReportListResDto {
 
-    private int reportCnt;
+    private long reportCnt;
 
-    List<AdminReportResDto> adminReportResDtoList;
-
+    private PageResultDTO<AdminReportResDto, Object[]> reportResDtoList;
 }

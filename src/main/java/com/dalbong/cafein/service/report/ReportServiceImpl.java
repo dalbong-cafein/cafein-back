@@ -3,6 +3,7 @@ package com.dalbong.cafein.service.report;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.member.MemberState;
+import com.dalbong.cafein.domain.memo.ReportMemo;
 import com.dalbong.cafein.domain.notice.NoticeRepository;
 import com.dalbong.cafein.domain.report.Report;
 import com.dalbong.cafein.domain.report.ReportRepository;
@@ -10,10 +11,17 @@ import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
+import com.dalbong.cafein.dto.page.PageRequestDto;
+import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.notice.NoticeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -51,6 +60,36 @@ public class ReportServiceImpl implements ReportService{
     }
 
     /**
+     * 신고 승인하기
+     */
+    @Transactional
+    @Override
+    public void approve(Long reportId) {
+
+        //Report 조회 (fetch toMember)
+        Report report = reportRepository.findWithToMemberById(reportId).orElseThrow(() ->
+                new CustomException("존재하지 않는 신고입니다."));
+
+        report.approve();
+
+        //리뷰 정책 적용
+        reportPolicy(report, report.getToMember());
+    }
+
+    /**
+     * 신고 반려하기
+     */
+    @Transactional
+    @Override
+    public void reject(Long reportId) {
+
+        Report report = reportRepository.findById(reportId).orElseThrow(() ->
+                new CustomException("존재하지 않는 신고입니다."));
+
+        report.reject();
+    }
+
+    /**
      * 자정에 정지 회원 변동 기능 실행
      */
     @Scheduled(cron = "00 00 00 * * ?")
@@ -59,7 +98,7 @@ public class ReportServiceImpl implements ReportService{
     public void autoModifyMemberState() {
 
         autoModifyToNormal();
-        autoModifyToSuspension();
+        //autoModifyToSuspension();
     }
 
 
@@ -76,21 +115,21 @@ public class ReportServiceImpl implements ReportService{
 
             Member toMember = report.getToMember();
 
-            long reportCnt = reportRepository.countByMemberIdAndLtReportId(toMember.getMemberId(), report.getReportId());
-
-            reportPolicy(report, toMember, (int)reportCnt);
+            reportPolicy(report, toMember);
         });
     }
 
-    private void reportPolicy(Report report, Member member, int reportCnt) {
+    private void reportPolicy(Report report, Member toMember) {
+
+        int reportCnt = (int) reportRepository.countApprovalStatusByMemberIdAndLtReportId(toMember.getMemberId(), report.getReportId());
 
         //회원정지
         if (reportCnt > 0){
-            member.suspension(reportCnt);
+            toMember.suspend(reportCnt);
         }
 
         //회원정지 알림 생성
-        noticeService.registerReportNotice(report, member, reportCnt);
+        noticeService.registerReportNotice(report, toMember, reportCnt);
     }
 
     /**
@@ -110,13 +149,39 @@ public class ReportServiceImpl implements ReportService{
      */
     @Transactional(readOnly = true)
     @Override
-    public AdminReportListResDto getReportListOfAdmin(Long memberId) {
+    public List<AdminReportResDto> getReportListOfAdminByMemberId(Long memberId) {
 
-        List<Report> reportList = reportRepository.getReportListByMemberId(memberId);
+        List<Object[]> reportList = reportRepository.getReportListOfAdminByMemberId(memberId);
 
-        List<AdminReportResDto> adminReportResDtoList =
-                reportList.stream().map(report -> new AdminReportResDto(report)).collect(Collectors.toList());
+        return reportList.stream().map(arr -> new AdminReportResDto((Report) arr[0], (Long) arr[1]))
+                        .collect(Collectors.toList());
+    }
 
-        return new AdminReportListResDto(reportList.size(), adminReportResDtoList);
+
+    /**
+     * 관리자단 신고 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminReportListResDto getReportListOfAdmin(PageRequestDto pageRequestDto) {
+
+        Pageable pageable;
+
+        if(pageRequestDto.getSort().equals("ASC")){
+            pageable = pageRequestDto.getPageable(Sort.by("reportId").ascending());
+        }else{
+            pageable = pageRequestDto.getPageable(Sort.by("reportId").descending());
+        }
+
+        Page<Object[]> results = reportRepository.getReportListOfAdmin(pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
+
+        Function<Object[], AdminReportResDto> fn = (arr -> {
+
+            Report report = (Report) arr[0];
+
+            return new AdminReportResDto(report, (Long) arr[1]);
+        });
+
+        return new AdminReportListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
     }
 }

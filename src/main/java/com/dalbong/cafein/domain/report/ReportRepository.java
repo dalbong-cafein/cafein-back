@@ -12,14 +12,18 @@ import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long>, ReportRepositoryQuerydsl {
 
-    @Query("select rp from Report rp " +
+    @Query("select rp, rm.memoId from Report rp " +
+            "left join fetch rp.toMember " +
+            "left join fetch rp.fromMember " +
             "left join fetch rp.reportCategory " +
+            "left join ReportMemo rm on rm.report = rp " +
             "where rp.toMember.memberId =:memberId")
-    List<Report> getReportListByMemberId(@Param("memberId") Long memberId);
+    List<Object[]> getReportListOfAdminByMemberId(@Param("memberId") Long memberId);
 
     @Query("select count(rp) from Report rp " +
-            "where rp.toMember.memberId =:memberId and rp.reportId < :reportId")
-    long countByMemberIdAndLtReportId(@Param("memberId") Long memberId, @Param("reportId") Long reportId);
+            "where rp.reportStatus = 'APPROVAL' " +
+            "and rp.toMember.memberId =:memberId and rp.reportId < :reportId")
+    long countApprovalStatusByMemberIdAndLtReportId(@Param("memberId") Long memberId, @Param("reportId") Long reportId);
 
     List<Report> findByReview(Review review);
 }
