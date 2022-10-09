@@ -9,6 +9,8 @@ import com.dalbong.cafein.domain.sticker.CongestionSticker;
 import com.dalbong.cafein.domain.sticker.CongestionStickerRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.admin.congestion.AdminCongestionListResDto;
+import com.dalbong.cafein.dto.admin.congestion.AdminCongestionResDto;
 import com.dalbong.cafein.dto.congestion.CongestionListResDto;
 import com.dalbong.cafein.dto.congestion.CongestionRegDto;
 import com.dalbong.cafein.dto.congestion.CongestionResDto;
@@ -91,5 +93,20 @@ public class CongestionServiceImpl implements CongestionService{
                 results.stream().map(c -> new CongestionResDto(c)).collect(Collectors.toList());
 
         return new CongestionListResDto<>(results.size(), congestionResDtoList);
+    }
+
+    /**
+     * 관리자단 혼잡도 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminCongestionListResDto<List<AdminCongestionResDto>> getCongestionListOfAdmin(Long storeId, Integer minusDays) {
+
+        List<Congestion> results = congestionRepository.getCongestionList(storeId, minusDays);
+
+        List<AdminCongestionResDto> adminCongestionResDtoList = results.stream().map(c -> new AdminCongestionResDto(c)).collect(Collectors.toList());
+
+
+        return null;
     }
 }
