@@ -7,6 +7,8 @@ import com.dalbong.cafein.dto.admin.RegisterDataCountOfTodayDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardRegDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardUpdateDto;
+import com.dalbong.cafein.dto.admin.congestion.AdminCongestionListResDto;
+import com.dalbong.cafein.dto.admin.congestion.AdminCongestionResDto;
 import com.dalbong.cafein.dto.admin.coupon.AdminCouponListResDto;
 
 import com.dalbong.cafein.dto.admin.event.AdminEventListResDto;
@@ -26,6 +28,8 @@ import com.dalbong.cafein.dto.admin.store.AdminMyStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoRegDto;
 import com.dalbong.cafein.dto.admin.memo.AdminMemoUpdateDto;
+import com.dalbong.cafein.dto.congestion.CongestionListResDto;
+import com.dalbong.cafein.dto.congestion.CongestionResDto;
 import com.dalbong.cafein.dto.event.EventRegDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.report.ReportRegDto;
@@ -34,6 +38,7 @@ import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.dto.store.StoreUpdateDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.board.BoardService;
+import com.dalbong.cafein.service.congestion.CongestionService;
 import com.dalbong.cafein.service.coupon.CouponService;
 import com.dalbong.cafein.service.event.EventService;
 import com.dalbong.cafein.service.image.ImageService;
@@ -69,7 +74,7 @@ public class AdminController {
     private final MemberService memberService;
     private final MemoService memoService;
     private final StickerService stickerService;
-    private final ImageService imageService;
+    private final CongestionService congestionService;
     private final ReportCategoryService reportCategoryService;
     private final EventService eventService;
 
@@ -342,6 +347,18 @@ public class AdminController {
         List<ReportCategoryResDto> reportCategoryResDtoList = reportCategoryService.getReportCategoryList();
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 신고사유 카테고리 리스트 조회 성공", reportCategoryResDtoList), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 카페별 혼잡도 리스트 조회
+     */
+    @GetMapping("/stores/{storeId}/congestions")
+    public ResponseEntity<?> getCongestionList(@PathVariable("storeId") Long storeId,
+                                               @RequestParam(required = false, defaultValue = "0") Integer minusDays){
+
+        AdminCongestionListResDto<List<AdminCongestionResDto>> adminCongestionListResDto = congestionService.getCongestionListOfAdmin(storeId, minusDays);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 카페별 혼잡도 리스트 조회 성공", adminCongestionListResDto), HttpStatus.OK);
     }
 
     /**
