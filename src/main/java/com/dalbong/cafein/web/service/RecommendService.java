@@ -4,6 +4,7 @@ import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.web.domain.recommend.Recommend;
 import com.dalbong.cafein.web.domain.recommend.RecommendRepository;
+import com.dalbong.cafein.web.dto.recommend.CountByRecommendTypeResDto;
 import com.dalbong.cafein.web.dto.recommend.RecommendRegDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,14 @@ public class RecommendService {
     }
 
     /**
+     * 추천 데이터 삭제
+     */
+    public void remove(Long storeId, String sessionId){
+
+        recommendRepository.deleteRecommend(storeId, sessionId);
+    }
+
+    /**
      * 웹 - 본인이 등록한 카페 추천 데이터 조회
      */
     @Transactional(readOnly = true)
@@ -49,6 +58,38 @@ public class RecommendService {
         }else{
             return Optional.empty();
         }
+    }
+
+    /**
+     * 웹 - 카페별 - 추천 항목별 count 조회
+     */
+    @Transactional(readOnly = true)
+    public CountByRecommendTypeResDto getCountByRecommendType(Long storeId){
+
+        List<Object[]> results = recommendRepository.countByRecommendationType(storeId);
+
+        CountByRecommendTypeResDto countByRecommendTypeResDto = new CountByRecommendTypeResDto();
+
+        for(Object[] arr : results){
+            Recommendation recommendation = (Recommendation) arr[0];
+
+            switch (recommendation.toString()){
+                case "BAD":
+                    countByRecommendTypeResDto.setBad((long)(arr[1]));
+                    break;
+
+                case "NORMAL":
+                    countByRecommendTypeResDto.setNormal((long)arr[1]);
+                    break;
+
+                case "GOOD":
+                    countByRecommendTypeResDto.setGood((long)arr[1]);
+                    break;
+            }
+
+        }
+
+        return countByRecommendTypeResDto;
     }
 
     /**
@@ -68,7 +109,7 @@ public class RecommendService {
 
         //추천 데이터가 없을 경우
         if (totalSize == 0){
-            return null;
+            return 0.0;
         }
 
         double recommendCnt = 0;

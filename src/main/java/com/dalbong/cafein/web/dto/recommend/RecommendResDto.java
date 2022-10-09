@@ -10,6 +10,8 @@ public class RecommendResDto {
 
     private Double recommendPercentOfStore;
 
-    private Recommendation recommendation;
+    private CountByRecommendTypeResDto countByRecommendTypeResDto;
+
+    private Recommendation regRecommendation;
 
 }

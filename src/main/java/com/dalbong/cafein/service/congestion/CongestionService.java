@@ -1,6 +1,8 @@
 package com.dalbong.cafein.service.congestion;
 
 import com.dalbong.cafein.domain.congestion.Congestion;
+import com.dalbong.cafein.dto.admin.congestion.AdminCongestionListResDto;
+import com.dalbong.cafein.dto.admin.congestion.AdminCongestionResDto;
 import com.dalbong.cafein.dto.congestion.CongestionListResDto;
 import com.dalbong.cafein.dto.congestion.CongestionRegDto;
 import com.dalbong.cafein.dto.congestion.CongestionResDto;
@@ -16,5 +18,6 @@ public interface CongestionService {
 
     CongestionListResDto<List<CongestionResDto>> getCongestionList(Long storeId, Integer minusDays);
 
+    AdminCongestionListResDto<List<AdminCongestionResDto>> getCongestionListOfAdmin(Long storeId, Integer minusDays);
 
 }
