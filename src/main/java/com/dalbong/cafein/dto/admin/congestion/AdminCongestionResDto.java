@@ -2,9 +2,11 @@ package com.dalbong.cafein.dto.admin.congestion;
 
 import com.dalbong.cafein.domain.congestion.Congestion;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
 public class AdminCongestionResDto {
 
     private Long writerId;

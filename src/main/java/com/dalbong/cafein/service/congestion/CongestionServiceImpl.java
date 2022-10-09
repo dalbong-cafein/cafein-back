@@ -5,15 +5,19 @@ import com.dalbong.cafein.domain.congestion.CongestionRepository;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.member.MemberState;
+import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.sticker.CongestionSticker;
 import com.dalbong.cafein.domain.sticker.CongestionStickerRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.admin.congestion.AdminCongestionListResDto;
 import com.dalbong.cafein.dto.admin.congestion.AdminCongestionResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
+import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
 import com.dalbong.cafein.dto.congestion.CongestionListResDto;
 import com.dalbong.cafein.dto.congestion.CongestionRegDto;
 import com.dalbong.cafein.dto.congestion.CongestionResDto;
+import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.sticker.StickerService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -106,7 +111,6 @@ public class CongestionServiceImpl implements CongestionService{
 
         List<AdminCongestionResDto> adminCongestionResDtoList = results.stream().map(c -> new AdminCongestionResDto(c)).collect(Collectors.toList());
 
-
-        return null;
+        return new AdminCongestionListResDto(adminCongestionResDtoList.size(), adminCongestionResDtoList);
     }
 }

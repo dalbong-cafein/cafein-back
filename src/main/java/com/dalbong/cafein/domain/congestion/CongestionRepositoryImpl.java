@@ -51,11 +51,7 @@ public class CongestionRepositoryImpl implements CongestionRepositoryQuerydsl {
     }
 
     private BooleanExpression dailyLookup(Integer minusDays) {
-
-        System.out.println(congestion.regDateTime);
-        System.out.println(LocalDate.now().minusDays(minusDays).atTime(0,0));
-        System.out.println(LocalDate.now().minusDays(minusDays).atTime(23,59,59));
-
+        
         return minusDays != null ?
                 congestion.regDateTime
                         .between(LocalDate.now().minusDays(minusDays).atTime(0,0),
