@@ -21,6 +21,7 @@ import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.login.AccountUniteRegDto;
+import com.dalbong.cafein.dto.member.AgreeRegDto;
 import com.dalbong.cafein.dto.member.MemberInfoDto;
 import com.dalbong.cafein.dto.member.MemberUpdateDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
@@ -108,6 +109,21 @@ public class MemberServiceImpl implements MemberService{
     public Boolean isDuplicateNickname(String nickname) {
 
         return !memberRepository.existNickname(nickname);
+    }
+
+
+    /**
+     * 약관 동의 데이터 저장
+     */
+    @Transactional
+    @Override
+    public void saveAgreeTerms(AgreeRegDto agreeRegDto, Long principalId) {
+
+        Member member = memberRepository.findById(principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 회원입니다."));
+
+        member.changeIsAgreeLocation(agreeRegDto.getIsAgreeLocation());
+        member.changeIsAgreeMarketingPush(agreeRegDto.getIsAgreeMarketingPush());
     }
 
     /**
