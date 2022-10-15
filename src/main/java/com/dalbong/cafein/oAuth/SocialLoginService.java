@@ -76,13 +76,7 @@ public class SocialLoginService {
         // 기존 회원
         else{
             Member findMember = memberResult.get();
-
-            if (findMember.getMainAuthProvider().equals(loginDto.getAuthProvider())){
-
-                //사용자정보에 변경이 있다면 사용자 정보를 업데이트 해준다.
-                updateMember(findMember, userInfo);
-            }
-
+            
             memberService.saveLoginHistory(findMember, loginDto.getAuthProvider(), clientIp);
 
             return findMember;
