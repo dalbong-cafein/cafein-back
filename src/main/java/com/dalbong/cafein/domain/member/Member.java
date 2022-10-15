@@ -66,6 +66,10 @@ public class Member extends BaseEntity {
 
     private LocalDateTime leaveDateTime;
 
+    private Boolean isAgreeLocation;
+
+    private Boolean isAgreeMarketingPush;
+
     public void setKakaoId(String kakaoId){
         this.kakaoId = kakaoId;
     }
@@ -96,6 +100,14 @@ public class Member extends BaseEntity {
 
     public void changeGender(GenderType genderType){
         this.genderType = genderType;
+    }
+
+    public void changeIsAgreeLocation(boolean isAgreeLocation){
+        this.isAgreeLocation = isAgreeLocation;
+    }
+
+    public void changeIsAgreeMarketingPush(boolean isAgreeMarketingPush){
+        this.isAgreeMarketingPush = isAgreeMarketingPush;
     }
 
     public void suspend(int reportCnt){

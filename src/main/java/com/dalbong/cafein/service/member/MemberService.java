@@ -8,6 +8,7 @@ import com.dalbong.cafein.dto.admin.member.AdminMemberResDto;
 import com.dalbong.cafein.dto.admin.member.AdminMemberUpdateDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.login.AccountUniteRegDto;
+import com.dalbong.cafein.dto.member.AgreeRegDto;
 import com.dalbong.cafein.dto.member.MemberInfoDto;
 import com.dalbong.cafein.dto.member.MemberUpdateDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
@@ -21,6 +22,8 @@ public interface MemberService {
     Long uniteAccount(String email, AccountUniteRegDto accountUniteRegDto);
 
     Boolean isDuplicateNickname(String nickname);
+
+    void saveAgreeTerms(AgreeRegDto agreeRegDto, Long principalId);
 
     void modifyPhone(String phone, Long principalId);
 
