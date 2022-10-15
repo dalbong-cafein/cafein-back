@@ -32,6 +32,10 @@ public class MemberInfoDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime joinDateTime;
 
+    private Boolean isAgreeLocation;
+
+    private Boolean isAgreeMarketingPush;
+
     public MemberInfoDto(Member member, ImageDto imageDto){
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname() != null ? member.getNickname() : null;
@@ -41,5 +45,7 @@ public class MemberInfoDto {
         this.imageDto = imageDto;
         this.mainAuthProvider = member.getMainAuthProvider();
         this.joinDateTime = member.getRegDateTime();
+        this.isAgreeLocation = member.getIsAgreeLocation();
+        this.isAgreeMarketingPush = member.getIsAgreeMarketingPush();
     }
 }

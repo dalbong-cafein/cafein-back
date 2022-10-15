@@ -3,10 +3,7 @@ package com.dalbong.cafein.controller;
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.image.ImageDto;
-import com.dalbong.cafein.dto.member.MemberInfoDto;
-import com.dalbong.cafein.dto.member.MemberUpdateDto;
-import com.dalbong.cafein.dto.member.PhoneUpdateDto;
-import com.dalbong.cafein.dto.member.StoreAndReviewCntResDto;
+import com.dalbong.cafein.dto.member.*;
 import com.dalbong.cafein.service.member.MemberService;
 import com.dalbong.cafein.service.review.ReviewService;
 import com.dalbong.cafein.service.store.StoreService;
@@ -27,6 +24,18 @@ public class MemberController {
     private final MemberService memberService;
     private final StoreService storeService;
     private final ReviewService reviewService;
+
+    /**
+     * 휴대폰 번호 수정
+     */
+    @PatchMapping("/members/agree-terms")
+    public ResponseEntity<?> saveAgreeTerms(@Validated @RequestBody AgreeRegDto agreeRegDto, BindingResult bindingResult,
+                                            @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        memberService.saveAgreeTerms(agreeRegDto, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "약관동의 데이터 저장 성공", null), HttpStatus.OK);
+    }
 
     /**
      * 휴대폰 번호 수정
