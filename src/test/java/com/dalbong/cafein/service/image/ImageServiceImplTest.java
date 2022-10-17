@@ -9,6 +9,7 @@ import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.s3.S3Uploader;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,6 +37,7 @@ class ImageServiceImplTest {
     /**
      * 회원 이미지 저장
      */
+    @Disabled
     @Test
     void 회원이미지_저장() throws Exception{
         //given
@@ -54,7 +56,8 @@ class ImageServiceImplTest {
         Assertions.assertThat(image.getImageUrl()).isNotNull();
         Assertions.assertThat(memberImage.getMember().getMemberId()).isEqualTo(member.getMemberId());
     }
-    
+
+    @Disabled
     @Test
     void 회원이미지_삭제() throws Exception{
         //given

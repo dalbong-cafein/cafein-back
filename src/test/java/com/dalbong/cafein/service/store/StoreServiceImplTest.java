@@ -18,6 +18,7 @@ import com.dalbong.cafein.dto.store.StoreRegDto;
 import org.aspectj.lang.annotation.RequiredTypes;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -60,6 +61,7 @@ class StoreServiceImplTest {
     /**
      * 카페 등록
      */
+    @Disabled
     @Test
     void 카페등록() throws Exception{
         //given

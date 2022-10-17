@@ -11,6 +11,7 @@ import com.dalbong.cafein.dto.member.MemberUpdateDto;
 import com.dalbong.cafein.service.image.ImageService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -79,6 +80,7 @@ class MemberServiceImplTest {
     /**
      * 프로필 사진, 닉네임 변경
      */
+    @Disabled
     @Test
     void 프로필사진_닉네임_수정() throws Exception{
         //given
