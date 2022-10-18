@@ -28,19 +28,19 @@ public class ReviewUpdateDto {
     private Recommendation recommendation;
 
     @NotNull
-    @Max(value = 4) @Min(value = 1)
+    @Max(value = 5) @Min(value = 1)
     private int socket;
 
     @NotNull
-    @Max(value = 4) @Min(value = 1)
+    @Max(value = 5) @Min(value = 1)
     private int wifi;
 
     @NotNull
-    @Max(value = 4) @Min(value = 1)
+    @Max(value = 5) @Min(value = 1)
     private int restroom;
 
     @NotNull
-    @Max(value = 4) @Min(value = 1)
+    @Max(value = 5) @Min(value = 1)
     private int tableSize;
 
     @Length(max = 100)

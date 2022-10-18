@@ -305,10 +305,10 @@ public class ReviewServiceImpl implements ReviewService{
 
         //추천율, 항목별 가장 많이 받은 점수, 점수의 개수 찾기
         double recommendCnt = 0;
-        int[] socketArr = new int[5];
-        int[] wifiArr = new int[5];
-        int[] restroomArr = new int[5];
-        int[] tableSizeArr = new int[5];
+        int[] socketArr = new int[6];
+        int[] wifiArr = new int[6];
+        int[] restroomArr = new int[6];
+        int[] tableSizeArr = new int[6];
 
         if(reviewList != null && !reviewList.isEmpty()){
             for(Review r : reviewList){
@@ -333,6 +333,7 @@ public class ReviewServiceImpl implements ReviewService{
                 int tableSize = detailEvaluation.getTableSize(); tableSizeArr[tableSize] += 1;
             }
         }
+
         //추천율 계산
         Double recommendPercent = null;
         if(reviewList != null && !reviewList.isEmpty()){
@@ -345,7 +346,7 @@ public class ReviewServiceImpl implements ReviewService{
         String restroomScoreOfMaxCnt = null; int maxCntOfRestroom= -1;
         String tableSizeScoreOfMaxCnt = null; int maxCntOfTableSize= -1;
 
-        for(int i=1; i<5; i++){
+        for(int i=1; i<6; i++){
             if(maxCntOfSocket <= socketArr[i]){
                 maxCntOfSocket = socketArr[i]; socketScoreOfMaxCnt = String.valueOf(i);
             }
