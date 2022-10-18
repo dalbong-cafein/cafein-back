@@ -2,6 +2,7 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.domain.image.Image;
+import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.admin.RegisterDataCountOfTodayDto;
 import com.dalbong.cafein.dto.admin.board.AdminBoardListResDto;
@@ -141,7 +142,8 @@ public class AdminController {
     public ResponseEntity<?> registerStore(@Validated StoreRegDto storeRegDto, BindingResult bindingResult,
                                       @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        storeService.register(storeRegDto, principalDetails.getMember().getMemberId());
+        //storeService.register(storeRegDto,principalDetails.getMember().getMemberId());
+        storeService.register(storeRegDto,1L);
 
         return new ResponseEntity<>(new CMRespDto<>(1,"관리자단 카페 등록 성공",null), HttpStatus.CREATED);
     }
@@ -153,7 +155,8 @@ public class AdminController {
     public ResponseEntity<?> modifyStore(@Validated StoreUpdateDto storeUpdateDto, BindingResult bindingResult,
                                          @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        storeService.modify(storeUpdateDto, principalDetails.getMember().getMemberId());
+        //storeService.modify(storeUpdateDto, principalDetails.getMember().getMemberId());
+        storeService.modify(storeUpdateDto, 1L);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 카페 수정 성공", null), HttpStatus.OK);
 
@@ -243,7 +246,8 @@ public class AdminController {
     public ResponseEntity<?> registerBoard(@Validated AdminBoardRegDto adminBoardRegDto, BindingResult bindingResult,
                                            @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        boardService.register(adminBoardRegDto,principalDetails.getMember().getMemberId());
+       // boardService.register(adminBoardRegDto, principalDetails.getMember().getMemberId());
+        boardService.register(adminBoardRegDto, 1L);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "게시글 등록 성공", null), HttpStatus.CREATED);
     }
@@ -311,7 +315,8 @@ public class AdminController {
     public ResponseEntity<?> report(@Validated @RequestBody ReportRegDto reportRegDto, BindingResult bindingResult,
                                     @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        reportService.report(reportRegDto, principalDetails.getMember());
+        //reportService.report(reportRegDto, principalDetails.getMember());
+        reportService.report(reportRegDto, Member.builder().memberId(1L).build());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 신고하기 성공",null), HttpStatus.CREATED);
     }
@@ -412,7 +417,8 @@ public class AdminController {
     @PostMapping("/memos")
     public ResponseEntity<?> registerMemo(@RequestBody AdminMemoRegDto adminMemoRegDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        memoService.register(adminMemoRegDto, principalDetails.getMember().getMemberId());
+        //memoService.register(adminMemoRegDto, principalDetails.getMember().getMemberId());
+        memoService.register(adminMemoRegDto, 1L);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 메모 생성 성공", null), HttpStatus.CREATED);
     }
