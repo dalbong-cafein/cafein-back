@@ -98,7 +98,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         // 알림 관련
                         "/notices", "/notices/**"
                          ).authenticated()
-                .antMatchers("/admin/**/*").access("hasRole('ROLE_ADMIN')")
+                //.antMatchers("/admin/**/*").access("hasRole('ROLE_ADMIN')")
                 //.antMatchers("/data/*").access("hasRole('ROLE_ADMIN')")
                 .antMatchers("/web/**").permitAll()
                 .anyRequest().permitAll()
