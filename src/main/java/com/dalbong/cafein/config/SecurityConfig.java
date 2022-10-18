@@ -78,7 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/reviews","/reviews/**", "/stores/{storeId}/reviews",
 
                         // 신고 관련
-                        "reviews/**/reports",
+                        "/reviews/**/reports",
 
                         // 하트 관련
                         "/hearts", "/hearts/**", "/stores/{storeId}/hearts",
@@ -87,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/coupons",
 
                         // 혼잡도 관련
-                        "/congestion","congestion/**",
+                        "/congestion","/congestion/**",
 
                         // 신고 관련
                         "/stickers", "/stickers/**",
@@ -98,7 +98,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         // 알림 관련
                         "/notices", "/notices/**"
                          ).authenticated()
-                .antMatchers("/admin/**/*").access("hasRole('ROLE_ADMIN')")
+                //.antMatchers("/admin/**/*").access("hasRole('ROLE_ADMIN')")
                 //.antMatchers("/data/*").access("hasRole('ROLE_ADMIN')")
                 .antMatchers("/web/**").permitAll()
                 .anyRequest().permitAll()
