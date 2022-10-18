@@ -168,6 +168,7 @@ public class Store extends BaseEntity {
         //요일별
         switch(dayOfWeekNumber){
             case 7: //일
+
                 //영업중 체크, 금일 영업 종료 시간
                 if(this.businessHours.getOnSun() != null) {
                     LocalTime openTime = this.businessHours.getOnSun().getOpen();
@@ -181,6 +182,17 @@ public class Store extends BaseEntity {
                 //내일 영업 시작 시간
                 if(this.businessHours.getOnMon() != null){
                     businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnMon().getOpen());
+                }
+
+                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen 체크
+                if(this.businessHours.getOnSat() != null){
+
+                    LocalTime openTimeDayBefore = this.businessHours.getOnSat().getOpen();
+                    LocalTime closedTimeDayBefore = this.businessHours.getOnSat().getClosed();
+
+                    if(openTimeDayBefore.isAfter(closedTimeDayBefore) && closedTimeDayBefore.isBefore(nowDateTime.toLocalTime())){
+                        businessHoursInfoMap.put("isOpen", true);
+                    }
                 }
                 break ;
             case 1:
@@ -198,6 +210,16 @@ public class Store extends BaseEntity {
                 //내일 영업 시작 시간
                 if(this.businessHours.getOnTue() != null){
                     businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnTue().getOpen());
+                }
+                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen 체크
+                if(this.businessHours.getOnSun() != null){
+
+                    LocalTime openTimeDayBefore = this.businessHours.getOnSun().getOpen();
+                    LocalTime closedTimeDayBefore = this.businessHours.getOnSun().getClosed();
+
+                    if(openTimeDayBefore.isAfter(closedTimeDayBefore) && closedTimeDayBefore.isBefore(nowDateTime.toLocalTime())){
+                        businessHoursInfoMap.put("isOpen", true);
+                    }
                 }
                 break ;
             case 2:
@@ -217,6 +239,16 @@ public class Store extends BaseEntity {
                 if(this.businessHours.getOnWed() != null){
                     businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnWed().getOpen());
                 }
+                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen 체크
+                if(this.businessHours.getOnMon() != null){
+
+                    LocalTime openTimeDayBefore = this.businessHours.getOnMon().getOpen();
+                    LocalTime closedTimeDayBefore = this.businessHours.getOnMon().getClosed();
+
+                    if(openTimeDayBefore.isAfter(closedTimeDayBefore) && closedTimeDayBefore.isBefore(nowDateTime.toLocalTime())){
+                        businessHoursInfoMap.put("isOpen", true);
+                    }
+                }
                 break ;
             case 3:
                 //영업중 체크, 금일 영업 종료 시간
@@ -233,6 +265,16 @@ public class Store extends BaseEntity {
                 //내일 영업 시작 시간
                 if(this.businessHours.getOnThu() != null){
                     businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnThu().getOpen());
+                }
+                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen 체크
+                if(this.businessHours.getOnTue() != null){
+
+                    LocalTime openTimeDayBefore = this.businessHours.getOnTue().getOpen();
+                    LocalTime closedTimeDayBefore = this.businessHours.getOnTue().getClosed();
+
+                    if(openTimeDayBefore.isAfter(closedTimeDayBefore) && closedTimeDayBefore.isBefore(nowDateTime.toLocalTime())){
+                        businessHoursInfoMap.put("isOpen", true);
+                    }
                 }
                 break ;
             case 4:
@@ -251,6 +293,16 @@ public class Store extends BaseEntity {
                 if(this.businessHours.getOnFri() != null){
                     businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnFri().getOpen());
                 }
+                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen 체크
+                if(this.businessHours.getOnWed() != null){
+
+                    LocalTime openTimeDayBefore = this.businessHours.getOnWed().getOpen();
+                    LocalTime closedTimeDayBefore = this.businessHours.getOnWed().getClosed();
+
+                    if(openTimeDayBefore.isAfter(closedTimeDayBefore) && closedTimeDayBefore.isBefore(nowDateTime.toLocalTime())){
+                        businessHoursInfoMap.put("isOpen", true);
+                    }
+                }
                 break ;
             case 5:
                 //영업중 체크, 금일 영업 종료 시간
@@ -268,6 +320,16 @@ public class Store extends BaseEntity {
                 if(this.businessHours.getOnSat() != null){
                     businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnSat().getOpen());
                 }
+                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen 체크
+                if(this.businessHours.getOnThu() != null){
+
+                    LocalTime openTimeDayBefore = this.businessHours.getOnThu().getOpen();
+                    LocalTime closedTimeDayBefore = this.businessHours.getOnThu().getClosed();
+
+                    if(openTimeDayBefore.isAfter(closedTimeDayBefore) && closedTimeDayBefore.isBefore(nowDateTime.toLocalTime())){
+                        businessHoursInfoMap.put("isOpen", true);
+                    }
+                }
                 break ;
             case 6:
                 //영업중 체크, 금일 영업 종료 시간
@@ -284,6 +346,16 @@ public class Store extends BaseEntity {
                 //내일 영업 시작 시간
                 if(this.businessHours.getOnSun() != null){
                     businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnSun().getOpen());
+                }
+                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen 체크
+                if(this.businessHours.getOnFri() != null){
+
+                    LocalTime openTimeDayBefore = this.businessHours.getOnFri().getOpen();
+                    LocalTime closedTimeDayBefore = this.businessHours.getOnFri().getClosed();
+
+                    if(openTimeDayBefore.isAfter(closedTimeDayBefore) && closedTimeDayBefore.isBefore(nowDateTime.toLocalTime())){
+                        businessHoursInfoMap.put("isOpen", true);
+                    }
                 }
                 break ;
         }
