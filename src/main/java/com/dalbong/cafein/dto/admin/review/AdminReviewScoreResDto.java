@@ -17,4 +17,6 @@ public class AdminReviewScoreResDto {
 
     private int fourPoint;
 
+    private int fivePoint;
+
 }
