@@ -433,10 +433,10 @@ public class ReviewServiceImpl implements ReviewService{
         List<Review> reviewList = store.getReviewList();
 
         //각 항목의 점수별 개수 count
-        int[] socketArr = new int[5];
-        int[] wifiArr = new int[5];
-        int[] restroomArr = new int[5];
-        int[] tableSizeArr = new int[5];
+        int[] socketArr = new int[6];
+        int[] wifiArr = new int[6];
+        int[] restroomArr = new int[6];
+        int[] tableSizeArr = new int[6];
 
         if(reviewList != null && !reviewList.isEmpty()){
             for(Review r : reviewList){
@@ -456,11 +456,10 @@ public class ReviewServiceImpl implements ReviewService{
                 int tableSize = detailEvaluation.getTableSize(); tableSizeArr[tableSize] += 1;
             }
         }
-
-        AdminReviewScoreResDto socketScoreResDto = new AdminReviewScoreResDto(socketArr[1], socketArr[2], socketArr[3], socketArr[4]);
-        AdminReviewScoreResDto wifiScoreResDto = new AdminReviewScoreResDto(wifiArr[1], wifiArr[2], wifiArr[3], wifiArr[4]);
-        AdminReviewScoreResDto restroomScoreResDto = new AdminReviewScoreResDto(restroomArr[1], restroomArr[2], restroomArr[3], restroomArr[4]);
-        AdminReviewScoreResDto tableSizeScoreResDto = new AdminReviewScoreResDto(tableSizeArr[1], tableSizeArr[2], tableSizeArr[3], tableSizeArr[4]);
+        AdminReviewScoreResDto socketScoreResDto = new AdminReviewScoreResDto(socketArr[1], socketArr[2], socketArr[3], socketArr[4], socketArr[5]);
+        AdminReviewScoreResDto wifiScoreResDto = new AdminReviewScoreResDto(wifiArr[1], wifiArr[2], wifiArr[3], wifiArr[4], wifiArr[5]);
+        AdminReviewScoreResDto restroomScoreResDto = new AdminReviewScoreResDto(restroomArr[1], restroomArr[2], restroomArr[3], restroomArr[4], restroomArr[5]);
+        AdminReviewScoreResDto tableSizeScoreResDto = new AdminReviewScoreResDto(tableSizeArr[1], tableSizeArr[2], tableSizeArr[3], tableSizeArr[4], tableSizeArr[5]);
 
         return new AdminReviewEvaluationOfStoreResDto(recommendPercent, socketScoreResDto,
                 wifiScoreResDto, restroomScoreResDto, tableSizeScoreResDto);
