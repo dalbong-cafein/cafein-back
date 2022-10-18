@@ -148,6 +148,7 @@ public class Store extends BaseEntity {
 
         Map<String,Object> businessHoursInfoMap = new HashMap<>();
         businessHoursInfoMap.put("isOpen", null);
+        businessHoursInfoMap.put("open", null);
         businessHoursInfoMap.put("closed", null);
         businessHoursInfoMap.put("tmrOpen", null);
 
@@ -174,6 +175,7 @@ public class Store extends BaseEntity {
 
                     isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("open", openTime);
                     businessHoursInfoMap.put("closed", closedTime);
                 }
                 //내일 영업 시작 시간
@@ -190,6 +192,7 @@ public class Store extends BaseEntity {
 
                     isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("open", openTime);
                     businessHoursInfoMap.put("closed", this.businessHours.getOnMon().getClosed());
                 }
                 //내일 영업 시작 시간
@@ -206,6 +209,7 @@ public class Store extends BaseEntity {
 
                     isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("open", openTime);
                     businessHoursInfoMap.put("closed", closedTime);
 
                 }
@@ -223,6 +227,7 @@ public class Store extends BaseEntity {
 
                     isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("open", openTime);
                     businessHoursInfoMap.put("closed", this.businessHours.getOnWed().getClosed());
                 }
                 //내일 영업 시작 시간
@@ -239,6 +244,7 @@ public class Store extends BaseEntity {
 
                     isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("open", openTime);
                     businessHoursInfoMap.put("closed", this.businessHours.getOnThu().getClosed());
                 }
                 //내일 영업 시작 시간
@@ -255,6 +261,7 @@ public class Store extends BaseEntity {
 
                     isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("open", openTime);
                     businessHoursInfoMap.put("closed", this.businessHours.getOnFri().getClosed());
                 }
                 //내일 영업 시작 시간
@@ -271,6 +278,7 @@ public class Store extends BaseEntity {
 
                     isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
                     businessHoursInfoMap.put("isOpen", isOpen);
+                    businessHoursInfoMap.put("open", openTime);
                     businessHoursInfoMap.put("closed", this.businessHours.getOnSat().getClosed());
                 }
                 //내일 영업 시작 시간
