@@ -432,7 +432,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 //구 검색
                 for (String sgg : sggArr){
                     if (word.equals(sgg) || word.equals(sgg+"구")){
-                        builder.and(store.address.fullAddress.contains(sgg));
+                        builder.and(store.address.sggNm.eq(sgg));
 
                         ctn = true;
                         break;
