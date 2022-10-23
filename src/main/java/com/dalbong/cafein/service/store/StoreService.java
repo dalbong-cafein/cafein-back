@@ -32,6 +32,10 @@ public interface StoreService {
 
     DetailStoreResDto getDetailStore(Long storeId, Long principalId);
 
+    Store registerOfAdmin(StoreRegDto storeRegDto, Long principalId) throws IOException;
+
+    void modifyOfAdmin(StoreUpdateDto storeUpdateDto, Long principalId) throws IOException;
+
     AdminStoreListDto getStoreListOfAdmin(PageRequestDto pageRequestDto);
 
     AdminDetailStoreResDto getDetailStoreOfAdmin(Long storeId);

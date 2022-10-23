@@ -52,7 +52,7 @@ public class ImageServiceImpl implements ImageService{
      */
     @Transactional
     @Override
-    public List<StoreImage> saveStoreImage(Store store, List<MultipartFile> imageFiles) throws IOException {
+    public List<StoreImage> saveStoreImage(Store store, List<MultipartFile> imageFiles, boolean isCafein) throws IOException {
 
         List<String> imageUrlList = s3Uploader.s3MultipleUploadOfStore(store, imageFiles);
 
@@ -62,7 +62,7 @@ public class ImageServiceImpl implements ImageService{
         if(!imageUrlList.isEmpty()){
             for(String imageUrl : imageUrlList){
                 StoreImage storeImage =
-                        storeImageRepository.save(new StoreImage(store, imageUrl));
+                        storeImageRepository.save(new StoreImage(store, imageUrl, isCafein));
                 imageList.add(storeImage);
             }
         }

@@ -94,7 +94,7 @@ public class StoreServiceImpl implements StoreService{
 
         storeRepository.save(store);
 
-        imageService.saveStoreImage(store, storeRegDto.getImageFiles());
+        imageService.saveStoreImage(store, storeRegDto.getImageFiles(), false);
 
         //리뷰 자동 등록
         reviewService.register(storeRegDto.toReviewRegDto(store.getStoreId()), principalId);
@@ -143,10 +143,23 @@ public class StoreServiceImpl implements StoreService{
         }
 
         //이미지 추가
-        updateStoreImage(store, storeUpdateDto.getUpdateImageFiles(), storeUpdateDto.getDeleteImageIdList());
+        updateStoreImage(store, storeUpdateDto.getUpdateImageFiles(), storeUpdateDto.getDeleteImageIdList(), false);
 
         //최신 수정자 변경
         store.changeModMember(Member.builder().memberId(principalId).build());
+    }
+
+    private void updateStoreImage(Store store, List<MultipartFile> updateImageFiles, List<Long> deleteImageIdList, boolean isCafein) throws IOException {
+
+        //이미지 추가
+        imageService.saveStoreImage(store, updateImageFiles, isCafein);
+
+        //이미지 삭제
+        if (deleteImageIdList != null && !deleteImageIdList.isEmpty()){
+            for (Long imageId : deleteImageIdList){
+                imageService.remove(imageId);
+            }
+        }
     }
 
     /**
@@ -192,19 +205,6 @@ public class StoreServiceImpl implements StoreService{
 
         //store 삭제 (Cascade.Remove - Heart, businessHours, nearStoreToSubwayStation)
         storeRepository.deleteById(storeId);
-    }
-
-    private void updateStoreImage(Store store, List<MultipartFile> updateImageFiles, List<Long> deleteImageIdList) throws IOException {
-
-        //이미지 추가
-        imageService.saveStoreImage(store, updateImageFiles);
-
-        //이미지 삭제
-        if (deleteImageIdList != null && !deleteImageIdList.isEmpty()){
-            for (Long imageId : deleteImageIdList){
-                imageService.remove(imageId);
-            }
-        }
     }
 
     /**
@@ -429,6 +429,86 @@ public class StoreServiceImpl implements StoreService{
         store.increaseViewCnt();
 
         return new DetailStoreResDto(store, (Double) arr[2], memberImageDto, reviewImageDtoList, storeImageDtoList, principalId);
+    }
+
+    /**
+     * 관리자단 카페 등록
+     */
+    @Transactional
+    @Override
+    public Store registerOfAdmin(StoreRegDto storeRegDto, Long principalId) throws IOException {
+
+        Member member = memberRepository.findById(principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 회원입니다."));
+
+        //카페 중복 등록 예외 처리
+        if(storeRepository.existAddress(storeRegDto.getAddress())){
+            throw new CustomException("이미 등록된 카페입니다.");
+        }
+
+        //businessHours 엔티티 저장
+        BusinessHours businessHours = storeRegDto.toBusinessHoursEntity();
+        businessHoursRepository.save(businessHours);
+
+        //store entity 저장
+        Store store = storeRegDto.toEntity(principalId);
+        store.changeBusinessHours(businessHours);
+
+        storeRepository.save(store);
+
+        imageService.saveStoreImage(store, storeRegDto.getImageFiles(), true);
+
+        //리뷰 자동 등록
+        reviewService.register(storeRegDto.toReviewRegDto(store.getStoreId()), principalId);
+
+        //가까운 역 데이터 저장
+        nearStoreToSubWayStationService.save(store);
+
+        return store;
+    }
+
+    /**
+     * 관리자단 카페 수정
+     */
+    @Transactional
+    @Override
+    public void modifyOfAdmin(StoreUpdateDto storeUpdateDto, Long principalId) throws IOException {
+
+        Store store = storeRepository.findById(storeUpdateDto.getStoreId()).orElseThrow(() ->
+                new CustomException("존재하지 않는 카페입니다."));
+
+        //카페 데이터 수정
+        store.changeWebsite(storeUpdateDto.getWebsite());
+        store.changePhone(storeUpdateDto.getPhone());
+        store.changeWifiPassword(storeUpdateDto.getWifiPassword());
+
+        //영업시간 수정
+        BusinessHours FindBusinessHours = store.getBusinessHours();
+        BusinessHoursUpdateDto businessHoursUpdateDto = storeUpdateDto.toBusinessHoursUpdateDto();
+
+        //기존 영업시간 데이터가 있는 경우
+        if(FindBusinessHours != null){
+            FindBusinessHours.changeOnMon(businessHoursUpdateDto.getOnMon());
+            FindBusinessHours.changeOnTue(businessHoursUpdateDto.getOnTue());
+            FindBusinessHours.changeOnWed(businessHoursUpdateDto.getOnWed());
+            FindBusinessHours.changeOnThu(businessHoursUpdateDto.getOnThu());
+            FindBusinessHours.changeOnFri(businessHoursUpdateDto.getOnFri());
+            FindBusinessHours.changeOnSat(businessHoursUpdateDto.getOnSat());
+            FindBusinessHours.changeOnSun(businessHoursUpdateDto.getOnSun());
+            FindBusinessHours.changeEtcTime(businessHoursUpdateDto.getEtcTime());
+        }
+        //기존 영업시간 데이터가 없는 경우
+        else{
+            BusinessHours businessHours = storeUpdateDto.toBusinessHoursEntity();
+            businessHoursRepository.save(businessHours);
+            store.changeBusinessHours(businessHours);
+        }
+
+        //이미지 추가
+        updateStoreImage(store, storeUpdateDto.getUpdateImageFiles(), storeUpdateDto.getDeleteImageIdList(), true);
+
+        //최신 수정자 변경
+        store.changeModMember(Member.builder().memberId(principalId).build());
     }
 
     /**
