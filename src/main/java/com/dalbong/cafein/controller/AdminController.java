@@ -142,8 +142,8 @@ public class AdminController {
     public ResponseEntity<?> registerStore(@Validated StoreRegDto storeRegDto, BindingResult bindingResult,
                                       @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        //storeService.register(storeRegDto,principalDetails.getMember().getMemberId());
-        storeService.register(storeRegDto,1L);
+        //storeService.registerOfAdmin(storeRegDto,principalDetails.getMember().getMemberId());
+        storeService.registerOfAdmin(storeRegDto,1L);
 
         return new ResponseEntity<>(new CMRespDto<>(1,"관리자단 카페 등록 성공",null), HttpStatus.CREATED);
     }
@@ -155,8 +155,8 @@ public class AdminController {
     public ResponseEntity<?> modifyStore(@Validated StoreUpdateDto storeUpdateDto, BindingResult bindingResult,
                                          @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        //storeService.modify(storeUpdateDto, principalDetails.getMember().getMemberId());
-        storeService.modify(storeUpdateDto, 1L);
+        //storeService.modifyOfAdmin(storeUpdateDto, principalDetails.getMember().getMemberId());
+        storeService.modifyOfAdmin(storeUpdateDto, 1L);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 카페 수정 성공", null), HttpStatus.OK);
 

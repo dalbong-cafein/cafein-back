@@ -19,7 +19,7 @@ public interface ImageService {
 
     Image saveMemberImage(Member member, MultipartFile imageFile) throws IOException;
 
-    List<StoreImage> saveStoreImage(Store store, List<MultipartFile> imageFiles) throws IOException;
+    List<StoreImage> saveStoreImage(Store store, List<MultipartFile> imageFiles, boolean isCafein) throws IOException;
 
     StoreImage saveStoreImage(Store store, File imageFile);
 
