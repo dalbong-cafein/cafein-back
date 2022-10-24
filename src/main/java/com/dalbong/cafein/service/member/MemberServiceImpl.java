@@ -11,6 +11,7 @@ import com.dalbong.cafein.domain.loginHistory.LoginHistoryRepository;
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
+import com.dalbong.cafein.domain.notice.NoticeRepository;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.sticker.StickerRepository;
 import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
@@ -55,6 +56,7 @@ public class MemberServiceImpl implements MemberService{
     private final CouponRepository couponRepository;
     private final HeartRepository heartRepository;
     private final LoginHistoryRepository loginHistoryRepository;
+    private final NoticeRepository noticeRepository;
 
     /**
      * 로그인 기록 저장
@@ -188,7 +190,8 @@ public class MemberServiceImpl implements MemberService{
         //회원 탈퇴
         member.leave();
 
-        //회원의 sticker, coupon, heart 데이터 삭제
+        //회원의 notice, sticker, coupon, heart 데이터 삭제
+        noticeRepository.deleteByMemberId(member.getMemberId());
         stickerRepository.deleteByMember(member);
         couponRepository.deleteByMember(member);
         heartRepository.deleteByMember(member);
