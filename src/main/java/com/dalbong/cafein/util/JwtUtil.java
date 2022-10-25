@@ -17,14 +17,13 @@ public class JwtUtil implements Serializable {
     private String secretKey;
 
     //배포용
-    //public final static int accessTokenExpire = 10*60;
+    public final static int accessTokenExpire = 60*10;
+    public final static int refreshTokenExpire = 60*60*24*7;
 
     //테스트용
     public final static int accountUniteTokenExpire = 10*600;
-
-    public final static int accessTokenExpire = 30*60;
-
-    public final static int refreshTokenExpire = 50*60;
+    //public final static int accessTokenExpire = 10*600;
+    //public final static int refreshTokenExpire = 20160;
 
     public final static String accountUniteTokenName = "accountUniteToken";
 

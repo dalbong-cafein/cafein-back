@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 
 import static com.dalbong.cafein.domain.member.AuthProvider.KAKAO;
@@ -186,6 +187,8 @@ public class MemberServiceImpl implements MemberService{
 
         Member member = memberRepository.findById(memberId).orElseThrow(() ->
                 new CustomException("존재하지 않는 회원입니다."));
+
+        member.changeNickname(UUID.randomUUID().toString());
 
         //회원 탈퇴
         member.leave();
