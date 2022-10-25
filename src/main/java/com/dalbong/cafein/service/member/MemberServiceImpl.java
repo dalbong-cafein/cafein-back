@@ -28,6 +28,7 @@ import com.dalbong.cafein.dto.member.MemberUpdateDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.handler.exception.CustomException;
+import com.dalbong.cafein.oAuth.apple.AppleTokenService;
 import com.dalbong.cafein.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -57,6 +58,7 @@ public class MemberServiceImpl implements MemberService{
     private final HeartRepository heartRepository;
     private final LoginHistoryRepository loginHistoryRepository;
     private final NoticeRepository noticeRepository;
+    private final AppleTokenService appleTokenService;
 
     /**
      * 로그인 기록 저장
@@ -182,7 +184,7 @@ public class MemberServiceImpl implements MemberService{
      */
     @Transactional
     @Override
-    public void leave(Long memberId) {
+    public void leave(Long memberId, String code) throws IOException {
 
         Member member = memberRepository.findById(memberId).orElseThrow(() ->
                 new CustomException("존재하지 않는 회원입니다."));
@@ -195,6 +197,12 @@ public class MemberServiceImpl implements MemberService{
         stickerRepository.deleteByMember(member);
         couponRepository.deleteByMember(member);
         heartRepository.deleteByMember(member);
+
+        //애플 계정 회원일 경우
+        if(member.getAppleId() != null && !member.getAppleId().isEmpty()){
+            appleTokenService.generateAuthToken(code);
+        }
+
     }
 
     /**

@@ -131,7 +131,6 @@ public class DataSetController {
 
                 String keyword = a + " " + b;
 
-                //Http요청하기 - Post방식으로 -그리고 response 변수의 응답 받음.
                 ResponseEntity<String> response = rt.exchange(
                         "https://openapi.naver.com/v1/search/local.json?query=" + keyword +"&display=20",
                         HttpMethod.GET,
@@ -249,7 +248,6 @@ public class DataSetController {
                     new HttpEntity<>(null, headers);
 
 
-            //Http요청하기 - Post방식으로 -그리고 response 변수의 응답 받음.
             ResponseEntity<String> response = rt.exchange(
                     "https://dapi.kakao.com/v2/local/search/keyword.json?query=" + store.getStoreName() +"&size=15",
                     HttpMethod.GET,

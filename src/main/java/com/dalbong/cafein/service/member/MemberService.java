@@ -29,7 +29,7 @@ public interface MemberService {
 
     ImageDto modifyImageAndNickname(MemberUpdateDto memberUpdateDto, Long principalId) throws IOException;
 
-    void leave(Long memberId);
+    void leave(Long memberId, String code) throws IOException;
 
     MemberInfoDto getMemberInfo(Long memberId);
 

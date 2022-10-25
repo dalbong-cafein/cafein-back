@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.*;
 
 import static com.dalbong.cafein.domain.member.AuthProvider.*;
@@ -183,7 +184,6 @@ public class SocialLoginService {
 
         return member;
     }
-
 
     /**
      * OAuthUserInfo 조회
