@@ -342,34 +342,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         }
         return builder;
     }
-
-    private BooleanBuilder containStoreNameOrAddress(String keyword){
-        BooleanBuilder builder = new BooleanBuilder();
-
-        BooleanBuilder storeNameBuilder = new BooleanBuilder();
-        storeNameBuilder.and(containStoreName(keyword));
-        storeNameBuilder.and(sggNmEq(keyword));
-
-        builder.or(storeNameBuilder);
-        builder.or(containAddress(keyword));
-        return builder;
-    }
-
-    private BooleanExpression sggNmEq(String keyword) {
-
-        if(!isEmpty(keyword)){
-            //키워드에 구 데이터가 있는 체크
-            for(String sgg : sggArr){
-                if(keyword.contains(sgg)){
-                    //구에 해당하는 카페 조건 추가
-                    return store.address.sggNm.contains(sgg);
-                }
-            }
-        }
-
-        return null;
-    }
-
+    
     private BooleanExpression containStoreId(String keyword) {
 
         Long storeId = null;
