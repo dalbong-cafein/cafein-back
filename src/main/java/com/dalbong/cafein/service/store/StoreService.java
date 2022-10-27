@@ -28,8 +28,6 @@ public interface StoreService {
 
     List<NearStoreResDto> getNearStoreList(Long storeId, Long principalId);
 
-    List<RecommendSearchStoreResDto> getRecommendSearchStoreList(String keyword);
-
     DetailStoreResDto getDetailStore(Long storeId, Long principalId);
 
     Store registerOfAdmin(StoreRegDto storeRegDto, Long principalId) throws IOException;

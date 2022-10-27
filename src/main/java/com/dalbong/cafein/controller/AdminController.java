@@ -174,7 +174,7 @@ public class AdminController {
     }
 
     /**
-     * 관리자단 가게 리스트 조회
+     * 관리자단 카페 리스트 조회
      */
     @GetMapping("/stores")
     public ResponseEntity<?> getAllStoreList(PageRequestDto requestDto){
@@ -185,7 +185,7 @@ public class AdminController {
     }
 
     /**
-     * 관리자단 가게 상세 조회
+     * 관리자단 카페 상세 조회
      */
     @GetMapping("/stores/{storeId}")
     public ResponseEntity<?> getDetailStore(@PathVariable("storeId") Long storeId){

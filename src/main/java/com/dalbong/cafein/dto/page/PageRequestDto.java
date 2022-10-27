@@ -23,6 +23,8 @@ public class PageRequestDto {
     //회원Id: m, 회원명: mn, 핸드폰: p, 가게Id: s, 가게명: sn, 주소: a, 내용: c, 쿠폰Id : cp, 리뷰Id : r, 신고Id : rp
     private String[] searchType;
 
+    private String sggNm;
+
     private Boolean isOnlyImage;
 
     private String sort = "DESC";

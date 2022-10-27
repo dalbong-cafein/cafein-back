@@ -45,19 +45,6 @@ public class StoreController {
     }
 
     /**
-     * 추천 검색 카페 리스트 조회
-     */
-    @GetMapping("/stores/recommend-search")
-    public ResponseEntity<?> getRecommendSearchStoreList(@RequestParam(value = "keyword") String keyword){
-
-        List<RecommendSearchStoreResDto> recommendSearchStoreResDtoList =
-                storeService.getRecommendSearchStoreList(keyword);
-
-        return new ResponseEntity<>(new CMRespDto<>(
-                1, "추천 카페 리스트 조회 성공", recommendSearchStoreResDtoList), HttpStatus.OK);
-    }
-
-    /**
      * 근처 카공 카페 리스트 조회 - 조회중인 카페 기준
      */
     @GetMapping("/stores/{storeId}/near-stores")

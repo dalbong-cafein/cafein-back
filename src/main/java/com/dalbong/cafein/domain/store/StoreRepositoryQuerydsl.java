@@ -41,15 +41,9 @@ public interface StoreRepositoryQuerydsl {
     Optional<Object[]> getDetailStore(Long storeId);
 
     /**
-     * 추천 검색 카페 리스트 조회
-     */
-    List<Store> getRecommendSearchStoreList(String keyword);
-
-
-    /**
      * 관리자단 전체 카페 리스트 조회
      */
-    Page<Object[]> getAllStoreList(String[] searchType, String keyword, Pageable pageable);
+    Page<Object[]> getAllStoreList(String sggNm, String[] searchType, String keyword, Pageable pageable);
 
     /**
      * 관리자단 카페 상세 페이지 조회
