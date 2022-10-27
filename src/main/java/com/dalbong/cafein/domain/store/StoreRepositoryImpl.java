@@ -14,6 +14,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
@@ -190,22 +191,10 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     }
 
     /**
-     * 추천 검색 카페 리스트 조회
-     */
-    @Override
-    public List<Store> getRecommendSearchStoreList(String keyword) {
-
-        return queryFactory.selectFrom(store)
-                .where(containStoreNameOrAddress(keyword))
-                .limit(10)
-                .fetch();
-    }
-
-    /**
      * 관리자단 카페 리스트 조회
      */
     @Override
-    public Page<Object[]> getAllStoreList(String[] searchType, String keyword, Pageable pageable) {
+    public Page<Object[]> getAllStoreList(String sggNm, String[] searchType, String keyword, Pageable pageable) {
 
         QCongestion subCongestion = new QCongestion("sub");
 
@@ -218,7 +207,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                         storeMemo.memoId)
                 .from(store)
                 .leftJoin(storeMemo).on(storeMemo.store.storeId.eq(store.storeId))
-                .where(searchKeyword(searchType, keyword))
+                .where(sggNmFilter(sggNm), searchKeyword(searchType, keyword))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .groupBy(store.storeId);
@@ -236,7 +225,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         JPAQuery<Tuple> countQuery = queryFactory
                 .select(store, store.reviewList.size())
                 .from(store)
-                .where(searchKeyword(searchType, keyword))
+                .where(sggNmFilter(sggNm), searchKeyword(searchType, keyword))
                 .groupBy(store.storeId);
 
         List<Object[]> content = results.stream().map(t -> t.toArray()).collect(Collectors.toList());
@@ -320,6 +309,11 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 .fetch();
     }
 
+    private BooleanExpression sggNmFilter(String sggNm) {
+
+       return !isEmpty(sggNm) ? store.address.sggNm.eq(sggNm) : null;
+    }
+
 
     private BooleanBuilder searchKeyword(String[] searchType, String keyword) {
 
@@ -342,7 +336,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         }
         return builder;
     }
-    
+
     private BooleanExpression containStoreId(String keyword) {
 
         Long storeId = null;

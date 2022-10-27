@@ -363,19 +363,6 @@ public class StoreServiceImpl implements StoreService{
     }
 
     /**
-     * 추천 검색 카페 리스트 조회
-     */
-    @Transactional(readOnly = true)
-    @Override
-    public List<RecommendSearchStoreResDto> getRecommendSearchStoreList(String keyword) {
-
-        List<Store> results = storeRepository.getRecommendSearchStoreList(keyword);
-
-        return results.stream().map(s -> new RecommendSearchStoreResDto(s)).collect(Collectors.toList());
-
-    }
-
-    /**
      * 앱단 카페 상세 페이지 조회
      */
     @Transactional
@@ -526,7 +513,8 @@ public class StoreServiceImpl implements StoreService{
             pageable = pageRequestDto.getPageable(Sort.by("storeId").descending());
         }
 
-        Page<Object[]> results = storeRepository.getAllStoreList(pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
+        Page<Object[]> results = storeRepository.getAllStoreList(pageRequestDto.getSggNm(),
+                pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
 
         Function<Object[], AdminStoreResDto> fn = (arr -> {
 
