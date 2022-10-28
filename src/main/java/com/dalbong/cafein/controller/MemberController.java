@@ -65,10 +65,10 @@ public class MemberController {
      * 회원 탈퇴
      */
     @DeleteMapping("/members")
-    public ResponseEntity<?> leave(@RequestParam(name = "code", required = false) String code,
+    public ResponseEntity<?> leave(@RequestParam(name = "code", required = false) String authorizationCode,
                                    @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
-        memberService.leave(principalDetails.getMember().getMemberId(), code);
+        memberService.leave(principalDetails.getMember().getMemberId(), authorizationCode);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "회원탈퇴 성공", null), HttpStatus.OK);
     }

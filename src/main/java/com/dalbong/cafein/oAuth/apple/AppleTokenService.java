@@ -128,24 +128,50 @@ public class AppleTokenService {
         }
     }
 
+    public void revoke(String authorizationCode) throws IOException {
 
-    public void generateAuthToken(String authorizationCode) throws IOException {
+        String clientSecret = createClientSecret();
+
+        AppleToken appleToken = generateAuthToken(clientSecret, authorizationCode);
+
+        RestTemplate restTemplate = new RestTemplateBuilder().build();
+        String revokeUrl = "https://appleid.apple.com/auth/revoke";
+
+        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("client_id", clientId);
+        params.add("client_secret", clientSecret);
+        params.add("token", appleToken.getRefresh_token());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
+
+        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(revokeUrl, httpEntity, String.class);
+
+        if(stringResponseEntity.getStatusCode().is4xxClientError()){
+            throw new CustomException("회원 탈퇴 실패");
+        }
+    }
+
+
+    private AppleToken generateAuthToken(String clientSecret, String authorizationCode) throws IOException {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", authorizationCode);
         params.add("client_id", clientId);
-        params.add("client_secret", createClientSecret());
+        params.add("client_secret", clientSecret);
         params.add("grant_type", "authorization_code");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-        try {
-            Map<String,Object> response= restTemplate.postForObject("https://appleid.apple.com/auth/token", new HttpEntity<>(params, headers), Map.class);
-            System.out.println(response.toString());
-        } catch (HttpClientErrorException e) {
-            throw new IllegalArgumentException("Apple Auth Token Error");
+        try{
+            ResponseEntity<AppleToken> responseEntity = restTemplate.postForEntity("https://appleid.apple.com/auth/token", new HttpEntity<>(params, headers), AppleToken.class);
+            return responseEntity.getBody();
+        }catch (HttpClientErrorException e) {
+            throw new CustomException("Apple Auth Token Error");
         }
     }
 

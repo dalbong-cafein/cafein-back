@@ -184,7 +184,7 @@ public class MemberServiceImpl implements MemberService{
      */
     @Transactional
     @Override
-    public void leave(Long memberId, String code) throws IOException {
+    public void leave(Long memberId, String authorizationCode) throws IOException {
 
         Member member = memberRepository.findById(memberId).orElseThrow(() ->
                 new CustomException("존재하지 않는 회원입니다."));
@@ -200,7 +200,7 @@ public class MemberServiceImpl implements MemberService{
 
         //애플 계정 회원일 경우
         if(member.getAppleId() != null && !member.getAppleId().isEmpty()){
-            appleTokenService.generateAuthToken(code);
+            appleTokenService.revoke(authorizationCode);
         }
 
     }
