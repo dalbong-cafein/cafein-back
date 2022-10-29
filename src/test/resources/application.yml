@@ -36,6 +36,11 @@ app:
   token:
     secretKey: ${JWT_SECRET_KEY}
 
+apple:
+  keyId : ${APPLE_KEY_ID}
+  clientId : ${APPLE_CLIENT_ID}
+  teamId : ${APPLE_TEAM_ID}
+
 
 coolsms:
   apiKey: ${COOLSMS_API_KEY}
