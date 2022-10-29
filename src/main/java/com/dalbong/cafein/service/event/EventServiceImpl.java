@@ -107,6 +107,22 @@ public class EventServiceImpl implements EventService{
     @Override
     public AdminEventListResDto<?> getEventListOfAdmin(PageRequestDto pageRequestDto) {
 
+        //현재 이벤트 조회
+        Object[] arr = eventRepository.latestEvent().orElseThrow(() ->
+                new CustomException("이벤트 배너가 존재하지 않습니다."));
+
+        Event currentEvent = (Event) arr[0];
+        EventImage currentEventImage = (EventImage) arr[1];
+
+        //이벤트 배너 이미지
+        ImageDto currentEventImageDto = null;
+        if(currentEventImage != null){
+            currentEventImageDto = new ImageDto(currentEventImage.getImageId(), currentEventImage.getImageUrl());
+        }
+
+        AdminEventResDto currentAdminEventResDto = new AdminEventResDto(currentEvent, currentEventImageDto);
+
+        //이벤트 리스트 조회
         Pageable pageable;
 
         if(pageRequestDto.getSort().equals("ASC")){
@@ -117,10 +133,10 @@ public class EventServiceImpl implements EventService{
 
         Page<Object[]> results = eventRepository.getEventList(pageable);
 
-        Function<Object[], AdminEventResDto> fn = (arr-> {
+        Function<Object[], AdminEventResDto> fn = (array-> {
 
-            Event event = (Event) arr[0];
-            EventImage eventImage = (EventImage) arr[1];
+            Event event = (Event) array[0];
+            EventImage eventImage = (EventImage) array[1];
 
             ImageDto eventImageDto = null;
             if(eventImage != null){
@@ -130,6 +146,6 @@ public class EventServiceImpl implements EventService{
             return new AdminEventResDto(event, eventImageDto);
         });
 
-        return new AdminEventListResDto<>(results.getTotalElements(), new PageResultDTO<>(results, fn));
+        return new AdminEventListResDto<>(results.getTotalElements(), currentAdminEventResDto, new PageResultDTO<>(results, fn));
     }
 }
