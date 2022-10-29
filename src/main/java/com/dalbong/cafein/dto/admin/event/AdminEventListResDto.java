@@ -11,6 +11,8 @@ public class AdminEventListResDto<T> {
 
     private long eventCnt;
 
+    private AdminEventResDto currentEventResDto;
+
     private T eventResDtoList;
 
 }
