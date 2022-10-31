@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,5 +29,20 @@ public class BoardController {
 
         return new ResponseEntity<>(new CMRespDto<>(1, "게시글 리스트 조회 성공", boardResDtoList), HttpStatus.OK);
     }
+
+    /**
+     * 게시를 상세 조회
+     */
+    @GetMapping("/boards/{boardId}")
+    public ResponseEntity<?> getBoard(@PathVariable("boardId") Long boardId){
+
+        BoardResDto boardResDto = boardService.getBoard(boardId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "게시글 상세 조회 성공", boardResDto), HttpStatus.OK);
+    }
+
+
+
+
 
 }
