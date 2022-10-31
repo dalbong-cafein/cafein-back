@@ -20,6 +20,8 @@ public interface BoardService {
 
     List<BoardResDto> getBoardList(Long boardCategoryId);
 
+    BoardResDto getBoard(Long boardId);
+
     AdminBoardListResDto getBoardListOfAdmin(Long boardCategoryId, PageRequestDto pageRequestDto);
 
 }

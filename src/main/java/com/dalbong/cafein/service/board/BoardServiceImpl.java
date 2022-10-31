@@ -157,6 +157,29 @@ public class BoardServiceImpl implements BoardService{
     }
 
     /**
+     * 게시글 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public BoardResDto getBoard(Long boardId) {
+
+        Board board = boardRepository.findById(boardId).orElseThrow(()
+                -> new CustomException("존재하지 않는 게시글입니다."));
+
+        //게시글 이미지
+        List<ImageDto> boardImageDtoList = new ArrayList<>();
+
+        if (board.getBoardImageList() != null && !board.getBoardImageList().isEmpty()) {
+
+            for (BoardImage boardImage : board.getBoardImageList()) {
+                boardImageDtoList.add(new ImageDto(boardImage.getImageId(), boardImage.getImageUrl()));
+            }
+        }
+
+        return new BoardResDto(board, boardImageDtoList);
+    }
+
+    /**
      * 관리자단 게시글 리스트 조회
      */
     @Transactional(readOnly = true)
