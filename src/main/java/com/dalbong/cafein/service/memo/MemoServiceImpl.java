@@ -6,6 +6,8 @@ import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.memo.*;
 import com.dalbong.cafein.domain.notice.CouponNoticeRepository;
+import com.dalbong.cafein.domain.report.Report;
+import com.dalbong.cafein.domain.report.ReportRepository;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.domain.store.Store;
@@ -31,10 +33,12 @@ public class MemoServiceImpl implements MemoService{
     private final ReviewMemoRepository reviewMemoRepository;
     private final MemberMemoRepository memberMemoRepository;
     private final CouponMemoRepository couponMemoRepository;
+    private final ReportMemoRepository reportMemoRepository;
     private final StoreRepository storeRepository;
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
     private final CouponRepository couponRepository;
+    private final ReportRepository reportRepository;
 
     /**
      * 관리자단 메모 생성
@@ -79,6 +83,15 @@ public class MemoServiceImpl implements MemoService{
 
             CouponMemo couponMemo = new CouponMemo(coupon, Member.builder().memberId(principalId).build(), adminMemoRegDto.getContent());
             return couponMemoRepository.save(couponMemo);
+        }
+
+        //신고 메모
+        else if (adminMemoRegDto.getReportId() != null){
+            Report report = reportRepository.findById(adminMemoRegDto.getReportId()).orElseThrow(() ->
+                    new CustomException("존재하지 않는 신고입니다."));
+
+            ReportMemo reportMemo = new ReportMemo(report, Member.builder().memberId(principalId).build(), adminMemoRegDto.getContent());
+            return reportMemoRepository.save(reportMemo);
         }
 
         throw new CustomException("존재하는 메모 기능이 없습니다.");

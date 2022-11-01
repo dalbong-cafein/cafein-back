@@ -26,6 +26,8 @@ public class AdminMemoResDto {
 
     private Long memberId;
 
+    private Long reportId;
+
     private String content;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
@@ -64,6 +66,12 @@ public class AdminMemoResDto {
             this.memoType = "쿠폰관리";
             this.memberId = ((CouponMemo) memo).getCoupon().getCouponId();
         }
+
+        //신고 메모일 경우
+        if(memo instanceof ReportMemo){
+            this.memoType = "신고관리";
+            this.reportId = ((ReportMemo) memo).getReport().getReportId();
+       }
 
     }
 
