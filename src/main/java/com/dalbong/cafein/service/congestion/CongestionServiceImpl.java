@@ -8,6 +8,7 @@ import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.sticker.CongestionSticker;
 import com.dalbong.cafein.domain.sticker.CongestionStickerRepository;
+import com.dalbong.cafein.domain.sticker.StickerRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.admin.congestion.AdminCongestionListResDto;
@@ -38,6 +39,7 @@ public class CongestionServiceImpl implements CongestionService{
     private final StoreRepository storeRepository;
     private final MemberRepository memberRepository;
     private final CongestionStickerRepository congestionStickerRepository;
+    private final StickerRepository stickerRepository;
 
     /**
      * 혼잡도 등록
@@ -54,6 +56,9 @@ public class CongestionServiceImpl implements CongestionService{
             throw new CustomException("활동이 정지된 회원입니다.");
         }
 
+        //혼잡도 스티커일 경우 시간 체크 - 3시간 이내 스티커 발급 체크
+        checkLimitTimeOfCongestionSticker(congestionRegDto.getStoreId(), principalId);
+
         Store store = storeRepository.findById(congestionRegDto.getStoreId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 가게입니다."));
 
@@ -61,6 +66,14 @@ public class CongestionServiceImpl implements CongestionService{
         congestionRepository.save(congestion);
 
         return congestion;
+    }
+
+    private void checkLimitTimeOfCongestionSticker(Long storeId, Long principalId) {
+        boolean isExist = congestionRepository.existWithinTime(storeId, principalId);
+
+        if(isExist){
+            throw new CustomException("3시간 이내 동일한 카페의 혼잡도 등록은 제한됩니다.");
+        }
     }
 
     /**
