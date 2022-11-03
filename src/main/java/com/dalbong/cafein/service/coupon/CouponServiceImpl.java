@@ -111,7 +111,7 @@ public class CouponServiceImpl implements CouponService{
     }
 
     /**
-     * 쿠폰 리스트 사용자 지정 조회
+     * 쿠폰 리스트 사용자 개수 지정 조회
      */
     @Transactional(readOnly = true)
     @Override

@@ -57,4 +57,9 @@ public class AdminReportResDto {
         this.modDateTime = report.getModDateTime();
         this.memoId = memoId;
     }
+
+    public AdminReportResDto(Report report){
+        this(report, null);
+    }
+
 }

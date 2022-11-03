@@ -1,5 +1,6 @@
 package com.dalbong.cafein.domain.report;
 
+import com.dalbong.cafein.domain.coupon.Coupon;
 import com.dalbong.cafein.domain.review.Review;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.dalbong.cafein.domain.coupon.QCoupon.coupon;
 import static com.dalbong.cafein.domain.memo.QReportMemo.reportMemo;
 import static com.dalbong.cafein.domain.report.QReport.report;
 import static com.dalbong.cafein.domain.review.QReview.review;
@@ -74,6 +76,7 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
                 .from(report)
                 .leftJoin(report.toMember).fetchJoin()
                 .leftJoin(report.fromMember).fetchJoin()
+                .join(report.reportCategory).fetchJoin()
                 .leftJoin(reportMemo).on(reportMemo.report.eq(report))
                 .where(searchKeyword(searchType, keyword))
                 .offset(pageable.getOffset())
@@ -92,13 +95,27 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
         JPAQuery<Report> countQuery = queryFactory
                 .select(report)
                 .from(report)
-                .leftJoin(report.toMember).fetchJoin()
-                .leftJoin(report.fromMember).fetchJoin()
                 .where(searchKeyword(searchType, keyword));
 
         List<Object[]> content = results.stream().map(t -> t.toArray()).collect(Collectors.toList());
 
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchCount());
+    }
+
+    /**
+     * 관리자단 신고 리스트 사용자 개수 지정 조회
+     */
+    @Override
+    public List<Report> getCustomLimitReportListOfAdmin(int limit) {
+
+        return queryFactory.select(report)
+                .from(report)
+                .leftJoin(report.toMember).fetchJoin()
+                .leftJoin(report.fromMember).fetchJoin()
+                .join(report.reportCategory).fetchJoin()
+                .orderBy(report.reportId.desc())
+                .limit(limit)
+                .fetch();
     }
 
     private BooleanBuilder searchKeyword(String[] searchType, String keyword) {

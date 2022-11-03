@@ -163,7 +163,7 @@ public class ReportServiceImpl implements ReportService{
      */
     @Transactional(readOnly = true)
     @Override
-    public AdminReportListResDto getReportListOfAdmin(PageRequestDto pageRequestDto) {
+    public AdminReportListResDto<?> getReportListOfAdmin(PageRequestDto pageRequestDto) {
 
         Pageable pageable;
 
@@ -182,6 +182,21 @@ public class ReportServiceImpl implements ReportService{
             return new AdminReportResDto(report, (Long) arr[1]);
         });
 
-        return new AdminReportListResDto(results.getTotalElements(), new PageResultDTO<>(results, fn));
+        return new AdminReportListResDto<>(results.getTotalElements(), new PageResultDTO<>(results, fn));
+    }
+
+    /**
+     * 관리자단 신고 리스트 사용자 개수 지정 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public AdminReportListResDto<?> getCustomLimitReportListOfAdmin(int limit) {
+
+        List<Report> reportList = reportRepository.getCustomLimitReportListOfAdmin(limit);
+
+        List<AdminReportResDto> adminReportResDtoList = reportList.stream().map(report ->
+                new AdminReportResDto(report)).collect(Collectors.toList());
+
+        return new AdminReportListResDto<>(reportList.size(), adminReportResDtoList);
     }
 }

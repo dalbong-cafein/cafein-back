@@ -13,7 +13,7 @@ public interface CouponRepositoryQuerydsl {
     Page<Object[]> getCouponList(String[] searchType, String keyword, Pageable pageable);
 
     /**
-     * 관리자단 쿠폰 리스트 조회
+     * 관리자단 쿠폰 리스트 사용자 개수 지정 조회
      */
     List<Coupon> getCustomLimitCouponList(int limit);
 

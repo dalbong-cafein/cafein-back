@@ -6,6 +6,7 @@ import com.dalbong.cafein.dto.admin.member.AdminMemberListResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportResDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
+import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.dto.report.ReportRegDto;
 
 import java.util.List;
@@ -26,5 +27,7 @@ public interface ReportService {
 
     List<AdminReportResDto> getReportListOfAdminByMemberId(Long memberId);
 
-    AdminReportListResDto getReportListOfAdmin(PageRequestDto pageRequestDto);
+    AdminReportListResDto<?> getReportListOfAdmin(PageRequestDto pageRequestDto);
+
+    AdminReportListResDto<?> getCustomLimitReportListOfAdmin(int limit);
 }

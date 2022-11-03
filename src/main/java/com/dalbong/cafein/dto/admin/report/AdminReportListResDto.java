@@ -11,9 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class AdminReportListResDto {
+public class AdminReportListResDto<T> {
 
     private long reportCnt;
 
-    private PageResultDTO<AdminReportResDto, Object[]> reportResDtoList;
+    private T reportResDtoList;
 }

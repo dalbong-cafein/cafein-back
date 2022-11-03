@@ -225,7 +225,7 @@ public class AdminController {
 
         AdminCouponListResDto adminCouponListResDto = couponService.getCustomLimitCouponListOfAdmin(limit);
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 쿠폰 리스트 조회 성공", adminCouponListResDto), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 쿠폰 리스트 개수 지정 조회 성공", adminCouponListResDto), HttpStatus.OK);
     }
 
     /**
@@ -303,9 +303,20 @@ public class AdminController {
     @GetMapping("/reports")
     public ResponseEntity<?> getReportList(PageRequestDto requestDto){
 
-        AdminReportListResDto adminReportListResDto = reportService.getReportListOfAdmin(requestDto);
+        AdminReportListResDto<?> adminReportListResDto = reportService.getReportListOfAdmin(requestDto);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 신고 리스트 조회 성공", adminReportListResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 신고 리스트 개수 지정 조회
+     */
+    @GetMapping("/reports/limit")
+    public ResponseEntity<?> getCustomLimitReportList(@RequestParam(required = false, defaultValue = "6") int limit){
+
+        AdminReportListResDto<?> adminReportListResDto = reportService.getCustomLimitReportListOfAdmin(limit);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 신고 리스트 개수 지정 조회 성공", adminReportListResDto), HttpStatus.OK);
     }
 
     /**
