@@ -1,5 +1,6 @@
 package com.dalbong.cafein.dto.review;
 
+import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.domain.review.DetailEvaluation;
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
@@ -28,6 +29,8 @@ public class ReviewResDto {
 
     private String profileImageUrl;
 
+    private Boolean isLeaveOfWriter;
+
     private String content;
 
     private long visitCnt;
@@ -47,6 +50,7 @@ public class ReviewResDto {
         this.writerId = review.getMember().getMemberId();
         this.nicknameOfWriter = review.getMember().getNickname();
         this.profileImageUrl = profileImageUrl;
+        this.isLeaveOfWriter = review.getMember().getState().equals(MemberState.LEAVE);
         this.content = review.getContent();
         this.visitCnt = visitCnt;
         this.recommendation = review.getRecommendation();
