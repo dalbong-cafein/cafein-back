@@ -2,6 +2,7 @@ package com.dalbong.cafein.dto.member;
 
 import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,8 @@ public class MemberInfoDto {
 
     private LocalDate birth;
 
+    private MemberState state;
+
     private AuthProvider mainAuthProvider;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
@@ -42,6 +45,7 @@ public class MemberInfoDto {
         this.phone = member.getPhone() != null ? member.getPhone() : null;
         this.email = member.getEmail();
         this.birth = member.getBirth();
+        this.state = member.getState();
         this.imageDto = imageDto;
         this.mainAuthProvider = member.getMainAuthProvider();
         this.joinDateTime = member.getRegDateTime();
