@@ -169,20 +169,28 @@ public class Store extends BaseEntity {
         switch(dayOfWeekNumber){
             case 7: //일
 
+                LocalTime openTime = null;
+                LocalTime tmrOpenTime = null;
+
                 //영업중 체크, 금일 영업 종료 시간
                 if(this.businessHours.getOnSun() != null) {
-                    LocalTime openTime = this.businessHours.getOnSun().getOpen();
+
+                    openTime = this.businessHours.getOnSun().getOpen();
                     LocalTime closedTime = this.businessHours.getOnSun().getClosed();
 
                     isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
+
                     businessHoursInfoMap.put("isOpen", isOpen);
-                    businessHoursInfoMap.put("open", openTime);
                     businessHoursInfoMap.put("closed", closedTime);
                 }
+
                 //내일 영업 시작 시간
                 if(this.businessHours.getOnMon() != null){
-                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnMon().getOpen());
+                    tmrOpenTime = this.businessHours.getOnMon().getOpen();
                 }
+
+                checkNextOpenTime(nowDateTime, openTime, tmrOpenTime);
+
                 //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen, closed 체크
                 if(this.businessHours.getOnSat() != null){
                     checkBusinessAfterMidnight(businessHoursInfoMap, nowDateTime,
@@ -330,6 +338,19 @@ public class Store extends BaseEntity {
         }
 
         return businessHoursInfoMap;
+    }
+
+    private LocalTime checkNextOpenTime(LocalDateTime nowDateTime, LocalTime openTime, LocalTime tmrOpenTime) {
+
+            if(nowDateTime.toLocalTime().isBefore(openTime){
+
+                return  ;
+
+            }else if(){
+
+        }
+
+
     }
 
     private void checkBusinessAfterMidnight(Map<String, Object> businessHoursInfoMap, LocalDateTime nowDateTime,
