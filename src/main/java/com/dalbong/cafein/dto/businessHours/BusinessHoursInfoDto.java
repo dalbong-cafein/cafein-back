@@ -13,20 +13,16 @@ public class BusinessHoursInfoDto {
     private Boolean isOpen;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
-    private LocalTime open;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
     private LocalTime closed;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
-    private LocalTime tmrOpen;
+    private LocalTime nextOpen;
 
     public BusinessHoursInfoDto(Map<String,Object> businessHoursInfoMap){
 
         this.isOpen = (Boolean) businessHoursInfoMap.get("isOpen");
-        this.open = (LocalTime) businessHoursInfoMap.get("open");
         this.closed = (LocalTime) businessHoursInfoMap.get("closed");
-        this.tmrOpen = (LocalTime) businessHoursInfoMap.get("tmrOpen");
+        this.nextOpen = (LocalTime) businessHoursInfoMap.get("nextOpen");
     }
 
 }

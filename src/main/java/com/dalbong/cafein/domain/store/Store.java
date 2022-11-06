@@ -3,13 +3,13 @@ package com.dalbong.cafein.domain.store;
 import com.dalbong.cafein.domain.BaseEntity;
 import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.businessHours.BusinessHours;
+import com.dalbong.cafein.domain.businessHours.Day;
 import com.dalbong.cafein.domain.heart.Heart;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.nearStoreToSubwayStation.NearStoreToSubwayStation;
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
-import com.dalbong.cafein.domain.store.dto.NearStoreDto;
 import com.dalbong.cafein.web.domain.recommend.Recommend;
 import lombok.*;
 
@@ -148,9 +148,8 @@ public class Store extends BaseEntity {
 
         Map<String,Object> businessHoursInfoMap = new HashMap<>();
         businessHoursInfoMap.put("isOpen", null);
-        businessHoursInfoMap.put("open", null);
         businessHoursInfoMap.put("closed", null);
-        businessHoursInfoMap.put("tmrOpen", null);
+        businessHoursInfoMap.put("nextOpen", null);
 
         //영업시간 데이터 없는 경우
         if(this.businessHours == null) {
@@ -163,173 +162,90 @@ public class Store extends BaseEntity {
         //현재 요일
         int dayOfWeekNumber = nowDateTime.getDayOfWeek().getValue();
 
-        boolean isOpen;
-
         //요일별
         switch(dayOfWeekNumber){
             case 7: //일
-
-                //영업중 체크, 금일 영업 종료 시간
-                if(this.businessHours.getOnSun() != null) {
-                    LocalTime openTime = this.businessHours.getOnSun().getOpen();
-                    LocalTime closedTime = this.businessHours.getOnSun().getClosed();
-
-                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
-                    businessHoursInfoMap.put("isOpen", isOpen);
-                    businessHoursInfoMap.put("open", openTime);
-                    businessHoursInfoMap.put("closed", closedTime);
-                }
-                //내일 영업 시작 시간
-                if(this.businessHours.getOnMon() != null){
-                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnMon().getOpen());
-                }
-                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen, closed 체크
-                if(this.businessHours.getOnSat() != null){
-                    checkBusinessAfterMidnight(businessHoursInfoMap, nowDateTime,
-                            this.businessHours.getOnSat().getOpen(), this.businessHours.getOnSat().getClosed());
-                }
+                getBusinessHoursInfoMap(this.businessHours.getOnSun(), this.businessHours.getOnSat(),
+                        this.businessHours.getOnMon(), nowDateTime, businessHoursInfoMap);
                 break ;
 
-            case 1:
-                //영업중 체크, 금일 영업 종료 시간
-                if(this.businessHours.getOnMon() != null) {
-
-                    LocalTime openTime = this.businessHours.getOnMon().getOpen();
-                    LocalTime closedTime = this.businessHours.getOnMon().getClosed();
-
-                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
-                    businessHoursInfoMap.put("isOpen", isOpen);
-                    businessHoursInfoMap.put("open", openTime);
-                    businessHoursInfoMap.put("closed", this.businessHours.getOnMon().getClosed());
-                }
-                //내일 영업 시작 시간
-                if(this.businessHours.getOnTue() != null){
-                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnTue().getOpen());
-                }
-                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen, closed 체크
-                if(this.businessHours.getOnSun() != null){
-                    checkBusinessAfterMidnight(businessHoursInfoMap, nowDateTime,
-                            this.businessHours.getOnSun().getOpen(), this.businessHours.getOnSun().getClosed());
-                }
+            case 1: //월
+                getBusinessHoursInfoMap(this.businessHours.getOnMon(), this.businessHours.getOnSun(),
+                        this.businessHours.getOnTue(), nowDateTime, businessHoursInfoMap);
                 break ;
 
-            case 2:
-                //영업중 체크, 금일 영업 종료 시간
-                if(this.businessHours.getOnTue() != null) {
-
-                    LocalTime openTime = this.businessHours.getOnTue().getOpen();
-                    LocalTime closedTime = this.businessHours.getOnTue().getClosed();
-
-                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
-                    businessHoursInfoMap.put("isOpen", isOpen);
-                    businessHoursInfoMap.put("open", openTime);
-                    businessHoursInfoMap.put("closed", closedTime);
-
-                }
-                //내일 영업 시작 시간
-                if(this.businessHours.getOnWed() != null){
-                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnWed().getOpen());
-                }
-                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen, closed 체크
-                if(this.businessHours.getOnMon() != null){
-                    checkBusinessAfterMidnight(businessHoursInfoMap, nowDateTime,
-                            this.businessHours.getOnMon().getOpen(), this.businessHours.getOnMon().getClosed());
-                }
+            case 2: //화
+                getBusinessHoursInfoMap(this.businessHours.getOnTue(), this.businessHours.getOnMon(),
+                        this.businessHours.getOnWed(), nowDateTime, businessHoursInfoMap);
                 break ;
 
-            case 3:
-                //영업중 체크, 금일 영업 종료 시간
-                if(this.businessHours.getOnWed() != null) {
-
-                    LocalTime openTime = this.businessHours.getOnWed().getOpen();
-                    LocalTime closedTime = this.businessHours.getOnWed().getClosed();
-
-                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
-                    businessHoursInfoMap.put("isOpen", isOpen);
-                    businessHoursInfoMap.put("open", openTime);
-                    businessHoursInfoMap.put("closed", this.businessHours.getOnWed().getClosed());
-                }
-                //내일 영업 시작 시간
-                if(this.businessHours.getOnThu() != null){
-                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnThu().getOpen());
-                }
-                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen, closed 체크
-                if(this.businessHours.getOnTue() != null){
-                    checkBusinessAfterMidnight(businessHoursInfoMap, nowDateTime,
-                            this.businessHours.getOnTue().getOpen(), this.businessHours.getOnTue().getClosed());
-                }
+            case 3: //수
+                getBusinessHoursInfoMap(this.businessHours.getOnWed(), this.businessHours.getOnTue(),
+                        this.businessHours.getOnThu(), nowDateTime, businessHoursInfoMap);
                 break ;
 
-            case 4:
-                //영업중 체크, 금일 영업 종료 시간
-                if(this.businessHours.getOnThu() != null) {
-
-                    LocalTime openTime = this.businessHours.getOnThu().getOpen();
-                    LocalTime closedTime = this.businessHours.getOnThu().getClosed();
-
-                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
-                    businessHoursInfoMap.put("isOpen", isOpen);
-                    businessHoursInfoMap.put("open", openTime);
-                    businessHoursInfoMap.put("closed", this.businessHours.getOnThu().getClosed());
-                }
-                //내일 영업 시작 시간
-                if(this.businessHours.getOnFri() != null){
-                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnFri().getOpen());
-                }
-                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen, closed 체크
-                if(this.businessHours.getOnWed() != null){
-                    checkBusinessAfterMidnight(businessHoursInfoMap, nowDateTime,
-                            this.businessHours.getOnWed().getOpen(), this.businessHours.getOnWed().getClosed());
-                }
+            case 4: //목
+                getBusinessHoursInfoMap(this.businessHours.getOnThu(), this.businessHours.getOnWed(),
+                        this.businessHours.getOnFri(), nowDateTime, businessHoursInfoMap);
                 break ;
-            case 5:
-                //영업중 체크, 금일 영업 종료 시간
-                if(this.businessHours.getOnFri() != null) {
-
-                    LocalTime openTime = this.businessHours.getOnFri().getOpen();
-                    LocalTime closedTime = this.businessHours.getOnFri().getClosed();
-
-                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
-                    businessHoursInfoMap.put("isOpen", isOpen);
-                    businessHoursInfoMap.put("open", openTime);
-                    businessHoursInfoMap.put("closed", this.businessHours.getOnFri().getClosed());
-                }
-                //내일 영업 시작 시간
-                if(this.businessHours.getOnSat() != null){
-                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnSat().getOpen());
-                }
-                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen, closed 체크
-                if(this.businessHours.getOnThu() != null){
-                    checkBusinessAfterMidnight(businessHoursInfoMap, nowDateTime,
-                            this.businessHours.getOnThu().getOpen(), this.businessHours.getOnThu().getClosed());
-                    }
+            case 5: //금
+                getBusinessHoursInfoMap(this.businessHours.getOnFri(), this.businessHours.getOnTue(),
+                        this.businessHours.getOnSat(), nowDateTime, businessHoursInfoMap);
                 break ;
 
-            case 6:
-                //영업중 체크, 금일 영업 종료 시간
-                if(this.businessHours.getOnSat() != null) {
-
-                    LocalTime openTime = this.businessHours.getOnSat().getOpen();
-                    LocalTime closedTime = this.businessHours.getOnSat().getClosed();
-
-                    isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
-                    businessHoursInfoMap.put("isOpen", isOpen);
-                    businessHoursInfoMap.put("open", openTime);
-                    businessHoursInfoMap.put("closed", this.businessHours.getOnSat().getClosed());
-                }
-                //내일 영업 시작 시간
-                if(this.businessHours.getOnSun() != null){
-                    businessHoursInfoMap.put("tmrOpen", this.businessHours.getOnSun().getOpen());
-                }
-                //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen, closed 체크
-                if(this.businessHours.getOnFri() != null){
-                    checkBusinessAfterMidnight(businessHoursInfoMap, nowDateTime,
-                            this.businessHours.getOnFri().getOpen(), this.businessHours.getOnFri().getClosed());
-                }
+            case 6: //토
+                getBusinessHoursInfoMap(this.businessHours.getOnSat(), this.businessHours.getOnFri(),
+                        this.businessHours.getOnSun(), nowDateTime, businessHoursInfoMap);
                 break ;
         }
 
         return businessHoursInfoMap;
+    }
+
+    private void getBusinessHoursInfoMap(Day today, Day yesterday, Day tomorrow, LocalDateTime nowDateTime,
+                                                       Map<String, Object> businessHoursInfoMap) {
+
+        LocalTime openTime = null;
+        LocalTime tmrOpenTime = null;
+
+        //영업중 체크, 금일 영업 종료 시간
+        if(today != null) {
+
+            openTime = today.getOpen();
+            LocalTime closedTime = today.getClosed();
+
+            boolean isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
+
+            businessHoursInfoMap.put("isOpen", isOpen);
+            businessHoursInfoMap.put("closed", closedTime);
+        }
+
+        //내일 영업 시작 시간
+        if(tomorrow != null){
+            tmrOpenTime = tomorrow.getOpen();
+        }
+
+        //다음 오픈 시간
+        LocalTime nextOpenTime = getNextOpenTime(nowDateTime, openTime, tmrOpenTime);
+        businessHoursInfoMap.put("nextOpen", nextOpenTime);
+
+        //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen, closed 체크
+        if(yesterday != null){
+            checkBusinessAfterMidnight(businessHoursInfoMap, nowDateTime, yesterday.getOpen(), yesterday.getClosed());
+        }
+
+    }
+
+    private LocalTime getNextOpenTime(LocalDateTime nowDateTime, LocalTime openTime, LocalTime tmrOpenTime) {
+
+            //금일 오픈 시간 > 현재 시간일 경우 or 금일 오픈 시간 데이터가 없을 경우
+            if(nowDateTime.toLocalTime().isAfter(openTime)){
+                return  tmrOpenTime;
+            }
+            //금일 오픈 시간 <= 현재 시간일 경우
+            else{
+                return openTime;
+        }
     }
 
     private void checkBusinessAfterMidnight(Map<String, Object> businessHoursInfoMap, LocalDateTime nowDateTime,
