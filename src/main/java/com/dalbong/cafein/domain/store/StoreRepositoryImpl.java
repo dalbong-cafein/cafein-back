@@ -357,8 +357,8 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         if(!isEmpty(keyword)){
             String replaceWord = keyword;
 
-            if(keyword.contains("투썸 플레이스")){
-                replaceWord = keyword.replace("투썸 플레이스", "투썸");
+            if(keyword.contains("투썸")){
+                replaceWord = keyword.replace("투썸", "투썸 플레이스");
             }else if (keyword.contains("스벅")){
                 replaceWord = keyword.replace("스벅", "스타벅스");
             }
