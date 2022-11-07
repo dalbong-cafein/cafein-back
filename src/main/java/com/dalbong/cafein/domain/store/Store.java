@@ -238,8 +238,8 @@ public class Store extends BaseEntity {
 
     private LocalTime getNextOpenTime(LocalDateTime nowDateTime, LocalTime openTime, LocalTime tmrOpenTime) {
 
-            //금일 오픈 시간 > 현재 시간일 경우 or 금일 오픈 시간 데이터가 없을 경우
-            if(nowDateTime.toLocalTime().isAfter(openTime)){
+            //금일 오픈 시간 데이터가 없을 경우 or 금일 오픈 시간 > 현재 시간일 경우
+            if(openTime == null || nowDateTime.toLocalTime().isAfter(openTime)){
                 return  tmrOpenTime;
             }
             //금일 오픈 시간 <= 현재 시간일 경우
