@@ -66,7 +66,6 @@ public class ImageServiceImpl implements ImageService{
                 imageList.add(storeImage);
             }
         }
-
         return imageList;
     }
 
