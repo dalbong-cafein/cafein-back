@@ -24,6 +24,8 @@ public class AdminDetailMemberResDto {
 
     private String nickname;
 
+    private String username;
+
     private ImageDto memberImageDto;
 
     private List<AuthProvider> socialTypeList;
@@ -58,6 +60,7 @@ public class AdminDetailMemberResDto {
 
         this.memberId = member.getMemberId();
         this.nickname = member.getNickname();
+        this.username = member.getUsername();
         this.memberImageDto = memberImageDto;
         this.phone = member.getPhone();
         this.email = member.getEmail();
