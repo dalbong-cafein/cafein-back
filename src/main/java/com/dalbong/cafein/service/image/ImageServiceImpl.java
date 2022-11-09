@@ -175,6 +175,5 @@ public class ImageServiceImpl implements ImageService{
         }catch (EmptyResultDataAccessException e){
             throw new CustomException("존재하는 이미지가 없습니다.");
         }
-
     }
 }
