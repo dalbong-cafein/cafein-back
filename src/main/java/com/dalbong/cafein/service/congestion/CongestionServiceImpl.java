@@ -56,8 +56,8 @@ public class CongestionServiceImpl implements CongestionService{
             throw new CustomException("활동이 정지된 회원입니다.");
         }
 
-        //혼잡도 스티커일 경우 시간 체크 - 3시간 이내 스티커 발급 체크
-        checkLimitTimeOfCongestionSticker(congestionRegDto.getStoreId(), principalId);
+        //3시간 내 동일한 카페에 혼잡도 등록 여부 체크
+        checkLimitTimeOfCongestion(congestionRegDto.getStoreId(), principalId);
 
         Store store = storeRepository.findById(congestionRegDto.getStoreId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 가게입니다."));
@@ -68,7 +68,7 @@ public class CongestionServiceImpl implements CongestionService{
         return congestion;
     }
 
-    private void checkLimitTimeOfCongestionSticker(Long storeId, Long principalId) {
+    private void checkLimitTimeOfCongestion(Long storeId, Long principalId) {
         boolean isExist = congestionRepository.existWithinTime(storeId, principalId);
 
         if(isExist){

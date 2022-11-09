@@ -11,8 +11,7 @@ import java.util.List;
 
 public interface StickerService {
 
-
-    boolean checkPossibleIssueCongestionSticker(Long storeId, Long principalId);
+    boolean checkPossibleIssue(Long principalId);
 
     Sticker issueStoreSticker(Long storeId, Long principalId);
 
