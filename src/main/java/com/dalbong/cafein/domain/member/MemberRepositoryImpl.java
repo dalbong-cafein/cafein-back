@@ -110,14 +110,14 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
      * 관리자단 전체 회원 리스트 조회
      */
     @Override
-    public Page<Object[]> getAllMemberListOfAdmin(String[] searchType, String keyword, Pageable pageable) {
+    public Page<Object[]> getAllMemberListOfAdmin(MemberState[] memberStates, String[] searchType, String keyword, Pageable pageable) {
 
 
         JPAQuery<Tuple> query = queryFactory.select(member, memberImage, memberMemo.memoId)
                 .from(member)
                 .leftJoin(memberImage).on(memberImage.member.memberId.eq(member.memberId))
                 .leftJoin(memberMemo).on(memberMemo.member.memberId.eq(member.memberId))
-                .where(searchKeyword(searchType, keyword))
+                .where(memberStateFilter(memberStates), searchKeyword(searchType, keyword))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
@@ -205,11 +205,33 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
                 .fetch();
     }
 
+    private BooleanBuilder memberStateFilter(MemberState[] memberStates) {
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if(memberStates != null){
+            for(MemberState state : memberStates){
+                switch (state.toString()){
+                    case "NORMAL":
+                        builder.or(member.state.eq(MemberState.NORMAL));
+                        break;
+                    case "SUSPENSION":
+                        builder.or(member.state.eq(MemberState.SUSPENSION));
+                        break;
+                    case "LEAVE":
+                        builder.or(member.state.eq(MemberState.LEAVE));
+                        break;
+                }
+            }
+        }
+        return builder;
+    }
+
     private BooleanBuilder searchKeyword(String[] searchType, String keyword) {
 
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (searchType != null){ ;
+        if (searchType != null){
             for(String t : searchType){
                 switch (t){
                     case "m":

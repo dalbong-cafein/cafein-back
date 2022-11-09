@@ -1,5 +1,6 @@
 package com.dalbong.cafein.dto.page;
 
+import com.dalbong.cafein.domain.member.MemberState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +25,8 @@ public class PageRequestDto {
     private String[] searchType;
 
     private String sggNm;
+
+    private MemberState[] memberStates;
 
     private Boolean isOnlyImage;
 

@@ -251,7 +251,7 @@ public class MemberServiceImpl implements MemberService{
             pageable = pageRequestDto.getPageable(Sort.by("memberId").descending());
         }
 
-        Page<Object[]> results = memberRepository.getAllMemberListOfAdmin(
+        Page<Object[]> results = memberRepository.getAllMemberListOfAdmin(pageRequestDto.getMemberStates(),
                 pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
 
 

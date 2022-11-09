@@ -26,7 +26,7 @@ public interface MemberRepositoryQuerydsl {
     /**
      * 관리자단 전체 회원 리스트 조회
      */
-    Page<Object[]> getAllMemberListOfAdmin(String[] searchType, String keyword, Pageable pageable);
+    Page<Object[]> getAllMemberListOfAdmin(MemberState[] memberStates, String[] searchType, String keyword, Pageable pageable);
 
     /**
      * 관리자단 회원 상세 조회
