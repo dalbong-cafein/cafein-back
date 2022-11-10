@@ -1,17 +1,15 @@
 package com.dalbong.cafein.service.sticker;
 
-import com.dalbong.cafein.domain.congestion.Congestion;
-import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.sticker.Sticker;
-import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.dto.admin.sticker.AdminStickerResDto;
+import com.dalbong.cafein.dto.sticker.PossibleIssueResDto;
 import com.dalbong.cafein.dto.sticker.StickerHistoryResDto;
 
 import java.util.List;
 
 public interface StickerService {
 
-    boolean checkPossibleIssue(Long principalId);
+    PossibleIssueResDto checkPossibleIssue(Long principalId);
 
     Sticker issueStoreSticker(Long storeId, Long principalId);
 

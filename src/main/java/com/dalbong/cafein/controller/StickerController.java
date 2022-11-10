@@ -2,6 +2,7 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.sticker.PossibleIssueResDto;
 import com.dalbong.cafein.dto.sticker.StickerHistoryResDto;
 import com.dalbong.cafein.dto.sticker.StickerRegDto;
 import com.dalbong.cafein.service.sticker.StickerService;
@@ -25,9 +26,9 @@ public class StickerController {
     @GetMapping("/stickers/check-possible-issue")
     public ResponseEntity<?> check(@AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        boolean isPossibleIssue = stickerService.checkPossibleIssue(principalDetails.getMember().getMemberId());
+        PossibleIssueResDto possibleIssueResDto = stickerService.checkPossibleIssue(principalDetails.getMember().getMemberId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "스티커 발급 여부 조회 성공", isPossibleIssue), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "스티커 발급 가능 여부 조회 성공", possibleIssueResDto), HttpStatus.OK);
     }
 
     /**
