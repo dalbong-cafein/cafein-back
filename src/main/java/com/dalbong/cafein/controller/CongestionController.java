@@ -3,6 +3,7 @@ package com.dalbong.cafein.controller;
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.PossibleRegistrationResDto;
 import com.dalbong.cafein.dto.congestion.CongestionListResDto;
 import com.dalbong.cafein.dto.congestion.CongestionRegDto;
 import com.dalbong.cafein.dto.congestion.CongestionResDto;
@@ -24,6 +25,31 @@ public class CongestionController {
     private final CongestionService congestionService;
 
     /**
+     * 카페별 혼잡도 리스트 조회
+     */
+    @GetMapping("stores/{storeId}/congestion")
+    public ResponseEntity<?> getCongestionList(@PathVariable("storeId") Long storeId,
+                                               @RequestParam(required = false, defaultValue = "0") Integer minusDays){
+
+        CongestionListResDto<List<CongestionResDto>> congestionListResDto = congestionService.getCongestionList(storeId, minusDays);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "혼잡도 리스트 조회 성공", congestionListResDto), HttpStatus.OK);
+    }
+
+    /**
+     * 혼잡도 등록 가능 여부 조회
+     */
+    @GetMapping("/stores/{storeId}/congestion/check-possible-registration")
+    public ResponseEntity<?> checkPossibleRegistration(@PathVariable("storeId") Long storeId,
+                                                       @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        PossibleRegistrationResDto possibleRegistrationResDto =
+                congestionService.checkPossibleRegistration(storeId, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "혼잡도 등록 가능 여부 조회 성공", possibleRegistrationResDto), HttpStatus.OK);
+    }
+
+    /**
      * 혼잡도 등록
      */
     @PostMapping("/congestion")
@@ -35,16 +61,5 @@ public class CongestionController {
         return new ResponseEntity<>(new CMRespDto<>(1, "혼잡도 등록 성공",congestion.getCongestionId()), HttpStatus.CREATED);
     }
 
-    /**
-     * 카페별 혼잡도 리스트 조회
-     */
-    @GetMapping("stores/{storeId}/congestion")
-    public ResponseEntity<?> getCongestionList(@PathVariable("storeId") Long storeId,
-                                               @RequestParam(required = false, defaultValue = "0") Integer minusDays){
-
-        CongestionListResDto<List<CongestionResDto>> congestionListResDto = congestionService.getCongestionList(storeId, minusDays);
-
-        return new ResponseEntity<>(new CMRespDto<>(1, "혼잡도 리스트 조회 성공", congestionListResDto), HttpStatus.OK);
-    }
 
 }
