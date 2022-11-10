@@ -2,6 +2,7 @@ package com.dalbong.cafein.controller;
 
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.sticker.PossibleIssueResDto;
 import com.dalbong.cafein.dto.sticker.StickerHistoryResDto;
 import com.dalbong.cafein.dto.sticker.StickerRegDto;
 import com.dalbong.cafein.service.sticker.StickerService;
@@ -18,6 +19,17 @@ import java.util.List;
 public class StickerController {
 
     private final StickerService stickerService;
+
+    /**
+     * 스티커 발급 가능 여부
+     */
+    @GetMapping("/stickers/check-possible-issue")
+    public ResponseEntity<?> check(@AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        PossibleIssueResDto possibleIssueResDto = stickerService.checkPossibleIssue(principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "스티커 발급 가능 여부 조회 성공", possibleIssueResDto), HttpStatus.OK);
+    }
 
     /**
      * 카페 등록시 스티커 발급
@@ -39,18 +51,6 @@ public class StickerController {
         stickerService.issueReviewSticker(stickerRegDto.getReviewId(), principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1,"리뷰 등록시 스티커 발급 성@공", null), HttpStatus.CREATED);
-    }
-
-    /**
-     * 혼잡도 스티커 발급 가능 여부
-     */
-    @GetMapping("/stores/{storeId}/stickers/congestionType/check-possible-issue")
-    public ResponseEntity<?> check(@PathVariable("storeId") Long storeId,
-                                   @AuthenticationPrincipal PrincipalDetails principalDetails){
-
-        boolean isPossibleIssue = stickerService.checkPossibleIssueCongestionSticker(storeId, principalDetails.getMember().getMemberId());
-
-        return new ResponseEntity<>(new CMRespDto<>(1, "혼잡도 스티커 발급 여부 조회 성공", isPossibleIssue), HttpStatus.OK);
     }
 
     /**

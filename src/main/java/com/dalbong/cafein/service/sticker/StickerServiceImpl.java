@@ -4,7 +4,6 @@ import com.dalbong.cafein.domain.congestion.Congestion;
 import com.dalbong.cafein.domain.congestion.CongestionRepository;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
-import com.dalbong.cafein.domain.notice.NoticeRepository;
 import com.dalbong.cafein.domain.notice.StickerNoticeRepository;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
@@ -12,6 +11,7 @@ import com.dalbong.cafein.domain.sticker.*;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.admin.sticker.AdminStickerResDto;
+import com.dalbong.cafein.dto.sticker.PossibleIssueResDto;
 import com.dalbong.cafein.dto.sticker.StickerHistoryResDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.handler.exception.StickerExcessException;
@@ -40,15 +40,27 @@ public class StickerServiceImpl implements StickerService{
     private final StickerNoticeRepository stickerNoticeRepository;
 
     /**
-     * 혼잡도 스티커 발급 가능 여부
+     * 스티커 발급 가능 여부 체크
      */
     @Transactional(readOnly = true)
     @Override
-    public boolean checkPossibleIssueCongestionSticker(Long storeId, Long principalId) {
+    public PossibleIssueResDto checkPossibleIssue(Long principalId) {
 
-        boolean isExist = stickerRepository.existWithinTimeOfCongestionType(storeId, principalId);
+        //회원의 보유 스티커 개수 체크
+        int stickerCnt = countStickerOfMember(principalId);
 
-        return !isExist;
+        if(stickerCnt >= 20){
+            return new PossibleIssueResDto(false, "보유 가능한 스티커 수량 초과");
+        }
+
+        //하루동안 발급 받은 스티커 개수 체크
+        long count = stickerRepository.getCountStickerToday(principalId);
+
+        if(count >= 3){
+            return new PossibleIssueResDto(false, "하루 최대 스티커 발급 수량 초과");
+        }
+
+        return new PossibleIssueResDto(true, null);
     }
 
     /**
@@ -58,19 +70,17 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public Sticker issueStoreSticker(Long storeId, Long principalId) {
 
-        int stickerCnt = countStickerOfMember(principalId);
+        //회원의 스티커 개수 체크
+        checkLimitNumberOfSticker(principalId);
 
-        if(stickerCnt >= 20){
-            throw new StickerExcessException("더 이상 스티커를 발급받을 수 없습니다.");
-        }
+        //하루동안 발급 받은 스티커 개수 체크
+        checkLimitStickerToday(principalId);
 
         Member member = memberRepository.findById(principalId).orElseThrow(() ->
                 new CustomException("존재하지 않는 회원입니다."));
 
         Store store = storeRepository.findById(storeId).orElseThrow(() ->
                 new CustomException("존재하지 않는 카페입니다."));
-
-        //checkLimitStickerToday(principalId);
 
         StoreSticker storeSticker = new StoreSticker(store, member);
 
@@ -89,19 +99,17 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public Sticker issueReviewSticker(Long reviewId, Long principalId) {
 
-        int stickerCnt = countStickerOfMember(principalId);
+        //회원의 스티커 개수 체크
+        checkLimitNumberOfSticker(principalId);
 
-        if(stickerCnt >= 20){
-            throw new StickerExcessException("더 이상 스티커를 발급받을 수 없습니다.");
-        }
+        //하루동안 발급 받은 스티커 개수 체크
+        checkLimitStickerToday(principalId);
 
         Member member = memberRepository.findById(principalId).orElseThrow(() ->
                 new CustomException("존재하지 않는 회원입니다."));
 
         Review review = reviewRepository.findByIdStoreFetch(reviewId).orElseThrow(() ->
                 new CustomException("존재하지 않는 리뷰입니다."));
-
-        checkLimitStickerToday(principalId);
 
         ReviewSticker reviewSticker = new ReviewSticker(review, member);
 
@@ -120,12 +128,10 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public Sticker issueCongestionSticker(Long congestionId, Long principalId) {
 
-        int stickerCnt = countStickerOfMember(principalId);
+        //회원의 스티커 개수 체크
+        checkLimitNumberOfSticker(principalId);
 
-        if(stickerCnt >= 20){
-            throw new StickerExcessException("더 이상 스티커를 발급받을 수 없습니다.");
-        }
-
+        //하루동안 발급 받은 스티커 개수 체크
         checkLimitStickerToday(principalId);
 
         Congestion congestion = congestionRepository.findByIdStoreFetch(congestionId).orElseThrow(() ->
@@ -213,12 +219,21 @@ public class StickerServiceImpl implements StickerService{
         return results.stream().map(s -> new AdminStickerResDto(s)).collect(Collectors.toList());
     }
 
+    private void checkLimitNumberOfSticker(Long principalId) {
+
+        int stickerCnt = countStickerOfMember(principalId);
+
+        if(stickerCnt >= 20){
+            throw new StickerExcessException("보유 가능한 스티커 수량 초과");
+        }
+    }
+
     private void checkLimitStickerToday(Long principalId) {
 
         long count = stickerRepository.getCountStickerToday(principalId);
 
         if(count >= 3){
-            throw new CustomException("하루 최대 스티커 수량을 초과하였습니다.");
+            throw new StickerExcessException("하루 최대 스티커 발급 수량 초과");
         }
 
     }

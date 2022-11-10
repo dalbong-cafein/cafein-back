@@ -19,6 +19,7 @@ import com.dalbong.cafein.domain.sticker.ReviewSticker;
 import com.dalbong.cafein.domain.sticker.ReviewStickerRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.PossibleRegistrationResDto;
 import com.dalbong.cafein.dto.admin.review.*;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
@@ -58,6 +59,32 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewMemoRepository reviewMemoRepository;
     private final ReviewStickerRepository reviewStickerRepository;
     private final ReportRepository reportRepository;
+
+    /**
+     * 리뷰 등록 가능 여부 체크
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public PossibleRegistrationResDto checkPossibleRegistration(Long storeId, Long principalId) {
+
+        //회원 정지 상태 확인
+        Member member = memberRepository.findById(principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 회원입니다."));
+
+        if(member.getState().equals(MemberState.SUSPENSION)){
+            return new PossibleRegistrationResDto(false, "활동이 정지된 회원입니다.");
+        }
+
+        //금일 해당 카페에 리뷰 작성 여부 확인
+        Store store = storeRepository.findById(storeId).orElseThrow(() ->
+                new CustomException("존재하지 않는 카페입니다."));
+
+        if(reviewRepository.existRegisterToday(store.getStoreId(), principalId)){
+            return new PossibleRegistrationResDto(false, "하루당 한 카페에 리뷰 등록은 한번만 가능합니다.");
+        }
+
+        return new PossibleRegistrationResDto(true, null);
+    }
 
     /**
      * 리뷰 등록
