@@ -3,6 +3,7 @@ package com.dalbong.cafein.controller;
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.PossibleRegistrationResDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.ScrollResultDto;
 import com.dalbong.cafein.dto.review.*;
@@ -67,6 +68,19 @@ public class ReviewController {
         ReviewListResDto<List<MyReviewResDto>> reviewListResDto = reviewService.getMyReviewList(principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "내가 쓴 리뷰 리스트 조회 성공", reviewListResDto),HttpStatus.OK);
+    }
+
+    /**
+     * 리뷰 등록 가능 여부 조회
+     */
+    @GetMapping("/stores/{storeId}/reviews/check-possible-registration")
+    public ResponseEntity<?> checkPossibleRegistration(@PathVariable("storeId") Long storeId,
+                                                       @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        PossibleRegistrationResDto possibleRegistrationResDto =
+                reviewService.checkPossibleRegistration(storeId, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "리뷰 등록 가능 여부 조회 성공", possibleRegistrationResDto), HttpStatus.OK);
     }
 
     /**

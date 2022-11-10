@@ -40,7 +40,7 @@ public class StickerServiceImpl implements StickerService{
     private final StickerNoticeRepository stickerNoticeRepository;
 
     /**
-     * 스티커 발급 가능 여부
+     * 스티커 발급 가능 여부 체크
      */
     @Transactional(readOnly = true)
     @Override
