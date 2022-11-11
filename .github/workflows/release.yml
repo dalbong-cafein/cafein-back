@@ -58,8 +58,8 @@
           with:
             aws_access_key: ${{ secrets.RELEASE_AWS_ACCESS_KEY_ID }}
             aws_secret_key: ${{ secrets.RELEASE_AWS_SECRET_ACCESS_KEY }}
-            application_name: cafein-eb
-            environment_name: Cafeineb-env
+            application_name: cafein-dev
+            environment_name: Cafeindev-env
             version_label: "java-${{steps.current-time.outputs.formattedTime}}"
             region: ap-northeast-2
             deployment_package: deploy.zip

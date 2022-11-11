@@ -3,14 +3,15 @@ server:
 
 spring:
   datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    url: ${REALSE_DATABASE_URL}
+    username: ${REALSE_DATABASE_USERNAME}
+    password: ${REALSE_DATABASE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   redis:
-    host: ${REDIS_SERVER}
+    host: ${REALSE_REDIS_SERVER}
     port: 6379
+
 
   jpa:
     hibernate:
@@ -28,16 +29,16 @@ spring:
 
 app:
   token:
-    secretKey: ${JWT_SECRET_KEY}
+    secretKey: ${REALSE_JWT_SECRET_KEY}
 
 apple:
-  keyId : ${APPLE_KEY_ID}
-  clientId : ${APPLE_CLIENT_ID}
-  teamId : ${APPLE_TEAM_ID}
+  keyId : ${REALSE_APPLE_KEY_ID}
+  clientId : ${REALSE_APPLE_CLIENT_ID}
+  teamId : ${REALSE_APPLE_TEAM_ID}
 
 coolsms:
-  apiKey : ${COOLSMS_API_KEY}
-  apiSecret: ${COOLSMS_API_SECRET}
+  apiKey : ${REALSE_COOLSMS_API_KEY}
+  apiSecret: ${REALSE_COOLSMS_API_SECRET}
   fromNumber : 070-8065-0427
 
 logging:
@@ -50,10 +51,10 @@ logging:
 cloud:
   aws:
     credentials:
-      accessKey: ${AWS_ACCESS_KEY_ID}
-      secretKey: ${AWS_SECRET_ACCESS_KEY}
+      accessKey: ${REALSE_AWS_ACCESS_KEY_ID}
+      secretKey: ${REALSE_AWS_SECRET_ACCESS_KEY}
     s3:
-      bucket: ${BUCKET_NAME}
+      bucket: ${REALSE_BUCKET_NAME}
     region:
       static: ap-northeast-2
     stack:
@@ -61,12 +62,12 @@ cloud:
 
 dataSet:
   naver:
-    clientId: ${NAVER_CLIENT_ID}
-    clientSecret: ${NAVER_CLIENT_SECRET}
+    clientId: ${REALSE_NAVER_CLIENT_ID}
+    clientSecret: ${REALSE_NAVER_CLIENT_SECRET}
   kakao:
-    apiKey: ${KAKAO_API_KEY}
+    apiKey: ${REALSE_KAKAO_API_KEY}
   google:
-    apiKey: ${GOOGLE_API_KEY}
+    apiKey: ${REALSE_GOOGLE_API_KEY}
   naverCloud:
-    clientId: ${NAVER_CLOUD_CLIENT_ID}
-    clientSecret: ${NAVER_CLOUD_CLIENT_SECRET}
+    clientId: ${REALSE_NAVER_CLOUD_CLIENT_ID}
+    clientSecret: ${REALSE_NAVER_CLOUD_CLIENT_SECRET}
