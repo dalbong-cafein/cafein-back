@@ -1,4 +1,4 @@
-  name: cafein
+  name: release-cafein
 
   on:
     push:
