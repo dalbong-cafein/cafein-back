@@ -73,3 +73,6 @@ dataSet:
     apiKey: ${RELEASE_KAKAO_API_KEY}
   google:
     apiKey: ${RELEASE_GOOGLE_API_KEY}
+  naverCloud:
+    clientId: ${RELEASE_NAVER_CLOUD_CLIENT_ID}
+    clientSecret: ${RELEASE_NAVER_CLOUD_CLIENT_SECRET}
