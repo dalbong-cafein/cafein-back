@@ -12,7 +12,6 @@ spring:
     host: ${RELEASE_REDIS_SERVER}
     port: 6379
 
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -22,6 +21,7 @@ spring:
         default_batch_fetch_size: 1000
     open-in-view: false
     show-sql: true
+
 
   servlet:
     multipart:
