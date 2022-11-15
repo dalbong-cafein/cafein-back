@@ -127,7 +127,7 @@ public class S3Uploader {
         String folderPath = createFolderPathOfReview();
 
         //파일 이름
-        String frontName = review.getMember().getMemberId().toString() + review.getStore().getStoreId().toString();
+        String frontName = review.getReviewId().toString();
         String reviewFileName = createFileName(frontName, multipartFile.getOriginalFilename());
 
         return s3Upload(folderPath, reviewFileName, multipartFile);
