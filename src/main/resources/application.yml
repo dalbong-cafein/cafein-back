@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    default: none
+    default: local
 
   jpa:
     hibernate:
