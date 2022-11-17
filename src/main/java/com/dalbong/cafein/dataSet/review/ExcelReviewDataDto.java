@@ -25,6 +25,8 @@ public class ExcelReviewDataDto {
 
     private Recommendation recommendation;
 
+    private String content;
+
     public Review toReview(Store store, Member member){
 
         DetailEvaluation detailEvaluation =
@@ -35,6 +37,7 @@ public class ExcelReviewDataDto {
                 .content("")
                 .detailEvaluation(detailEvaluation)
                 .recommendation(this.recommendation)
+                .content(this.content)
                 .build();
 
         review.setStore(store);

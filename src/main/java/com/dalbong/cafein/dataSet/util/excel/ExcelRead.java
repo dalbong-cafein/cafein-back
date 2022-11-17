@@ -50,8 +50,10 @@ public class ExcelRead {
             int restroom = (int) row.getCell(3).getNumericCellValue();
             int tableSize = (int) row.getCell(4).getNumericCellValue();
             Recommendation recommendation = Recommendation.valueOf(row.getCell(6).getStringCellValue());
+            String content = row.getCell(7).getStringCellValue();
 
-            ExcelReviewDataDto excelReviewDataDto = new ExcelReviewDataDto(storeName, socket, wifi, restroom, tableSize, recommendation);
+            ExcelReviewDataDto excelReviewDataDto = new ExcelReviewDataDto(storeName, socket, wifi, restroom,
+                    tableSize, recommendation, content);
 
             excelReviewDataDtoList.add(excelReviewDataDto);
 
