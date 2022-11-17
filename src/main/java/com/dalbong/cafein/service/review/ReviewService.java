@@ -1,6 +1,7 @@
 package com.dalbong.cafein.service.review;
 
 import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.dto.PossibleRegistrationResDto;
 import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewEvaluationOfStoreResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
@@ -13,6 +14,8 @@ import java.io.IOException;
 import java.util.List;
 
 public interface ReviewService {
+
+    PossibleRegistrationResDto checkPossibleRegistration(Long storeId, Long principalId);
 
     Review register(ReviewRegDto reviewRegDto, Long principalId) throws IOException;
 

@@ -64,7 +64,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(StickerExcessException.class)
     public ResponseEntity<CMRespDto<?>> exceedStickerException(StickerExcessException e){
 
-        return new ResponseEntity<>(new CMRespDto<>(-1, e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new CMRespDto<>(-1, e.getMessage(), null), HttpStatus.BAD_REQUEST);
 
     }
 

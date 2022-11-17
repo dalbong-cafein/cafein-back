@@ -59,7 +59,7 @@ public class SmsServiceImpl implements SmsService{
         params.put("to", toNumber);
         params.put("from", fromNumber);
         params.put("type", "SMS");
-        params.put("text", "[Cafein] 인증번호 " + certifyNum + "을 입력해주세요.");
+        params.put("text", "[Cafein] 인증번호 " + certifyNum + " 을 입력해주세요.");
         params.put("app_version", "test app 1.2");
 
         try{

@@ -11,6 +11,7 @@ import com.dalbong.cafein.domain.sticker.CongestionStickerRepository;
 import com.dalbong.cafein.domain.sticker.StickerRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.dto.PossibleRegistrationResDto;
 import com.dalbong.cafein.dto.admin.congestion.AdminCongestionListResDto;
 import com.dalbong.cafein.dto.admin.congestion.AdminCongestionResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
@@ -42,6 +43,32 @@ public class CongestionServiceImpl implements CongestionService{
     private final StickerRepository stickerRepository;
 
     /**
+     * 혼잡도 등록 가능 여부 체크
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public PossibleRegistrationResDto checkPossibleRegistration(Long storeId, Long principalId) {
+
+        //회원 정지 상태 확인
+        Member member = memberRepository.findById(principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 회원입니다."));
+
+        if(member.getState().equals(MemberState.SUSPENSION)){
+            return new PossibleRegistrationResDto(false, "활동이 정지된 회원입니다.");
+        }
+
+        //3시간 내 동일한 카페에 혼잡도 등록 여부
+        Store store = storeRepository.findById(storeId).orElseThrow(() ->
+                new CustomException("존재하지 않는 카페입니다."));
+
+        if(congestionRepository.existWithinTime(store.getStoreId(), principalId)){
+            return new PossibleRegistrationResDto(false, "3시간 이내 동일한 카페의 혼잡도 등록은 제한됩니다.");
+        }
+
+        return new PossibleRegistrationResDto(true, null);
+    }
+
+    /**
      * 혼잡도 등록
      */
     @Transactional
@@ -56,8 +83,8 @@ public class CongestionServiceImpl implements CongestionService{
             throw new CustomException("활동이 정지된 회원입니다.");
         }
 
-        //혼잡도 스티커일 경우 시간 체크 - 3시간 이내 스티커 발급 체크
-        checkLimitTimeOfCongestionSticker(congestionRegDto.getStoreId(), principalId);
+        //3시간 내 동일한 카페에 혼잡도 등록 여부 체크
+        checkLimitTimeOfCongestion(congestionRegDto.getStoreId(), principalId);
 
         Store store = storeRepository.findById(congestionRegDto.getStoreId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 가게입니다."));
@@ -68,7 +95,7 @@ public class CongestionServiceImpl implements CongestionService{
         return congestion;
     }
 
-    private void checkLimitTimeOfCongestionSticker(Long storeId, Long principalId) {
+    private void checkLimitTimeOfCongestion(Long storeId, Long principalId) {
         boolean isExist = congestionRepository.existWithinTime(storeId, principalId);
 
         if(isExist){
