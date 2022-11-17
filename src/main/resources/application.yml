@@ -2,19 +2,12 @@ server:
   port: 5000
 
 spring:
-  datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  redis:
-    host: ${REDIS_SERVER}
-    port: 6379
+  profiles:
+    default: local
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         format_sql : true
@@ -26,18 +19,7 @@ spring:
     multipart:
       max-file-size: 2MB
 
-app:
-  token:
-    secretKey: ${JWT_SECRET_KEY}
-
-apple:
-  keyId : ${APPLE_KEY_ID}
-  clientId : ${APPLE_CLIENT_ID}
-  teamId : ${APPLE_TEAM_ID}
-
 coolsms:
-  apiKey : ${COOLSMS_API_KEY}
-  apiSecret: ${COOLSMS_API_SECRET}
   fromNumber : 070-8065-0427
 
 logging:
@@ -46,27 +28,3 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: error
-
-cloud:
-  aws:
-    credentials:
-      accessKey: ${AWS_ACCESS_KEY_ID}
-      secretKey: ${AWS_SECRET_ACCESS_KEY}
-    s3:
-      bucket: ${BUCKET_NAME}
-    region:
-      static: ap-northeast-2
-    stack:
-      auto: false
-
-dataSet:
-  naver:
-    clientId: ${NAVER_CLIENT_ID}
-    clientSecret: ${NAVER_CLIENT_SECRET}
-  kakao:
-    apiKey: ${KAKAO_API_KEY}
-  google:
-    apiKey: ${GOOGLE_API_KEY}
-  naverCloud:
-    clientId: ${NAVER_CLOUD_CLIENT_ID}
-    clientSecret: ${NAVER_CLOUD_CLIENT_SECRET}
