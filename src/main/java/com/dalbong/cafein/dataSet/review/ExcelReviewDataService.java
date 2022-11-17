@@ -48,6 +48,8 @@ public class ExcelReviewDataService {
         //파일 읽기
         List<ExcelReviewDataDto> excelReviewDataDtoList = excelRead.readReviewData(excelFile);
 
+        int saveReviewCnt = 0;
+
         //데이터 매핑
         for (ExcelReviewDataDto dataDto : excelReviewDataDtoList){
             Optional<Store> result = storeRepository.findByStoreName(dataDto.getStoreName());
@@ -81,8 +83,10 @@ public class ExcelReviewDataService {
             //리뷰 데이터 저장
             if(review != null){
                 reviewRepository.save(review);
+                saveReviewCnt += 1;
             }
         }
+        System.out.println("저장된 리뷰 수 : " + saveReviewCnt);
     }
 
     private Map<String,Object> requestNaverSearchApi(String keyword) throws JsonProcessingException, InterruptedException {
