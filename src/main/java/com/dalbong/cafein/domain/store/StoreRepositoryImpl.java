@@ -2,6 +2,8 @@ package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.congestion.QCongestion;
+import com.dalbong.cafein.domain.image.QImage;
+import com.dalbong.cafein.domain.image.QReviewImage;
 import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.domain.member.QMember;
 import com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSubwayStation;
@@ -16,6 +18,8 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -31,13 +35,16 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
 import static com.dalbong.cafein.domain.heart.QHeart.heart;
+import static com.dalbong.cafein.domain.image.QImage.image;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
+import static com.dalbong.cafein.domain.image.QReviewImage.reviewImage;
 import static com.dalbong.cafein.domain.member.QMember.member;
 import static com.dalbong.cafein.domain.memo.QStoreMemo.storeMemo;
 import static com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSubwayStation.nearStoreToSubwayStation;
@@ -88,15 +95,42 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                         .select(subCongestion.congestionScore.avg())
                         .from(subCongestion)
                         .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
-                                subCongestion.store.storeId.eq(store.storeId)))
+                                subCongestion.store.storeId.eq(store.storeId))
+                        .groupBy(store.storeId))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
                 .where(keywordSearch(keyword, stationNameList))
-                .groupBy(store.storeId)
+                .orderBy(sort().stream().toArray(OrderSpecifier[]::new))
+                .limit(40)
                 .fetch();
 
         return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
+
+    private List<OrderSpecifier<?>> sort() {
+
+        List<OrderSpecifier<?>> orders = new ArrayList<>();
+
+        //이미지 유무
+        orders.add(new OrderSpecifier<>(Order.DESC, existImage()));
+
+        //리뷰 많은 순
+        orders.add(new OrderSpecifier<>(Order.DESC, store.reviewList.size()));
+
+        return orders;
+    }
+
+    private NumberExpression existImage() {
+
+        return new CaseBuilder()
+                .when(store.storeImageList.isNotEmpty()
+                        .or(queryFactory.select().from(reviewImage)
+                                .join(review).on(review.eq(reviewImage.review))
+                                .where(review.store.eq(store)).exists()))
+                .then(2)
+                .otherwise(1);
+    }
+
 
     /**
      * 앱단 내 카페 리스트 조회
