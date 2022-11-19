@@ -19,9 +19,6 @@ spring:
     multipart:
       max-file-size: 2MB
 
-coolsms:
-  fromNumber : 070-8065-0427
-
 logging:
   level:
     com:

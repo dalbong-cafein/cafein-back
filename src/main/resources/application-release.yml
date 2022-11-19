@@ -71,3 +71,4 @@ dataSet:
   naverCloud:
     clientId: ${RELEASE_NAVER_CLOUD_CLIENT_ID}
     clientSecret: ${RELEASE_NAVER_CLOUD_CLIENT_SECRET}
+
