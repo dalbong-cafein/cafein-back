@@ -1,3 +1,4 @@
 spring:
   profiles:
-    default: release
+    default: release #운영서버 prod, 테스트 서버 release, 로컬 서버 local
+
