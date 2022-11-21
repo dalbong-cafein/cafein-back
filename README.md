@@ -1,12 +1,14 @@
-# <img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/19bb7e70-533f-4a65-bd9a-774c2a1c883e/%EC%B9%B4%ED%8E%98%EC%9D%B8_%EB%A1%9C%EA%B3%A0_Main_Color.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220908%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220908T093626Z&X-Amz-Expires=86400&X-Amz-Signature=ec0a858c9daf521260f3cd055a923fddcb881704cfc1bc72ef36f29be32d1fda&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22%25EC%25B9%25B4%25ED%258E%2598%25EC%259D%25B8_%25EB%25A1%259C%25EA%25B3%25A0_Main%2520Color.svg%22&x-id=GetObject" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;">
-카페인 - 국민대학교 알파프로젝트
+# <img src="https://user-images.githubusercontent.com/77663506/202992692-9b0fab8c-64e0-464b-84ce-6e15a52877df.png" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 300px; height: 83px;">
+카페인 - 카페 공부 필수 앱
 
 # 📌 Introduction
 보다 나은 공부/작업/회의를 위해 카공 정보를 제공하는 지도 기반 어플리케이션 ‘카페인’ 입니다.
 
 # Member
 - 여정화 (frontend - app)
+- 장요엘 (frontend - app)
 - 안소영 (frontend - web)
+- 이의섭 (frontend - web)
 - 이형우 (backend)
 
 # Branch 전략
@@ -41,4 +43,4 @@ server
 https://documenter.getpostman.com/view/15013144/UVkjuccy
 
 # ERD(진행중)
-![cafein_erd](https://user-images.githubusercontent.com/77663506/189089305-b7233671-ec8c-4724-869a-8b953a1d01a1.png)
+![20221121cafein_erd](https://user-images.githubusercontent.com/77663506/202992552-e6fc81f8-e8d8-470a-b5b9-1a831b7509b0.png)
