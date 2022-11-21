@@ -513,7 +513,7 @@ public class StoreServiceImpl implements StoreService{
             pageable = pageRequestDto.getPageable(Sort.by("storeId").descending());
         }
 
-        Page<Object[]> results = storeRepository.getAllStoreList(pageRequestDto.getSggNm(),
+        Page<Object[]> results = storeRepository.getAllStoreList(pageRequestDto.getSggNms(),
                 pageRequestDto.getSearchType(), pageRequestDto.getKeyword(), pageable);
 
         Function<Object[], AdminStoreResDto> fn = (arr -> {
