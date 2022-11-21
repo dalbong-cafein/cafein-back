@@ -57,6 +57,7 @@ import static org.aspectj.util.LangUtil.isEmpty;
 public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     private final JPAQueryFactory queryFactory;
+    private final String[] sggArr = {"서대문","마포","성북","동대문","종로","강남","중","광진","서초"};
 
     public StoreRepositoryImpl(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
@@ -228,7 +229,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
      * 관리자단 카페 리스트 조회
      */
     @Override
-    public Page<Object[]> getAllStoreList(String sggNm, String[] searchType, String keyword, Pageable pageable) {
+    public Page<Object[]> getAllStoreList(String[] sggNms, String[] searchType, String keyword, Pageable pageable) {
 
         QCongestion subCongestion = new QCongestion("sub");
 
@@ -237,14 +238,14 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                         .select(subCongestion.congestionScore.avg())
                         .from(subCongestion)
                         .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
-                                subCongestion.store.storeId.eq(store.storeId)),
+                                subCongestion.store.storeId.eq(store.storeId))
+                        .groupBy(store.storeId),
                         storeMemo.memoId)
                 .from(store)
                 .leftJoin(storeMemo).on(storeMemo.store.storeId.eq(store.storeId))
-                .where(sggNmFilter(sggNm), searchKeyword(searchType, keyword))
+                .where(sggNmFilter(sggNms), searchKeyword(searchType, keyword))
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .groupBy(store.storeId);
+                .limit(pageable.getPageSize());
 
         //정렬
         for (Sort.Order o : pageable.getSort()) {
@@ -259,8 +260,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         JPAQuery<Tuple> countQuery = queryFactory
                 .select(store, store.reviewList.size())
                 .from(store)
-                .where(sggNmFilter(sggNm), searchKeyword(searchType, keyword))
-                .groupBy(store.storeId);
+                .where(sggNmFilter(sggNms), searchKeyword(searchType, keyword));
 
         List<Object[]> content = results.stream().map(t -> t.toArray()).collect(Collectors.toList());
 
@@ -343,11 +343,17 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 .fetch();
     }
 
-    private BooleanExpression sggNmFilter(String sggNm) {
+    private BooleanBuilder sggNmFilter(String[] sggNms) {
 
-       return !isEmpty(sggNm) ? store.address.sggNm.eq(sggNm) : null;
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if(sggNms != null){
+            for(String sggNm : sggNms){
+                builder.or(store.address.sggNm.eq(sggNm));
+            }
+        }
+        return builder;
     }
-
 
     private BooleanBuilder searchKeyword(String[] searchType, String keyword) {
 
@@ -472,6 +478,4 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         }
         return builder;
     }
-
-    private final String[] sggArr = {"서대문","마포","성북","동대문","종로","강남","중","광진","서초"};
 }

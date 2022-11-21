@@ -43,7 +43,7 @@ public interface StoreRepositoryQuerydsl {
     /**
      * 관리자단 전체 카페 리스트 조회
      */
-    Page<Object[]> getAllStoreList(String sggNm, String[] searchType, String keyword, Pageable pageable);
+    Page<Object[]> getAllStoreList(String[] sggNms, String[] searchType, String keyword, Pageable pageable);
 
     /**
      * 관리자단 카페 상세 페이지 조회
