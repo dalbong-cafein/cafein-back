@@ -66,6 +66,9 @@ public class Store extends BaseEntity {
     private BusinessHours businessHours;
 
     @Builder.Default
+    private LocalDateTime infoModDateTime = LocalDateTime.now();
+
+    @Builder.Default
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     private List<Review> reviewList = new ArrayList<>();
 
