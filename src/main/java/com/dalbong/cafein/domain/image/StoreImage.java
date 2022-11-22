@@ -1,5 +1,6 @@
 package com.dalbong.cafein.domain.image;
 
+import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.store.Store;
 import lombok.Getter;
@@ -17,18 +18,23 @@ public class StoreImage extends Image{
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reg_member_id")
+    private Member regMember;
+
     private Boolean isCafein;
 
     protected StoreImage(){}
 
-    public StoreImage(Store store, String imageUrl){
+    public StoreImage(Store store, Member regMember, String imageUrl){
         super(imageUrl);
         this.store = store;
+        this.regMember = regMember;
         this.isCafein = false;
     }
 
-    public StoreImage(Store store, String imageUrl, boolean isCafein){
-        this(store, imageUrl);
+    public StoreImage(Store store, Member regMember, String imageUrl, boolean isCafein){
+        this(store, regMember, imageUrl);
         this.isCafein = isCafein;
     }
 }

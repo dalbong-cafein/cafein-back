@@ -62,7 +62,7 @@ public class ImageServiceImpl implements ImageService{
         if(!imageUrlList.isEmpty()){
             for(String imageUrl : imageUrlList){
                 StoreImage storeImage =
-                        storeImageRepository.save(new StoreImage(store, imageUrl, isCafein));
+                        storeImageRepository.save(new StoreImage(store, Member.builder().build(), imageUrl, isCafein));
                 imageList.add(storeImage);
             }
         }
@@ -79,7 +79,7 @@ public class ImageServiceImpl implements ImageService{
 
         String imageUrl = s3Uploader.s3UploadOfStore(store, imageFile);
 
-        return storeImageRepository.save(new StoreImage(store, imageUrl, true));
+        return storeImageRepository.save(new StoreImage(store, Member.builder().memberId(1L).build(), imageUrl, true));
     }
 
 
@@ -99,7 +99,7 @@ public class ImageServiceImpl implements ImageService{
         if(!imageUrlList.isEmpty()){
             for(String imageUrl : imageUrlList){
                 ReviewImage reviewImage =
-                        reviewImageRepository.save(new ReviewImage(review, imageUrl));
+                        reviewImageRepository.save(new ReviewImage(review, Member.builder().memberId(1L).build(),imageUrl));
                 imageList.add(reviewImage);
             }
         }

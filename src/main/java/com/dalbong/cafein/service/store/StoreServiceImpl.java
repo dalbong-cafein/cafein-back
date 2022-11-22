@@ -54,6 +54,7 @@ public class StoreServiceImpl implements StoreService{
     private final ImageService imageService;
     private final ReviewService reviewService;
     private final ReviewImageRepository reviewImageRepository;
+    private final StoreImageRepository storeImageRepository;
     private final MemberRepository memberRepository;
     private final StoreMemoRepository storeMemoRepository;
     private final StoreStickerRepository storeStickerRepository;
@@ -385,7 +386,7 @@ public class StoreServiceImpl implements StoreService{
 
         //review 이미지 리스트
         List<ImageDto> reviewImageDtoList = new ArrayList<>();
-        List<ReviewImage> reviewImageList = reviewImageRepository.findByStoreId(storeId);
+        List<ReviewImage> reviewImageList = reviewImageRepository.findWithRegMemberByStoreId(storeId);
 
         if(!reviewImageList.isEmpty()){
 
@@ -393,14 +394,15 @@ public class StoreServiceImpl implements StoreService{
             Collections.reverse(reviewImageList);
 
             for(ReviewImage reviewImage : reviewImageList){
-                reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(),
+                        reviewImage.getRegMember().getNickname(), reviewImage.getImageUrl()));
             }
         }
 
         //store 이미지 리스트
         List<ImageDto> storeImageDtoList = new ArrayList<>();
 
-        List<StoreImage> storeImageList = store.getStoreImageList();
+        List<StoreImage> storeImageList = storeImageRepository.findWithRegMemberByStoreId(storeId);
 
         if(storeImageList != null && !storeImageList.isEmpty()){
 
@@ -408,7 +410,8 @@ public class StoreServiceImpl implements StoreService{
             Collections.reverse(storeImageList);
 
             for (StoreImage storeImage : store.getStoreImageList()){
-                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
+                storeImageDtoList.add(new ImageDto(storeImage.getImageId(),
+                        storeImage.getRegMember().getNickname(), storeImage.getImageUrl(), storeImage.getIsCafein()));
             }
         }
 
@@ -553,7 +556,7 @@ public class StoreServiceImpl implements StoreService{
 
         //review 이미지 리스트
         List<ImageDto> reviewImageDtoList = new ArrayList<>();
-        List<ReviewImage> reviewImageList = reviewImageRepository.findByStoreId(storeId);
+        List<ReviewImage> reviewImageList = reviewImageRepository.findWithRegMemberByStoreId(storeId);
         if(!reviewImageList.isEmpty()){
 
             //최신순 조회
@@ -574,7 +577,8 @@ public class StoreServiceImpl implements StoreService{
             Collections.reverse(storeImageList);
 
             for (StoreImage storeImage : store.getStoreImageList()){
-                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
+                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(),
+                        storeImage.getRegMember().getNickname(),storeImage.getIsCafein()));
             }
         }
 
@@ -624,7 +628,8 @@ public class StoreServiceImpl implements StoreService{
         int cnt = 0;
 
         for(StoreImage storeImage : storeImageList){
-            imageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
+            imageDtoList.add(new ImageDto(storeImage.getImageId(), store.getRegMember().getNickname(),
+                    storeImage.getImageUrl(), storeImage.getIsCafein()));
             cnt += 1;
             if(cnt >= size) break;
         }
@@ -633,7 +638,7 @@ public class StoreServiceImpl implements StoreService{
         if(imageDtoList.size() < size){
 
             //TODO limit 개수 조회로 변경
-            List<ReviewImage> reviewImageList = reviewImageRepository.findByStoreId(store.getStoreId());
+            List<ReviewImage> reviewImageList = reviewImageRepository.findWithRegMemberByStoreId(store.getStoreId());
 
             //최신순 조회
             Collections.reverse(reviewImageList);

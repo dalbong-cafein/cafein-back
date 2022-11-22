@@ -2,6 +2,7 @@ package com.dalbong.cafein.web.service;
 
 import com.dalbong.cafein.domain.image.Image;
 import com.dalbong.cafein.domain.image.StoreImage;
+import com.dalbong.cafein.domain.image.StoreImageRepository;
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class StoreServiceOfWeb {
 
     private final StoreRepository storeRepository;
+    private final StoreImageRepository storeImageRepository;
 
     /**
      * 웹 - 카페 리스트 조회
@@ -52,7 +54,7 @@ public class StoreServiceOfWeb {
             //이미지 최대 3개 불러오기
             List<ImageDto> storeImageDtoList = new ArrayList<>();
 
-            List<StoreImage> storeImageList = store.getStoreImageList();
+            List<StoreImage> storeImageList = storeImageRepository.findWithRegMemberByStoreId(store.getStoreId());
             if (storeImageList != null && !storeImageList.isEmpty()) {
 
                 //최신순 조회
@@ -60,7 +62,8 @@ public class StoreServiceOfWeb {
 
                 int count = 0;
                 for(StoreImage storeImage : store.getStoreImageList()){
-                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
+                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getRegMember().getNickname(),
+                            storeImage.getImageUrl(), storeImage.getIsCafein()));
                     count += 1;
                     if(count >= 3) break;
                 }
@@ -95,7 +98,7 @@ public class StoreServiceOfWeb {
             //이미지 최대 3개 불러오기
             List<ImageDto> storeImageDtoList = new ArrayList<>();
 
-            List<StoreImage> storeImageList = store.getStoreImageList();
+            List<StoreImage> storeImageList = storeImageRepository.findWithRegMemberByStoreId(storeId);
             if (storeImageList != null && !storeImageList.isEmpty()) {
 
                 //최신순 조회
@@ -103,7 +106,8 @@ public class StoreServiceOfWeb {
                 
                 int count = 0;
                 for(StoreImage storeImage : store.getStoreImageList()){
-                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
+                    storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getRegMember().getNickname(),
+                            storeImage.getImageUrl(), storeImage.getIsCafein()));
                     count += 1;
                     if(count >= 3) break;
                 }
