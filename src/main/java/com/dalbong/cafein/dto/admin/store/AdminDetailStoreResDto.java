@@ -69,7 +69,7 @@ public class AdminDetailStoreResDto {
         this.reviewImageDtoList = reviewImageDtoList;
         this.storeImageDtoList = storeImageDtoList;
         this.regDateTime = store.getRegDateTime();
-        this.modDateTime = store.getModDateTime();
+        this.modDateTime = store.getInfoModDateTime();
 
 
     }

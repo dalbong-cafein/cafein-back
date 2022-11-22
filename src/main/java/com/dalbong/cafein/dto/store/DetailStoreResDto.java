@@ -79,7 +79,7 @@ public class DetailStoreResDto {
         this.reviewImageList = reviewImageDtoList;
         this.storeImageList = storeImageDtoList;
         this.regDateTime = store.getRegDateTime();
-        this.modDateTime = store.getModDateTime();
+        this.modDateTime = store.getInfoModDateTime();
 
     }
 }

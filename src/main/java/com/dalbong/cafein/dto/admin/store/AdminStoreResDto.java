@@ -56,7 +56,7 @@ public class AdminStoreResDto {
         this.regMemberId = store.getRegMember().getMemberId();
         this.modMemberId = store.getModMember().getMemberId();
         this.regDateTime = store.getRegDateTime();
-        this.modDateTime = store.getModDateTime();
+        this.modDateTime = store.getInfoModDateTime();
         this.memoId = memoId;
     }
 }

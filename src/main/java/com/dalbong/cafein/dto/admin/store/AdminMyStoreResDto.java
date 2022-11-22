@@ -24,7 +24,7 @@ public class AdminMyStoreResDto {
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
         this.regDateTime = store.getRegDateTime();
-        this.modDateTime = store.getModDateTime();
+        this.modDateTime = store.getInfoModDateTime();
     }
 
 }
