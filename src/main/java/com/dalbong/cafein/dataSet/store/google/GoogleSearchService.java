@@ -4,6 +4,7 @@ import com.dalbong.cafein.domain.businessHours.BusinessHours;
 import com.dalbong.cafein.domain.businessHours.BusinessHoursRepository;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.image.StoreImageRepository;
+import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.s3.S3Uploader;
@@ -212,7 +213,8 @@ public class GoogleSearchService {
 //                System.out.println(i);
 //            }
 //        }
-        if (storeImageRepository.findByStore(store).isEmpty()) {
+
+        if (store.getStoreImageList().isEmpty()) {
             //이미지 저장
             photoApi(store, dto);
         }
@@ -237,7 +239,7 @@ public class GoogleSearchService {
 
                 String imageUrl = s3Upload(store, response);
 
-                storeImageRepository.save(new StoreImage(store,imageUrl));
+                storeImageRepository.save(new StoreImage(store, Member.builder().memberId(1L).build(), imageUrl));
 
                 i++;
                 if (i == 5) break;

@@ -15,16 +15,27 @@ public class ImageDto {
 
     private String imageUrl;
 
+    private String regNickname;
+
     public ImageDto(Long imageId, String imageUrl){
         this.imageId = imageId;
         this.imageUrl = imageUrl;
         this.isCafein = false;
+        this.regNickname = "";
     }
 
-    public ImageDto(Long imageId, String imageUrl, boolean isCafein){
+    public ImageDto(Long imageId, String imageUrl, String regNickname){
+        this.imageId = imageId;
+        this.imageUrl = imageUrl;
+        this.isCafein = false;
+        this.regNickname = regNickname;
+    }
+
+    public ImageDto(Long imageId, String imageUrl, String regNickname, boolean isCafein){
         this.imageId = imageId;
         this.imageUrl = imageUrl;
         this.isCafein = isCafein;
+        this.regNickname = regNickname;
     }
 
 
