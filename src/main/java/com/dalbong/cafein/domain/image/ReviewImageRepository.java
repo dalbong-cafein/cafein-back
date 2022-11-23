@@ -12,8 +12,8 @@ public interface ReviewImageRepository extends JpaRepository<ReviewImage,Long> {
     List<ReviewImage> findReviewImagesByReviewReviewId(@Param("reviewId") Long reviewId);
 
     @Query("select ri from ReviewImage ri " +
-            "join fetch ri.review " +
-            "join fetch ri.regMember " +
-            "where ri.review.store.storeId =:storeId")
+            "join fetch ri.review r " +
+            "join fetch r.member " +
+            "where ri.review.store.storeId = :storeId")
     List<ReviewImage> findWithRegMemberByStoreId(@Param("storeId") Long storeId);
 }

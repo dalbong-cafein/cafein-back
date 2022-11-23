@@ -92,7 +92,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         QCongestion subCongestion = new QCongestion("sub");
 
         List<Tuple> result = queryFactory
-                .select(store , store.heartList.size(), JPAExpressions
+                .select(store ,store.heartList.size(), JPAExpressions
                         .select(subCongestion.congestionScore.avg())
                         .from(subCongestion)
                         .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
