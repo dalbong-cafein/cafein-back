@@ -96,7 +96,6 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
         JPAQuery<Review> countQuery = queryFactory
                 .select(review)
                 .from(review)
-                .leftJoin(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
                 .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage));
 
@@ -141,6 +140,35 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
     }
 
     /**
+     * 회원별 리뷰 리스트 조회
+     */
+    @Override
+    public List<Object[]> getMyReviewList(Long principalId) {
+
+        QReview review = new QReview("review");
+        QReview reviewSub = new QReview("reviewSub");
+
+        List<Tuple> result = queryFactory.select(review,
+                JPAExpressions.select(reviewSub.count())
+                        .from(reviewSub)
+                        .where(reviewSub.store.storeId.eq(review.store.storeId),
+                                reviewSub.member.memberId.eq(review.member.memberId)))
+
+                .from(review)
+                .leftJoin(review.member).fetchJoin()
+                .leftJoin(review.store).fetchJoin()
+                .where(review.member.memberId.eq(principalId))
+                .orderBy(review.reviewId.desc())
+                .fetch();
+
+        if(result.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
+    }
+
+    /**
      * 관리자단 전체 리뷰 리스트 조회
      */
     @Override
@@ -171,41 +199,11 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
         JPAQuery<Review> countQuery = queryFactory
                 .select(review)
                 .from(review)
-                .leftJoin(review.member).fetchJoin()
-                .leftJoin(review.store).fetchJoin()
                 .where(searchKeyword(searchType, keyword));
 
         List<Object[]> content = results.stream().map(t -> t.toArray()).collect(Collectors.toList());
 
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchCount());
-    }
-
-    /**
-     * 회원별 리뷰 리스트 조회
-     */
-    @Override
-    public List<Object[]> getMyReviewList(Long principalId) {
-
-        QReview review = new QReview("review");
-        QReview reviewSub = new QReview("reviewSub");
-
-        List<Tuple> result = queryFactory.select(review,
-                                        JPAExpressions.select(reviewSub.count())
-                                                .from(reviewSub)
-                                                .where(reviewSub.store.storeId.eq(review.store.storeId),
-                                                        reviewSub.member.memberId.eq(review.member.memberId)))
-
-                .from(review)
-                .leftJoin(review.store).fetchJoin()
-                .where(review.member.memberId.eq(principalId))
-                .orderBy(review.reviewId.desc())
-                .fetch();
-
-        if(result.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
 
     /**

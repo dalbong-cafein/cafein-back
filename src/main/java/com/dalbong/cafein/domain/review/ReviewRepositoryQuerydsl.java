@@ -26,14 +26,14 @@ public interface ReviewRepositoryQuerydsl {
     List<Object[]> getCustomLimitReviewList(int limit, Long storeId);
 
     /**
-     * 관리자단 전체 리뷰 리스트 조회
-     */
-    Page<Object[]> getAllReviewList(String[] searchType, String keyword, Pageable pageable);
-
-    /**
      * 회원별 리뷰 리스트 조회
      */
     List<Object[]> getMyReviewList(Long principalId);
+
+    /**
+     * 관리자단 전체 리뷰 리스트 조회
+     */
+    Page<Object[]> getAllReviewList(String[] searchType, String keyword, Pageable pageable);
 
     /**
      * 관리자단 리뷰 상세 정보 조회
