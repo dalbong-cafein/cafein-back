@@ -95,7 +95,7 @@ public class StoreServiceImpl implements StoreService{
 
         storeRepository.save(store);
 
-        imageService.saveStoreImage(store, storeRegDto.getImageFiles(), false);
+        imageService.saveStoreImage(store, member, storeRegDto.getImageFiles(), false);
 
         //리뷰 자동 등록
         reviewService.register(storeRegDto.toReviewRegDto(store.getStoreId()), principalId);
@@ -115,6 +115,9 @@ public class StoreServiceImpl implements StoreService{
 
         Store store = storeRepository.findById(storeUpdateDto.getStoreId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 카페입니다."));
+
+        Member member = memberRepository.findById(principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 회원입니다."));
 
         //카페 데이터 수정
         store.changeWebsite(storeUpdateDto.getWebsite());
@@ -144,16 +147,16 @@ public class StoreServiceImpl implements StoreService{
         }
 
         //이미지 추가
-        updateStoreImage(store, storeUpdateDto.getUpdateImageFiles(), storeUpdateDto.getDeleteImageIdList(), false);
+        updateStoreImage(store, member, storeUpdateDto.getUpdateImageFiles(), storeUpdateDto.getDeleteImageIdList(), false);
 
         //최신 수정자 변경
-        store.changeModMember(Member.builder().memberId(principalId).build());
+        store.changeModMember(member);
     }
 
-    private void updateStoreImage(Store store, List<MultipartFile> updateImageFiles, List<Long> deleteImageIdList, boolean isCafein) throws IOException {
+    private void updateStoreImage(Store store, Member regMember, List<MultipartFile> updateImageFiles, List<Long> deleteImageIdList, boolean isCafein) throws IOException {
 
         //이미지 추가
-        imageService.saveStoreImage(store, updateImageFiles, isCafein);
+        imageService.saveStoreImage(store, regMember, updateImageFiles, isCafein);
 
         //이미지 삭제
         if (deleteImageIdList != null && !deleteImageIdList.isEmpty()){
@@ -379,41 +382,14 @@ public class StoreServiceImpl implements StoreService{
         MemberImage memberImage = (MemberImage) arr[1];
         ImageDto memberImageDto = null;
         if (memberImage != null){
-            Long imageId = memberImage.getImageId();
-            String imageUrl = memberImage.getImageUrl();
-            memberImageDto = new ImageDto(imageId, imageUrl);
+            memberImageDto = new ImageDto(memberImage.getImageId(), memberImage.getImageUrl());
         }
 
         //review 이미지 리스트
-        List<ImageDto> reviewImageDtoList = new ArrayList<>();
-        List<ReviewImage> reviewImageList = reviewImageRepository.findWithRegMemberByStoreId(storeId);
-
-        if(!reviewImageList.isEmpty()){
-
-            //최신순 조회
-            Collections.reverse(reviewImageList);
-
-            for(ReviewImage reviewImage : reviewImageList){
-                reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(),
-                        reviewImage.getRegMember().getNickname(), reviewImage.getImageUrl()));
-            }
-        }
+        List<ImageDto> reviewImageDtoList = getReviewImageDtoList(store);
 
         //store 이미지 리스트
-        List<ImageDto> storeImageDtoList = new ArrayList<>();
-
-        List<StoreImage> storeImageList = storeImageRepository.findWithRegMemberByStoreId(storeId);
-
-        if(storeImageList != null && !storeImageList.isEmpty()){
-
-            //최신순 조회
-            Collections.reverse(storeImageList);
-
-            for (StoreImage storeImage : store.getStoreImageList()){
-                storeImageDtoList.add(new ImageDto(storeImage.getImageId(),
-                        storeImage.getRegMember().getNickname(), storeImage.getImageUrl(), storeImage.getIsCafein()));
-            }
-        }
+        List<ImageDto> storeImageDtoList = getStoreImageDtoList(store);
 
         //조회수 증가
         store.increaseViewCnt();
@@ -446,7 +422,7 @@ public class StoreServiceImpl implements StoreService{
 
         storeRepository.save(store);
 
-        imageService.saveStoreImage(store, storeRegDto.getImageFiles(), true);
+        imageService.saveStoreImage(store, member, storeRegDto.getImageFiles(), true);
 
         //리뷰 자동 등록
         reviewService.register(storeRegDto.toReviewRegDto(store.getStoreId()), principalId);
@@ -466,6 +442,9 @@ public class StoreServiceImpl implements StoreService{
 
         Store store = storeRepository.findById(storeUpdateDto.getStoreId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 카페입니다."));
+
+        Member member = memberRepository.findById(principalId).orElseThrow(() ->
+                new CustomException("존재하지 않는 회원입니다."));
 
         //카페 데이터 수정
         store.changeWebsite(storeUpdateDto.getWebsite());
@@ -495,7 +474,7 @@ public class StoreServiceImpl implements StoreService{
         }
 
         //이미지 추가
-        updateStoreImage(store, storeUpdateDto.getUpdateImageFiles(), storeUpdateDto.getDeleteImageIdList(), true);
+        updateStoreImage(store, member, storeUpdateDto.getUpdateImageFiles(), storeUpdateDto.getDeleteImageIdList(), true);
 
         //최신 수정자 변경
         store.changeModMember(Member.builder().memberId(principalId).build());
@@ -555,32 +534,10 @@ public class StoreServiceImpl implements StoreService{
         Store store = (Store) arr[0];
 
         //review 이미지 리스트
-        List<ImageDto> reviewImageDtoList = new ArrayList<>();
-        List<ReviewImage> reviewImageList = reviewImageRepository.findWithRegMemberByStoreId(storeId);
-        if(!reviewImageList.isEmpty()){
-
-            //최신순 조회
-            Collections.reverse(reviewImageList);
-
-            for(ReviewImage reviewImage : reviewImageList){
-                reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
-            }
-        }
+        List<ImageDto> reviewImageDtoList = getReviewImageDtoList(store);
 
         //store 이미지 리스트
-        List<ImageDto> storeImageDtoList = new ArrayList<>();
-
-        List<StoreImage> storeImageList = store.getStoreImageList();
-        if(storeImageList != null && !storeImageList.isEmpty()){
-
-            //최신순 조회
-            Collections.reverse(storeImageList);
-
-            for (StoreImage storeImage : store.getStoreImageList()){
-                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(),
-                        storeImage.getRegMember().getNickname(),storeImage.getIsCafein()));
-            }
-        }
+        List<ImageDto> storeImageDtoList = getStoreImageDtoList(store);
 
         return new AdminDetailStoreResDto(store, (int)arr[1], (long) arr[2], (int)arr[3], reviewImageDtoList, storeImageDtoList);
     }
@@ -628,8 +585,7 @@ public class StoreServiceImpl implements StoreService{
         int cnt = 0;
 
         for(StoreImage storeImage : storeImageList){
-            imageDtoList.add(new ImageDto(storeImage.getImageId(), store.getRegMember().getNickname(),
-                    storeImage.getImageUrl(), storeImage.getIsCafein()));
+            imageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
             cnt += 1;
             if(cnt >= size) break;
         }
@@ -637,22 +593,64 @@ public class StoreServiceImpl implements StoreService{
         //storeImage 개수가 size 미만일 경우
         if(imageDtoList.size() < size){
 
-            //TODO limit 개수 조회로 변경
-            List<ReviewImage> reviewImageList = reviewImageRepository.findWithRegMemberByStoreId(store.getStoreId());
+            List<Review> reviewList = store.getReviewList();
 
-            //최신순 조회
-            Collections.reverse(reviewImageList);
+            if(!reviewList.isEmpty()){
+                for(Review review : reviewList){
 
-            if(!reviewImageList.isEmpty()){
-                for(ReviewImage reviewImage : reviewImageList){
-                    imageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
-                    cnt += 1;
-                    if(cnt >= size) break;
+                    List<ReviewImage> reviewImageList = review.getReviewImageList();
+
+                    //최신순 조회
+                    Collections.reverse(reviewImageList);
+
+                    //TODO 카페 리스트 조회 시 ImageDto 따로 설계 필요 - 케이스별 ImageDto 분리
+                    if(!reviewImageList.isEmpty()){
+                        for(ReviewImage reviewImage : reviewImageList){
+                            imageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                            cnt += 1;
+                            if(cnt >= size) break;
+                        }
+                    }
                 }
             }
         }
 
         return imageDtoList;
+    }
+
+    private List<ImageDto> getReviewImageDtoList(Store store) {
+
+        List<ImageDto> reviewImageDtoList = new ArrayList<>();
+        List<ReviewImage> reviewImageList = reviewImageRepository.findWithRegMemberByStoreId(store.getStoreId());
+
+        if(!reviewImageList.isEmpty()){
+            //최신순 조회
+            Collections.reverse(reviewImageList);
+
+            for(ReviewImage reviewImage : reviewImageList){
+                reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl(),
+                        reviewImage.getReview().getMember().getNickname()));
+            }
+        }
+        return reviewImageDtoList;
+    }
+
+    private List<ImageDto> getStoreImageDtoList(Store store) {
+
+        List<ImageDto> storeImageDtoList = new ArrayList<>();
+
+        List<StoreImage> storeImageList = storeImageRepository.findWithRegMemberByStoreId(store.getStoreId());
+
+        if(storeImageList != null && !storeImageList.isEmpty()){
+            //최신순 조회
+            Collections.reverse(storeImageList);
+
+            for (StoreImage storeImage : store.getStoreImageList()){
+                storeImageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(),
+                        storeImage.getRegMember().getNickname(), storeImage.getIsCafein()));
+            }
+        }
+        return storeImageDtoList;
     }
 }
 
