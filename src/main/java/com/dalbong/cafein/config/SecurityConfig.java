@@ -59,11 +59,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         HttpMethod.GET,
 
                         //카페 관련
-                        "/stores", "/stores/{storeId}/near-stores", "/stores/{storeId}",
+                        "/stores",
+                        "/stores/{storeId}/near-stores",
+                        "/stores/{storeId}",
 
                         //리뷰 관련
-                        "/stores/{storeId}/detail-review-score"
-                ).permitAll()
+                        "/stores/{storeId}/detail-review-score",
+                        "/stores/{storeId}/reviews",
+                        "/stores/{storeId}/reviews/limit",
+
+                        //혼잡도 관련
+                        "/stores/{storeId}/congestion"
+                ).anonymous()
                 .antMatchers(
                         // 인증 관련
                         "/auth/logout",
@@ -78,7 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/reviews","/reviews/**", "/stores/{storeId}/reviews",
 
                         // 신고 관련
-                        "reviews/**/reports",
+                        "/reviews/**/reports",
 
                         // 하트 관련
                         "/hearts", "/hearts/**", "/stores/{storeId}/hearts",
