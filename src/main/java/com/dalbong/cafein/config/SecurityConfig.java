@@ -70,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                         //혼잡도 관련
                         "/stores/{storeId}/congestion"
-                ).anonymous()
+                ).permitAll()
                 .antMatchers(
                         // 인증 관련
                         "/auth/logout",
