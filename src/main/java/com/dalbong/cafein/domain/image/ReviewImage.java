@@ -1,5 +1,6 @@
 package com.dalbong.cafein.domain.image;
 
+import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
 import lombok.Getter;
 import lombok.ToString;

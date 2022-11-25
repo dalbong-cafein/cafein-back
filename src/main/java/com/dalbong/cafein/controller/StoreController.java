@@ -8,6 +8,7 @@ import com.dalbong.cafein.service.store.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -30,7 +31,6 @@ public class StoreController {
                                           @AuthenticationPrincipal PrincipalDetails principalDetails){
 
         List<StoreResDto> storeResDtoList;
-
         //비로그인 상태
         if(principalDetails == null){
             storeResDtoList = storeService.getStoreList(keyword, null);

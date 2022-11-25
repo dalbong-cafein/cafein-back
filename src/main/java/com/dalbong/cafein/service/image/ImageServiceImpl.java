@@ -52,7 +52,7 @@ public class ImageServiceImpl implements ImageService{
      */
     @Transactional
     @Override
-    public List<StoreImage> saveStoreImage(Store store, List<MultipartFile> imageFiles, boolean isCafein) throws IOException {
+    public List<StoreImage> saveStoreImage(Store store, Member regMember, List<MultipartFile> imageFiles, boolean isCafein) throws IOException {
 
         List<String> imageUrlList = s3Uploader.s3MultipleUploadOfStore(store, imageFiles);
 
@@ -62,7 +62,7 @@ public class ImageServiceImpl implements ImageService{
         if(!imageUrlList.isEmpty()){
             for(String imageUrl : imageUrlList){
                 StoreImage storeImage =
-                        storeImageRepository.save(new StoreImage(store, imageUrl, isCafein));
+                        storeImageRepository.save(new StoreImage(store, regMember, imageUrl, isCafein));
                 imageList.add(storeImage);
             }
         }
@@ -78,7 +78,7 @@ public class ImageServiceImpl implements ImageService{
 
         String imageUrl = s3Uploader.s3UploadOfStore(store, imageFile);
 
-        return storeImageRepository.save(new StoreImage(store, imageUrl, true));
+        return storeImageRepository.save(new StoreImage(store, Member.builder().memberId(1L).build(), imageUrl, true));
     }
 
 
@@ -98,7 +98,7 @@ public class ImageServiceImpl implements ImageService{
         if(!imageUrlList.isEmpty()){
             for(String imageUrl : imageUrlList){
                 ReviewImage reviewImage =
-                        reviewImageRepository.save(new ReviewImage(review, imageUrl));
+                        reviewImageRepository.save(new ReviewImage(review,imageUrl));
                 imageList.add(reviewImage);
             }
         }

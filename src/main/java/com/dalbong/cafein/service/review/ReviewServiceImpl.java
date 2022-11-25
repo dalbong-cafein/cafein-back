@@ -225,13 +225,7 @@ public class ReviewServiceImpl implements ReviewService{
                 }
 
                 //리뷰 이미지
-                List<ImageDto> reviewImageDtoList = new ArrayList<>();
-
-                if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()){
-                    for (ReviewImage reviewImage : review.getReviewImageList()){
-                        reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
-                    }
-                }
+                List<ImageDto> reviewImageDtoList = getReviewImageDtoList(review);
 
                 return new ReviewResDto(review, profileImageUrl, (long)arr[2], reviewImageDtoList);
             }
@@ -255,26 +249,23 @@ public class ReviewServiceImpl implements ReviewService{
 
             Review review = (Review) arr[0];
 
-            //review 이미지 리스트
-            List<ImageDto> reviewImageDtoList = new ArrayList<>();
+            if(review != null) {
 
-            if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()) {
-                for (ReviewImage reviewImage : review.getReviewImageList()) {
-                    reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                //review 이미지 리스트
+                List<ImageDto> reviewImageDtoList = getReviewImageDtoList(review);
+
+                //store 이미지
+                //TODO storeImage 화면 존재 유무
+                ImageDto storeImageDto = null;
+
+                if (review.getStore().getStoreImageList() != null && !review.getStore().getStoreImageList().isEmpty()) {
+                    StoreImage storeImage = review.getStore().getStoreImageList().get(0);
+                    storeImageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
                 }
-            }
 
-            //store 이미지
-            //TODO storeImage 화면 존재 유무
-            ImageDto storeImageDto = null;
-
-            if (review.getStore().getStoreImageList() != null && !review.getStore().getStoreImageList().isEmpty()) {
-                StoreImage storeImage = review.getStore().getStoreImageList().get(0);
-                storeImageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
-            }
-
-            return new MyReviewResDto(review, (long) arr[1], reviewImageDtoList, storeImageDto);
-
+                return new MyReviewResDto(review, (long) arr[1], reviewImageDtoList, storeImageDto);
+                }
+            return null;
             }).collect(Collectors.toList());
 
 
@@ -302,13 +293,8 @@ public class ReviewServiceImpl implements ReviewService{
 
             //리뷰 이미지
             Review review = (Review) arr[0];
-            List<ImageDto> reviewImageDtoList = new ArrayList<>();
-            if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()) {
 
-                for (ReviewImage reviewImage : review.getReviewImageList()) {
-                    reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
-                }
-            }
+            List<ImageDto> reviewImageDtoList = getReviewImageDtoList(review);
 
             return new ReviewResDto(review, profileImageUrl, (long) arr[2], reviewImageDtoList);
         }).collect(Collectors.toList());
@@ -414,7 +400,6 @@ public class ReviewServiceImpl implements ReviewService{
 
             Review review = (Review) arr[0];
 
-
             return new AdminReviewResDto(review, (Long) arr[1]);
         });
 
@@ -434,13 +419,7 @@ public class ReviewServiceImpl implements ReviewService{
         Review review = (Review) arr[0];
 
         //review 이미지 리스트
-        List<ImageDto> reviewImageDtoList = new ArrayList<>();
-        if(review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()){
-
-            for(ReviewImage reviewImage : review.getReviewImageList()){
-                reviewImageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
-            }
-        }
+        List<ImageDto> reviewImageDtoList = getReviewImageDtoList(review);
 
         return new AdminDetailReviewResDto(review, (long)arr[1], reviewImageDtoList);
     }
@@ -527,5 +506,20 @@ public class ReviewServiceImpl implements ReviewService{
     public int countMyReview(Long memberId) {
 
         return reviewRepository.countByMemberId(memberId);
+    }
+
+
+    private List<ImageDto> getReviewImageDtoList(Review review) {
+
+        List<ImageDto> reviewImageDtoList = new ArrayList<>();
+
+        if (review.getReviewImageList() != null && !review.getReviewImageList().isEmpty()) {
+            for (ReviewImage reviewImage : review.getReviewImageList()) {
+                reviewImageDtoList.add(
+                        new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl(), review.getMember().getNickname()));
+            }
+        }
+
+        return reviewImageDtoList;
     }
 }

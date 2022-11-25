@@ -59,10 +59,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         HttpMethod.GET,
 
                         //카페 관련
-                        "/stores", "/stores/{storeId}/near-stores", "/stores/{storeId}",
+                        "/stores",
+                        "/stores/{storeId}/near-stores",
+                        "/stores/{storeId}",
 
                         //리뷰 관련
-                        "/stores/{storeId}/detail-review-score"
+                        "/stores/{storeId}/detail-review-score",
+                        "/stores/{storeId}/reviews",
+                        "/stores/{storeId}/reviews/limit",
+
+                        //혼잡도 관련
+                        "/stores/{storeId}/congestion"
                 ).permitAll()
                 .antMatchers(
                         // 인증 관련
