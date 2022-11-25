@@ -69,7 +69,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/stores/{storeId}/reviews/limit",
 
                         //혼잡도 관련
-                        "/stores/{storeId}/congestion"
+                        "/stores/{storeId}/congestion",
+
+                        //게시글 관련 - 1.공지사항 2. 자주 묻는 질문
+                        "/boards", "/boards/{boardId}",
+
+                        //이벤트 배너 관련
+                        "/events/latest"
                 ).permitAll()
                 .antMatchers(
                         // 인증 관련
