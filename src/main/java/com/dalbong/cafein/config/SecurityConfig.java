@@ -67,9 +67,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/stores/{storeId}/detail-review-score",
                         "/stores/{storeId}/reviews",
                         "/stores/{storeId}/reviews/limit",
+                        "/stores/{storeId}/reviews/check-possible-registration",
 
                         //혼잡도 관련
                         "/stores/{storeId}/congestion",
+                        "/stores/{storeId}/congestion/check-possible-registration",
+
+                        //스티커 관련
+                        "/stickers/check-possible-issue",
 
                         //게시글 관련 - 1.공지사항 2. 자주 묻는 질문
                         "/boards", "/boards/{boardId}",
