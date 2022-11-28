@@ -202,7 +202,7 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     /**
-     * 가게별 리뷰 리스트 조회
+     * 카페별 리뷰 리스트 조회
      */
     @Transactional(readOnly = true)
     @Override
@@ -273,7 +273,7 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     /**
-     * 가게별 리뷰 리스트 개수 지정 조회
+     * 카페별 리뷰 리스트 개수 지정 조회
      */
     @Transactional(readOnly = true)
     @Override
