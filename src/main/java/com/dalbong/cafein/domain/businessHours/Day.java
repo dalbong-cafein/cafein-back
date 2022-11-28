@@ -21,10 +21,13 @@ public class Day {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
     private LocalTime closed;
 
+    private Boolean isHoliday;
+
     protected Day(){}
 
-    public Day(LocalTime open, LocalTime closed) {
+    public Day(LocalTime open, LocalTime closed, Boolean isHoliday) {
         this.open = open;
         this.closed = closed;
+        this.isHoliday = isHoliday;
     }
 }
