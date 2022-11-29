@@ -391,21 +391,25 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     }
 
-    private BooleanExpression containStoreName(String keyword) {
+    private BooleanBuilder containStoreName(String keyword) {
 
+        BooleanBuilder builder = new BooleanBuilder();
 
         if(!isEmpty(keyword)){
-            String replaceWord = keyword;
 
-            if(keyword.contains("투썸")){
-                replaceWord = keyword.replace("투썸", "투썸 플레이스");
+            if(keyword.contains("투썸 플레이스")){
+                keyword = keyword.replace("투썸 플레이스", "투썸");
             }else if (keyword.contains("스벅")){
-                replaceWord = keyword.replace("스벅", "스타벅스");
+                keyword = keyword.replace("스벅", "스타벅스");
             }
-            System.out.println(replaceWord);
-            return store.storeName.contains(replaceWord);
+
+            String[] wordArr = keyword.split(" ");
+
+            for(String word : wordArr){
+                builder.and(store.storeName.contains(word));
+            }
         }
-        return null;
+        return builder;
     }
 
     private BooleanExpression containAddress(String keyword) {
