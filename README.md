@@ -5,7 +5,7 @@
 보다 나은 공부/작업/회의를 위해 카공 정보를 제공하는 지도 기반 어플리케이션 ‘카페인’ 입니다.
 
 <p float="left">
-  <img src="https://user-images.githubusercontent.com/77663506/204604602-cf7a7d31-d045-445a-bcdf-1218edf78a2a.png"  width="760" height="390" />
+  <img src="https://user-images.githubusercontent.com/77663506/204604602-cf7a7d31-d045-445a-bcdf-1218edf78a2a.png"  width="820" height="420" />
 </p>
 <p float="left">
   <img src="https://user-images.githubusercontent.com/77663506/204605235-01829519-0bdc-4fc1-aaab-b5325fc3b2f4.png" width="250" height="460" />
