@@ -10,6 +10,7 @@ import com.dalbong.cafein.dataSet.store.naver.NaverSearchService;
 import com.dalbong.cafein.dataSet.subwayStation.SubwayStationRegDto;
 import com.dalbong.cafein.dataSet.subwayStation.SubwayStationService;
 import com.dalbong.cafein.dataSet.util.json.JsonUtil;
+import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.CMRespDto;
@@ -330,7 +331,7 @@ public class DataSetController {
     public String registerReview(MultipartFile excelFile,
                                  @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException, InterruptedException {
 
-        excelReviewDataService.register(excelFile, principalDetails.getMember());
+        excelReviewDataService.register(excelFile, Member.builder().memberId(1L).build());
 
         return "엑셀 리뷰 데이터 추가 성공";
     }
