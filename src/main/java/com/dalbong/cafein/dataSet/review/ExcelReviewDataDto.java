@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class ExcelReviewDataDto {
 
+    private Long storeId;
+
     private String storeName;
 
     private Integer socket;

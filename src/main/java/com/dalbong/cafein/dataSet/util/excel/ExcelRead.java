@@ -44,15 +44,16 @@ public class ExcelRead {
              */
             Row row = sheet.getRow(rowIndex);
 
-            String storeName = row.getCell(0).getStringCellValue();
-            int socket = (int) row.getCell(1).getNumericCellValue();
-            int wifi = (int) row.getCell(2).getNumericCellValue();
-            int restroom = (int) row.getCell(3).getNumericCellValue();
-            int tableSize = (int) row.getCell(4).getNumericCellValue();
-            Recommendation recommendation = Recommendation.valueOf(row.getCell(6).getStringCellValue());
-            String content = row.getCell(7).getStringCellValue();
+            Long storeId = (long) row.getCell(0).getNumericCellValue();
+            String storeName = row.getCell(1).getStringCellValue();
+            int socket = (int) row.getCell(2).getNumericCellValue();
+            int wifi = (int) row.getCell(3).getNumericCellValue();
+            int restroom = (int) row.getCell(4).getNumericCellValue();
+            int tableSize = (int) row.getCell(5).getNumericCellValue();
+            Recommendation recommendation = Recommendation.valueOf(row.getCell(7).getStringCellValue());
+            String content = row.getCell(8).getStringCellValue();
 
-            ExcelReviewDataDto excelReviewDataDto = new ExcelReviewDataDto(storeName, socket, wifi, restroom,
+            ExcelReviewDataDto excelReviewDataDto = new ExcelReviewDataDto(storeId, storeName, socket, wifi, restroom,
                     tableSize, recommendation, content);
 
             excelReviewDataDtoList.add(excelReviewDataDto);
