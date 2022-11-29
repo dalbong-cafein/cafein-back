@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +52,7 @@ public class ExcelReviewDataService {
 
         //데이터 매핑
         for (ExcelReviewDataDto dataDto : excelReviewDataDtoList){
-            Optional<Store> result = storeRepository.findByStoreName(dataDto.getStoreName());
+            Optional<Store> result = storeRepository.findById(dataDto.getStoreId());
 
             Review review = null;
 
@@ -69,8 +69,13 @@ public class ExcelReviewDataService {
                 //카페 데이터 저장
                 naverSearchService.createStore(searchData, member.getMemberId());
 
-                Optional<Store> repeatResult
-                        = storeRepository.findByStoreName(dataDto.getStoreName());
+                Optional<Store> repeatResult = Optional.empty();
+                try {
+                    repeatResult = storeRepository.findByStoreName(dataDto.getStoreName());
+                }catch (IncorrectResultSizeDataAccessException e){
+                    System.out.println("같은 이름을 가지고 있는 카페 이름 : " + dataDto.getStoreName());
+                }
+
 
                 if(repeatResult.isPresent()){
                     review = dataDto.toReview(repeatResult.get(), member);
