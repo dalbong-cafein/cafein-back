@@ -18,7 +18,7 @@ public interface StoreService {
 
     void remove(Long storeId);
 
-    List<StoreResDto> getStoreList(String keyword, Long principalId);
+    List<StoreResDto> getStoreList(StoreSearchRequestDto storeSearchRequestDto, Long principalId);
 
     StoreListResDto<List<MyStoreResDto>> getMyStoreList(Long principalId);
 

@@ -216,13 +216,18 @@ public class StoreServiceImpl implements StoreService{
      */
     @Transactional(readOnly = true)
     @Override
-    public List<StoreResDto> getStoreList(String keyword, Long principal) {
+    public List<StoreResDto> getStoreList(StoreSearchRequestDto storeSearchRequestDto, Long principal) {
 
-        List<Object[]> results = storeRepository.getStoreList(keyword);
+        List<Object[]> results = storeRepository.getStoreList(
+                storeSearchRequestDto.getKeyword(), storeSearchRequestDto.getRect());
+
+        //TODO 거리순, 이미지 유무, 리뷰 많은 순 정렬 후 limit 40 추출 후 DTO 변경
+
 
         return results.stream().map(arr -> {
 
             Store store = (Store) arr[0];
+            (int) arr[1], (Double) arr[2]
 
             //리뷰 추천율
             Double recommendPercent = store.getRecommendPercent();

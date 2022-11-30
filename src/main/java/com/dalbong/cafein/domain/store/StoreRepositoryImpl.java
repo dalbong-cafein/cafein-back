@@ -83,7 +83,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
      * 앱단 가게 리스트 조회
      */
     @Override
-    public List<Object[]> getStoreList(String keyword) {
+    public List<Object[]> getStoreList(String keyword, String rect) {
 
         //지하철역 검색
         List<String> stationNameList = queryFactory.select(subwayStation.stationName).from(subwayStation)
@@ -92,20 +92,38 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         QCongestion subCongestion = new QCongestion("sub");
 
         List<Tuple> result = queryFactory
-                .select(store ,store.heartList.size(), JPAExpressions
-                        .select(subCongestion.congestionScore.avg())
+                .select(store ,store.heartList.size(), store.reviewList.size(), existImage(),
+                        JPAExpressions.select(subCongestion.congestionScore.avg())
                         .from(subCongestion)
                         .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
                                 subCongestion.store.storeId.eq(store.storeId))
                         .groupBy(store.storeId))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .where(keywordSearch(keyword, stationNameList))
-                .orderBy(sort().stream().toArray(OrderSpecifier[]::new))
-                .limit(40)
+                .where(keywordSearch(keyword, stationNameList), inRect(rect))
                 .fetch();
 
         return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
+    }
+
+    private BooleanBuilder inRect(String rect) {
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if(!rect.isEmpty()){
+            String[] coordinateArr = rect.split(",");
+
+            double leftLngX = Double.parseDouble(coordinateArr[0]);
+            double rightLngX = Double.parseDouble(coordinateArr[1]);
+            double topLatY = Double.parseDouble(coordinateArr[2]);
+            double bottomLatY = Double.parseDouble(coordinateArr[3]);
+
+            builder.and(store.lngX.goe(leftLngX));
+            builder.and(store.lngX.loe(rightLngX));
+            builder.and(store.latY.loe(topLatY));
+            builder.and(store.latY.goe(bottomLatY));
+        }
+        return builder;
     }
 
     private List<OrderSpecifier<?>> sort() {
