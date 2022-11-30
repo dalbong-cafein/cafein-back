@@ -14,7 +14,7 @@ import com.dalbong.cafein.domain.sticker.StoreSticker;
 import com.dalbong.cafein.domain.sticker.StoreStickerRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
-import com.dalbong.cafein.domain.store.dto.NearStoreDto;
+import com.dalbong.cafein.domain.store.dto.StoreSortDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminMyStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
@@ -218,16 +218,19 @@ public class StoreServiceImpl implements StoreService{
     @Override
     public List<StoreResDto> getStoreList(StoreSearchRequestDto storeSearchRequestDto, Long principal) {
 
-        List<Object[]> results = storeRepository.getStoreList(
+        List<StoreSortDto> storeSortDtoList = storeRepository.getStoreList(
                 storeSearchRequestDto.getKeyword(), storeSearchRequestDto.getRect());
+        
+        //검색어내에 구데이터가 존재하는 지 체크
+        boolean isExistSggNmOfKeyword = checkSggNmInKeyword(storeSearchRequestDto.getKeyword());
 
-        //TODO 거리순, 이미지 유무, 리뷰 많은 순 정렬 후 limit 40 추출 후 DTO 변경
+        //정렬 후 limit 40개 추출
+        List<StoreSortDto> sortedStoreSortDtoList =
+                sortAndLimit(storeSortDtoList, storeSearchRequestDto.getCoordinate(), isExistSggNmOfKeyword);
 
+        return sortedStoreSortDtoList.stream().map(storeSortDto -> {
 
-        return results.stream().map(arr -> {
-
-            Store store = (Store) arr[0];
-            (int) arr[1], (Double) arr[2]
+            Store store = storeSortDto.getStore();
 
             //리뷰 추천율
             Double recommendPercent = store.getRecommendPercent();
@@ -239,8 +242,87 @@ public class StoreServiceImpl implements StoreService{
             //최대 이미지 4개 불러오기
             List<ImageDto> imageDtoList = getCustomSizeImageList(store, 4);
 
-            return new StoreResDto(store, recommendPercent, businessHoursInfoDto, imageDtoList, (int) arr[1], (Double) arr[2], principal);
+            return new StoreResDto(store, recommendPercent, businessHoursInfoDto, imageDtoList,
+                    storeSortDto.getHeartCnt(), storeSortDto.getCongestionAvg(), principal);
         }).collect(Collectors.toList());
+    }
+
+    private List<StoreSortDto> sortAndLimit(List<StoreSortDto> storeSortDtoList, String coordinate, boolean isExistSggNmOfKeyword) {
+
+        //기준 좌표 데이터가 존재하는 경우
+        if(coordinate != null && !coordinate.isEmpty()){
+            //검색어내에 구데이터가 존재하지 않는 경우 or 지도 검색일 경우
+            if(!isExistSggNmOfKeyword){
+
+                //기준 좌표와 거리 차이 데이터 얻기기
+               getDistance(storeSortDtoList, coordinate);
+
+                /**
+                 * 정렬우선 순위
+                 * 1.가까운 순
+                 * 2.데이터 유무
+                 * 3.리뷰 많은 순
+                 */
+                Comparator<StoreSortDto> reversedIsExistImage = Comparator.comparing(StoreSortDto::getIsExistImage).reversed();
+                Comparator<StoreSortDto> reversedReviewCnt = Comparator.comparing(StoreSortDto::getReviewCnt).reversed();
+
+                storeSortDtoList.sort(Comparator.comparing(StoreSortDto::getDistance)
+                        .thenComparing(reversedIsExistImage)
+                        .thenComparing(reversedReviewCnt));
+
+                return storeSortDtoList.stream().limit(40).collect(Collectors.toList());
+            }
+        }
+
+        //기준 좌표가 존재하지 않는 경우
+        /**
+         * 정렬우선 순위
+         * 1.데이터 유무
+         * 2.리뷰 많은 순
+         */
+        storeSortDtoList.sort(Comparator.comparing(StoreSortDto::getIsExistImage)
+                .thenComparing(StoreSortDto::getReviewCnt).reversed());
+
+        return storeSortDtoList.stream().limit(40).collect(Collectors.toList());
+    }
+
+    private boolean checkSggNmInKeyword(String keyword) {
+
+        String[] sggArr = {"서대문","마포","성북","동대문","종로","강남","중","광진","서초"};
+
+        if(keyword != null && !keyword.isEmpty()){
+            String[] wordArr = keyword.split(" ");
+
+            for(String word : wordArr){
+                //구 검색
+                for (String sgg : sggArr){
+                    if (word.equals(sgg) || word.equals(sgg+"구")){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private void getDistance(List<StoreSortDto> storeSortDtoList, String coordinate) {
+
+        //기준 좌표
+        String[] coordinateArr = coordinate.split(",");
+        double latYOfRequest = Double.parseDouble(coordinateArr[0]);
+        double lngXOfRequest = Double.parseDouble(coordinateArr[1]);
+
+
+        storeSortDtoList.forEach(storeSortDto -> {
+
+            //카페 좌표
+            double lngXOfStore = storeSortDto.getStore().getLngX();
+            double latYOfStore = storeSortDto.getStore().getLatY();
+
+            double distance = DistanceUtil.calculateDistance(latYOfRequest, lngXOfRequest, latYOfStore, lngXOfStore, "meter");
+
+            storeSortDto.setDistance(distance);
+        });
     }
 
     /**

@@ -27,10 +27,11 @@ public class StoreController {
      * 카페 리스트 조회
      */
     @GetMapping("/stores")
-    public ResponseEntity<?> getStoreList(StoreSearchRequestDto storeSearchRequestDto,
+    public ResponseEntity<?> getStoreList(@Validated StoreSearchRequestDto storeSearchRequestDto, BindingResult bindingResult,
                                           @AuthenticationPrincipal PrincipalDetails principalDetails){
 
         List<StoreResDto> storeResDtoList;
+        System.out.println(storeSearchRequestDto.getCoordinate());
         //비로그인 상태
         if(principalDetails == null){
             storeResDtoList = storeService.getStoreList(storeSearchRequestDto, null);

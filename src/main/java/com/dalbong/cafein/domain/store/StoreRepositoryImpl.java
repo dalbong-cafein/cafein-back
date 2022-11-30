@@ -8,6 +8,7 @@ import com.dalbong.cafein.domain.member.MemberState;
 import com.dalbong.cafein.domain.member.QMember;
 import com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSubwayStation;
 import com.dalbong.cafein.domain.review.QReview;
+import com.dalbong.cafein.domain.store.dto.StoreSortDto;
 import com.dalbong.cafein.domain.subwayStation.QSubwayStation;
 import com.dalbong.cafein.domain.subwayStation.SubwayStation;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
@@ -17,6 +18,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -83,7 +85,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
      * 앱단 가게 리스트 조회
      */
     @Override
-    public List<Object[]> getStoreList(String keyword, String rect) {
+    public List<StoreSortDto> getStoreList(String keyword, String rect) {
 
         //지하철역 검색
         List<String> stationNameList = queryFactory.select(subwayStation.stationName).from(subwayStation)
@@ -91,37 +93,35 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
         QCongestion subCongestion = new QCongestion("sub");
 
-        List<Tuple> result = queryFactory
-                .select(store ,store.heartList.size(), store.reviewList.size(), existImage(),
+        return queryFactory.select(Projections.constructor(StoreSortDto.class,
+                        store ,store.heartList.size(), store.reviewList.size(), existImage(),
                         JPAExpressions.select(subCongestion.congestionScore.avg())
-                        .from(subCongestion)
-                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
-                                subCongestion.store.storeId.eq(store.storeId))
-                        .groupBy(store.storeId))
+                                .from(subCongestion)
+                                .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
+                                        subCongestion.store.storeId.eq(store.storeId))
+                                .groupBy(store.storeId)))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
                 .where(keywordSearch(keyword, stationNameList), inRect(rect))
                 .fetch();
-
-        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
 
     private BooleanBuilder inRect(String rect) {
 
         BooleanBuilder builder = new BooleanBuilder();
 
-        if(!rect.isEmpty()){
+        if(rect != null && !rect.isEmpty()){
             String[] coordinateArr = rect.split(",");
 
-            double leftLngX = Double.parseDouble(coordinateArr[0]);
-            double rightLngX = Double.parseDouble(coordinateArr[1]);
-            double topLatY = Double.parseDouble(coordinateArr[2]);
-            double bottomLatY = Double.parseDouble(coordinateArr[3]);
+            double topLatY = Double.parseDouble(coordinateArr[0]);
+            double bottomLatY = Double.parseDouble(coordinateArr[1]);
+            double leftLngX = Double.parseDouble(coordinateArr[2]);
+            double rightLngX = Double.parseDouble(coordinateArr[3]);
 
-            builder.and(store.lngX.goe(leftLngX));
-            builder.and(store.lngX.loe(rightLngX));
             builder.and(store.latY.loe(topLatY));
             builder.and(store.latY.goe(bottomLatY));
+            builder.and(store.lngX.goe(leftLngX));
+            builder.and(store.lngX.loe(rightLngX));
         }
         return builder;
     }
@@ -139,15 +139,15 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         return orders;
     }
 
-    private NumberExpression existImage() {
+    private BooleanExpression existImage() {
 
         return new CaseBuilder()
                 .when(store.storeImageList.isNotEmpty()
                         .or(queryFactory.select().from(reviewImage)
                                 .join(review).on(review.eq(reviewImage.review))
                                 .where(review.store.eq(store)).exists()))
-                .then(2)
-                .otherwise(1);
+                .then(true)
+                .otherwise(false);
     }
 
 
@@ -439,7 +439,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     private BooleanBuilder keywordSearch(String keyword, List<String> subwayStationNameList){
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (!isEmpty(keyword)){
+        if (keyword != null && !keyword.isEmpty()){
 
             if(keyword.contains("투썸 플레이스")){
                 keyword = keyword.replace("투썸 플레이스", "투썸");
