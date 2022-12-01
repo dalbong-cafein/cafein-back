@@ -48,5 +48,4 @@ public class StoreResDto {
         this.congestionScoreAvg = congestionScoreAvg;
         this.storeImageDtoList = storeImageDtoList;
     }
-
 }

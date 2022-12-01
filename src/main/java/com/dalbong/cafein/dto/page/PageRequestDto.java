@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
-@Builder
 @AllArgsConstructor
 @Data
 public class PageRequestDto {

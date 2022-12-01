@@ -18,7 +18,7 @@ public interface StoreRepositoryQuerydsl {
     /**
      * 앱단 가게 리스트 조회
      */
-    List<Object[]> getStoreList(String keyword);
+    List<Object[]> getStoreList(String keyword, String rect);
 
     /**
      * 앱단 내 카페 리스트 조회
