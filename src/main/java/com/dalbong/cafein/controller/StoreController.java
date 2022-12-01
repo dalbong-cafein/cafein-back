@@ -31,7 +31,7 @@ public class StoreController {
                                           @AuthenticationPrincipal PrincipalDetails principalDetails){
 
         List<StoreResDto> storeResDtoList;
-        System.out.println(storeSearchRequestDto.getCoordinate());
+
         //비로그인 상태
         if(principalDetails == null){
             storeResDtoList = storeService.getStoreList(storeSearchRequestDto, null);

@@ -314,7 +314,6 @@ public class StoreServiceImpl implements StoreService{
 
 
         storeSortDtoList.forEach(storeSortDto -> {
-
             //카페 좌표
             double lngXOfStore = storeSortDto.getStore().getLngX();
             double latYOfStore = storeSortDto.getStore().getLatY();
