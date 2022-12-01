@@ -2,26 +2,14 @@ package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.congestion.QCongestion;
-import com.dalbong.cafein.domain.image.QImage;
-import com.dalbong.cafein.domain.image.QReviewImage;
-import com.dalbong.cafein.domain.member.MemberState;
-import com.dalbong.cafein.domain.member.QMember;
-import com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSubwayStation;
-import com.dalbong.cafein.domain.review.QReview;
-import com.dalbong.cafein.domain.store.dto.StoreSortDto;
 import com.dalbong.cafein.domain.subwayStation.QSubwayStation;
-import com.dalbong.cafein.domain.subwayStation.SubwayStation;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
-import com.dalbong.cafein.web.domain.contents.QContentsStore;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -44,10 +32,8 @@ import java.util.stream.Collectors;
 
 import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
 import static com.dalbong.cafein.domain.heart.QHeart.heart;
-import static com.dalbong.cafein.domain.image.QImage.image;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.image.QReviewImage.reviewImage;
-import static com.dalbong.cafein.domain.member.QMember.member;
 import static com.dalbong.cafein.domain.memo.QStoreMemo.storeMemo;
 import static com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSubwayStation.nearStoreToSubwayStation;
 import static com.dalbong.cafein.domain.review.QReview.review;
@@ -85,7 +71,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
      * 앱단 가게 리스트 조회
      */
     @Override
-    public List<StoreSortDto> getStoreList(String keyword, String rect) {
+    public List<Object[]> getStoreList(String keyword, String rect) {
 
         //지하철역 검색
         List<String> stationNameList = queryFactory.select(subwayStation.stationName).from(subwayStation)
@@ -93,17 +79,21 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
         QCongestion subCongestion = new QCongestion("sub");
 
-        return queryFactory.select(Projections.constructor(StoreSortDto.class,
-                        store ,store.heartList.size(), store.reviewList.size(), existImage(),
-                        JPAExpressions.select(subCongestion.congestionScore.avg())
-                                .from(subCongestion)
-                                .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
-                                        subCongestion.store.storeId.eq(store.storeId))
-                                .groupBy(store.storeId)))
+        List<Tuple> result = queryFactory
+                .select(store ,store.heartList.size(), JPAExpressions
+                        .select(subCongestion.congestionScore.avg())
+                        .from(subCongestion)
+                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
+                                subCongestion.store.storeId.eq(store.storeId))
+                        .groupBy(store.storeId))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
                 .where(keywordSearch(keyword, stationNameList), inRect(rect))
+                .orderBy(sort().stream().toArray(OrderSpecifier[]::new))
+                .limit(40)
                 .fetch();
+
+        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
 
     private BooleanBuilder inRect(String rect) {
