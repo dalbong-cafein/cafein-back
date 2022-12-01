@@ -14,7 +14,6 @@ import com.dalbong.cafein.domain.sticker.StoreSticker;
 import com.dalbong.cafein.domain.sticker.StoreStickerRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
-import com.dalbong.cafein.domain.store.dto.NearStoreDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminMyStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
@@ -216,9 +215,10 @@ public class StoreServiceImpl implements StoreService{
      */
     @Transactional(readOnly = true)
     @Override
-    public List<StoreResDto> getStoreList(String keyword, Long principal) {
+    public List<StoreResDto> getStoreList(StoreSearchRequestDto storeSearchRequestDto, Long principal) {
 
-        List<Object[]> results = storeRepository.getStoreList(keyword);
+        List<Object[]> results = storeRepository.getStoreList(
+                storeSearchRequestDto.getKeyword(), storeSearchRequestDto.getRect());
 
         return results.stream().map(arr -> {
 
