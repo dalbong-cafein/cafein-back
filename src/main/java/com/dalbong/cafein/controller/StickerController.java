@@ -50,7 +50,7 @@ public class StickerController {
 
         stickerService.issueReviewSticker(stickerRegDto.getReviewId(), principalDetails.getMember().getMemberId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1,"리뷰 등록시 스티커 발급 성@공", null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CMRespDto<>(1,"리뷰 등록시 스티커 발급 성공", null), HttpStatus.CREATED);
     }
 
     /**

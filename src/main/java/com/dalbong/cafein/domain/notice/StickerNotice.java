@@ -21,7 +21,7 @@ public class StickerNotice extends Notice{
     private Sticker sticker;
 
     public StickerNotice(Sticker sticker, Member toMember){
-        super(toMember,"스티커 증정 완료");
+        super(toMember,"스티커 증정 완료 | " + sticker.getStoreName());
         this.sticker = sticker;
     }
 
