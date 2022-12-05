@@ -44,4 +44,11 @@ public class University {
 
     @Column(unique = true)
     private String mainKey;
+
+    @Builder.Default
+    private Boolean isUse = false;
+
+    public void use(){
+        this.isUse = true;
+    }
 }

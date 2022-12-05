@@ -1,7 +1,8 @@
-package com.dalbong.cafein.domain.nearStoreToSubwayStation;
+package com.dalbong.cafein.domain.nearStoreToUniversity;
 
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.subwayStation.SubwayStation;
+import com.dalbong.cafein.domain.university.University;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,18 +10,18 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString(exclude = {"store","subwayStation"})
+@ToString(exclude = {"store","university"})
 @Getter
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
                         name="near_uk",
-                        columnNames={"store_id", "subway_station_id"}
+                        columnNames={"store_id", "university_id"}
                 )
         }
 )
 @Entity
-public class NearStoreToSubwayStation {
+public class NearStoreToUniversity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long nearId;
@@ -30,8 +31,8 @@ public class NearStoreToSubwayStation {
     private Store store;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subway_station_id", nullable = false)
-    private SubwayStation subwayStation;
+    @JoinColumn(name = "university_id", nullable = false)
+    private University university;
 
     @Column(nullable = false)
     private Double distance;
@@ -39,6 +40,6 @@ public class NearStoreToSubwayStation {
     //연관관계 메서드
     public void setStore(Store store){
         this.store = store;
-        store.getNearStoreToSubwayStationList().add(this);
+        store.getNearStoreToUniversityList().add(this);
     }
 }

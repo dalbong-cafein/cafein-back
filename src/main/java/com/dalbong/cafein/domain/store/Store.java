@@ -8,6 +8,7 @@ import com.dalbong.cafein.domain.heart.Heart;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.nearStoreToSubwayStation.NearStoreToSubwayStation;
+import com.dalbong.cafein.domain.nearStoreToUniversity.NearStoreToUniversity;
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.web.domain.recommend.Recommend;
@@ -26,7 +27,8 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"regMember","modMember","reviewList","storeImageList","heartList","nearStoreToSubwayStationArrayList","recommendList"})
+@ToString(exclude = {"regMember","modMember","reviewList","storeImageList","heartList",
+        "nearStoreToSubwayStationList","nearStoreToUniversity","recommendList"})
 @Entity
 public class Store extends BaseEntity {
 
@@ -82,7 +84,11 @@ public class Store extends BaseEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "store",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<NearStoreToSubwayStation> nearStoreToSubwayStationArrayList = new ArrayList<>();
+    private List<NearStoreToSubwayStation> nearStoreToSubwayStationList = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "store",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<NearStoreToUniversity> nearStoreToUniversityList = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)

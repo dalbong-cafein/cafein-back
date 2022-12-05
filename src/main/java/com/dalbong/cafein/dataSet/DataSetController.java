@@ -9,6 +9,8 @@ import com.dalbong.cafein.dataSet.store.naver.NaverCloudService;
 import com.dalbong.cafein.dataSet.store.naver.NaverSearchService;
 import com.dalbong.cafein.dataSet.subwayStation.SubwayStationRegDto;
 import com.dalbong.cafein.dataSet.subwayStation.SubwayStationService;
+import com.dalbong.cafein.dataSet.university.UniversityRegDto;
+import com.dalbong.cafein.dataSet.university.UniversityService;
 import com.dalbong.cafein.dataSet.util.json.JsonUtil;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.store.Store;
@@ -43,6 +45,7 @@ public class DataSetController {
     private final NaverCloudService naverCloudService;
     private final StoreRepository storeRepository;
     private final SubwayStationService subwayStationService;
+    private final UniversityService universityService;
     private final ExcelReviewDataService excelReviewDataService;
     private final StoreDataService storeDataService;
     private final JsonUtil jsonUtil;
@@ -305,6 +308,14 @@ public class DataSetController {
         subwayStationService.saveNearStoreToSubwayStation();
 
         return "역과 가까운 카페 데이터 저장 성공";
+    }
+
+    @PostMapping("/data/universitys")
+    public String saveSubwayStation(@RequestBody UniversityRegDto universityRegDto) throws JsonProcessingException {
+
+        universityService.save(universityRegDto.getData());
+
+        return "대학교 데이터 저장 성공";
     }
 
     @PostMapping("/data/reviews")
