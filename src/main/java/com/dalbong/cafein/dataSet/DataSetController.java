@@ -303,7 +303,7 @@ public class DataSetController {
     }
 
     @PostMapping("/data/nearStoreToSubwayStations")
-    public String saveDistance(){
+    public String saveNearStoreToSubwayStation(){
 
         subwayStationService.saveNearStoreToSubwayStation();
 
@@ -316,6 +316,14 @@ public class DataSetController {
         universityService.save(universityRegDto.getData());
 
         return "대학교 데이터 저장 성공";
+    }
+
+    @PostMapping("/data/nearStoreToUniversitys")
+    public String saveNearStoreToUniversity(){
+
+        universityService.saveNearStoreToUniversity();
+
+        return "대학교와 가까운 카페 데이터 저장 성공";
     }
 
     @PostMapping("/data/reviews")

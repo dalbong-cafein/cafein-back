@@ -3,11 +3,15 @@ package com.dalbong.cafein.dataSet.university;
 import com.dalbong.cafein.dataSet.store.naver.NaverCloudDto;
 import com.dalbong.cafein.dataSet.store.naver.NaverCloudService;
 import com.dalbong.cafein.dataSet.subwayStation.SubwayStationDto;
+import com.dalbong.cafein.domain.nearStoreToSubwayStation.NearStoreToSubwayStation;
+import com.dalbong.cafein.domain.nearStoreToUniversity.NearStoreToUniversity;
 import com.dalbong.cafein.domain.nearStoreToUniversity.NearStoreToUniversityRepository;
+import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.domain.subwayStation.SubwayStation;
 import com.dalbong.cafein.domain.university.University;
 import com.dalbong.cafein.domain.university.UniversityRepository;
+import com.dalbong.cafein.util.DistanceUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,6 +51,40 @@ public class UniversityService {
                 universityRepository.save(university);
             } else {
                 System.out.println(universityDto.getName_kor() + "은 이미 존재하는 데이터 입니다.");
+            }
+        }
+    }
+
+    /**
+     *  대학교와 가까운 카페 데이터 저장
+     */
+    @Transactional
+    public void saveNearStoreToUniversity(){
+
+        List<Store> storeList = storeRepository.findAll();
+
+        List<University> universityList = universityRepository.findByIsUseTrue();
+
+        for(University university : universityList){
+            for(Store store : storeList){
+
+                double distance = DistanceUtil.calculateDistance(
+                        store.getLatY(), store.getLngX(), university.getLatY(), university.getLngX(), "meter");
+
+                if(distance <= 1000){
+                    boolean exist = nearStoreToUniversityRepository.existsByStoreAndUniversity(store, university);
+
+                    if(!exist){
+                        NearStoreToUniversity nearStoreToUniversity = NearStoreToUniversity.builder()
+                                .university(university)
+                                .store(store)
+                                .distance(distance)
+                                .build();
+
+                        nearStoreToUniversityRepository.save(nearStoreToUniversity);
+                    }
+                }
+
             }
         }
     }
