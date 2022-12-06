@@ -2,7 +2,9 @@ package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.congestion.QCongestion;
+import com.dalbong.cafein.domain.nearStoreToUniversity.QNearStoreToUniversity;
 import com.dalbong.cafein.domain.subwayStation.QSubwayStation;
+import com.dalbong.cafein.domain.university.QUniversity;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -36,9 +38,11 @@ import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.image.QReviewImage.reviewImage;
 import static com.dalbong.cafein.domain.memo.QStoreMemo.storeMemo;
 import static com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSubwayStation.nearStoreToSubwayStation;
+import static com.dalbong.cafein.domain.nearStoreToUniversity.QNearStoreToUniversity.nearStoreToUniversity;
 import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
 import static com.dalbong.cafein.domain.subwayStation.QSubwayStation.subwayStation;
+import static com.dalbong.cafein.domain.university.QUniversity.university;
 import static com.dalbong.cafein.web.domain.contents.QContentsStore.contentsStore;
 import static org.aspectj.util.LangUtil.isEmpty;
 
@@ -73,10 +77,6 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     @Override
     public List<Object[]> getStoreList(String keyword, String rect) {
 
-        //지하철역 검색
-        List<String> stationNameList = queryFactory.select(subwayStation.stationName).from(subwayStation)
-                .where(subwayStation.isUse.isTrue()).fetch();
-
         QCongestion subCongestion = new QCongestion("sub");
 
         List<Tuple> result = queryFactory
@@ -88,7 +88,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                         .groupBy(store.storeId))
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .where(keywordSearch(keyword, stationNameList), inRect(rect))
+                .where(keywordSearch(keyword), inRect(rect))
                 .orderBy(sort().stream().toArray(OrderSpecifier[]::new))
                 .limit(40)
                 .fetch();
@@ -326,14 +326,10 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     @Override
     public List<Store> getStoreListOfWeb(String keyword) {
 
-        //지하철역 검색
-        List<String> stationNameList = queryFactory.select(subwayStation.stationName).from(subwayStation)
-                .where(subwayStation.isUse.isTrue()).fetch();
-
         return queryFactory.select(store)
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .where(keywordSearch(keyword,stationNameList))
+                .where(keywordSearch(keyword))
                 .fetch();
     }
 
@@ -426,7 +422,24 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     }
 
-    private BooleanBuilder keywordSearch(String keyword, List<String> subwayStationNameList){
+    private BooleanBuilder keywordSearch(String keyword){
+
+        //대학교 리스트
+        QUniversity subUniversity = new QUniversity("subUniversity");
+
+        List<String> universityNameList = queryFactory.select(subUniversity.universityName)
+                .from(subUniversity)
+                .where(subUniversity.isUse.isTrue())
+                .fetch();
+
+        //지하철역 리스트
+        QSubwayStation subSubwayStation = new QSubwayStation("subSubwayStation");
+
+        List<String> subwayStationNameList = queryFactory.select(subSubwayStation.stationName)
+                .from(subSubwayStation)
+                .where(subSubwayStation.isUse.isTrue())
+                .fetch();
+
         BooleanBuilder builder = new BooleanBuilder();
 
         if (keyword != null && !keyword.isEmpty()){
@@ -461,8 +474,29 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 //구로 필터링 했을 경우
                 if(ctn) continue;
 
-                QSubwayStation subSubwayStation = new QSubwayStation("subSubwayStation");
+                //대학교로 검색
+                for(String universityName : universityNameList){
 
+                    String compareStationName = universityName.replace("대학교","대");
+
+                    StringUtils.removeEnd(compareStationName, "학");
+
+                    if(word.equals(compareStationName) || word.equals(compareStationName+"학교")){
+                        builder.and(store.storeId.in(JPAExpressions.select(nearStoreToUniversity.store.storeId)
+                                .from(nearStoreToUniversity)
+                                .join(university).on(university.eq(nearStoreToUniversity.university))
+                                .where(university.isUse.isTrue(),
+                                        university.universityName.eq(universityName))));
+
+                        ctn = true;
+                        break;
+                    }
+                }
+
+                //대학교로 필터링 했을 경우
+                if(ctn) continue;
+
+                //지하철역으로 검색
                 for(String stationName : subwayStationNameList){
 
                     String compareStationName = StringUtils.removeEnd(stationName,"입구");
@@ -472,9 +506,9 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                         //역 근처 카페 필터링
                         builder.and(store.storeId.in(JPAExpressions.select(nearStoreToSubwayStation.store.storeId)
                                 .from(nearStoreToSubwayStation)
-                                .join(subSubwayStation).on(subSubwayStation.eq(nearStoreToSubwayStation.subwayStation))
-                                .where(subSubwayStation.isUse.isTrue(),
-                                        subSubwayStation.stationName.eq(stationName))));
+                                .join(subwayStation).on(subwayStation.eq(nearStoreToSubwayStation.subwayStation))
+                                .where(subwayStation.isUse.isTrue(),
+                                        subwayStation.stationName.eq(stationName))));
 
                         ctn = true;
                         break;
