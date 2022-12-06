@@ -459,7 +459,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                     continue;
                 }
 
-                boolean ctn = false;
+                boolean ctn = false; //원시형 변수 선언
 
                 //구 검색
                 for (String sgg : sggArr){
@@ -477,11 +477,21 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 //대학교로 검색
                 for(String universityName : universityNameList){
 
-                    String compareStationName = universityName.replace("대학교","대");
+                    String compareUniversityName = universityName.replace("대학교","대");
 
-                    StringUtils.removeEnd(compareStationName, "학");
+                    StringUtils.removeEnd(compareUniversityName, "학");
 
-                    if(word.equals(compareStationName) || word.equals(compareStationName+"학교")){
+                    word = word.replace("외대", "외국어대")
+                            .replace("여대", "여자대")
+                            .replace("홍대","홍익대")
+                            .replace("이대","이화여자대")
+                            .replace("건대","건국대")
+                            .replace("고대", "고려대")
+                            .replace("연대","연세대")
+                            .replace("중대","중앙대")
+                            .replace("과기대","과학기술대");
+
+                    if(word.equals(compareUniversityName) || word.equals(compareUniversityName+"학교")){
                         builder.and(store.storeId.in(JPAExpressions.select(nearStoreToUniversity.store.storeId)
                                 .from(nearStoreToUniversity)
                                 .join(university).on(university.eq(nearStoreToUniversity.university))
