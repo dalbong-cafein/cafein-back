@@ -483,13 +483,26 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
                     word = word.replace("외대", "외국어대")
                             .replace("여대", "여자대")
+                            .replace("체대", "체육대")
                             .replace("홍대","홍익대")
                             .replace("이대","이화여자대")
                             .replace("건대","건국대")
                             .replace("고대", "고려대")
                             .replace("연대","연세대")
                             .replace("중대","중앙대")
-                            .replace("과기대","과학기술대");
+                            .replace("서울과기대", "서울과학기술대")
+                            .replace("과기대","서울과학기술대")
+                            .replace("장신대", "장로회신학대")
+                            .replace("중대","중앙대")
+                            .replace("감신대","감리교신학대")
+                            .replace("서울교대","서울교육대")
+                            .replace("교대", "서울교육대")
+                            .replace("한예종","한국예술종합")
+                            .replace("숙대","숙명여자대")
+                            .replace("한국방통대","한국방송통신대")
+                            .replace("방통대", "한국방송통신대")
+                            .replace("성대", "성균관대")
+                            .replace("동대", "동국대");
 
                     if(word.equals(compareUniversityName) || word.equals(compareUniversityName+"학교")){
                         builder.and(store.storeId.in(JPAExpressions.select(nearStoreToUniversity.store.storeId)
