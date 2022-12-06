@@ -31,6 +31,8 @@ public class NaverCloudService {
     @Value("${dataSet.naverCloud.clientSecret}")
     private String cloudSecretId;
 
+    private final String[] sggArr = {"서대문구","마포구","성북구","동대문구","종로구","강남구","중구","광진구","서초구"};
+
     private final ObjectMapper objectMapper;
     private final StoreRepository storeRepository;
     private final SubwayStationRepository subwayStationRepository;
@@ -51,8 +53,6 @@ public class NaverCloudService {
         }
     }
 
-    private final String[] sggArr = {"서대문구","마포구","성북구","동대문구","종로구","강남구","중구","광진구","서초구"};
-
     @Transactional
     public void modifyStationIsUse() throws JsonProcessingException {
 
@@ -71,7 +71,12 @@ public class NaverCloudService {
             }
 
         }
+    }
 
+    @Transactional
+    public NaverCloudDto getLatAndLng(String fullAddress) throws JsonProcessingException {
+
+        return getLatAndLngByNaverCloud(fullAddress);
     }
 
     private String getSgg(SubwayStation subwayStation) throws JsonProcessingException {
@@ -153,17 +158,23 @@ public class NaverCloudService {
 
         List<Map<String, Object>> addresses = (List<Map<String, Object>>) searchData.get("addresses");
 
-        try {
-            Map<String, Object> address = addresses.get(0);
-            String roadAddress = (String) address.get("roadAddress");
-            System.out.println(roadAddress);
 
-            String x = (String) address.get("x");
-            String y = (String) address.get("y");
-            return new NaverCloudDto(Double.parseDouble(x), Double.parseDouble(y), roadAddress);
+        if(addresses.size() != 1) {
+            System.out.println("결과 데이터가 2개 이상입니다.");
+        }
+        else{
+            try {
+                Map<String, Object> address = addresses.get(0);
+                String roadAddress = (String) address.get("roadAddress");
+                System.out.println(roadAddress);
 
-        }catch (Exception e){
-            System.out.println("결과 값이 없습니다.");
+                String x = (String) address.get("x");
+                String y = (String) address.get("y");
+                return new NaverCloudDto(Double.parseDouble(x), Double.parseDouble(y));
+
+            }catch (Exception e){
+                System.out.println("결과 값이 없습니다.");
+            }
         }
 
        return null;
