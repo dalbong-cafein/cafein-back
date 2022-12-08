@@ -474,7 +474,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     }
 
     private boolean searchSubwayStation(String word, BooleanBuilder builder, List<String> subwayStationNameList) {
-
+        
         for(String stationName : subwayStationNameList){
 
             String compareStationName = StringUtils.removeEnd(stationName,"입구");
@@ -504,9 +504,9 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
             StringUtils.removeEnd(compareUniversityName, "학");
 
             //대학교 연관 키워드 처리
-            word = relatedKeywordOfUniversity(word);
+            String relatedWord = relatedKeywordOfUniversity(word);
 
-            if(word.equals(compareUniversityName) || word.equals(compareUniversityName+"학교")){
+            if(relatedWord.equals(compareUniversityName) || relatedWord.equals(compareUniversityName+"학교")){
                 builder.and(store.storeId.in(JPAExpressions.select(nearStoreToUniversity.store.storeId)
                         .from(nearStoreToUniversity)
                         .join(university).on(university.eq(nearStoreToUniversity.university))
