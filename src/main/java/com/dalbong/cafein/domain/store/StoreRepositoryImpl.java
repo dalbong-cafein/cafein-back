@@ -444,107 +444,115 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
         if (keyword != null && !keyword.isEmpty()){
 
-            if(keyword.contains("투썸 플레이스")){
-                keyword = keyword.replace("투썸 플레이스", "투썸");
-            }else if (keyword.contains("스벅")){
-                keyword = keyword.replace("스벅", "스타벅스");
-            }
+            //연관 키워드 처리
+            keyword = keyword.replace("투썸 플레이스", "투썸")
+                    .replace("스벅", "스타벅스")
+                    .replace("이디야커피", "이디야");
+
 
             String[] wordArr = keyword.split(" ");
 
             for(String word : wordArr){
 
                 //"카페" 단어 통과
-                if(word.equals("카페")){
-                    continue;
-                }
-
-                boolean ctn = false; //원시형 변수 선언
+                if(word.equals("카페")) continue;
 
                 //구 검색
-                for (String sgg : sggArr){
-                    if (word.equals(sgg) || word.equals(sgg+"구")){
-                        builder.and(store.address.sggNm.eq(sgg+"구"));
-
-                        ctn = true;
-                        break;
-                    }
-                }
-
-                //구로 필터링 했을 경우
-                if(ctn) continue;
+                if(searchSggNm(word, builder)) continue;
 
                 //대학교로 검색
-                for(String universityName : universityNameList){
-
-                    String compareUniversityName = universityName.replace("대학교","대");
-
-                    StringUtils.removeEnd(compareUniversityName, "학");
-
-                    word = word.replace("외대", "외국어대")
-                            .replace("여대", "여자대")
-                            .replace("체대", "체육대")
-                            .replace("홍대","홍익대")
-                            .replace("이대","이화여자대")
-                            .replace("건대","건국대")
-                            .replace("고대", "고려대")
-                            .replace("연대","연세대")
-                            .replace("중대","중앙대")
-                            .replace("서울과기대", "서울과학기술대")
-                            .replace("과기대","서울과학기술대")
-                            .replace("장신대", "장로회신학대")
-                            .replace("중대","중앙대")
-                            .replace("감신대","감리교신학대")
-                            .replace("서울교대","서울교육대")
-                            .replace("교대", "서울교육대")
-                            .replace("한예종","한국예술종합")
-                            .replace("숙대","숙명여자대")
-                            .replace("한국방통대","한국방송통신대")
-                            .replace("방통대", "한국방송통신대")
-                            .replace("성대", "성균관대")
-                            .replace("동대", "동국대");
-
-                    if(word.equals(compareUniversityName) || word.equals(compareUniversityName+"학교")){
-                        builder.and(store.storeId.in(JPAExpressions.select(nearStoreToUniversity.store.storeId)
-                                .from(nearStoreToUniversity)
-                                .join(university).on(university.eq(nearStoreToUniversity.university))
-                                .where(university.isUse.isTrue(),
-                                        university.universityName.eq(universityName))));
-
-                        ctn = true;
-                        break;
-                    }
-                }
-
-                //대학교로 필터링 했을 경우
-                if(ctn) continue;
+                if(searchUniversity(word, builder, universityNameList)) continue;
 
                 //지하철역으로 검색
-                for(String stationName : subwayStationNameList){
-
-                    String compareStationName = StringUtils.removeEnd(stationName,"입구");
-
-                    if(word.equals(compareStationName) || word.equals(compareStationName + "역")
-                            || word.equals(compareStationName + "입구") || word.equals(compareStationName + "입구역")){
-                        //역 근처 카페 필터링
-                        builder.and(store.storeId.in(JPAExpressions.select(nearStoreToSubwayStation.store.storeId)
-                                .from(nearStoreToSubwayStation)
-                                .join(subwayStation).on(subwayStation.eq(nearStoreToSubwayStation.subwayStation))
-                                .where(subwayStation.isUse.isTrue(),
-                                        subwayStation.stationName.eq(stationName))));
-
-                        ctn = true;
-                        break;
-                    }
-                }
-
-                //지하철역으로 필터링 했을 경우
-                if(ctn) continue;
+                if(searchSubwayStation(word, builder, subwayStationNameList)) continue;
 
                 //카페명 검색
                 builder.and(store.storeName.contains(word));
             }
         }
         return builder;
+    }
+
+    private boolean searchSubwayStation(String word, BooleanBuilder builder, List<String> subwayStationNameList) {
+        
+        for(String stationName : subwayStationNameList){
+
+            String compareStationName = StringUtils.removeEnd(stationName,"입구");
+
+            if(word.equals(compareStationName) || word.equals(compareStationName + "역")
+                    || word.equals(compareStationName + "입구") || word.equals(compareStationName + "입구역")){
+
+                //역 근처 카페 필터링
+                builder.and(store.storeId.in(JPAExpressions.select(nearStoreToSubwayStation.store.storeId)
+                        .from(nearStoreToSubwayStation)
+                        .join(subwayStation).on(subwayStation.eq(nearStoreToSubwayStation.subwayStation))
+                        .where(subwayStation.isUse.isTrue(),
+                                subwayStation.stationName.eq(stationName))));
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean searchUniversity(String word, BooleanBuilder builder, List<String> universityNameList) {
+
+        for(String universityName : universityNameList){
+
+            String compareUniversityName = universityName.replace("대학교","대");
+
+            StringUtils.removeEnd(compareUniversityName, "학");
+
+            //대학교 연관 키워드 처리
+            String relatedWord = relatedKeywordOfUniversity(word);
+
+            if(relatedWord.equals(compareUniversityName) || relatedWord.equals(compareUniversityName+"학교")){
+                builder.and(store.storeId.in(JPAExpressions.select(nearStoreToUniversity.store.storeId)
+                        .from(nearStoreToUniversity)
+                        .join(university).on(university.eq(nearStoreToUniversity.university))
+                        .where(university.isUse.isTrue(),
+                                university.universityName.eq(universityName))));
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String relatedKeywordOfUniversity(String word) {
+
+        return word.replace("외대", "외국어대")
+                .replace("여대", "여자대")
+                .replace("체대", "체육대")
+                .replace("홍대","홍익대")
+                .replace("이대","이화여자대")
+                .replace("건대","건국대")
+                .replace("고대", "고려대")
+                .replace("연대","연세대")
+                .replace("중대","중앙대")
+                .replace("서울과기대", "서울과학기술대")
+                .replace("과기대","서울과학기술대")
+                .replace("장신대", "장로회신학대")
+                .replace("중대","중앙대")
+                .replace("감신대","감리교신학대")
+                .replace("서울교대","서울교육대")
+                .replace("교대", "서울교육대")
+                .replace("한예종","한국예술종합")
+                .replace("숙대","숙명여자대")
+                .replace("한국방통대","한국방송통신대")
+                .replace("방통대", "한국방송통신대")
+                .replace("성대", "성균관대")
+                .replace("동대", "동국대");
+    }
+
+    private boolean searchSggNm(String word, BooleanBuilder builder) {
+
+        for (String sgg : sggArr){
+            if (word.equals(sgg) || word.equals(sgg+"구")){
+                builder.and(store.address.sggNm.eq(sgg+"구"));
+                return true;
+            }
+        }
+        return false;
     }
 }
