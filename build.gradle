@@ -50,15 +50,19 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws-secrets-manager-config:2.2.6.RELEASE'
 
 	//querydsl 추가
-	implementation 'com.querydsl:querydsl-jpa'
+	//implementation 'com.querydsl:querydsl-jpa'
 
-	//https://mvnrepository.com/artifact/org.apache.poi/poi
+
+	implementation 'com.querydsl:querydsl-jpa:5.0.0'
+	implementation 'com.querydsl:querydsl-sql:5.0.0'
+	implementation 'com.querydsl:querydsl-core:5.0.0'
+	// https://mvnrepository.com/artifact/com.mysema.querydsl/querydsl-apt
+	compileOnly 'com.mysema.querydsl:querydsl-apt:3.7.4'
+
+
+
 	implementation group: 'org.apache.poi', name: 'poi', version: '5.1.0'
-
-	//https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
 	implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.1.0'
-
-	//https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 
 }
