@@ -78,9 +78,9 @@ public class Store extends BaseEntity {
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Heart> heartList = new ArrayList<>();
 
-    @Builder.Default
+    //@Builder.Default
     @OneToMany(mappedBy = "store",fetch = FetchType.LAZY)
-    private List<StoreImage> storeImageList = new ArrayList<>();
+    private List<StoreImage> storeImageList ;
 
     @Builder.Default
     @OneToMany(mappedBy = "store",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)

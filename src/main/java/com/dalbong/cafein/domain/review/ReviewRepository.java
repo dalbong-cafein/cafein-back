@@ -1,14 +1,17 @@
 package com.dalbong.cafein.domain.review;
 
 import com.dalbong.cafein.domain.store.Store;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRepositoryQuerydsl {
+public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRepositoryQuerydsl, ReviewRepositoryJdbcTemplate {
 
     List<Review> findByStore(Store store);
 
@@ -22,5 +25,4 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
 
     @Query("select count(r) from Review r where r.member.memberId =:memberId")
     int countByMemberId(@Param("memberId") Long memberId);
-
 }

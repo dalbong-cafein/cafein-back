@@ -1,8 +1,6 @@
 package com.dalbong.cafein.domain.review;
 
-import com.dalbong.cafein.domain.memo.QMemo;
-import com.dalbong.cafein.domain.memo.QReviewMemo;
-import com.dalbong.cafein.domain.store.QStore;
+import com.dalbong.cafein.domain.store.Store;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
@@ -12,12 +10,16 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import javax.persistence.EntityManager;
+import javax.sql.DataSource;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,20 +29,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
-import static com.dalbong.cafein.domain.memo.QMemo.memo;
 import static com.dalbong.cafein.domain.memo.QReviewMemo.reviewMemo;
 import static com.dalbong.cafein.domain.review.QReview.review;
-import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
 
-public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
+public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl, ReviewRepositoryJdbcTemplate{
 
     private final JPAQueryFactory queryFactory;
+    private JdbcTemplate jdbcTemplate;
 
-    public ReviewRepositoryImpl(EntityManager entityManager) {
+    @Autowired
+    public ReviewRepositoryImpl(EntityManager entityManager, DataSource dataSource) {
         this.queryFactory = new JPAQueryFactory(entityManager);
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     /**
@@ -322,5 +324,29 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
 
         return isOnlyImage != null && isOnlyImage ? review.reviewImageList.isNotEmpty() : null;
 
+    }
+
+
+
+    @Override
+    public List<ReviewMappedDto> getMultiEntity(Long storeIds) {
+
+        return jdbcTemplate.query("select r.*, s.* from review r " +
+                "left join store s on s.store_id = r.store_id", (RowMapper<ReviewMappedDto>) (rs, rowNum) -> {
+
+            long reviewId = rs.getLong("review_id");
+            long storeId = rs.getLong("store_id");
+
+
+            Review review = Review.builder()
+                    .reviewId(reviewId)
+                    .build();
+
+            Store store = Store.builder()
+                    .storeId(storeId)
+                    .build();
+
+            return new ReviewMappedDto(review, store);
+        });
     }
 }
