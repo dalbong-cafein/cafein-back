@@ -110,12 +110,14 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
             return acos(cos(radians(store.latY))
                     .multiply(cos(radians(latY)))
                     .multiply(cos(radians(lngX).subtract(radians(store.lngX))))
-                    .add(sin(radians(store.latY).multiply(sin(radians(latY))))))
+                    .add(sin(radians(store.latY)).multiply(sin(radians(latY)))))
                     .multiply(6371);
         }
 
         return null;
     }
+
+
 
     private NumberTemplate<Double> acos(Object num) {
         return Expressions.numberTemplate(Double.class, "function('acos',{0})", num);

@@ -8,10 +8,12 @@ import com.dalbong.cafein.domain.member.AuthProvider;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.review.ReviewRepository;
+import com.dalbong.cafein.util.DistanceUtil;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,20 +84,19 @@ class StoreRepositoryImplTest {
         imageFiles.add(file2);
 
        createStore("store1", address, "010-0000-0000", "cafeinofficial.com",
-                imageFiles, 127.1,37.1, businessHours, member);
+                imageFiles,127.3145, 37.1, businessHours, member);
 
         //when
+        NumberExpression<Double> distance = calculateDistance("37.5909755140802,127.0564052274");
 
-        NumberExpression<Double> distance = calculateDistance("37.1,127.1");
-
-        NumberTemplate<Double> radiansLatY1 = Expressions.numberTemplate(Double.class, "function('radians',{0})", 37.1);
-
-        List<Double> result = queryFactory.select(distance).from(store).fetch();
+        Double result = queryFactory.select(distance).from(store).fetchOne();
 
         //then
-        for(Double num : result){
-            System.out.println(num);
-        }
+
+        double assertDistance = DistanceUtil.calculateDistance(37.1, 127.3145, 37.5909755140802, 127.0564052274, "kilometer");
+
+        Assertions.assertThat(Math.ceil(result)).isEqualTo(Math.ceil(assertDistance));
+
     }
 
     private NumberExpression<Double> calculateDistance(String coordinate) {
@@ -103,16 +104,15 @@ class StoreRepositoryImplTest {
         if(coordinate != null && !coordinate.isEmpty()) {
             String[] coordinateArr = coordinate.split(",");
 
-            double latY = Double.parseDouble(coordinateArr[0]);
-            double lngX = Double.parseDouble(coordinateArr[1]);
+            Double latY = Double.parseDouble(coordinateArr[0]);
+            Double lngX = Double.parseDouble(coordinateArr[1]);
 
-            return acos(cos(radians(store.latY))
-                    .multiply(cos(radians(latY)))
+            return acos(cos(radians(latY))
+                    .multiply(cos(radians(store.latY)))
                     .multiply(cos(radians(lngX).subtract(radians(store.lngX))))
-                    .add(sin(radians(store.latY).multiply(sin(radians(latY))))))
+                    .add(sin(radians(latY)).multiply(sin(radians(store.latY)))))
                     .multiply(6371);
         }
-
         return null;
     }
 
