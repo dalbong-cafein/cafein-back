@@ -218,9 +218,15 @@ public class StoreServiceImpl implements StoreService{
     public List<StoreResDto> getStoreList(StoreSearchRequestDto storeSearchRequestDto, Long principal) {
 
         List<Object[]> results = storeRepository.getStoreList(
-                storeSearchRequestDto.getKeyword(), storeSearchRequestDto.getRect());
+                storeSearchRequestDto.getKeyword(),
+                storeSearchRequestDto.getCoordinate(),
+                storeSearchRequestDto.getRect());
 
         return results.stream().map(arr -> {
+
+            Double distance = (Double) arr[3];
+
+            System.out.println(distance);
 
             Store store = (Store) arr[0];
 

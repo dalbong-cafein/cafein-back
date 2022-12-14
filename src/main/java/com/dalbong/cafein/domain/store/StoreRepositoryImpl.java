@@ -5,14 +5,14 @@ import com.dalbong.cafein.domain.congestion.QCongestion;
 import com.dalbong.cafein.domain.nearStoreToUniversity.QNearStoreToUniversity;
 import com.dalbong.cafein.domain.subwayStation.QSubwayStation;
 import com.dalbong.cafein.domain.university.QUniversity;
+import com.dalbong.cafein.util.DistanceUtil;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -75,9 +75,11 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
      * 앱단 가게 리스트 조회
      */
     @Override
-    public List<Object[]> getStoreList(String keyword, String rect) {
+    public List<Object[]> getStoreList(String keyword, String coordinate, String rect) {
 
         QCongestion subCongestion = new QCongestion("sub");
+
+        NumberExpression<Double> distance = calculateDistance(coordinate);
 
         List<Tuple> result = queryFactory
                 .select(store ,store.heartList.size(), JPAExpressions
@@ -85,15 +87,50 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                         .from(subCongestion)
                         .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
                                 subCongestion.store.storeId.eq(store.storeId))
-                        .groupBy(store.storeId))
+                        .groupBy(store.storeId), distance
+                        )
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
                 .where(keywordSearch(keyword), inRect(rect))
-                .orderBy(sort().stream().toArray(OrderSpecifier[]::new))
+                .orderBy(distance.asc())
                 .limit(40)
                 .fetch();
 
         return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
+    }
+
+    private NumberExpression<Double> calculateDistance(String coordinate) {
+
+        if(coordinate != null && !coordinate.isEmpty()) {
+            String[] coordinateArr = coordinate.split(",");
+
+            double latY = Double.parseDouble(coordinateArr[0]);
+            double lngX = Double.parseDouble(coordinateArr[1]);
+
+            return acos(cos(radians(store.latY))
+                    .multiply(cos(radians(latY)))
+                    .multiply(cos(radians(lngX).subtract(radians(store.lngX))))
+                    .add(sin(radians(store.latY).multiply(sin(radians(latY))))))
+                    .multiply(6371);
+        }
+
+        return null;
+    }
+
+    private NumberTemplate<Double> acos(Object num) {
+        return Expressions.numberTemplate(Double.class, "function('acos',{0})", num);
+    }
+
+    private NumberTemplate<Double> sin(Object num) {
+        return Expressions.numberTemplate(Double.class, "function('sin',{0})", num);
+    }
+
+    private NumberTemplate<Double> cos(Object num) {
+        return Expressions.numberTemplate(Double.class, "function('cos',{0})", num);
+    }
+
+    private NumberTemplate<Double> radians(Object num) {
+        return Expressions.numberTemplate(Double.class, "function('radians',{0})", num);
     }
 
     private BooleanBuilder inRect(String rect) {
