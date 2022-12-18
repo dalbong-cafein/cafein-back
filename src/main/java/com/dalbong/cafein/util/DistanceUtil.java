@@ -19,7 +19,6 @@ public class DistanceUtil {
         } else if(unit == "meter"){
             dist = dist * 1609.344;
         }
-
         return dist;
     }
 
