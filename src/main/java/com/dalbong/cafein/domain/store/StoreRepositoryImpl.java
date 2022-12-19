@@ -6,6 +6,7 @@ import com.dalbong.cafein.domain.nearStoreToUniversity.QNearStoreToUniversity;
 import com.dalbong.cafein.domain.subwayStation.QSubwayStation;
 import com.dalbong.cafein.domain.university.QUniversity;
 import com.dalbong.cafein.util.DistanceUtil;
+import com.dalbong.cafein.util.SqlFunctionUtil;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -43,6 +44,7 @@ import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
 import static com.dalbong.cafein.domain.subwayStation.QSubwayStation.subwayStation;
 import static com.dalbong.cafein.domain.university.QUniversity.university;
+import static com.dalbong.cafein.util.SqlFunctionUtil.*;
 import static com.dalbong.cafein.web.domain.contents.QContentsStore.contentsStore;
 import static org.aspectj.util.LangUtil.isEmpty;
 
@@ -107,32 +109,15 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
             double latY = Double.parseDouble(coordinateArr[0]);
             double lngX = Double.parseDouble(coordinateArr[1]);
 
-            return acos(cos(radians(store.latY))
+
+            return acos(radians(store.latY))
                     .multiply(cos(radians(latY)))
                     .multiply(cos(radians(lngX).subtract(radians(store.lngX))))
-                    .add(sin(radians(store.latY)).multiply(sin(radians(latY)))))
+                    .add(sin(radians(store.latY)).multiply(sin(radians(latY))))
                     .multiply(6371);
         }
-
+        //TODO null 처리 필요
         return null;
-    }
-
-
-
-    private NumberTemplate<Double> acos(Object num) {
-        return Expressions.numberTemplate(Double.class, "function('acos',{0})", num);
-    }
-
-    private NumberTemplate<Double> sin(Object num) {
-        return Expressions.numberTemplate(Double.class, "function('sin',{0})", num);
-    }
-
-    private NumberTemplate<Double> cos(Object num) {
-        return Expressions.numberTemplate(Double.class, "function('cos',{0})", num);
-    }
-
-    private NumberTemplate<Double> radians(Object num) {
-        return Expressions.numberTemplate(Double.class, "function('radians',{0})", num);
     }
 
     private BooleanBuilder inRect(String rect) {
