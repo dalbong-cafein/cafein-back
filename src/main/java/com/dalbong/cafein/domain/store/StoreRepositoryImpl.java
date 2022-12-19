@@ -231,7 +231,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                )
                 .from(store)
                 .where(store.storeId.ne(storeId))
-                .having(distancePath.lt(0.5))
+                .orderBy(distancePath.asc())
                 .limit(10)
                 .fetch();
 
