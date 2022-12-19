@@ -5,14 +5,13 @@ import com.dalbong.cafein.domain.congestion.QCongestion;
 import com.dalbong.cafein.domain.nearStoreToUniversity.QNearStoreToUniversity;
 import com.dalbong.cafein.domain.subwayStation.QSubwayStation;
 import com.dalbong.cafein.domain.university.QUniversity;
+import com.dalbong.cafein.util.SqlFunctionUtil;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -205,6 +204,35 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                         subCongestion.store.storeId.eq(store.storeId)))
                 .from(store)
                 .where(store.regMember.memberId.eq(principalId))
+                .fetch();
+
+        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
+    }
+
+    /**
+     * 앱단 조회 카페 기준 근처 카페 리스트 조회
+     */
+    @Override
+    public List<Object[]> getNearStoreListOfStore(Long storeId, double latY, double lngX) {
+
+        QCongestion subCongestion = new QCongestion("sub");
+
+        //거리계산 함수
+        NumberExpression<Double> distance = SqlFunctionUtil.calculateDistance(store.latY, store.lngX, latY, lngX);
+
+        NumberPath<Double> distancePath = Expressions.numberPath(Double.class, "distance");
+
+        List<Tuple> result  = queryFactory.select(store, distance.as(distancePath), JPAExpressions
+                        .select(subCongestion.congestionScore.avg())
+                        .from(subCongestion)
+                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
+                                subCongestion.store.storeId.eq(store.storeId))
+                        .groupBy(subCongestion.store.storeId)
+               )
+                .from(store)
+                .where(store.storeId.ne(storeId))
+                .having(distancePath.lt(0.5))
+                .limit(10)
                 .fetch();
 
         return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
