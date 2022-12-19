@@ -26,10 +26,10 @@ public class SqlFunctionUtil {
 
     public static NumberExpression<Double> calculateDistance(Object lat1, Object lng1, Object lat2, Object lng2){
 
-        return acos(radians(lat1))
+        return acos(cos(radians(lat1))
                 .multiply(cos(radians(lat2)))
                 .multiply(cos(radians(lng1).subtract(radians(lng2))))
-                .add(sin(radians(lat1)).multiply(sin(radians(lat2))))
+                .add(sin(radians(lat1)).multiply(sin(radians(lat2)))))
                 .multiply(6371);
     }
 }
