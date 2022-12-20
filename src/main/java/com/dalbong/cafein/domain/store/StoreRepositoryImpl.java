@@ -78,14 +78,12 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     @Override
     public List<Store> getAutocompleteSearchWordList(String keyword) {
 
-        queryFactory
+        return queryFactory
                 .select(store)
                 .from(store)
                 .where(autocompleteSearch(keyword))
-                .limit(15);
-
-
-        return null;
+                .limit(15)
+                .fetch();
     }
 
     /**
@@ -441,11 +439,31 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     private BooleanBuilder autocompleteSearch(String keyword) {
 
+        //대학교 리스트
+        QUniversity subUniversity = new QUniversity("subUniversity");
+
+        List<String> universityNameList = queryFactory.select(subUniversity.universityName)
+                .from(subUniversity)
+                .where(subUniversity.isUse.isTrue())
+                .fetch();
+
+        //지하철역 리스트
+        QSubwayStation subSubwayStation = new QSubwayStation("subSubwayStation");
+
+        List<String> subwayStationNameList = queryFactory.select(subSubwayStation.stationName)
+                .from(subSubwayStation)
+                .where(subSubwayStation.isUse.isTrue())
+                .fetch();
+
         BooleanBuilder builder = new BooleanBuilder();
 
         if(keyword != null && !keyword.isEmpty()){
 
             //TODO 연관 키워드 처리 - 함수 재활용
+            //연관 키워드 처리
+            keyword = keyword.replace("투썸 플레이스", "투썸")
+                    .replace("스벅", "스타벅스")
+                    .replace("이디야커피", "이디야");
 
             String[] wordArr = keyword.split(" ");
 
@@ -456,6 +474,12 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
                 //카페명 검색
                 builder.and(store.storeName.contains(word));
+
+                //대학교로 검색
+                if(searchUniversity(word, builder, universityNameList)) continue;
+
+                //지하철역으로 검색
+                if(searchSubwayStation(word, builder, subwayStationNameList)) continue;
             }
 
         }
@@ -484,6 +508,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
         if (keyword != null && !keyword.isEmpty()){
 
+            //TODO 연관 키워드 처리 - 함수 재활용
             //연관 키워드 처리
             keyword = keyword.replace("투썸 플레이스", "투썸")
                     .replace("스벅", "스타벅스")

@@ -30,8 +30,9 @@ public class StoreController {
     @GetMapping("/stores/autocomplete-search")
     public ResponseEntity<?> getAutocompleteSearchWordList(@RequestParam("keyword") String keyword){
 
+        List<AutocompleteStoreSearchResDto> autocompleteStoreSearchResDtoList = storeService.getAutocompleteSearchWordList(keyword);
 
-
+        return new ResponseEntity<>(new CMRespDto<>(1, "카페 자동완성 검색어 리스트 조회 성공", autocompleteStoreSearchResDtoList), HttpStatus.OK);
     }
 
     /**

@@ -219,14 +219,7 @@ public class StoreServiceImpl implements StoreService{
 
         List<Store> storeList = storeRepository.getAutocompleteSearchWordList(keyword);
 
-        storeList.stream().map(store -> {
-
-            new AutocompleteStoreSearchResDto()
-
-        })
-
-
-        return null;
+        return storeList.stream().map(store -> new AutocompleteStoreSearchResDto(store)).collect(Collectors.toList());
     }
 
     /**
