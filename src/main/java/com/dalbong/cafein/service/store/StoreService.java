@@ -18,6 +18,8 @@ public interface StoreService {
 
     void remove(Long storeId);
 
+    List<AutocompleteStoreSearchResDto> getAutocompleteSearchWordList(String keyword);
+
     List<StoreResDto> getStoreList(StoreSearchRequestDto storeSearchRequestDto, Long principalId);
 
     StoreListResDto<List<MyStoreResDto>> getMyStoreList(Long principalId);

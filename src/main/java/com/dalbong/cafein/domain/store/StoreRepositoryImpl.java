@@ -10,6 +10,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -69,6 +70,22 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 .fetchOne();
 
         return fetchOne != null;
+    }
+
+    /**
+     * 카페 자동완성 검색어 리스트 조회
+     */
+    @Override
+    public List<Store> getAutocompleteSearchWordList(String keyword) {
+
+        queryFactory
+                .select(store)
+                .from(store)
+                .where(autocompleteSearch(keyword))
+                .limit(15);
+
+
+        return null;
     }
 
     /**
@@ -420,6 +437,29 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
         return !isEmpty(keyword) ? store.address.fullAddress.contains(keyword) : null;
 
+    }
+
+    private BooleanBuilder autocompleteSearch(String keyword) {
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if(keyword != null && !keyword.isEmpty()){
+
+            //TODO 연관 키워드 처리 - 함수 재활용
+
+            String[] wordArr = keyword.split(" ");
+
+            for(String word : wordArr){
+
+                //구 검색
+                if(searchSggNm(word, builder)) continue;
+
+                //카페명 검색
+                builder.and(store.storeName.contains(word));
+            }
+
+        }
+        return builder;
     }
 
     private BooleanBuilder keywordSearch(String keyword){

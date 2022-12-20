@@ -6,6 +6,7 @@ import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.store.*;
 import com.dalbong.cafein.service.store.StoreService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,16 @@ import java.util.List;
 public class StoreController {
 
     private final StoreService storeService;
+
+    /**
+     * 카페 자동완성 검색어 리스트 조회
+     */
+    @GetMapping("/stores/autocomplete-search")
+    public ResponseEntity<?> getAutocompleteSearchWordList(@RequestParam("keyword") String keyword){
+
+
+
+    }
 
     /**
      * 카페 리스트 조회
