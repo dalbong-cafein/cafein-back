@@ -79,7 +79,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .from(review)
                 .leftJoin(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
-                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage))
+                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage),
+                        review.isPost.isTrue())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
@@ -97,7 +98,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .select(review)
                 .from(review)
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
-                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage));
+                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage), review.isPost.isTrue());
 
         List<Object[]> content = results.stream().map(t -> t.toArray()).collect(Collectors.toList());
 
@@ -129,7 +130,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .from(review)
                 .leftJoin(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
-                .where(review.store.storeId.eq(storeId))
+                .where(review.store.storeId.eq(storeId), review.isPost.isTrue())
                 .orderBy(review.reviewId.desc())
                 .limit(limit)
                 .fetch();
