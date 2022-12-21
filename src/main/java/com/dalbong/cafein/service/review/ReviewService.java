@@ -21,6 +21,10 @@ public interface ReviewService {
 
     void modify(ReviewUpdateDto reviewUpdateDto) throws IOException;
 
+    void post(Long reviewId);
+
+    void stopPosting(Long reviewId);
+
     void remove(Long reviewId);
 
     ReviewListResDto<ScrollResultDto<ReviewResDto, Object[]>> getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId);
