@@ -9,7 +9,6 @@ import javax.validation.constraints.Pattern;
 @Data
 public class StoreSearchRequestDto {
 
-
     private String keyword;
 
     @Pattern(regexp = "^([-+]?\\d{1,2}([.]\\d+)?),([-+]?\\d{1,2}([.]\\d+)?)," +

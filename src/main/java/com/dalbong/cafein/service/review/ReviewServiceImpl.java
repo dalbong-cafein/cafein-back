@@ -147,6 +147,32 @@ public class ReviewServiceImpl implements ReviewService{
 
     }
 
+    /**
+     * 리뷰 게시 상태로 변경
+     */
+    @Transactional
+    @Override
+    public void post(Long reviewId) {
+
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
+                new CustomException("존재하지 않는 리뷰입니다."));
+
+        review.post();
+    }
+
+    /**
+     * 리뷰 게시 중단 상태로 변경
+     */
+    @Transactional
+    @Override
+    public void stopPosting(Long reviewId) {
+
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
+                new CustomException("존재하지 않는 리뷰입니다."));
+
+        review.stopPosting();
+    }
+
     private void updateReviewImage(Review review, List<MultipartFile> updateImageFiles, List<Long> deleteImageIdList) throws IOException {
 
         //이미지 추가

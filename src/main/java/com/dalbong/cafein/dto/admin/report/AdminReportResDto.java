@@ -18,6 +18,8 @@ public class AdminReportResDto {
 
     private Long reviewId;
 
+    private Boolean isPostOfReview;
+
     private Long toMemberId;
 
     private String toMemberNickname;
@@ -45,6 +47,7 @@ public class AdminReportResDto {
     public AdminReportResDto(Report report, Long memoId){
         this.reportId = report.getReportId();
         this.reviewId = report.getReview().getReviewId();
+        this.isPostOfReview = report.getReview().getIsPost();
         this.toMemberId = report.getToMember().getMemberId();
         this.toMemberNickname = report.getToMember().getNickname();
         this.fromMemberId = report.getFromMember().getMemberId();

@@ -74,6 +74,7 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
 
         JPAQuery<Tuple> query = queryFactory.select(report, reportMemo.memoId)
                 .from(report)
+                .leftJoin(report.review).fetchJoin()
                 .leftJoin(report.toMember).fetchJoin()
                 .leftJoin(report.fromMember).fetchJoin()
                 .join(report.reportCategory).fetchJoin()

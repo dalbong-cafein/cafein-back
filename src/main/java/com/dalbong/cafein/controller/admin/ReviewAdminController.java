@@ -22,16 +22,6 @@ public class ReviewAdminController {
     private final ReviewService reviewService;
 
     /**
-     * 관리자단 리뷰 삭제
-     */
-    @DeleteMapping("/reviews/{reviewId}")
-    public ResponseEntity<?> removeReview(@PathVariable("reviewId") Long reviewId){
-        reviewService.remove(reviewId);
-
-        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 삭제 성공", null), HttpStatus.OK);
-    }
-
-    /**
      * 관리자단 리뷰 리스트 조회
      */
     @GetMapping("/reviews")
@@ -75,5 +65,39 @@ public class ReviewAdminController {
         List<AdminReviewResDto> adminReviewResDtoList = reviewService.getReviewListByMemberIdOfAdmin(memberId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 회원별 리뷰 리스트 조회 성공", adminReviewResDtoList), HttpStatus.OK);
+    }
+
+
+    /**
+     * 리뷰 게시 상태로 변경
+     */
+    @PatchMapping("/reviews/{reviewId}/post")
+    public ResponseEntity<?> post(@PathVariable("reviewId") Long reviewId){
+
+        reviewService.post(reviewId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 게시 상태로 변경 성공", null), HttpStatus.OK);
+    }
+
+    /**
+     * 리뷰 게시중단 상태로 변경
+     */
+    @PatchMapping("/reviews/{reviewId}/stop-posting")
+    public ResponseEntity<?> stopPosting(@PathVariable("reviewId") Long reviewId){
+
+        reviewService.stopPosting(reviewId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 게시중단 상태로 변경 성공", null), HttpStatus.OK);
+    }
+
+    /**
+     * 관리자단 리뷰 삭제
+     */
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<?> removeReview(@PathVariable("reviewId") Long reviewId){
+
+        reviewService.remove(reviewId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 리뷰 삭제 성공", null), HttpStatus.OK);
     }
 }
