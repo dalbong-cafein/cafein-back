@@ -219,7 +219,8 @@ public class StoreServiceImpl implements StoreService{
 
         List<Object[]> results = storeRepository.getStoreList(
                 storeSearchRequestDto.getKeyword(),
-                storeSearchRequestDto.getCoordinate(),
+                storeSearchRequestDto.getCenterCoordinates(),
+                storeSearchRequestDto.getUserCoordinates(),
                 storeSearchRequestDto.getRect());
 
         return results.stream().map(arr -> {

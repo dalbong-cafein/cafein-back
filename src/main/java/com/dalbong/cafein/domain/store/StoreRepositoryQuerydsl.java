@@ -18,7 +18,7 @@ public interface StoreRepositoryQuerydsl {
     /**
      * 앱단 가게 리스트 조회
      */
-    List<Object[]> getStoreList(String keyword, String coordinate, String rect);
+    List<Object[]> getStoreList(String keyword, String centerCoordinates, String userCoordinates, String rect);
 
     /**
      * 앱단 내 카페 리스트 조회
