@@ -2,6 +2,7 @@ package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.congestion.QCongestion;
+import com.dalbong.cafein.domain.store.dto.StoreQueryDto;
 import com.dalbong.cafein.domain.subwayStation.QSubwayStation;
 import com.dalbong.cafein.domain.subwayStation.SubwayStation;
 import com.dalbong.cafein.domain.university.QUniversity;
@@ -12,8 +13,10 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang.StringUtils;
@@ -42,8 +45,6 @@ import static com.dalbong.cafein.domain.nearStoreToUniversity.QNearStoreToUniver
 import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
 import static com.dalbong.cafein.domain.subwayStation.QSubwayStation.subwayStation;
-import static com.dalbong.cafein.domain.university.QUniversity.university;
-import static com.dalbong.cafein.util.SqlFunctionUtil.*;
 import static com.dalbong.cafein.web.domain.contents.QContentsStore.contentsStore;
 import static org.aspectj.util.LangUtil.isEmpty;
 
@@ -76,7 +77,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
      * 앱단 가게 리스트 조회
      */
     @Override
-    public List<Object[]> getStoreList(String keyword, String centerCoordinates, String userCoordinates, String rect) {
+    public List<StoreQueryDto> getStoreList(String keyword, String centerCoordinates, String userCoordinates, String rect) {
 
         //대학교 리스트
         List<University> universityList = getUniversityList();
@@ -84,27 +85,35 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         //지하철역 리스트
         List<SubwayStation> subwayStationList = getSubwayStationList();
 
+        //혼잡도 평균
         QCongestion subCongestion = new QCongestion("sub");
+        JPQLQuery<Double> congestionAvg = JPAExpressions
+                .select(subCongestion.congestionScore.avg())
+                .from(subCongestion)
+                .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
+                        subCongestion.store.storeId.eq(store.storeId))
+                .groupBy(store.storeId);
 
-        //사용자 위치와 카페 거리계산
-        NumberExpression<Double> userDistance = SqlFunctionUtil.calculateDistance(userCoordinates);
 
-        List<Tuple> result = queryFactory
-                .select(store ,store.heartList.size(), JPAExpressions
-                        .select(subCongestion.congestionScore.avg())
-                        .from(subCongestion)
-                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
-                                subCongestion.store.storeId.eq(store.storeId))
-                        .groupBy(store.storeId), userDistance
-                        )
+        JPAQuery<StoreQueryDto> query;
+
+        if(userCoordinates == null){
+             query = queryFactory.select((Projections.constructor(StoreQueryDto.class, store, store.heartList.size(), congestionAvg)));
+
+        }else {
+            //사용자 위치와 카페 거리계산
+            NumberExpression<Double> userDistance = SqlFunctionUtil.calculateDistance(userCoordinates);;
+
+            query = queryFactory.select((Projections.constructor(StoreQueryDto.class, store, store.heartList.size(), congestionAvg, userDistance)));
+        }
+
+        return query
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
                 .where(keywordSearch(keyword, universityList, subwayStationList), inRect(rect))
                 .orderBy(sort(keyword, centerCoordinates, universityList, subwayStationList).stream().toArray(OrderSpecifier[]::new))
                 .limit(40)
                 .fetch();
-
-        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
 
     private List<SubwayStation> getSubwayStationList() {

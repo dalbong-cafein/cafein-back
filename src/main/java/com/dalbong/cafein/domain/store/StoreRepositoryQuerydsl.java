@@ -1,6 +1,7 @@
 package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.address.Address;
+import com.dalbong.cafein.domain.store.dto.StoreQueryDto;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,7 @@ public interface StoreRepositoryQuerydsl {
     /**
      * 앱단 가게 리스트 조회
      */
-    List<Object[]> getStoreList(String keyword, String centerCoordinates, String userCoordinates, String rect);
+    List<StoreQueryDto> getStoreList(String keyword, String centerCoordinates, String userCoordinates, String rect);
 
     /**
      * 앱단 내 카페 리스트 조회

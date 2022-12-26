@@ -1,7 +1,11 @@
 package com.dalbong.cafein.util;
 
+import com.dalbong.cafein.handler.exception.CustomException;
+import com.querydsl.core.types.NullExpression;
+import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import org.springframework.stereotype.Component;
 
@@ -37,17 +41,17 @@ public class SqlFunctionUtil {
 
     public static NumberExpression<Double> calculateDistance(String coordinate) {
 
-        if(coordinate != null && !coordinate.isEmpty()) {
-            String[] coordinateArr = coordinate.split(",");
+            try {
+                String[] coordinateArr = coordinate.split(",");
 
-            double latY = Double.parseDouble(coordinateArr[0]);
-            double lngX = Double.parseDouble(coordinateArr[1]);
+                double latY = Double.parseDouble(coordinateArr[0]);
+                double lngX = Double.parseDouble(coordinateArr[1]);
 
-
-            return SqlFunctionUtil.calculateDistance(store.latY, store.lngX, latY, lngX);
-        }
-        //TODO null 처리 필요
-        return null;
+                return SqlFunctionUtil.calculateDistance(store.latY, store.lngX, latY, lngX);
+            }catch (IndexOutOfBoundsException e) {
+                throw new CustomException("잘못된 좌표 형식입니다.");
+            }
     }
-
 }
+
+

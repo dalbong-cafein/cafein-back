@@ -14,6 +14,7 @@ import com.dalbong.cafein.domain.sticker.StoreSticker;
 import com.dalbong.cafein.domain.sticker.StoreStickerRepository;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
+import com.dalbong.cafein.domain.store.dto.StoreQueryDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminMyStoreResDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
@@ -217,19 +218,15 @@ public class StoreServiceImpl implements StoreService{
     @Override
     public List<StoreResDto> getStoreList(StoreSearchRequestDto storeSearchRequestDto, Long principal) {
 
-        List<Object[]> results = storeRepository.getStoreList(
+        List<StoreQueryDto> results = storeRepository.getStoreList(
                 storeSearchRequestDto.getKeyword(),
                 storeSearchRequestDto.getCenterCoordinates(),
                 storeSearchRequestDto.getUserCoordinates(),
                 storeSearchRequestDto.getRect());
 
-        return results.stream().map(arr -> {
+        return results.stream().map(storeQueryDto -> {
 
-            Double distance = (Double) arr[3];
-
-            System.out.println(distance);
-
-            Store store = (Store) arr[0];
+            Store store = storeQueryDto.getStore();
 
             //리뷰 추천율
             Double recommendPercent = store.getRecommendPercent();
@@ -241,7 +238,8 @@ public class StoreServiceImpl implements StoreService{
             //최대 이미지 4개 불러오기
             List<ImageDto> imageDtoList = getCustomSizeImageList(store, 4);
 
-            return new StoreResDto(store, recommendPercent, businessHoursInfoDto, distance, imageDtoList, (int) arr[1], (Double) arr[2], principal);
+            return new StoreResDto(store, recommendPercent, businessHoursInfoDto, storeQueryDto.getUserDistance(),
+                    imageDtoList, storeQueryDto.getHeartCnt(), storeQueryDto.getCongestionAvg(), principal);
         }).collect(Collectors.toList());
     }
 
