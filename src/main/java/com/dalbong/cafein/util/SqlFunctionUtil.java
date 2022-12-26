@@ -1,8 +1,11 @@
 package com.dalbong.cafein.util;
 
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import org.springframework.stereotype.Component;
+
+import static com.dalbong.cafein.domain.store.QStore.store;
 
 @Component
 public class SqlFunctionUtil {
@@ -21,6 +24,30 @@ public class SqlFunctionUtil {
 
     public static NumberTemplate<Double> radians(Object num) {
         return Expressions.numberTemplate(Double.class, "function('radians',{0})", num);
+    }
+
+    public static NumberExpression<Double> calculateDistance(Object lat1, Object lng1, Object lat2, Object lng2){
+
+        return acos(cos(radians(lat1))
+                .multiply(cos(radians(lat2)))
+                .multiply(cos(radians(lng1).subtract(radians(lng2))))
+                .add(sin(radians(lat1)).multiply(sin(radians(lat2)))))
+                .multiply(6371);
+    }
+
+    public static NumberExpression<Double> calculateDistance(String coordinate) {
+
+        if(coordinate != null && !coordinate.isEmpty()) {
+            String[] coordinateArr = coordinate.split(",");
+
+            double latY = Double.parseDouble(coordinateArr[0]);
+            double lngX = Double.parseDouble(coordinateArr[1]);
+
+
+            return SqlFunctionUtil.calculateDistance(store.latY, store.lngX, latY, lngX);
+        }
+        //TODO null 처리 필요
+        return null;
     }
 
 }

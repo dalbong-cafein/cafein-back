@@ -26,6 +26,8 @@ public class StoreResDto {
 
     private double latY;
 
+    private Double distance;
+
     private long heartCnt;
 
     private Boolean isHeart;
@@ -34,13 +36,14 @@ public class StoreResDto {
 
     private List<ImageDto> storeImageDtoList;
 
-    public StoreResDto(Store store, Double recommendPercent, BusinessHoursInfoDto businessHoursInfoDto,
+    public StoreResDto(Store store, Double recommendPercent, BusinessHoursInfoDto businessHoursInfoDto, Double distance,
                        List<ImageDto> storeImageDtoList, long heartCnt, Double congestionScoreAvg, Long principalId){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
         this.recommendPercent = recommendPercent;
         this.businessHoursInfoDto = businessHoursInfoDto;
+        this.distance = distance;
         this.lngX = store.getLngX();
         this.latY = store.getLatY();
         this.heartCnt = heartCnt;

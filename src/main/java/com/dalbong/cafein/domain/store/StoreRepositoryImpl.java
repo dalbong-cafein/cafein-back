@@ -2,17 +2,16 @@ package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.congestion.QCongestion;
-import com.dalbong.cafein.domain.nearStoreToUniversity.QNearStoreToUniversity;
 import com.dalbong.cafein.domain.subwayStation.QSubwayStation;
+import com.dalbong.cafein.domain.subwayStation.SubwayStation;
 import com.dalbong.cafein.domain.university.QUniversity;
-import com.dalbong.cafein.util.DistanceUtil;
+import com.dalbong.cafein.domain.university.University;
 import com.dalbong.cafein.util.SqlFunctionUtil;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -79,13 +78,16 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     @Override
     public List<Object[]> getStoreList(String keyword, String centerCoordinates, String userCoordinates, String rect) {
 
+        //대학교 리스트
+        List<University> universityList = getUniversityList();
+
+        //지하철역 리스트
+        List<SubwayStation> subwayStationList = getSubwayStationList();
+
         QCongestion subCongestion = new QCongestion("sub");
 
-        //정렬
-        sort(keyword, centerCoordinates);
-
         //사용자 위치와 카페 거리계산
-        NumberExpression<Double> userDistance = calculateDistance(userCoordinates);
+        NumberExpression<Double> userDistance = SqlFunctionUtil.calculateDistance(userCoordinates);
 
         List<Tuple> result = queryFactory
                 .select(store ,store.heartList.size(), JPAExpressions
@@ -97,31 +99,32 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                         )
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .where(keywordSearch(keyword), inRect(rect))
-                .orderBy(distance.asc())
+                .where(keywordSearch(keyword, universityList, subwayStationList), inRect(rect))
+                .orderBy(sort(keyword, centerCoordinates, universityList, subwayStationList).stream().toArray(OrderSpecifier[]::new))
                 .limit(40)
                 .fetch();
 
         return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
 
-    private NumberExpression<Double> calculateDistance(String coordinate) {
+    private List<SubwayStation> getSubwayStationList() {
 
-        if(coordinate != null && !coordinate.isEmpty()) {
-            String[] coordinateArr = coordinate.split(",");
+        QSubwayStation subSubwayStation = new QSubwayStation("subSubwayStation");
 
-            double latY = Double.parseDouble(coordinateArr[0]);
-            double lngX = Double.parseDouble(coordinateArr[1]);
+        return queryFactory.select(subSubwayStation)
+                .from(subSubwayStation)
+                .where(subSubwayStation.isUse.isTrue())
+                .fetch();
+    }
 
+    private List<University> getUniversityList() {
 
-            return acos(radians(store.latY))
-                    .multiply(cos(radians(latY)))
-                    .multiply(cos(radians(lngX).subtract(radians(store.lngX))))
-                    .add(sin(radians(store.latY)).multiply(sin(radians(latY))))
-                    .multiply(6371);
-        }
-        //TODO null 처리 필요
-        return null;
+        QUniversity subUniversity = new QUniversity("subUniversity");
+
+        return queryFactory.select(subUniversity)
+                .from(subUniversity)
+                .where(subUniversity.isUse.isTrue())
+                .fetch();
     }
 
     private BooleanBuilder inRect(String rect) {
@@ -144,17 +147,36 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         return builder;
     }
 
-    private List<OrderSpecifier<?>> sort(String keyword, String centerCoordinates) {
+    private List<OrderSpecifier<?>> sort(String keyword, String centerCoordinates, List<University> universityList,
+                                         List<SubwayStation> subwayStationList) {
 
         List<OrderSpecifier<?>> orders = new ArrayList<>();
 
+        Optional<University> optUniversity = findUniversity(keyword, universityList);
+        Optional<SubwayStation> optSubwayStation = findSubwayStation(keyword, subwayStationList);
 
+        if(optUniversity.isPresent()){
+            University university = optUniversity.get();
+            NumberExpression<Double> distance = SqlFunctionUtil.calculateDistance(store.latY, store.lngX, university.getLatY(), university.getLngX());
+            orders.add(distance.asc());
 
-        //이미지 유무
-        orders.add(new OrderSpecifier<>(Order.DESC, existImage()));
+        }else if(optSubwayStation.isPresent()){
+            SubwayStation subwayStation = optSubwayStation.get();
+            NumberExpression<Double> distance = SqlFunctionUtil.calculateDistance(store.latY, store.lngX, subwayStation.getLatY(), subwayStation.getLngX());
+            orders.add(distance.asc());
 
-        //리뷰 많은 순
-        orders.add(new OrderSpecifier<>(Order.DESC, store.reviewList.size()));
+        }else if(centerCoordinates != null && !centerCoordinates.isEmpty()){
+
+            NumberExpression<Double> distance = SqlFunctionUtil.calculateDistance(centerCoordinates);
+            orders.add(distance.asc());
+
+        }else{
+            //이미지 유무
+            orders.add(new OrderSpecifier<>(Order.DESC, existImage()));
+
+            //리뷰 많은 순
+            orders.add(new OrderSpecifier<>(Order.DESC, store.reviewList.size()));
+        }
 
         return orders;
     }
@@ -359,7 +381,7 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         return queryFactory.select(store)
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .where(keywordSearch(keyword))
+                .where(keywordSearch(keyword, getUniversityList(), getSubwayStationList()))
                 .fetch();
     }
 
@@ -449,26 +471,9 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     private BooleanExpression containAddress(String keyword) {
 
         return !isEmpty(keyword) ? store.address.fullAddress.contains(keyword) : null;
-
     }
 
-    private BooleanBuilder keywordSearch(String keyword){
-
-        //대학교 리스트
-        QUniversity subUniversity = new QUniversity("subUniversity");
-
-        List<String> universityNameList = queryFactory.select(subUniversity.universityName)
-                .from(subUniversity)
-                .where(subUniversity.isUse.isTrue())
-                .fetch();
-
-        //지하철역 리스트
-        QSubwayStation subSubwayStation = new QSubwayStation("subSubwayStation");
-
-        List<String> subwayStationNameList = queryFactory.select(subSubwayStation.stationName)
-                .from(subSubwayStation)
-                .where(subSubwayStation.isUse.isTrue())
-                .fetch();
+    private BooleanBuilder keywordSearch(String keyword, List<University> universityList, List<SubwayStation> subwayStationList){
 
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -491,10 +496,10 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                 if(searchSggNm(word, builder)) continue;
 
                 //대학교로 검색
-                if(searchUniversity(word, builder, universityNameList)) continue;
+                if(searchUniversity(word, builder, universityList)) continue;
 
                 //지하철역으로 검색
-                if(searchSubwayStation(word, builder, subwayStationNameList)) continue;
+                if(searchSubwayStation(word, builder, subwayStationList)) continue;
 
                 //카페명 검색
                 builder.and(store.storeName.contains(word));
@@ -503,43 +508,59 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         return builder;
     }
 
-    private boolean searchSubwayStation(String word, BooleanBuilder builder, List<String> subwayStationNameList) {
-        
-        for(String stationName : subwayStationNameList){
+    private boolean searchSubwayStation(String word, BooleanBuilder builder, List<SubwayStation> subwayStationList) {
 
-            String compareStationName = StringUtils.removeEnd(stationName,"입구");
+        Optional<SubwayStation> optSubwayStation = findSubwayStation(word, subwayStationList);
+
+        if(optSubwayStation.isPresent()){
+            //역 근처 카페 필터링
+            builder.and(store.storeId.in(JPAExpressions.select(nearStoreToSubwayStation.store.storeId)
+                    .from(nearStoreToSubwayStation)
+                    .join(subwayStation).on(subwayStation.eq(nearStoreToSubwayStation.subwayStation))
+                    .where(subwayStation.isUse.isTrue(),
+                            subwayStation.stationName.eq(optSubwayStation.get().getStationName()))));
+            return true;
+        }
+
+        return false;
+    }
+
+    private Optional<SubwayStation> findSubwayStation(String word, List<SubwayStation> subwayStationList){
+
+        for(SubwayStation subwayStation : subwayStationList){
+
+            String compareStationName = StringUtils.removeEnd(subwayStation.getStationName(),"입구");
 
             if(word.equals(compareStationName) || word.equals(compareStationName + "역")
                     || word.equals(compareStationName + "입구") || word.equals(compareStationName + "입구역")){
 
-                //역 근처 카페 필터링
-                builder.and(store.storeId.in(JPAExpressions.select(nearStoreToSubwayStation.store.storeId)
-                        .from(nearStoreToSubwayStation)
-                        .join(subwayStation).on(subwayStation.eq(nearStoreToSubwayStation.subwayStation))
-                        .where(subwayStation.isUse.isTrue(),
-                                subwayStation.stationName.eq(stationName))));
-
-                return true;
+                return Optional.of(subwayStation);
             }
+        }
+        return Optional.empty();
+    }
+
+    private boolean searchUniversity(String word, BooleanBuilder builder, List<University> universityNameList) {
+
+        Optional<University> optUniversity = findUniversity(word, universityNameList);
+
+        if(optUniversity.isPresent()){
+            //대학교 근처 카페 필터링
+            builder.and(store.storeId.in(JPAExpressions.select(nearStoreToUniversity.store.storeId)
+                    .from(nearStoreToUniversity)
+                    .join(QUniversity.university).on(QUniversity.university.eq(nearStoreToUniversity.university))
+                    .where(QUniversity.university.isUse.isTrue(),
+                            QUniversity.university.universityName.eq(optUniversity.get().getUniversityName()))));
+            return true;
         }
         return false;
     }
 
-    private boolean searchUniversity(String word, BooleanBuilder builder, List<String> universityNameList) {
+    private Optional<University> findUniversity(String word, List<University> universityList){
 
-        if(isUniversity(word, universityNameList)){
-            builder.and(store.storeId.in(JPAExpressions.select(nearStoreToUniversity.store.storeId)
-                    .from(nearStoreToUniversity)
-                    .join(university).on(university.eq(nearStoreToUniversity.university))
-                    .where(university.isUse.isTrue(),
-                            university.universityName.eq(universityName))));
+        for(University university : universityList){
 
-            return true;
-        }
-
-        for(String universityName : universityNameList){
-
-            String compareUniversityName = universityName.replace("대학교","대");
+            String compareUniversityName = university.getUniversityName().replace("대학교","대");
 
             StringUtils.removeEnd(compareUniversityName, "학");
 
@@ -547,14 +568,15 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
             String relatedWord = relatedKeywordOfUniversity(word);
 
             if(relatedWord.equals(compareUniversityName) || relatedWord.equals(compareUniversityName+"학교")){
-
+                return Optional.of(university);
             }
         }
-        return false;
+        return Optional.empty();
     }
 
     private String relatedKeywordOfUniversity(String word) {
 
+        //TODO null point error 처리
         return word.replace("외대", "외국어대")
                 .replace("여대", "여자대")
                 .replace("체대", "체육대")
@@ -581,42 +603,24 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     private boolean searchSggNm(String word, BooleanBuilder builder) {
 
-        if(isSggNm(word)){
-            builder.and(store.address.sggNm.eq(word+"구"));
+        Optional<String> optSggNm = findSggNm(word);
+
+        if(optSggNm.isPresent()){
+            //구 카페 필터링링
+            builder.and(store.address.sggNm.eq(optSggNm.get()+"구"));
             return true;
         }
         return false;
     }
 
-    //TODO Optional로 return 빼기
-    private boolean isSggNm(String word){
+
+    private Optional<String> findSggNm(String word){
+
         for (String sgg : sggArr){
             if (word.equals(sgg) || word.equals(sgg+"구")){
-                return true;
+                return Optional.of(sgg);
             }
         }
-        return false;
-    }
-
-    private boolean isUniversity(String word, List<String> universityNameList){
-
-        for(String universityName : universityNameList){
-
-            String compareUniversityName = universityName.replace("대학교","대");
-
-            StringUtils.removeEnd(compareUniversityName, "학");
-
-            //대학교 연관 키워드 처리
-            String relatedWord = relatedKeywordOfUniversity(word);
-
-            if(relatedWord.equals(compareUniversityName) || relatedWord.equals(compareUniversityName+"학교")){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isSubwayStation(String word){
-
+        return Optional.empty();
     }
 }

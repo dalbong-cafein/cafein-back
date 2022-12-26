@@ -241,7 +241,7 @@ public class StoreServiceImpl implements StoreService{
             //최대 이미지 4개 불러오기
             List<ImageDto> imageDtoList = getCustomSizeImageList(store, 4);
 
-            return new StoreResDto(store, recommendPercent, businessHoursInfoDto, imageDtoList, (int) arr[1], (Double) arr[2], principal);
+            return new StoreResDto(store, recommendPercent, businessHoursInfoDto, distance, imageDtoList, (int) arr[1], (Double) arr[2], principal);
         }).collect(Collectors.toList());
     }
 
