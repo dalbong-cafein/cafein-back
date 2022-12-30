@@ -40,7 +40,6 @@ public class CongestionServiceImpl implements CongestionService{
     private final StoreRepository storeRepository;
     private final MemberRepository memberRepository;
     private final CongestionStickerRepository congestionStickerRepository;
-    private final StickerRepository stickerRepository;
 
     /**
      * 혼잡도 등록 가능 여부 체크
