@@ -402,6 +402,20 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     /**
+     * 관리자단 리뷰 수정
+     */
+    @Transactional
+    @Override
+    public void modifyOfAdmin(AdminReviewUpdateDto adminReviewUpdateDto) throws IOException {
+
+        Review review = reviewRepository.findById(adminReviewUpdateDto.getReviewId()).orElseThrow(() ->
+                new CustomException("존재하는 리뷰가 없습니다."));
+
+        //리뷰 이미지 갱신
+        updateReviewImage(review, adminReviewUpdateDto.getUpdateImageFiles(), adminReviewUpdateDto.getDeleteImageIdList());
+    }
+
+    /**
      * 관리자단 리뷰 리스트 조회
      */
     @Transactional(readOnly = true)
