@@ -67,6 +67,10 @@ public class ReportServiceImpl implements ReportService{
         Review review = reviewRepository.findById(reportRegDto.getReviewId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 리뷰입니다."));
 
+        if(reportRepository.existReport(reportRegDto.getReviewId(), fromMember.getMemberId())){
+            throw new CustomException("이미 신고된 리뷰입니다.");
+        }
+
         Report report = reportRegDto.toEntity(review, fromMember);
 
         reportRepository.save(report);
