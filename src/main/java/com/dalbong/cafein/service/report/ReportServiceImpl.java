@@ -9,6 +9,7 @@ import com.dalbong.cafein.domain.report.Report;
 import com.dalbong.cafein.domain.report.ReportRepository;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
+import com.dalbong.cafein.dto.PossibleRegistrationResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportResDto;
 import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
@@ -43,6 +44,20 @@ public class ReportServiceImpl implements ReportService{
     private final MemberRepository memberRepository;
 
     /**
+     * 신고 가능 여부 체크
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public PossibleRegistrationResDto checkPossibleReport(Long reviewId, Long principalId) {
+
+        if(reportRepository.existReport(reviewId, principalId)){
+            return new PossibleRegistrationResDto(false, "이미 신고된 리뷰입니다.");
+        }
+
+        return new PossibleRegistrationResDto(true, null);
+    }
+
+    /**
      * 신고하기
      */
     @Transactional
@@ -51,6 +66,10 @@ public class ReportServiceImpl implements ReportService{
 
         Review review = reviewRepository.findById(reportRegDto.getReviewId()).orElseThrow(() ->
                 new CustomException("존재하지 않는 리뷰입니다."));
+
+        if(reportRepository.existReport(reportRegDto.getReviewId(), fromMember.getMemberId())){
+            throw new CustomException("이미 신고된 리뷰입니다.");
+        }
 
         Report report = reportRegDto.toEntity(review, fromMember);
 

@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface ReportRepositoryQuerydsl {
 
+    boolean existReport(Long reviewId, Long principalId);
+
     List<Report> findByReportToday();
 
     Optional<Report> findWithToMemberById(Long reportId);

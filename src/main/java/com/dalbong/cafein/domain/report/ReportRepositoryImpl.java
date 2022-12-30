@@ -39,6 +39,21 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
     }
 
     /**
+     * 중복 신고 확인
+     */
+    @Override
+    public boolean existReport(Long reviewId, Long principalId) {
+
+        Integer fetchOne = queryFactory.selectOne()
+                .from(report)
+                .where(report.review.reviewId.eq(reviewId),
+                        report.fromMember.memberId.eq(principalId))
+                .fetchOne();
+
+        return fetchOne != null;
+    }
+
+    /**
      * 금일 신고 회원
      */
     @Override
