@@ -161,20 +161,35 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
         List<OrderSpecifier<?>> orders = new ArrayList<>();
 
+        Optional<String> optSggNm = findSggNm(keyword);
         Optional<University> optUniversity = findUniversity(keyword, universityList);
         Optional<SubwayStation> optSubwayStation = findSubwayStation(keyword, subwayStationList);
 
-        if(optUniversity.isPresent()){
+        //구 관련 검색 정렬
+        if(optSggNm.isPresent()){
+            //이미지 유무
+            orders.add(new OrderSpecifier<>(Order.DESC, existImage()));
+
+            //리뷰 많은 순
+            orders.add(new OrderSpecifier<>(Order.DESC, store.reviewList.size()));
+
+        }
+        //대학교 관련 검색 정렬
+        else if(optUniversity.isPresent()){
             University university = optUniversity.get();
             NumberExpression<Double> distance = SqlFunctionUtil.calculateDistance(store.latY, store.lngX, university.getLatY(), university.getLngX());
             orders.add(distance.asc());
 
-        }else if(optSubwayStation.isPresent()){
+        }
+        //지하철역 관련 검색 정렬
+        else if(optSubwayStation.isPresent()){
             SubwayStation subwayStation = optSubwayStation.get();
             NumberExpression<Double> distance = SqlFunctionUtil.calculateDistance(store.latY, store.lngX, subwayStation.getLatY(), subwayStation.getLngX());
             orders.add(distance.asc());
 
-        }else if(centerCoordinates != null && !centerCoordinates.isEmpty()){
+        }
+        //지도 좌표 관련 검색 정렬
+        else if(centerCoordinates != null && !centerCoordinates.isEmpty()){
 
             NumberExpression<Double> distance = SqlFunctionUtil.calculateDistance(centerCoordinates);
             orders.add(distance.asc());
@@ -462,13 +477,9 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
         if(!isEmpty(keyword)){
 
-            if(keyword.contains("투썸 플레이스")){
-                keyword = keyword.replace("투썸 플레이스", "투썸");
-            }else if (keyword.contains("스벅")){
-                keyword = keyword.replace("스벅", "스타벅스");
-            }
+            String relatedKeyword = relatedKeywordOfStoreName(keyword);
 
-            String[] wordArr = keyword.split(" ");
+            String[] wordArr = relatedKeyword.split(" ");
 
             for(String word : wordArr){
                 builder.and(store.storeName.contains(word));
@@ -489,12 +500,9 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         if (keyword != null && !keyword.isEmpty()){
 
             //연관 키워드 처리
-            keyword = keyword.replace("투썸 플레이스", "투썸")
-                    .replace("스벅", "스타벅스")
-                    .replace("이디야커피", "이디야");
+            String relatedKeyword = relatedKeywordOfStoreName(keyword);
 
-
-            String[] wordArr = keyword.split(" ");
+            String[] wordArr = relatedKeyword.split(" ");
 
             for(String word : wordArr){
 
@@ -517,6 +525,13 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
         return builder;
     }
 
+    private String relatedKeywordOfStoreName(String keyword) {
+
+        return keyword.replace("투썸 플레이스", "투썸")
+                .replace("스벅", "스타벅스")
+                .replace("이디야커피", "이디야");
+    }
+
     private boolean searchSubwayStation(String word, BooleanBuilder builder, List<SubwayStation> subwayStationList) {
 
         Optional<SubwayStation> optSubwayStation = findSubwayStation(word, subwayStationList);
@@ -530,22 +545,24 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
                             subwayStation.stationName.eq(optSubwayStation.get().getStationName()))));
             return true;
         }
-
         return false;
     }
 
     private Optional<SubwayStation> findSubwayStation(String word, List<SubwayStation> subwayStationList){
 
-        for(SubwayStation subwayStation : subwayStationList){
+        if(word != null && !word.isEmpty()){
+            for(SubwayStation subwayStation : subwayStationList){
 
-            String compareStationName = StringUtils.removeEnd(subwayStation.getStationName(),"입구");
+                String compareStationName = StringUtils.removeEnd(subwayStation.getStationName(),"입구");
 
-            if(word.equals(compareStationName) || word.equals(compareStationName + "역")
-                    || word.equals(compareStationName + "입구") || word.equals(compareStationName + "입구역")){
+                if(word.equals(compareStationName) || word.equals(compareStationName + "역")
+                        || word.equals(compareStationName + "입구") || word.equals(compareStationName + "입구역")){
 
-                return Optional.of(subwayStation);
+                    return Optional.of(subwayStation);
+                }
             }
         }
+
         return Optional.empty();
     }
 
@@ -567,17 +584,19 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     private Optional<University> findUniversity(String word, List<University> universityList){
 
-        for(University university : universityList){
+        if(word != null && !word.isEmpty()){
+            for(University university : universityList){
 
-            String compareUniversityName = university.getUniversityName().replace("대학교","대");
+                String compareUniversityName = university.getUniversityName().replace("대학교","대");
 
-            StringUtils.removeEnd(compareUniversityName, "학");
+                StringUtils.removeEnd(compareUniversityName, "학");
 
-            //대학교 연관 키워드 처리
-            String relatedWord = relatedKeywordOfUniversity(word);
+                //대학교 연관 키워드 처리
+                String relatedWord = relatedKeywordOfUniversity(word);
 
-            if(relatedWord.equals(compareUniversityName) || relatedWord.equals(compareUniversityName+"학교")){
-                return Optional.of(university);
+                if(relatedWord.equals(compareUniversityName) || relatedWord.equals(compareUniversityName+"학교")){
+                    return Optional.of(university);
+                }
             }
         }
         return Optional.empty();
@@ -585,7 +604,6 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     private String relatedKeywordOfUniversity(String word) {
 
-        //TODO null point error 처리
         return word.replace("외대", "외국어대")
                 .replace("여대", "여자대")
                 .replace("체대", "체육대")
@@ -625,9 +643,11 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     private Optional<String> findSggNm(String word){
 
-        for (String sgg : sggArr){
-            if (word.equals(sgg) || word.equals(sgg+"구")){
-                return Optional.of(sgg);
+        if(word != null && !word.isEmpty()){
+            for (String sgg : sggArr){
+                if (word.equals(sgg) || word.equals(sgg+"구")){
+                    return Optional.of(sgg);
+                }
             }
         }
         return Optional.empty();
