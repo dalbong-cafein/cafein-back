@@ -25,6 +25,8 @@ public interface NoticeService {
 
     void remove(Long noticeId);
 
+    void remove(Report report);
+
     void removeAll(Long principalId);
 
     List<NoticeResDto> getNoticeList(Long principalId);

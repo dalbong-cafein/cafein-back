@@ -106,13 +106,23 @@ public class NoticeServiceImpl implements NoticeService{
     }
 
     /**
-     * 알림 삭제
+     * 알림 삭제 - by noticeId
      */
     @Transactional
     @Override
     public void remove(Long noticeId) {
 
         noticeRepository.deleteById(noticeId);
+    }
+
+    /**
+     * 알림 삭제 - By report
+     */
+    @Transactional
+    @Override
+    public void remove(Report report) {
+
+        reportNoticeRepository.deleteByReport(report);
     }
 
     /**

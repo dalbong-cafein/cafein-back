@@ -139,5 +139,8 @@ public class Member extends BaseEntity {
         this.state = MemberState.NORMAL;
     }
 
+    public void setNullReportExpiredDateTime(){
+        this.reportExpiredDateTime = null;
+    }
 
 }

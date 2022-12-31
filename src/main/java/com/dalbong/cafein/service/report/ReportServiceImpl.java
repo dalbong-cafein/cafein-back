@@ -7,6 +7,7 @@ import com.dalbong.cafein.domain.memo.ReportMemo;
 import com.dalbong.cafein.domain.notice.NoticeRepository;
 import com.dalbong.cafein.domain.report.Report;
 import com.dalbong.cafein.domain.report.ReportRepository;
+import com.dalbong.cafein.domain.report.ReportStatus;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.dto.PossibleRegistrationResDto;
@@ -104,6 +105,17 @@ public class ReportServiceImpl implements ReportService{
 
         Report report = reportRepository.findById(reportId).orElseThrow(() ->
                 new CustomException("존재하지 않는 신고입니다."));
+
+        //승인 -> 반려
+        if(report.getReportStatus().equals(ReportStatus.APPROVAL)){
+
+            noticeService.remove(report);
+            
+            Member member = memberRepository.findById(report.getToMember().getMemberId()).orElseThrow(() ->
+                    new CustomException("존재하지 않는 회원입니다."));
+
+            member.changeToNormal();
+        }
 
         report.reject();
     }
