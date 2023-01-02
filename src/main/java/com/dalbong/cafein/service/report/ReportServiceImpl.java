@@ -109,7 +109,7 @@ public class ReportServiceImpl implements ReportService{
         //승인 -> 반려
         if(report.getReportStatus().equals(ReportStatus.APPROVAL)){
 
-            noticeService.remove(report);
+            //noticeService.remove(report);
             
             Member member = memberRepository.findById(report.getToMember().getMemberId()).orElseThrow(() ->
                     new CustomException("존재하지 않는 회원입니다."));
