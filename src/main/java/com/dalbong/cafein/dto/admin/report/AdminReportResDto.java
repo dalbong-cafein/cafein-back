@@ -1,7 +1,7 @@
 package com.dalbong.cafein.dto.admin.report;
 
-import com.dalbong.cafein.domain.report.Report;
 import com.dalbong.cafein.domain.report.ReportStatus;
+import com.dalbong.cafein.domain.report.report.Report;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;

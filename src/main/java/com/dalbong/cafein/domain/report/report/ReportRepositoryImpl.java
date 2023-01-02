@@ -1,12 +1,9 @@
-package com.dalbong.cafein.domain.report;
+package com.dalbong.cafein.domain.report.report;
 
-import com.dalbong.cafein.domain.coupon.Coupon;
-import com.dalbong.cafein.domain.review.Review;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -24,10 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.dalbong.cafein.domain.coupon.QCoupon.coupon;
 import static com.dalbong.cafein.domain.memo.QReportMemo.reportMemo;
-import static com.dalbong.cafein.domain.report.QReport.report;
-import static com.dalbong.cafein.domain.review.QReview.review;
+import static com.dalbong.cafein.domain.report.report.QReport.report;
 import static org.aspectj.util.LangUtil.isEmpty;
 
 public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{

@@ -4,7 +4,7 @@ import com.dalbong.cafein.domain.board.Board;
 import com.dalbong.cafein.domain.coupon.Coupon;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.notice.*;
-import com.dalbong.cafein.domain.report.Report;
+import com.dalbong.cafein.domain.report.report.Report;
 import com.dalbong.cafein.domain.sticker.Sticker;
 import com.dalbong.cafein.dto.notice.NoticeResDto;
 import com.dalbong.cafein.handler.exception.CustomException;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

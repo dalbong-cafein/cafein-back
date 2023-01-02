@@ -2,23 +2,22 @@ package com.dalbong.cafein.service.report;
 
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
-import com.dalbong.cafein.domain.member.MemberState;
-import com.dalbong.cafein.domain.memo.ReportMemo;
-import com.dalbong.cafein.domain.notice.NoticeRepository;
-import com.dalbong.cafein.domain.report.Report;
-import com.dalbong.cafein.domain.report.ReportRepository;
+import com.dalbong.cafein.domain.report.ReportStatus;
+import com.dalbong.cafein.domain.report.report.Report;
+import com.dalbong.cafein.domain.report.report.ReportRepository;
+import com.dalbong.cafein.domain.report.reportHistory.ReportHistory;
+import com.dalbong.cafein.domain.report.reportHistory.ReportHistoryRepository;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.dto.PossibleRegistrationResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportResDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.notice.NoticeService;
+import com.dalbong.cafein.service.reportHistory.ReportHistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +26,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -42,6 +39,7 @@ public class ReportServiceImpl implements ReportService{
     private final ReviewRepository reviewRepository;
     private final NoticeService noticeService;
     private final MemberRepository memberRepository;
+    private final ReportHistoryService reportHistoryService;
 
     /**
      * 신고 가능 여부 체크
@@ -75,6 +73,9 @@ public class ReportServiceImpl implements ReportService{
 
         reportRepository.save(report);
 
+        //신고 내역 생성 - 대기
+        reportHistoryService.save(report, ReportStatus.WAIT);
+
         return report;
     }
 
@@ -93,6 +94,9 @@ public class ReportServiceImpl implements ReportService{
 
         //리뷰 정책 적용
         reportPolicy(report, report.getToMember());
+
+        //신고 내역 생성 - 승인
+        reportHistoryService.save(report, ReportStatus.APPROVAL);
     }
 
     /**
@@ -106,6 +110,9 @@ public class ReportServiceImpl implements ReportService{
                 new CustomException("존재하지 않는 신고입니다."));
 
         report.reject();
+
+        //신고 내역 생성 - 반려
+        reportHistoryService.save(report, ReportStatus.REJECT);
     }
 
     /**

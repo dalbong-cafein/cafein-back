@@ -1,4 +1,4 @@
-package com.dalbong.cafein.domain.report;
+package com.dalbong.cafein.domain.report.report;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
