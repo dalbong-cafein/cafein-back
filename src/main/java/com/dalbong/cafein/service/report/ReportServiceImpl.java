@@ -12,6 +12,7 @@ import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.dto.PossibleRegistrationResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportResDto;
+import com.dalbong.cafein.dto.admin.reportHistory.AdminReportHistoryResDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.dto.report.ReportRegDto;
@@ -26,6 +27,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -179,8 +181,15 @@ public class ReportServiceImpl implements ReportService{
 
         List<Object[]> reportList = reportRepository.getReportListOfAdminByMemberId(memberId);
 
-        return reportList.stream().map(arr -> new AdminReportResDto((Report) arr[0], (Long) arr[1]))
-                        .collect(Collectors.toList());
+        return reportList.stream().map(arr -> {
+
+            Report report = (Report) arr[0];
+
+            //신고 상태 히스토리 리스트
+            List<AdminReportHistoryResDto> reportHistoryResDtoList = getReportHistoryList(report);
+
+            return new AdminReportResDto((Report) arr[0], reportHistoryResDtoList, (Long) arr[1]);
+        }).collect(Collectors.toList());
     }
 
 
@@ -205,7 +214,10 @@ public class ReportServiceImpl implements ReportService{
 
             Report report = (Report) arr[0];
 
-            return new AdminReportResDto(report, (Long) arr[1]);
+            //신고 상태 히스토리 리스트
+            List<AdminReportHistoryResDto> reportHistoryResDtoList = getReportHistoryList(report);
+
+            return new AdminReportResDto(report, reportHistoryResDtoList, (Long) arr[1]);
         });
 
         return new AdminReportListResDto<>(results.getTotalElements(), new PageResultDTO<>(results, fn));
@@ -221,8 +233,22 @@ public class ReportServiceImpl implements ReportService{
         List<Report> reportList = reportRepository.getCustomLimitReportListOfAdmin(limit);
 
         List<AdminReportResDto> adminReportResDtoList = reportList.stream().map(report ->
-                new AdminReportResDto(report)).collect(Collectors.toList());
+                new AdminReportResDto(report, getReportHistoryList(report))).collect(Collectors.toList());
 
         return new AdminReportListResDto<>(reportList.size(), adminReportResDtoList);
+    }
+
+    private List<AdminReportHistoryResDto> getReportHistoryList(Report report) {
+
+        List<ReportHistory> reportHistoryList = report.getReportHistoryList();
+
+        List<AdminReportHistoryResDto> reportHistoryResDtoList = new ArrayList<>();
+
+        if(reportHistoryList != null && !reportHistoryList.isEmpty()){
+            for(ReportHistory reportHistory : reportHistoryList){
+                reportHistoryResDtoList.add(new AdminReportHistoryResDto(reportHistory));
+            }
+        }
+        return reportHistoryResDtoList;
     }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 public interface ReportRepository extends JpaRepository<Report, Long>, ReportRepositoryQuerydsl {
 
     @Query("select rp, rm.memoId from Report rp " +
+            "left join fetch rp.review " +
             "left join fetch rp.toMember " +
             "left join fetch rp.fromMember " +
             "left join fetch rp.reportCategory " +

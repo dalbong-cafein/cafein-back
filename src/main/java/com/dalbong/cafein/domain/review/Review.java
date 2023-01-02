@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"member","store"})
+@ToString(exclude = {"member","store","reviewImageList"})
 @Entity
 public class Review extends BaseEntity {
 

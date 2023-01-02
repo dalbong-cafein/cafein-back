@@ -121,6 +121,7 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
 
         return queryFactory.select(report)
                 .from(report)
+                .leftJoin(report.review).fetchJoin()
                 .leftJoin(report.toMember).fetchJoin()
                 .leftJoin(report.fromMember).fetchJoin()
                 .join(report.reportCategory).fetchJoin()
