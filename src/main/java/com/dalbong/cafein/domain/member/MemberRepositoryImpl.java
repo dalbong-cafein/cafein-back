@@ -1,18 +1,9 @@
 package com.dalbong.cafein.domain.member;
 
-import com.dalbong.cafein.domain.congestion.QCongestion;
-import com.dalbong.cafein.domain.heart.QHeart;
-import com.dalbong.cafein.domain.image.QMemberImage;
-import com.dalbong.cafein.domain.memo.QMemberMemo;
-import com.dalbong.cafein.domain.report.QReport;
-import com.dalbong.cafein.domain.review.QReview;
-import com.dalbong.cafein.domain.sticker.QSticker;
-import com.dalbong.cafein.dto.admin.member.AdminDetailMemberResDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
@@ -36,10 +27,8 @@ import static com.dalbong.cafein.domain.heart.QHeart.heart;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.member.QMember.member;
 import static com.dalbong.cafein.domain.memo.QMemberMemo.memberMemo;
-import static com.dalbong.cafein.domain.report.QReport.report;
 import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.sticker.QSticker.sticker;
-import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
 
 public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{

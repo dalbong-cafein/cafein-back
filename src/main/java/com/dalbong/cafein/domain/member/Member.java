@@ -1,8 +1,6 @@
 package com.dalbong.cafein.domain.member;
 
 import com.dalbong.cafein.domain.BaseEntity;
-import com.dalbong.cafein.domain.report.Report;
-import com.dalbong.cafein.domain.review.Review;
 import lombok.*;
 
 import javax.persistence.*;
