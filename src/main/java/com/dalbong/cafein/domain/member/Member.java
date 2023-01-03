@@ -108,6 +108,10 @@ public class Member extends BaseEntity {
         this.isAgreeMarketingPush = isAgreeMarketingPush;
     }
 
+    public void changeReportExpiredDateTime(LocalDateTime reportExpiredDateTime){
+        this.reportExpiredDateTime = reportExpiredDateTime;
+    }
+
     public void suspend(int reportCnt){
 
         switch (reportCnt){
@@ -135,10 +139,6 @@ public class Member extends BaseEntity {
 
     public void changeToNormal(){
         this.state = MemberState.NORMAL;
-    }
-
-    public void setNullReportExpiredDateTime(){
-        this.reportExpiredDateTime = null;
     }
 
 }

@@ -1,18 +1,19 @@
 package com.dalbong.cafein.domain.report.report;
 
+import com.dalbong.cafein.domain.report.ReportStatus;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import javax.persistence.EntityManager;
@@ -76,6 +77,21 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
                 .fetchOne();
 
         return findReport != null ? Optional.of(findReport) : Optional.empty();
+    }
+
+    /**
+     * 가장 최근 승인 받은 신고 조회
+     */
+    @Override
+    public Report getLatestApprovalStatusByMemberIdAndNeReportId(Long memberId, Long reportId) {
+
+        return queryFactory.select(report)
+                .from(report)
+                .where(report.reportStatus.eq(ReportStatus.APPROVAL),
+                        report.toMember.memberId.eq(memberId), report.reportId.ne(reportId))
+                .orderBy(report.reportId.desc())
+                .limit(1)
+                .fetchOne();
     }
 
     /**

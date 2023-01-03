@@ -26,6 +26,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -74,7 +76,7 @@ public class ReportServiceImpl implements ReportService{
 
         reportRepository.save(report);
 
-        //신고 내역 생성 - 대기
+        //신고 상태 히스토리 생성 - 대기
         reportHistoryService.save(report, ReportStatus.WAIT);
 
         return report;
@@ -96,7 +98,7 @@ public class ReportServiceImpl implements ReportService{
         //리뷰 정책 적용
         reportPolicy(report, report.getToMember());
 
-        //신고 내역 생성 - 승인
+        //신고 상태 히스토리 생성 - 승인
         reportHistoryService.save(report, ReportStatus.APPROVAL);
     }
 
@@ -113,18 +115,61 @@ public class ReportServiceImpl implements ReportService{
         //승인 -> 반려
         if(report.getReportStatus().equals(ReportStatus.APPROVAL)){
 
-            //noticeService.remove(report);
-            
             Member member = memberRepository.findById(report.getToMember().getMemberId()).orElseThrow(() ->
                     new CustomException("존재하지 않는 회원입니다."));
-
-            member.changeToNormal();
+            //패널티 철회
+            withdrawPenalty(report, member);
         }
 
         report.reject();
 
-        //신고 내역 생성 - 반려
+        //신고 상태 히스토리 생성 - 반려
         reportHistoryService.save(report, ReportStatus.REJECT);
+    }
+
+    private void withdrawPenalty(Report report, Member member) {
+
+        int reportCnt = (int) reportRepository.countApprovalStatusByMemberIdAndNeReportId(member.getMemberId(), report.getReportId());
+
+        Report latestApprovalReport = reportRepository.getLatestApprovalStatusByMemberIdAndNeReportId(member.getMemberId(), report.getReportId());
+
+        if(reportCnt > 0 && latestApprovalReport != null) {
+            LocalDateTime reportExpiredDateTime = getReportExpiredDate(reportCnt, latestApprovalReport);
+
+            //활동 정지 유효기간이 지났을 경우
+            if (reportExpiredDateTime == null || !LocalDate.now().isBefore(reportExpiredDateTime.toLocalDate())) {
+                member.changeToNormal();
+            }
+            //활동 정지 유효기간이 지나지 않았을 경우
+            else {
+                member.changeReportExpiredDateTime(reportExpiredDateTime);
+            }
+        }
+    }
+
+    private LocalDateTime getReportExpiredDate(int reportCnt, Report latestApprovalReport) {
+
+        LocalDateTime reportExpiredDateTime = latestApprovalReport.getModDateTime();
+
+        switch (reportCnt) {
+            case 1:
+                reportExpiredDateTime = null;
+                break;
+            case 2:
+                reportExpiredDateTime = reportExpiredDateTime.plusDays(1);
+                break;
+            case 3:
+                reportExpiredDateTime = reportExpiredDateTime.plusDays(3);
+                break;
+            case 4:
+                reportExpiredDateTime = reportExpiredDateTime.plusDays(7);
+                break;
+            default:
+                reportExpiredDateTime = reportExpiredDateTime.plusMonths(1);
+
+        }
+
+        return reportExpiredDateTime;
     }
 
     /**
