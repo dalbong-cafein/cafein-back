@@ -83,15 +83,17 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
      * 가장 최근 승인 받은 신고 조회
      */
     @Override
-    public Report getLatestApprovalStatusByMemberIdAndNeReportId(Long memberId, Long reportId) {
+    public Optional<Report> getLatestApprovalStatusByMemberIdAndNeReportId(Long memberId, Long reportId) {
 
-        return queryFactory.select(report)
+        Report findReport = queryFactory.select(report)
                 .from(report)
                 .where(report.reportStatus.eq(ReportStatus.APPROVAL),
                         report.toMember.memberId.eq(memberId), report.reportId.ne(reportId))
                 .orderBy(report.reportId.desc())
                 .limit(1)
                 .fetchOne();
+
+        return findReport != null ? Optional.of(findReport) : Optional.empty();
     }
 
     /**

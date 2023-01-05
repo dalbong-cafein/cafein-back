@@ -16,7 +16,7 @@ public interface ReportRepositoryQuerydsl {
 
     Optional<Report> findWithToMemberById(Long reportId);
 
-    Report getLatestApprovalStatusByMemberIdAndNeReportId(Long memberId, Long reportId);
+    Optional<Report> getLatestApprovalStatusByMemberIdAndNeReportId(Long memberId, Long reportId);
 
     Page<Object[]> getReportListOfAdmin(String[] searchType, String keyword, Pageable pageable);
 

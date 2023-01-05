@@ -4,14 +4,17 @@ import com.dalbong.cafein.domain.board.Board;
 import com.dalbong.cafein.domain.coupon.Coupon;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.notice.*;
+import com.dalbong.cafein.domain.notice.detailReportNotice.DetailReportNotice;
 import com.dalbong.cafein.domain.report.report.Report;
 import com.dalbong.cafein.domain.sticker.Sticker;
 import com.dalbong.cafein.dto.notice.NoticeResDto;
 import com.dalbong.cafein.handler.exception.CustomException;
+import com.dalbong.cafein.service.notice.detailReportNotice.DetailReportNoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +28,7 @@ public class NoticeServiceImpl implements NoticeService{
     private final CouponNoticeRepository couponNoticeRepository;
     private final BoardNoticeRepository boardNoticeRepository;
     private final ReportNoticeRepository reportNoticeRepository;
+    private final DetailReportNoticeService detailReportNoticeService;
 
     /**
      * 스티커 지급 알림 등록
@@ -57,24 +61,33 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     public Notice registerReportNotice(Report report, Member toMember, int reportCnt) {
 
+        Notice notice;
         switch (reportCnt){
             case 0:
-                return reportNoticeRepository.save(new ReportNotice(report, toMember,
+                notice = reportNoticeRepository.save(new ReportNotice(report, toMember,
                         "신고 1회를 받았습니다. 신고 정책을 확인해 주세요."));
+                break;
             case 1:
-                return reportNoticeRepository.save(new ReportNotice(report, toMember,
+                notice = reportNoticeRepository.save(new ReportNotice(report, toMember,
                         "신고 2회를 받았습니다. 신고 정책에 따라 하루 동안 카페 등록, 카페 리뷰 작성, 혼잡도 공유 등이 정지됩니다."));
+                break;
             case 2:
-                return reportNoticeRepository.save(new ReportNotice(report, toMember,
+                notice = reportNoticeRepository.save(new ReportNotice(report, toMember,
                         "신고 3회를 받았습니다. 삼 일간 카페 등록, 카페 리뷰 작성, 혼잡도 공유 등이 정지됩니다."));
+                break;
             case 3:
-                return reportNoticeRepository.save(new ReportNotice(report, toMember,
+                notice = reportNoticeRepository.save(new ReportNotice(report, toMember,
                         "신고 4회를 받았습니다. 일주일간 카페 등록, 카페 리뷰 작성, 혼잡도 공유 등이 정지됩니다."));
+                break;
             default:
                 reportCnt += 1;
-                return reportNoticeRepository.save(new ReportNotice(report, toMember,
+                notice = reportNoticeRepository.save(new ReportNotice(report, toMember,
                         "신고 "+ reportCnt +"회를 받았습니다. 한 달간 카페 등록, 카페 리뷰 작성, 혼잡도 공유 등이 정지됩니다."));
         }
+
+        //상세 신고 알림 저장
+        detailReportNoticeService.register(notice, toMember.getReportExpiredDateTime(), LocalDateTime.now());
+        return notice;
     }
 
     /**

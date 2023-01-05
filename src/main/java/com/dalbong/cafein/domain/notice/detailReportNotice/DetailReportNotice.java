@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"report"})
+@ToString(exclude = {"notice"})
 @Entity
 public class DetailReportNotice {
 
@@ -19,9 +19,10 @@ public class DetailReportNotice {
     private Long detailReportNoticeId;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "notice_id")
     private Notice notice;
 
-    private LocalDate reportExpiredDate;
+    private LocalDateTime reportExpiredDateTime;
 
     private LocalDateTime stopPostDateTime;
 

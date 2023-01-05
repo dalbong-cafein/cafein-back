@@ -133,11 +133,12 @@ public class Member extends BaseEntity {
 
 
     public void leave(){
-        this.state = MemberState.LEAVE;
         this.leaveDateTime = LocalDateTime.now();
+        this.state = MemberState.LEAVE;
     }
 
     public void changeToNormal(){
+        this.reportExpiredDateTime = null;
         this.state = MemberState.NORMAL;
     }
 
