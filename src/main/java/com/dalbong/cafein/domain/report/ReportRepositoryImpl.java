@@ -1,12 +1,9 @@
 package com.dalbong.cafein.domain.report;
 
-import com.dalbong.cafein.domain.coupon.Coupon;
-import com.dalbong.cafein.domain.review.Review;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -24,10 +21,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.dalbong.cafein.domain.coupon.QCoupon.coupon;
 import static com.dalbong.cafein.domain.memo.QReportMemo.reportMemo;
+
 import static com.dalbong.cafein.domain.report.QReport.report;
-import static com.dalbong.cafein.domain.review.QReview.review;
 import static org.aspectj.util.LangUtil.isEmpty;
 
 public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
@@ -62,7 +58,8 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
         return queryFactory.select(report)
                 .from(report)
                 .leftJoin(report.toMember).fetchJoin()
-                .where(report.regDateTime.between(LocalDateTime.now().minusDays(1).toLocalDate().atStartOfDay(), LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(23, 59, 59))))
+                .where(report.regDateTime.between(LocalDateTime.now().minusDays(1).toLocalDate().atStartOfDay(),
+                        LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(23, 59, 59))))
                 .fetch();
     }
 
