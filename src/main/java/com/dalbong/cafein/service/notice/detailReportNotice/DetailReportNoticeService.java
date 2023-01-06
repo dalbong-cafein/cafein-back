@@ -46,12 +46,17 @@ public class DetailReportNoticeService {
     }
 
     /**
-     * 상세 신고 알림 조회
+     * 신고 알림 상세 조회
      */
     @Transactional
     public DetailReportNoticeResDto getDetailReportNotice(Long noticeId){
 
         DetailReportNotice detailReportNotice = detailReportNoticeRepository.getDetailReportNotice(noticeId);
+
+        //신고 타입의 알림이 아닐 경우
+        if(detailReportNotice == null){
+            throw new CustomException("해당 알림은 신고 타입이 아닙니다.");
+        }
 
         Review review = reviewRepository.findByIdStoreFetch(detailReportNotice.getReportNotice().getReport().getReview().getReviewId())
                 .orElseThrow(() -> new CustomException("존재하지 않는 리뷰입니다."));

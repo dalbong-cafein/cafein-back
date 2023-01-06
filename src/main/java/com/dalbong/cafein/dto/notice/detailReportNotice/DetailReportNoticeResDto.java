@@ -13,7 +13,7 @@ public class DetailReportNoticeResDto {
     private Long detailReportNoticeId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
-    private LocalDateTime reportExpiredDate;
+    private LocalDateTime reportExpiredDateTime;
 
     private String reportCategoryName;
 
@@ -24,9 +24,10 @@ public class DetailReportNoticeResDto {
     public DetailReportNoticeResDto(DetailReportNotice detailReportNotice, ReportedReviewResDto reportedReviewResDto){
 
         this.detailReportNoticeId = detailReportNotice.getDetailReportNoticeId();
-        this.reportExpiredDate = detailReportNotice.getReportExpiredDateTime();
+        this.reportExpiredDateTime = detailReportNotice.getReportExpiredDateTime() != null ?
+                detailReportNotice.getReportExpiredDateTime().minusDays(1).toLocalDate().atTime(23,59,59) : null;
         this.reportCategoryName = detailReportNotice.getReportNotice().getReport().getReportCategory().getCategoryName();
         this.reportedReviewResDto = reportedReviewResDto;
-        this.isPossibleObjection = detailReportNotice.getStopPostDateTime().plusDays(30).isBefore(LocalDateTime.now());
+        this.isPossibleObjection = !detailReportNotice.getStopPostDateTime().plusDays(30).isBefore(LocalDateTime.now());
     }
 }

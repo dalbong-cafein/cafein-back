@@ -3,7 +3,9 @@ package com.dalbong.cafein.controller;
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.notice.NoticeResDto;
+import com.dalbong.cafein.dto.notice.detailReportNotice.DetailReportNoticeResDto;
 import com.dalbong.cafein.service.notice.NoticeService;
+import com.dalbong.cafein.service.notice.detailReportNotice.DetailReportNoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.util.List;
 public class NoticeController {
 
     private final NoticeService noticeService;
+    private final DetailReportNoticeService detailReportNoticeService;
 
     /**
      * 알림 리스트 조회
@@ -27,6 +30,17 @@ public class NoticeController {
         List<NoticeResDto> noticeResDtoList = noticeService.getNoticeList(principalDetails.getMember().getMemberId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "알림 리스트 조회 성공", noticeResDtoList), HttpStatus.OK);
+    }
+
+    /**
+     * 신고 알림 상세 조회
+     */
+    @GetMapping("/notices/reportType/{noticeId}")
+    public ResponseEntity<?> getReportNotice(@PathVariable("noticeId") Long noticeId){
+
+        DetailReportNoticeResDto detailReportNoticeResDto = detailReportNoticeService.getDetailReportNotice(noticeId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "신고 알림 상세 조회 성공", detailReportNoticeResDto), HttpStatus.OK);
     }
 
     /**
