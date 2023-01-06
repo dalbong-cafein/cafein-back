@@ -61,33 +61,33 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     public Notice registerReportNotice(Report report, Member toMember, int reportCnt) {
 
-        Notice notice;
+        ReportNotice reportNotice;
         switch (reportCnt){
             case 0:
-                notice = reportNoticeRepository.save(new ReportNotice(report, toMember,
+                reportNotice = reportNoticeRepository.save(new ReportNotice(report, toMember,
                         "신고 1회를 받았습니다. 신고 정책을 확인해 주세요."));
                 break;
             case 1:
-                notice = reportNoticeRepository.save(new ReportNotice(report, toMember,
+                reportNotice = reportNoticeRepository.save(new ReportNotice(report, toMember,
                         "신고 2회를 받았습니다. 신고 정책에 따라 하루 동안 카페 등록, 카페 리뷰 작성, 혼잡도 공유 등이 정지됩니다."));
                 break;
             case 2:
-                notice = reportNoticeRepository.save(new ReportNotice(report, toMember,
+                reportNotice = reportNoticeRepository.save(new ReportNotice(report, toMember,
                         "신고 3회를 받았습니다. 삼 일간 카페 등록, 카페 리뷰 작성, 혼잡도 공유 등이 정지됩니다."));
                 break;
             case 3:
-                notice = reportNoticeRepository.save(new ReportNotice(report, toMember,
+                reportNotice = reportNoticeRepository.save(new ReportNotice(report, toMember,
                         "신고 4회를 받았습니다. 일주일간 카페 등록, 카페 리뷰 작성, 혼잡도 공유 등이 정지됩니다."));
                 break;
             default:
                 reportCnt += 1;
-                notice = reportNoticeRepository.save(new ReportNotice(report, toMember,
+                reportNotice = reportNoticeRepository.save(new ReportNotice(report, toMember,
                         "신고 "+ reportCnt +"회를 받았습니다. 한 달간 카페 등록, 카페 리뷰 작성, 혼잡도 공유 등이 정지됩니다."));
         }
 
         //상세 신고 알림 저장
-        detailReportNoticeService.register(notice, toMember.getReportExpiredDateTime(), LocalDateTime.now());
-        return notice;
+        detailReportNoticeService.register(reportNotice, toMember.getReportExpiredDateTime(), LocalDateTime.now());
+        return reportNotice;
     }
 
     /**

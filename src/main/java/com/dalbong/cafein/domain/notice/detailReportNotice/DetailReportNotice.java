@@ -1,6 +1,7 @@
 package com.dalbong.cafein.domain.notice.detailReportNotice;
 
 import com.dalbong.cafein.domain.notice.Notice;
+import com.dalbong.cafein.domain.notice.ReportNotice;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"notice"})
+@ToString(exclude = {"reportNotice"})
 @Entity
 public class DetailReportNotice {
 
@@ -19,12 +20,10 @@ public class DetailReportNotice {
     private Long detailReportNoticeId;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "notice_id")
-    private Notice notice;
+    @JoinColumn(name = "report_notice_id")
+    private ReportNotice reportNotice;
 
     private LocalDateTime reportExpiredDateTime;
 
     private LocalDateTime stopPostDateTime;
-
-
 }
