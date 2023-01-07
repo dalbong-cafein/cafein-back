@@ -37,10 +37,11 @@ public class DetailReportNoticeService {
     public DetailReportNotice register(ReportNotice reportNotice, LocalDateTime reportExpiredDateTime, LocalDateTime stopPostDateTime){
 
         DetailReportNotice detailReportNotice = DetailReportNotice.builder()
-                .reportNotice(reportNotice)
                 .reportExpiredDateTime(reportExpiredDateTime)
                 .stopPostDateTime(stopPostDateTime)
                 .build();
+
+        detailReportNotice.setReportNotice(reportNotice);
 
         return detailReportNoticeRepository.save(detailReportNotice);
     }

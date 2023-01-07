@@ -87,6 +87,7 @@ public class NoticeServiceImpl implements NoticeService{
 
         //상세 신고 알림 저장
         detailReportNoticeService.register(reportNotice, toMember.getReportExpiredDateTime(), LocalDateTime.now());
+
         return reportNotice;
     }
 
@@ -144,7 +145,7 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     public void removeAll(Long principalId) {
 
-        noticeRepository.deleteByMemberId(principalId);
+        noticeRepository.deleteAllByToMemberMemberId(principalId);
     }
 
     /**
