@@ -11,24 +11,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"reportNotice"})
+@ToString
 @Entity
 public class DetailReportNotice {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long detailReportNoticeId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "report_notice_id")
-    private ReportNotice reportNotice;
-
     private LocalDateTime reportExpiredDateTime;
 
     private LocalDateTime stopPostDateTime;
-
-    //연관관계 메서드
-    public void setReportNotice(ReportNotice reportNotice){
-        this.reportNotice = reportNotice;
-        reportNotice.getDetailReportNoticeList().add(this);
-    }
 }

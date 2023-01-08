@@ -194,7 +194,7 @@ public class MemberServiceImpl implements MemberService{
         member.leave();
 
         //회원의 notice, sticker, coupon, heart 데이터 삭제
-        noticeRepository.deleteAllByToMemberMemberId(member.getMemberId());
+        noticeRepository.deleteByMemberId(member.getMemberId());
         stickerRepository.deleteByMember(member);
         couponRepository.deleteByMember(member);
         heartRepository.deleteByMember(member);

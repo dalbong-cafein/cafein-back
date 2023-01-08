@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"report","detailReportNoticeList"})
+@ToString(exclude = {"report","detailReportNotice"})
 @DiscriminatorValue("report")
 @Entity
 public class ReportNotice extends Notice{
@@ -23,13 +23,14 @@ public class ReportNotice extends Notice{
     @JoinColumn(name = "report_id")
     private Report report;
 
-    @OneToMany(mappedBy = "reportNotice", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<DetailReportNotice> detailReportNoticeList;
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinColumn(name = "detail_report_notice_id")
+    private DetailReportNotice detailReportNotice;
 
-    public ReportNotice(Report report, Member toMember, String content){
+    public ReportNotice(Report report, Member toMember, String content, DetailReportNotice detailReportNotice){
         super(toMember, content);
         this.report = report;
-        detailReportNoticeList = new ArrayList<>();
+        this.detailReportNotice = detailReportNotice;
     }
 
 }

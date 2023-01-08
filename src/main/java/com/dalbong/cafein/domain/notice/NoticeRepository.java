@@ -13,6 +13,8 @@ public interface NoticeRepository extends JpaRepository<Notice,Long> {
     @Query("select n from Notice n where n.toMember.memberId =:memberId order by n.noticeId desc")
     List<Notice> getNoticeList(@Param("memberId") Long principalId);
 
-    void deleteAllByToMemberMemberId(Long memberId);
+    @Modifying
+    @Query("delete from Notice n where n.toMember.memberId =:memberId")
+    void deleteByMemberId(@Param("memberId") Long memberId);
 
 }
