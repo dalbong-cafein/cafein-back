@@ -5,7 +5,6 @@ import com.dalbong.cafein.domain.coupon.Coupon;
 import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
-import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.notice.*;
 import com.dalbong.cafein.domain.notice.detailReportNotice.DetailReportNotice;
 import com.dalbong.cafein.domain.notice.detailReportNotice.DetailReportNoticeRepository;
@@ -186,7 +185,8 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     public DetailReportNoticeResDto getDetailReportNotice(Long noticeId) {
 
-        ReportNotice reportNotice = reportNoticeRepository.getDetailReportNotice(noticeId);
+        ReportNotice reportNotice = reportNoticeRepository.getDetailReportNotice(noticeId).orElseThrow(() ->
+                new CustomException("존재하지 않은 신고 알림입니다."));
 
         Review review = reviewRepository.findByIdStoreFetch(reportNotice.getReport().getReview().getReviewId())
                 .orElseThrow(() -> new CustomException("존재하지 않는 리뷰입니다."));

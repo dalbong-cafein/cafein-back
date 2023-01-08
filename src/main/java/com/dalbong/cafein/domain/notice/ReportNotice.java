@@ -3,12 +3,9 @@ package com.dalbong.cafein.domain.notice;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.notice.detailReportNotice.DetailReportNotice;
 import com.dalbong.cafein.domain.report.report.Report;
-import edu.emory.mathcs.backport.java.util.Arrays;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Builder
 @AllArgsConstructor

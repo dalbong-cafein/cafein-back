@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ReportNoticeRepository extends JpaRepository<ReportNotice, Long> {
 
@@ -17,7 +18,7 @@ public interface ReportNoticeRepository extends JpaRepository<ReportNotice, Long
             "join fetch rpn.report rp " +
             "join fetch rp.reportCategory rpc " +
             "where rpn.noticeId =:noticeId")
-    ReportNotice getDetailReportNotice(@Param("noticeId") Long noticeId);
+    Optional<ReportNotice> getDetailReportNotice(@Param("noticeId") Long noticeId);
 
     @Query("select drpn from ReportNotice rpn " +
             "join DetailReportNotice drpn on drpn.detailReportNoticeId = rpn.detailReportNotice.detailReportNoticeId " +
