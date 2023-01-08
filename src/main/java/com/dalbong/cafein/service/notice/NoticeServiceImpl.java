@@ -5,8 +5,10 @@ import com.dalbong.cafein.domain.coupon.Coupon;
 import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.notice.*;
 import com.dalbong.cafein.domain.notice.detailReportNotice.DetailReportNotice;
+import com.dalbong.cafein.domain.notice.detailReportNotice.DetailReportNoticeRepository;
 import com.dalbong.cafein.domain.report.report.Report;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
@@ -36,6 +38,7 @@ public class NoticeServiceImpl implements NoticeService{
     private final BoardNoticeRepository boardNoticeRepository;
     private final ReportNoticeRepository reportNoticeRepository;
     private final ReviewRepository reviewRepository;
+    private final DetailReportNoticeRepository detailReportNoticeRepository;
 
     /**
      * 스티커 지급 알림 등록
@@ -157,7 +160,11 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     public void removeAll(Long principalId) {
 
+        List<DetailReportNotice> detailReportNoticeList = reportNoticeRepository.getDetailReportNoticeByMemberId(principalId);
+
         noticeRepository.deleteByMemberId(principalId);
+
+        detailReportNoticeRepository.deleteInBatch(detailReportNoticeList);
     }
 
     /**

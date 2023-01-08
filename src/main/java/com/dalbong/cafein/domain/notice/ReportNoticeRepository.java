@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface ReportNoticeRepository extends JpaRepository<ReportNotice, Long> {
 
     void deleteByReport(Report report);
@@ -16,4 +18,9 @@ public interface ReportNoticeRepository extends JpaRepository<ReportNotice, Long
             "join fetch rp.reportCategory rpc " +
             "where rpn.noticeId =:noticeId")
     ReportNotice getDetailReportNotice(@Param("noticeId") Long noticeId);
+
+    @Query("select drpn from ReportNotice rpn " +
+            "join DetailReportNotice drpn on drpn.detailReportNoticeId = rpn.detailReportNotice.detailReportNoticeId " +
+            "where rpn.toMember.memberId = :memberId")
+    List<DetailReportNotice> getDetailReportNoticeByMemberId(@Param("memberId") Long memberId);
 }
