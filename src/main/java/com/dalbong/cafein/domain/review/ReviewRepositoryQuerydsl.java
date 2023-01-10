@@ -49,4 +49,6 @@ public interface ReviewRepositoryQuerydsl {
      * 관리자단 오늘 등록된 리뷰 개수 조회
      */
     Long getRegisterCountOfToday();
+
+    List<Object[]> getRankFunction(Long reviewId);
 }

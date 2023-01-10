@@ -3,10 +3,7 @@ package com.dalbong.cafein.util;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.querydsl.core.types.NullExpression;
 import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.NumberTemplate;
+import com.querydsl.core.types.dsl.*;
 import org.springframework.stereotype.Component;
 
 import static com.dalbong.cafein.domain.store.QStore.store;
@@ -28,6 +25,14 @@ public class SqlFunctionUtil {
 
     public static NumberTemplate<Double> radians(Object num) {
         return Expressions.numberTemplate(Double.class, "function('radians',{0})", num);
+    }
+
+    public static NumberTemplate<Integer> rank(){
+        return Expressions.numberTemplate(Integer.class, "function('rank')");
+    }
+
+    public static NumberTemplate<Integer> over(Object partition, Object orderBy){
+        return Expressions.numberTemplate(Integer.class, "function('over', partition {0} order by {1})", partition, orderBy);
     }
 
     public static NumberExpression<Double> calculateDistance(Object lat1, Object lng1, Object lat2, Object lng2){

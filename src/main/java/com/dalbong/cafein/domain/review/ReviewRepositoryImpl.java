@@ -3,15 +3,20 @@ package com.dalbong.cafein.domain.review;
 import com.dalbong.cafein.domain.memo.QMemo;
 import com.dalbong.cafein.domain.memo.QReviewMemo;
 import com.dalbong.cafein.domain.store.QStore;
+import com.dalbong.cafein.util.SqlFunctionUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.apache.commons.math3.analysis.FunctionUtils;
+import org.hibernate.dialect.function.SQLFunction;
+import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -263,6 +268,26 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                         LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59))))
                 .fetchOne();
     }
+
+    @Override
+    public List<Object[]> getRankFunction(Long storeId) {
+
+        List<Tuple> result = queryFactory
+                .select(review, SqlFunctionUtil.rank(), SqlFunctionUtil.over(review.member.memberId, review.regDateTime))
+                .from(review)
+                .where(review.store.storeId.eq(storeId))
+                .fetch();
+
+        if(result.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
+    }
+
+    /**
+     *
+     */
 
     private  BooleanBuilder searchKeyword(String[] searchType, String keyword) {
 
