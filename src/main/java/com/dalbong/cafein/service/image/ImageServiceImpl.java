@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor
@@ -165,11 +166,8 @@ public class ImageServiceImpl implements ImageService{
     @Override
     public void remove(Long imageId){
 
-        System.out.println(imageId);
         //s3 이미지 파일 삭제
         s3Uploader.delete(imageId);
-
-        System.out.println("-------------");
 
         try{
             imageRepository.deleteById(imageId);
@@ -177,5 +175,26 @@ public class ImageServiceImpl implements ImageService{
             throw new CustomException("존재하는 이미지가 없습니다.");
         }
 
+    }
+
+    /**
+     * 대표 이미지 설정
+     */
+    @Transactional
+    @Override
+    public void setUpRepresentativeImage(Long storeId, Long imageId) {
+
+        Image image = imageRepository.findById(imageId).orElseThrow(() ->
+                new CustomException("존재하지 않는 이미지입니다."));
+
+        image.setUpRepresentative();
+
+        //기존 대표 이미지 취소
+        Optional<Image> optRepresentativeImage = imageRepository.getRepresentativeImage(storeId);
+
+        if(optRepresentativeImage.isPresent()){
+            Image oldRepresentativeImage = optRepresentativeImage.get();
+            oldRepresentativeImage.cancelRepresentative();
+        }
     }
 }

@@ -32,4 +32,6 @@ public interface ImageService {
     Image saveEventImage(Event event, MultipartFile imageFile) throws IOException;
 
     void remove(Long imageId);
+
+    void setUpRepresentativeImage(Long storeId, Long ImageId);
 }
