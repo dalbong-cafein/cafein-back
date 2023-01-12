@@ -1,8 +1,7 @@
 package com.dalbong.cafein.domain.notice;
 
 import com.dalbong.cafein.domain.member.Member;
-import com.dalbong.cafein.domain.report.Report;
-import com.dalbong.cafein.domain.sticker.Sticker;
+import com.dalbong.cafein.domain.report.report.Report;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

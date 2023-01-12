@@ -190,7 +190,8 @@ public class MemberRepositoryImpl implements MemberRepositoryQuerydsl{
         return queryFactory.select(member)
                 .from(member)
                 .where(member.reportExpiredDateTime.between(LocalDateTime.now().toLocalDate().atStartOfDay(),
-                        LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59))))
+                        LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59))),
+                        member.state.eq(MemberState.SUSPENSION))
                 .fetch();
     }
 

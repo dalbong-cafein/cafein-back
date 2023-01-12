@@ -2,23 +2,22 @@ package com.dalbong.cafein.service.report;
 
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
-import com.dalbong.cafein.domain.member.MemberState;
-import com.dalbong.cafein.domain.memo.ReportMemo;
-import com.dalbong.cafein.domain.notice.NoticeRepository;
-import com.dalbong.cafein.domain.report.Report;
-import com.dalbong.cafein.domain.report.ReportRepository;
+import com.dalbong.cafein.domain.report.ReportStatus;
+import com.dalbong.cafein.domain.report.report.Report;
+import com.dalbong.cafein.domain.report.report.ReportRepository;
+import com.dalbong.cafein.domain.report.reportHistory.ReportHistory;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.review.ReviewRepository;
 import com.dalbong.cafein.dto.PossibleRegistrationResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportResDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
+import com.dalbong.cafein.dto.admin.reportHistory.AdminReportHistoryResDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.PageResultDTO;
 import com.dalbong.cafein.dto.report.ReportRegDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.notice.NoticeService;
+import com.dalbong.cafein.service.reportHistory.ReportHistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,9 +26,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,7 @@ public class ReportServiceImpl implements ReportService{
     private final ReviewRepository reviewRepository;
     private final NoticeService noticeService;
     private final MemberRepository memberRepository;
+    private final ReportHistoryService reportHistoryService;
 
     /**
      * 신고 가능 여부 체크
@@ -75,6 +77,9 @@ public class ReportServiceImpl implements ReportService{
 
         reportRepository.save(report);
 
+        //신고 상태 히스토리 생성 - 대기
+        reportHistoryService.save(report, ReportStatus.WAIT);
+
         return report;
     }
 
@@ -93,6 +98,14 @@ public class ReportServiceImpl implements ReportService{
 
         //리뷰 정책 적용
         reportPolicy(report, report.getToMember());
+
+        //신고 상태 히스토리 생성 - 승인
+        reportHistoryService.save(report, ReportStatus.APPROVAL);
+
+        //해당 리뷰 게시중단
+        Review review = reviewRepository.findById(report.getReview().getReviewId()).orElseThrow(() ->
+                new CustomException("존재하지 않는 리뷰입니다."));
+        review.stopPosting();
     }
 
     /**
@@ -105,7 +118,67 @@ public class ReportServiceImpl implements ReportService{
         Report report = reportRepository.findById(reportId).orElseThrow(() ->
                 new CustomException("존재하지 않는 신고입니다."));
 
+        //승인 -> 반려
+        if(report.getReportStatus().equals(ReportStatus.APPROVAL)){
+
+            Member member = memberRepository.findById(report.getToMember().getMemberId()).orElseThrow(() ->
+                    new CustomException("존재하지 않는 회원입니다."));
+            //패널티 철회
+            withdrawPenalty(report, member);
+        }
+
         report.reject();
+
+        //신고 상태 히스토리 생성 - 반려
+        reportHistoryService.save(report, ReportStatus.REJECT);
+    }
+
+    private void withdrawPenalty(Report report, Member member) {
+
+        int reportCnt = (int) reportRepository.countApprovalStatusByMemberIdAndNeReportId(member.getMemberId(), report.getReportId());
+
+        Optional<Report> optLatestApprovalReport = reportRepository.getLatestApprovalStatusByMemberIdAndNeReportId(member.getMemberId(), report.getReportId());
+
+        LocalDateTime reportExpiredDateTime = getReportExpiredDate(reportCnt, optLatestApprovalReport);
+
+        //활동 정지 유효기간이 지났을 경우
+        if (reportExpiredDateTime == null || !LocalDate.now().isBefore(reportExpiredDateTime.toLocalDate())) {
+            member.changeToNormal();
+        }
+        //활동 정지 유효기간이 지나지 않았을 경우
+        else {
+            member.changeReportExpiredDateTime(reportExpiredDateTime);
+        }
+    }
+
+    private LocalDateTime getReportExpiredDate(int reportCnt, Optional<Report> optLatestApprovalReport) {
+
+        if(optLatestApprovalReport.isPresent()){
+
+            LocalDateTime reportExpiredDateTime = optLatestApprovalReport.get().getModDateTime();
+
+            switch (reportCnt) {
+                case 0:
+                case 1:
+                    reportExpiredDateTime = null;
+                    break;
+                case 2:
+                    reportExpiredDateTime = reportExpiredDateTime.plusDays(1);
+                    break;
+                case 3:
+                    reportExpiredDateTime = reportExpiredDateTime.plusDays(3);
+                    break;
+                case 4:
+                    reportExpiredDateTime = reportExpiredDateTime.plusDays(7);
+                    break;
+                default:
+                    reportExpiredDateTime = reportExpiredDateTime.plusMonths(1);
+            }
+            return reportExpiredDateTime;
+
+        }else{
+                return null;
+            }
     }
 
     /**
@@ -172,8 +245,15 @@ public class ReportServiceImpl implements ReportService{
 
         List<Object[]> reportList = reportRepository.getReportListOfAdminByMemberId(memberId);
 
-        return reportList.stream().map(arr -> new AdminReportResDto((Report) arr[0], (Long) arr[1]))
-                        .collect(Collectors.toList());
+        return reportList.stream().map(arr -> {
+
+            Report report = (Report) arr[0];
+
+            //신고 상태 히스토리 리스트
+            List<AdminReportHistoryResDto> reportHistoryResDtoList = getReportHistoryList(report);
+
+            return new AdminReportResDto((Report) arr[0], reportHistoryResDtoList, (Long) arr[1]);
+        }).collect(Collectors.toList());
     }
 
 
@@ -198,7 +278,10 @@ public class ReportServiceImpl implements ReportService{
 
             Report report = (Report) arr[0];
 
-            return new AdminReportResDto(report, (Long) arr[1]);
+            //신고 상태 히스토리 리스트
+            List<AdminReportHistoryResDto> reportHistoryResDtoList = getReportHistoryList(report);
+
+            return new AdminReportResDto(report, reportHistoryResDtoList, (Long) arr[1]);
         });
 
         return new AdminReportListResDto<>(results.getTotalElements(), new PageResultDTO<>(results, fn));
@@ -214,8 +297,22 @@ public class ReportServiceImpl implements ReportService{
         List<Report> reportList = reportRepository.getCustomLimitReportListOfAdmin(limit);
 
         List<AdminReportResDto> adminReportResDtoList = reportList.stream().map(report ->
-                new AdminReportResDto(report)).collect(Collectors.toList());
+                new AdminReportResDto(report, getReportHistoryList(report))).collect(Collectors.toList());
 
         return new AdminReportListResDto<>(reportList.size(), adminReportResDtoList);
+    }
+
+    private List<AdminReportHistoryResDto> getReportHistoryList(Report report) {
+
+        List<ReportHistory> reportHistoryList = report.getReportHistoryList();
+
+        List<AdminReportHistoryResDto> reportHistoryResDtoList = new ArrayList<>();
+
+        if(reportHistoryList != null && !reportHistoryList.isEmpty()){
+            for(ReportHistory reportHistory : reportHistoryList){
+                reportHistoryResDtoList.add(new AdminReportHistoryResDto(reportHistory));
+            }
+        }
+        return reportHistoryResDtoList;
     }
 }
