@@ -1,5 +1,6 @@
 package com.dalbong.cafein.domain.report.report;
 
+import com.dalbong.cafein.domain.memo.QReportMemo;
 import com.dalbong.cafein.domain.report.ReportStatus;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -12,8 +13,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import javax.persistence.EntityManager;
@@ -60,7 +59,8 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
         return queryFactory.select(report)
                 .from(report)
                 .leftJoin(report.toMember).fetchJoin()
-                .where(report.regDateTime.between(LocalDateTime.now().minusDays(1).toLocalDate().atStartOfDay(), LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(23, 59, 59))))
+                .where(report.regDateTime.between(LocalDateTime.now().minusDays(1).toLocalDate().atStartOfDay(),
+                        LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(23, 59, 59))))
                 .fetch();
     }
 

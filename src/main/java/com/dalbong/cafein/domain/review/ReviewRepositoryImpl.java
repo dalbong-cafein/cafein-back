@@ -1,8 +1,5 @@
 package com.dalbong.cafein.domain.review;
 
-import com.dalbong.cafein.domain.memo.QMemo;
-import com.dalbong.cafein.domain.memo.QReviewMemo;
-import com.dalbong.cafein.domain.store.QStore;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
@@ -27,12 +24,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
-import static com.dalbong.cafein.domain.memo.QMemo.memo;
 import static com.dalbong.cafein.domain.memo.QReviewMemo.reviewMemo;
 import static com.dalbong.cafein.domain.review.QReview.review;
-import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
 
 public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
