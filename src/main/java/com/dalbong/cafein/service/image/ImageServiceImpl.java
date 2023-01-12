@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -185,11 +186,12 @@ public class ImageServiceImpl implements ImageService{
     public void setUpRepresentativeImageOfStore(Long storeId, Long imageId) {
 
         //기존 대표 이미지 취소
-        Optional<Image> optRepresentativeImage = imageRepository.getRepresentativeImageOfStore(storeId);
+        Long oldRepresentImageId = imageRepository.getRepresentativeImageOfStore(storeId);
+        if (oldRepresentImageId != null){
+            Image oldRepresentImage = imageRepository.findById(oldRepresentImageId).orElseThrow(() ->
+                    new CustomException("존재하지 않는 이미지입니다."));
 
-        if(optRepresentativeImage.isPresent()){
-            Image oldRepresentativeImage = optRepresentativeImage.get();
-            oldRepresentativeImage.cancelRepresentative();
+            oldRepresentImage.cancelRepresentative();
         }
 
         //새로운 대표 이미지 설정

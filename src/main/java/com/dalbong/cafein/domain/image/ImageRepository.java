@@ -8,14 +8,14 @@ import java.util.Optional;
 
 public interface ImageRepository extends JpaRepository<Image,Long> {
 
-    @Query(value = "select i.image_id from Store_image si " +
-            "join Image i on i.image_id = si.image_id " +
+    @Query(value = "select i.image_id from store_image si " +
+            "join image i on i.image_id = si.image_id " +
             "where si.store_id =:storeId and i.is_represent = true " +
             "UNION " +
-            "select i.image_id from Review_image ri " +
-            "join Image i on i.image_id = ri.image_id " +
-            "join Review r on r.review_id = ri.review_id " +
+            "select i.image_id from review_image ri " +
+            "join image i on i.image_id = ri.image_id " +
+            "join review r on r.review_id = ri.review_id " +
             "where r.store_id =:storeId and i.is_represent = true", nativeQuery = true)
-    Optional<Image> getRepresentativeImageOfStore(@Param("storeId") Long storeId);
+   Long getRepresentativeImageOfStore(@Param("storeId") Long storeId);
 
 }
