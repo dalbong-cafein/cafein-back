@@ -33,5 +33,5 @@ public interface ImageService {
 
     void remove(Long imageId);
 
-    void setUpRepresentativeImage(Long storeId, Long ImageId);
+    void setUpRepresentativeImageOfStore(Long storeId, Long ImageId);
 }
