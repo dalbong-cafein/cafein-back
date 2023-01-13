@@ -16,6 +16,8 @@ public interface StoreService {
 
     void modify(StoreUpdateDto storeUpdateDto, Long principalId) throws IOException;
 
+    void setUpRepresentImage(Long storeId, Long presentImageId);
+
     void remove(Long storeId);
 
     List<StoreResDto> getStoreList(StoreSearchRequestDto storeSearchRequestDto, Long principalId);

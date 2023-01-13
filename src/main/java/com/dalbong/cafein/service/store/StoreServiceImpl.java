@@ -52,6 +52,7 @@ public class StoreServiceImpl implements StoreService{
     private final StoreRepository storeRepository;
     private final BusinessHoursRepository businessHoursRepository;
     private final ImageService imageService;
+    private final ImageRepository imageRepository;
     private final ReviewService reviewService;
     private final ReviewImageRepository reviewImageRepository;
     private final StoreImageRepository storeImageRepository;
@@ -151,6 +152,27 @@ public class StoreServiceImpl implements StoreService{
 
         //최신 수정자 변경
         store.changeModMember(member);
+    }
+
+    /**
+     * 카페 대표 이미지 설정
+     */
+    @Transactional
+    @Override
+    public void setUpRepresentImage(Long storeId, Long presentImageId) {
+
+        //기존 대표 이미지 취소
+        Image oldRepresentImage = imageService.getRepresentImageOfStore(storeId);
+
+        if(oldRepresentImage != null){
+            oldRepresentImage.cancelRepresentative();
+        }
+
+        //새로운 대표 이미지 설정
+        Image newRepresentImage = imageRepository.findById(presentImageId).orElseThrow(() ->
+                new CustomException("존재하지 않는 이미지입니다."));
+
+        newRepresentImage.setUpRepresentative();
     }
 
     private void updateStoreImage(Store store, Member regMember, List<MultipartFile> updateImageFiles, List<Long> deleteImageIdList, boolean isCafein) throws IOException {
@@ -544,7 +566,18 @@ public class StoreServiceImpl implements StoreService{
         //store 이미지 리스트
         List<ImageDto> storeImageDtoList = getStoreImageDtoList(store);
 
+        //대표 이미지
+        findRepresentImage(storeImageDtoList, reviewImageDtoList);
+
         return new AdminDetailStoreResDto(store, (int)arr[1], (long) arr[2], (int)arr[3], reviewImageDtoList, storeImageDtoList);
+    }
+
+    private Image findRepresentImage(List<ImageDto> storeImageDtoList, List<ImageDto> reviewImageDtoList) {
+
+        //storeImageDtoList.stream().filter().findAny()
+
+        return null;
+
     }
 
     /**

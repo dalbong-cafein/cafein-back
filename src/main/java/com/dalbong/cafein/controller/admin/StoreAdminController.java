@@ -26,7 +26,6 @@ import java.io.IOException;
 public class StoreAdminController {
 
     private final StoreService storeService;
-    private final ImageService imageService;
 
     /**
      * 관리자단 카페 등록
@@ -61,7 +60,7 @@ public class StoreAdminController {
     @PatchMapping("/stores/{storeId}/representation-image")
     public ResponseEntity<?> setUpRepresentativeImage(@Validated @RequestBody AdminRepresentImageSetUpDto adminRepresentImageSetUpDto, BindingResult bindingResult){
 
-        imageService.setUpRepresentativeImageOfStore(adminRepresentImageSetUpDto.getStoreId(),
+        storeService.setUpRepresentImage(adminRepresentImageSetUpDto.getStoreId(),
                 adminRepresentImageSetUpDto.getRepresentImageId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 카페 대표 이미지 설정 성공",null), HttpStatus.OK);

@@ -48,6 +48,8 @@ public class DetailStoreResDto {
 
     private double latY;
 
+    private ImageDto representImage;
+
     private List<ImageDto> reviewImageList;
 
     private List<ImageDto> storeImageList;

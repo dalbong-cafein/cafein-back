@@ -183,21 +183,15 @@ public class ImageServiceImpl implements ImageService{
      */
     @Transactional
     @Override
-    public void setUpRepresentativeImageOfStore(Long storeId, Long imageId) {
+    public Image getRepresentImageOfStore(Long storeId) {
 
-        //기존 대표 이미지 취소
-        Long oldRepresentImageId = imageRepository.getRepresentativeImageOfStore(storeId);
-        if (oldRepresentImageId != null){
-            Image oldRepresentImage = imageRepository.findById(oldRepresentImageId).orElseThrow(() ->
+        Long representImageId = imageRepository.getRepresentativeImageOfStore(storeId);
+
+        if (representImageId != null) {
+            return imageRepository.findById(representImageId).orElseThrow(() ->
                     new CustomException("존재하지 않는 이미지입니다."));
-
-            oldRepresentImage.cancelRepresentative();
         }
 
-        //새로운 대표 이미지 설정
-        Image image = imageRepository.findById(imageId).orElseThrow(() ->
-                new CustomException("존재하지 않는 이미지입니다."));
-
-        image.setUpRepresentative();
+        return null;
     }
 }
