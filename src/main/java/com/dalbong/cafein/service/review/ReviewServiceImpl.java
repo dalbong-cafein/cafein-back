@@ -277,6 +277,7 @@ public class ReviewServiceImpl implements ReviewService{
                 //review 이미지 리스트
                 List<ImageDto> reviewImageDtoList = getReviewImageDtoList(review);
 
+                //TODO 대표 이미지로 변경
                 //store 이미지
                 ImageDto storeImageDto = null;
 

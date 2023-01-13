@@ -60,7 +60,7 @@ public class DetailStoreResDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime modDateTime;
 
-    public DetailStoreResDto(Store store, Double congestionScoreAvg, ImageDto memberImageDto,
+    public DetailStoreResDto(Store store, Double congestionScoreAvg, ImageDto memberImageDto, ImageDto representImageDto,
                              List<ImageDto> reviewImageDtoList, List<ImageDto> storeImageDtoList,Long principalId){
 
         this.storeId = store.getStoreId();
@@ -78,6 +78,7 @@ public class DetailStoreResDto {
         this.congestionScoreAvg = congestionScoreAvg;
         this.lngX = store.getLngX();
         this.latY = store.getLatY();
+        this.representImage = representImageDto;
         this.reviewImageList = reviewImageDtoList;
         this.storeImageList = storeImageDtoList;
         this.regDateTime = store.getRegDateTime();

@@ -426,7 +426,8 @@ public class StoreServiceImpl implements StoreService{
         //조회수 증가
         store.increaseViewCnt();
 
-        return new DetailStoreResDto(store, (Double) arr[2], memberImageDto, reviewImageDtoList, storeImageDtoList, principalId);
+        return new DetailStoreResDto(store, (Double) arr[2], memberImageDto,
+                representImageDto, reviewImageDtoList, storeImageDtoList, principalId);
     }
 
     /**
@@ -579,31 +580,6 @@ public class StoreServiceImpl implements StoreService{
                 representImageDto, reviewImageDtoList, storeImageDtoList);
     }
 
-    private ImageDto toRepresentImageDto(Image representImage) {
-
-        ImageDto representImageDto = null;
-
-        //StoreImage 일 경우
-        if(representImage instanceof StoreImage){
-            StoreImage storeImage = (StoreImage) representImage;
-
-            //지연 로딩 발생
-            representImageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(),
-                    storeImage.getRegMember().getNickname(), storeImage.getIsCafein());
-        }
-
-        //reviewImage 일 경우
-        if(representImage instanceof ReviewImage){
-            ReviewImage reviewImage = (ReviewImage) representImage;
-
-            //지연 로딩 발생
-            representImageDto = new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl(),
-                    reviewImage.getReview().getMember().getNickname());
-        }
-
-        return representImageDto;
-    }
-
     /**
      * 관리자단 회원별 내 카페 리스트 조회
      */
@@ -635,6 +611,32 @@ public class StoreServiceImpl implements StoreService{
         return storeRepository.countByRegMemberId(memberId);
     }
 
+    private ImageDto toRepresentImageDto(Image representImage) {
+
+        ImageDto representImageDto = null;
+
+        //StoreImage 일 경우
+        if(representImage instanceof StoreImage){
+            StoreImage storeImage = (StoreImage) representImage;
+
+            //지연 로딩 발생
+            representImageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(),
+                    storeImage.getRegMember().getNickname(), storeImage.getIsCafein());
+        }
+
+        //reviewImage 일 경우
+        if(representImage instanceof ReviewImage){
+            ReviewImage reviewImage = (ReviewImage) representImage;
+
+            //지연 로딩 발생
+            representImageDto = new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl(),
+                    reviewImage.getReview().getMember().getNickname());
+        }
+
+        return representImageDto;
+    }
+
+    //TODO 카페 리스트 조회 시 ImageDto 따로 설계 필요 - 케이스별 ImageDto 분리
     public List<ImageDto> getCustomSizeImageList(Store store, int size){
 
         List<ImageDto> imageDtoList = new ArrayList<>();
@@ -642,43 +644,52 @@ public class StoreServiceImpl implements StoreService{
         //조회하는 사진 개수 카운트
         int cnt = 0;
 
-        //size 개수 만큼 storeImage 이미지 불러오기
+        //storeImage 이미지 불러오기
         List<StoreImage> storeImageList = store.getStoreImageList();
 
         //최신순 조회
         Collections.reverse(storeImageList);
 
         for(StoreImage storeImage : storeImageList){
+            if(storeImage.getIsRepresent()){
+                //대표 이미지 index: 0
+                imageDtoList.add(0,new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
+                cnt += 1;
 
-            imageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
-            cnt += 1;
-            if(cnt >= size) break;
+            }else if(cnt<size){
+                imageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
+                cnt += 1;
+            }
         }
 
-        //storeImage 개수가 size 미만일 경우
-        if(imageDtoList.size() < size){
+        //reviewImage 이미지 불러오기
+        List<Review> reviewList = store.getReviewList();
 
-            List<Review> reviewList = store.getReviewList();
+        for(Review review : reviewList){
 
-            if(!reviewList.isEmpty()){
-                for(Review review : reviewList){
+            List<ReviewImage> reviewImageList = review.getReviewImageList();
 
-                    List<ReviewImage> reviewImageList = review.getReviewImageList();
+            //최신순 조회
+            Collections.reverse(reviewImageList);
 
-                    //최신순 조회
-                    Collections.reverse(reviewImageList);
+            if(!reviewImageList.isEmpty()){
+                for(ReviewImage reviewImage : reviewImageList){
+                    if(reviewImage.getIsRepresent()){
+                        //대표 이미지 index:0
+                        imageDtoList.add(0, new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                        cnt += 1;
 
-                    //TODO 카페 리스트 조회 시 ImageDto 따로 설계 필요 - 케이스별 ImageDto 분리
-                    if(!reviewImageList.isEmpty()){
-                        for(ReviewImage reviewImage : reviewImageList){
-
-                            imageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
-                            cnt += 1;
-                            if(cnt >= size) break;
-                        }
+                    }else if(cnt<size){
+                        imageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                        cnt += 1;
                     }
                 }
             }
+        }
+
+        //size 초과 시 대표 이미지가 삽입 됐을 수 있으니 size 체크 - 대표 이미지는 카페별 1개
+        if(imageDtoList.size() > size){
+            imageDtoList.remove(size);
         }
 
         return imageDtoList;
@@ -694,7 +705,6 @@ public class StoreServiceImpl implements StoreService{
             Collections.reverse(reviewImageList);
 
             for(ReviewImage reviewImage : reviewImageList){
-
                 //대표 이미지는 통과
                 if(reviewImage.equals(representImage)) continue;
 
@@ -712,11 +722,11 @@ public class StoreServiceImpl implements StoreService{
         List<StoreImage> storeImageList = storeImageRepository.findWithRegMemberByStoreId(store.getStoreId());
 
         if(storeImageList != null && !storeImageList.isEmpty()){
+
             //최신순 조회
             Collections.reverse(storeImageList);
 
-            for (StoreImage storeImage : store.getStoreImageList()){
-
+            for (StoreImage storeImage : storeImageList){
                 //대표 이미지는 통과
                 if(storeImage.equals(representImage)) continue;
 
