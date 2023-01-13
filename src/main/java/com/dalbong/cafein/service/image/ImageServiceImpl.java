@@ -179,7 +179,7 @@ public class ImageServiceImpl implements ImageService{
     }
 
     /**
-     * 카페 대표 이미지 설정
+     * 카페 대표 이미지 조회
      */
     @Transactional
     @Override

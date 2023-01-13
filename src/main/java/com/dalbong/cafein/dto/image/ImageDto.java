@@ -1,5 +1,8 @@
 package com.dalbong.cafein.dto.image;
 
+import com.dalbong.cafein.domain.image.Image;
+import com.dalbong.cafein.domain.image.ReviewImage;
+import com.dalbong.cafein.domain.image.StoreImage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
