@@ -70,29 +70,37 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     public Notice registerReportNotice(Report report, Member toMember, int reportCnt) {
 
-        //활동 제한 기한
+
         LocalDateTime reportExpiredDateTime = toMember.getReportExpiredDateTime();
-        int year = reportExpiredDateTime.getYear();
-        int month = reportExpiredDateTime.getMonthValue();
-        int day = reportExpiredDateTime.getDayOfMonth()-1;
+
 
         DetailReportNotice detailReportNotice = DetailReportNotice.builder()
-                .reportExpiredDateTime(toMember.getReportExpiredDateTime())
+                .reportExpiredDateTime(reportExpiredDateTime)
                 .stopPostDateTime(LocalDateTime.now())
                 .build();
 
+
         //신고 텍스트
-        String reportText = "작성한 리뷰에 대해 신고가 접수되어 카페인 활동이 제한되었습니다. " +
-                "신고 정책에 따라 하루 동안 카페 리뷰 작성, 혼잡도 공유 활동이 제한되며 " +
-                "신고된 리뷰는 게시중단 처리됩니다."+System.lineSeparator()+
-                "*활동 제한 기한: ~ "+year+"년 "+month+"월 "+day+"일까지";
+        String reportText = "작성한 리뷰에 대해 신고가 접수되어 안내드립니다.";
+        if(reportExpiredDateTime != null){
+
+            //활동 제한 기한
+            int year = reportExpiredDateTime.getYear();
+            int month = reportExpiredDateTime.getMonthValue();
+            int day = reportExpiredDateTime.getDayOfMonth()-1;
+
+            reportText = "작성한 리뷰에 대해 신고가 접수되어 카페인 활동이 제한되었습니다. " +
+                    "신고 정책에 따라 하루 동안 카페 리뷰 작성, 혼잡도 공유 활동이 제한되며 " +
+                    "신고된 리뷰는 게시중단 처리됩니다."+System.lineSeparator()+
+                    "*활동 제한 기한: ~ "+year+"년 "+month+"월 "+day+"일까지";
+        }
 
         ReportNotice reportNotice;
 
         switch (reportCnt) {
             case 0:
                 reportNotice = reportNoticeRepository.save(new ReportNotice(report, toMember,
-                        "[신고 1회] 작성한 리뷰에 대해 신고가 접수되어 안내드립니다.", detailReportNotice));
+                        "[신고 1회] " + reportText, detailReportNotice));
                 break;
             case 1:
                 reportNotice = reportNoticeRepository.save(new ReportNotice(report, toMember,
