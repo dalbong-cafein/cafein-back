@@ -277,13 +277,13 @@ public class ReviewServiceImpl implements ReviewService{
                 //review 이미지 리스트
                 List<ImageDto> reviewImageDtoList = getReviewImageDtoList(review);
 
-                //TODO 대표 이미지로 변경
                 //store 이미지
                 ImageDto storeImageDto = null;
 
-                if (review.getStore().getStoreImageList() != null && !review.getStore().getStoreImageList().isEmpty()) {
-                    StoreImage storeImage = review.getStore().getStoreImageList().get(0);
-                    storeImageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+                List<ImageDto> storeImageDtoList = imageService.getCustomSizeImageList(review.getStore(), 1);
+
+                if(!storeImageDtoList.isEmpty()){
+                    storeImageDto = storeImageDtoList.get(0);
                 }
 
                 return new MyReviewResDto(review, (long) arr[1], reviewImageDtoList, storeImageDto);

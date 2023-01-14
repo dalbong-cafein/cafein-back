@@ -9,6 +9,7 @@ import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.dto.image.ImageDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -34,4 +35,6 @@ public interface ImageService {
     void remove(Long imageId);
 
     Image getRepresentImageOfStore(Long storeId);
+
+    List<ImageDto> getCustomSizeImageList(Store store, int size);
 }

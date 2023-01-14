@@ -79,8 +79,6 @@ public class StoreServiceImpl implements StoreService{
             throw new CustomException("활동이 정지된 회원입니다.");
         }
 
-        System.out.println( storeRegDto.getAddress());
-
         //카페 중복 등록 예외 처리
         if(storeRepository.existAddress(storeRegDto.getAddress())){
             throw new CustomException("이미 등록된 카페입니다.");
@@ -258,7 +256,7 @@ public class StoreServiceImpl implements StoreService{
             BusinessHoursInfoDto businessHoursInfoDto = new BusinessHoursInfoDto(businessInfoMap);
 
             //최대 이미지 4개 불러오기
-            List<ImageDto> imageDtoList = getCustomSizeImageList(store, 4);
+            List<ImageDto> imageDtoList = imageService.getCustomSizeImageList(store, 4);
 
             return new StoreResDto(store, recommendPercent, businessHoursInfoDto, storeQueryDto.getUserDistance(),
                     imageDtoList, storeQueryDto.getHeartCnt(), storeQueryDto.getCongestionAvg(), principal);
@@ -285,7 +283,7 @@ public class StoreServiceImpl implements StoreService{
             //첫번째 이미지 불러오기
             ImageDto imageDto = null;
 
-            List<ImageDto> imageDtoList = getCustomSizeImageList(store, 1);
+            List<ImageDto> imageDtoList = imageService.getCustomSizeImageList(store, 1);
 
             if(!imageDtoList.isEmpty()){
                 imageDto = imageDtoList.get(0);
@@ -317,7 +315,7 @@ public class StoreServiceImpl implements StoreService{
             //첫번째 이미지 불러오기
             ImageDto imageDto = null;
 
-            List<ImageDto> imageDtoList = getCustomSizeImageList(store, 1);
+            List<ImageDto> imageDtoList = imageService.getCustomSizeImageList(store, 1);
 
             if(!imageDtoList.isEmpty()){
                 imageDto = imageDtoList.get(0);
@@ -349,7 +347,7 @@ public class StoreServiceImpl implements StoreService{
             //첫번째 이미지 불러오기
             ImageDto imageDto = null;
 
-            List<ImageDto> imageDtoList = getCustomSizeImageList(store, 1);
+            List<ImageDto> imageDtoList = imageService.getCustomSizeImageList(store, 1);
 
             if(!imageDtoList.isEmpty()){
                 imageDto = imageDtoList.get(0);
@@ -383,7 +381,7 @@ public class StoreServiceImpl implements StoreService{
             BusinessHoursInfoDto businessHoursInfoDto = new BusinessHoursInfoDto(businessInfoMap);
 
             //최대 이미지 3개 불러오기
-            List<ImageDto> imageDtoList = getCustomSizeImageList(store, 3);
+            List<ImageDto> imageDtoList = imageService.getCustomSizeImageList(store, 3);
 
             //거리 계산
             double distance = DistanceUtil.calculateDistance(store.getLatY(), store.getLngX(), findStore.getLatY(), findStore.getLngX(), "meter");
@@ -542,7 +540,7 @@ public class StoreServiceImpl implements StoreService{
             //첫번째 이미지 불러오기
             ImageDto imageDto = null;
 
-            List<ImageDto> imageDtoList = getCustomSizeImageList(store, 1);
+            List<ImageDto> imageDtoList = imageService.getCustomSizeImageList(store, 1);
 
             if(!imageDtoList.isEmpty()){
                 imageDto = imageDtoList.get(0);
@@ -634,65 +632,6 @@ public class StoreServiceImpl implements StoreService{
         }
 
         return representImageDto;
-    }
-
-    //TODO 카페 리스트 조회 시 ImageDto 따로 설계 필요 - 케이스별 ImageDto 분리
-    public List<ImageDto> getCustomSizeImageList(Store store, int size){
-
-        List<ImageDto> imageDtoList = new ArrayList<>();
-
-        //조회하는 사진 개수 카운트
-        int cnt = 0;
-
-        //storeImage 이미지 불러오기
-        List<StoreImage> storeImageList = store.getStoreImageList();
-
-        //최신순 조회
-        Collections.reverse(storeImageList);
-
-        for(StoreImage storeImage : storeImageList){
-            if(storeImage.getIsRepresent()){
-                //대표 이미지 index: 0
-                imageDtoList.add(0,new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
-                cnt += 1;
-
-            }else if(cnt<size){
-                imageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
-                cnt += 1;
-            }
-        }
-
-        //reviewImage 이미지 불러오기
-        List<Review> reviewList = store.getReviewList();
-
-        for(Review review : reviewList){
-
-            List<ReviewImage> reviewImageList = review.getReviewImageList();
-
-            //최신순 조회
-            Collections.reverse(reviewImageList);
-
-            if(!reviewImageList.isEmpty()){
-                for(ReviewImage reviewImage : reviewImageList){
-                    if(reviewImage.getIsRepresent()){
-                        //대표 이미지 index:0
-                        imageDtoList.add(0, new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
-                        cnt += 1;
-
-                    }else if(cnt<size){
-                        imageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
-                        cnt += 1;
-                    }
-                }
-            }
-        }
-
-        //size 초과 시 대표 이미지가 삽입 됐을 수 있으니 size 체크 - 대표 이미지는 카페별 1개
-        if(imageDtoList.size() > size){
-            imageDtoList.remove(size);
-        }
-
-        return imageDtoList;
     }
 
     private List<ImageDto> getReviewImageDtoList(Store store, Image representImage) {
