@@ -35,6 +35,8 @@ public class AdminDetailReviewResDto {
 
     private String content;
 
+    private Boolean isPost;
+
     private List<ImageDto> reviewImageDtoList;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
@@ -53,6 +55,7 @@ public class AdminDetailReviewResDto {
         this.recommendation = review.getRecommendation();
         this.detailEvaluation = review.getDetailEvaluation();
         this.content = review.getContent();
+        this.isPost = review.getIsPost();
         this.regDateTime = review.getRegDateTime();
         this.modDateTime = review.getModDateTime();
         this.reviewImageDtoList = reviewImageDtoList;

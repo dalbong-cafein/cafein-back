@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class EventRegDto {
 
-    @NotNull
     private Long boardId;
 
     @NotNull
