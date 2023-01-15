@@ -32,12 +32,6 @@ public class StoreController {
 
         List<StoreResDto> storeResDtoList;
 
-        System.out.println("-----------------------------------");
-        System.out.println("중심좌표1 : " + storeSearchRequestDto.getCenterCoordinates());
-        System.out.println("현재좌표2 : " + storeSearchRequestDto.getUserCoordinates());
-        System.out.println("검색어 : " + storeSearchRequestDto.getKeyword());
-        System.out.println("rect : " + storeSearchRequestDto.getRect());
-
         //비로그인 상태
         if(principalDetails == null){
             storeResDtoList = storeService.getStoreList(storeSearchRequestDto, null);
