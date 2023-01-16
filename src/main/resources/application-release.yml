@@ -39,7 +39,7 @@ apple:
 coolsms:
   apiKey : ${RELEASE_COOLSMS_API_KEY}
   apiSecret: ${RELEASE_COOLSMS_API_SECRET}
-  fromNumber : 070-8065-0427
+  fromNumber : 010-2655-3165
 
 logging:
   level:
