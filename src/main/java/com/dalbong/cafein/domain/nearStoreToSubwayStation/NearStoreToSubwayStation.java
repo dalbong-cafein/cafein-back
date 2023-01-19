@@ -39,8 +39,6 @@ public class NearStoreToSubwayStation {
     //연관관계 메서드
     public void setStore(Store store){
         this.store = store;
-        store.getNearStoreToSubwayStationArrayList().add(this);
+        store.getNearStoreToSubwayStationList().add(this);
     }
-
-
 }

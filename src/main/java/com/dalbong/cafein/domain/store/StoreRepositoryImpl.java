@@ -2,26 +2,21 @@ package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.congestion.QCongestion;
-import com.dalbong.cafein.domain.image.QImage;
-import com.dalbong.cafein.domain.image.QReviewImage;
-import com.dalbong.cafein.domain.member.MemberState;
-import com.dalbong.cafein.domain.member.QMember;
-import com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSubwayStation;
-import com.dalbong.cafein.domain.review.QReview;
+import com.dalbong.cafein.domain.store.dto.StoreQueryDto;
 import com.dalbong.cafein.domain.subwayStation.QSubwayStation;
 import com.dalbong.cafein.domain.subwayStation.SubwayStation;
+import com.dalbong.cafein.domain.university.QUniversity;
+import com.dalbong.cafein.domain.university.University;
+import com.dalbong.cafein.util.SqlFunctionUtil;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
-import com.dalbong.cafein.web.domain.contents.QContentsStore;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang.StringUtils;
@@ -42,12 +37,11 @@ import java.util.stream.Collectors;
 
 import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
 import static com.dalbong.cafein.domain.heart.QHeart.heart;
-import static com.dalbong.cafein.domain.image.QImage.image;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
 import static com.dalbong.cafein.domain.image.QReviewImage.reviewImage;
-import static com.dalbong.cafein.domain.member.QMember.member;
 import static com.dalbong.cafein.domain.memo.QStoreMemo.storeMemo;
 import static com.dalbong.cafein.domain.nearStoreToSubwayStation.QNearStoreToSubwayStation.nearStoreToSubwayStation;
+import static com.dalbong.cafein.domain.nearStoreToUniversity.QNearStoreToUniversity.nearStoreToUniversity;
 import static com.dalbong.cafein.domain.review.QReview.review;
 import static com.dalbong.cafein.domain.store.QStore.store;
 import static com.dalbong.cafein.domain.subwayStation.QSubwayStation.subwayStation;
@@ -83,53 +77,143 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
      * 앱단 가게 리스트 조회
      */
     @Override
-    public List<Object[]> getStoreList(String keyword) {
+    public List<StoreQueryDto> getStoreList(String keyword, String centerCoordinates, String userCoordinates, String rect) {
 
-        //지하철역 검색
-        List<String> stationNameList = queryFactory.select(subwayStation.stationName).from(subwayStation)
-                .where(subwayStation.isUse.isTrue()).fetch();
+        //대학교 리스트
+        List<University> universityList = getUniversityList();
 
+        //지하철역 리스트
+        List<SubwayStation> subwayStationList = getSubwayStationList();
+
+        //혼잡도 평균
         QCongestion subCongestion = new QCongestion("sub");
+        JPQLQuery<Double> congestionAvg = JPAExpressions
+                .select(subCongestion.congestionScore.avg())
+                .from(subCongestion)
+                .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
+                        subCongestion.store.storeId.eq(store.storeId))
+                .groupBy(store.storeId);
 
-        List<Tuple> result = queryFactory
-                .select(store ,store.heartList.size(), JPAExpressions
-                        .select(subCongestion.congestionScore.avg())
-                        .from(subCongestion)
-                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
-                                subCongestion.store.storeId.eq(store.storeId))
-                        .groupBy(store.storeId))
+
+        JPAQuery<StoreQueryDto> query;
+
+        if(userCoordinates == null){
+             query = queryFactory.select((Projections.constructor(StoreQueryDto.class, store, store.heartList.size(), congestionAvg)));
+
+        }else {
+            //사용자 위치와 카페 거리계산
+            NumberExpression<Double> userDistance = SqlFunctionUtil.calculateDistance(userCoordinates);;
+
+            query = queryFactory.select((Projections.constructor(StoreQueryDto.class, store, store.heartList.size(), congestionAvg, userDistance)));
+        }
+
+        return query
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .where(keywordSearch(keyword, stationNameList))
-                .orderBy(sort().stream().toArray(OrderSpecifier[]::new))
+                .where(keywordSearch(keyword, universityList, subwayStationList), inRect(rect))
+                .orderBy(sort(keyword, centerCoordinates, universityList, subwayStationList).stream().toArray(OrderSpecifier[]::new))
                 .limit(40)
                 .fetch();
-
-        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
 
-    private List<OrderSpecifier<?>> sort() {
+    private List<SubwayStation> getSubwayStationList() {
+
+        QSubwayStation subSubwayStation = new QSubwayStation("subSubwayStation");
+
+        return queryFactory.select(subSubwayStation)
+                .from(subSubwayStation)
+                .where(subSubwayStation.isUse.isTrue())
+                .fetch();
+    }
+
+    private List<University> getUniversityList() {
+
+        QUniversity subUniversity = new QUniversity("subUniversity");
+
+        return queryFactory.select(subUniversity)
+                .from(subUniversity)
+                .where(subUniversity.isUse.isTrue())
+                .fetch();
+    }
+
+    private BooleanBuilder inRect(String rect) {
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if(rect != null && !rect.isEmpty()){
+            String[] coordinateArr = rect.split(",");
+
+            double topLatY = Double.parseDouble(coordinateArr[0]);
+            double bottomLatY = Double.parseDouble(coordinateArr[1]);
+            double leftLngX = Double.parseDouble(coordinateArr[2]);
+            double rightLngX = Double.parseDouble(coordinateArr[3]);
+
+            builder.and(store.latY.loe(topLatY));
+            builder.and(store.latY.goe(bottomLatY));
+            builder.and(store.lngX.goe(leftLngX));
+            builder.and(store.lngX.loe(rightLngX));
+        }
+        return builder;
+    }
+
+    private List<OrderSpecifier<?>> sort(String keyword, String centerCoordinates, List<University> universityList,
+                                         List<SubwayStation> subwayStationList) {
 
         List<OrderSpecifier<?>> orders = new ArrayList<>();
 
-        //이미지 유무
-        orders.add(new OrderSpecifier<>(Order.DESC, existImage()));
+        Optional<String> optSggNm = findSggNm(keyword);
+        Optional<University> optUniversity = findUniversity(keyword, universityList);
+        Optional<SubwayStation> optSubwayStation = findSubwayStation(keyword, subwayStationList);
 
-        //리뷰 많은 순
-        orders.add(new OrderSpecifier<>(Order.DESC, store.reviewList.size()));
+        //구 관련 검색 정렬
+        if(optSggNm.isPresent()){
+            //이미지 유무
+            orders.add(new OrderSpecifier<>(Order.DESC, existImage()));
+
+            //리뷰 많은 순
+            orders.add(new OrderSpecifier<>(Order.DESC, store.reviewList.size()));
+
+        }
+        //대학교 관련 검색 정렬
+        else if(optUniversity.isPresent()){
+            University university = optUniversity.get();
+            NumberExpression<Double> distance = SqlFunctionUtil.calculateDistance(store.latY, store.lngX, university.getLatY(), university.getLngX());
+            orders.add(distance.asc());
+
+        }
+        //지하철역 관련 검색 정렬
+        else if(optSubwayStation.isPresent()){
+            SubwayStation subwayStation = optSubwayStation.get();
+            NumberExpression<Double> distance = SqlFunctionUtil.calculateDistance(store.latY, store.lngX, subwayStation.getLatY(), subwayStation.getLngX());
+            orders.add(distance.asc());
+
+        }
+        //지도 좌표 관련 검색 정렬
+        else if(centerCoordinates != null && !centerCoordinates.isEmpty()){
+
+            NumberExpression<Double> distance = SqlFunctionUtil.calculateDistance(centerCoordinates);
+            orders.add(distance.asc());
+
+        }else{
+            //이미지 유무
+            orders.add(new OrderSpecifier<>(Order.DESC, existImage()));
+
+            //리뷰 많은 순
+            orders.add(new OrderSpecifier<>(Order.DESC, store.reviewList.size()));
+        }
 
         return orders;
     }
 
-    private NumberExpression existImage() {
+    private BooleanExpression existImage() {
 
         return new CaseBuilder()
                 .when(store.storeImageList.isNotEmpty()
                         .or(queryFactory.select().from(reviewImage)
                                 .join(review).on(review.eq(reviewImage.review))
                                 .where(review.store.eq(store)).exists()))
-                .then(2)
-                .otherwise(1);
+                .then(true)
+                .otherwise(false);
     }
 
 
@@ -318,14 +402,10 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     @Override
     public List<Store> getStoreListOfWeb(String keyword) {
 
-        //지하철역 검색
-        List<String> stationNameList = queryFactory.select(subwayStation.stationName).from(subwayStation)
-                .where(subwayStation.isUse.isTrue()).fetch();
-
         return queryFactory.select(store)
                 .from(store)
                 .leftJoin(store.businessHours).fetchJoin()
-                .where(keywordSearch(keyword,stationNameList))
+                .where(keywordSearch(keyword, getUniversityList(), getSubwayStationList()))
                 .fetch();
     }
 
@@ -391,91 +471,185 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
 
     }
 
-    private BooleanExpression containStoreName(String keyword) {
+    private BooleanBuilder containStoreName(String keyword) {
 
+        BooleanBuilder builder = new BooleanBuilder();
 
         if(!isEmpty(keyword)){
-            String replaceWord = keyword;
 
-            if(keyword.contains("투썸")){
-                replaceWord = keyword.replace("투썸", "투썸 플레이스");
-            }else if (keyword.contains("스벅")){
-                replaceWord = keyword.replace("스벅", "스타벅스");
+            String relatedKeyword = relatedKeywordOfStoreName(keyword);
+
+            String[] wordArr = relatedKeyword.split(" ");
+
+            for(String word : wordArr){
+                builder.and(store.storeName.contains(word));
             }
-            System.out.println(replaceWord);
-            return store.storeName.contains(replaceWord);
         }
-        return null;
+        return builder;
     }
 
     private BooleanExpression containAddress(String keyword) {
 
         return !isEmpty(keyword) ? store.address.fullAddress.contains(keyword) : null;
-
     }
 
-    private BooleanBuilder keywordSearch(String keyword, List<String> subwayStationNameList){
+    private BooleanBuilder keywordSearch(String keyword, List<University> universityList, List<SubwayStation> subwayStationList){
+
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (!isEmpty(keyword)){
+        if (keyword != null && !keyword.isEmpty()){
 
-            if(keyword.contains("투썸 플레이스")){
-                keyword = keyword.replace("투썸 플레이스", "투썸");
-            }else if (keyword.contains("스벅")){
-                keyword = keyword.replace("스벅", "스타벅스");
-            }
+            //연관 키워드 처리
+            String relatedKeyword = relatedKeywordOfStoreName(keyword);
 
-            String[] wordArr = keyword.split(" ");
+            String[] wordArr = relatedKeyword.split(" ");
 
             for(String word : wordArr){
 
                 //"카페" 단어 통과
-                if(word.equals("카페")){
-                    continue;
-                }
-
-                boolean ctn = false;
+                if(word.equals("카페")) continue;
 
                 //구 검색
-                for (String sgg : sggArr){
-                    if (word.equals(sgg) || word.equals(sgg+"구")){
-                        builder.and(store.address.sggNm.eq(sgg+"구"));
+                if(searchSggNm(word, builder)) continue;
 
-                        ctn = true;
-                        break;
-                    }
-                }
+                //대학교로 검색
+                if(searchUniversity(word, builder, universityList)) continue;
 
-                //구로 필터링 했을 경우
-                if(ctn) continue;
-
-                QSubwayStation subSubwayStation = new QSubwayStation("subSubwayStation");
-
-                for(String stationName : subwayStationNameList){
-
-                    String compareStationName = StringUtils.removeEnd(stationName,"입구");
-
-                    if(word.equals(compareStationName) || word.equals(compareStationName + "역")
-                            || word.equals(compareStationName + "입구") || word.equals(compareStationName + "입구역")){
-                        //역 근처 카페 필터링
-                        builder.and(store.storeId.in(JPAExpressions.select(nearStoreToSubwayStation.store.storeId)
-                                .from(nearStoreToSubwayStation)
-                                .join(subSubwayStation).on(subSubwayStation.eq(nearStoreToSubwayStation.subwayStation))
-                                .where(subSubwayStation.isUse.isTrue(),
-                                        subSubwayStation.stationName.eq(stationName))));
-
-                        ctn = true;
-                        break;
-                    }
-                }
-
-                //지하철역으로 필터링 했을 경우
-                if(ctn) continue;
+                //지하철역으로 검색
+                if(searchSubwayStation(word, builder, subwayStationList)) continue;
 
                 //카페명 검색
                 builder.and(store.storeName.contains(word));
             }
         }
         return builder;
+    }
+
+    private String relatedKeywordOfStoreName(String keyword) {
+
+        return keyword.replace("투썸 플레이스", "투썸")
+                .replace("스벅", "스타벅스")
+                .replace("이디야커피", "이디야");
+    }
+
+    private boolean searchSubwayStation(String word, BooleanBuilder builder, List<SubwayStation> subwayStationList) {
+
+        Optional<SubwayStation> optSubwayStation = findSubwayStation(word, subwayStationList);
+
+        if(optSubwayStation.isPresent()){
+            //역 근처 카페 필터링
+            builder.and(store.storeId.in(JPAExpressions.select(nearStoreToSubwayStation.store.storeId)
+                    .from(nearStoreToSubwayStation)
+                    .join(subwayStation).on(subwayStation.eq(nearStoreToSubwayStation.subwayStation))
+                    .where(subwayStation.isUse.isTrue(),
+                            subwayStation.stationName.eq(optSubwayStation.get().getStationName()))));
+            return true;
+        }
+        return false;
+    }
+
+    private Optional<SubwayStation> findSubwayStation(String word, List<SubwayStation> subwayStationList){
+
+        if(word != null && !word.isEmpty()){
+            for(SubwayStation subwayStation : subwayStationList){
+
+                String compareStationName = StringUtils.removeEnd(subwayStation.getStationName(),"입구");
+
+                if(word.equals(compareStationName) || word.equals(compareStationName + "역")
+                        || word.equals(compareStationName + "입구") || word.equals(compareStationName + "입구역")){
+
+                    return Optional.of(subwayStation);
+                }
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private boolean searchUniversity(String word, BooleanBuilder builder, List<University> universityNameList) {
+
+        Optional<University> optUniversity = findUniversity(word, universityNameList);
+
+        if(optUniversity.isPresent()){
+            //대학교 근처 카페 필터링
+            builder.and(store.storeId.in(JPAExpressions.select(nearStoreToUniversity.store.storeId)
+                    .from(nearStoreToUniversity)
+                    .join(QUniversity.university).on(QUniversity.university.eq(nearStoreToUniversity.university))
+                    .where(QUniversity.university.isUse.isTrue(),
+                            QUniversity.university.universityName.eq(optUniversity.get().getUniversityName()))));
+            return true;
+        }
+        return false;
+    }
+
+    private Optional<University> findUniversity(String word, List<University> universityList){
+
+        if(word != null && !word.isEmpty()){
+            for(University university : universityList){
+
+                String compareUniversityName = university.getUniversityName().replace("대학교","대");
+
+                StringUtils.removeEnd(compareUniversityName, "학");
+
+                //대학교 연관 키워드 처리
+                String relatedWord = relatedKeywordOfUniversity(word);
+
+                if(relatedWord.equals(compareUniversityName) || relatedWord.equals(compareUniversityName+"학교")){
+                    return Optional.of(university);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private String relatedKeywordOfUniversity(String word) {
+
+        return word.replace("외대", "외국어대")
+                .replace("여대", "여자대")
+                .replace("체대", "체육대")
+                .replace("홍대","홍익대")
+                .replace("이대","이화여자대")
+                .replace("건대","건국대")
+                .replace("고대", "고려대")
+                .replace("연대","연세대")
+                .replace("중대","중앙대")
+                .replace("서울과기대", "서울과학기술대")
+                .replace("과기대","서울과학기술대")
+                .replace("장신대", "장로회신학대")
+                .replace("중대","중앙대")
+                .replace("감신대","감리교신학대")
+                .replace("서울교대","서울교육대")
+                .replace("교대", "서울교육대")
+                .replace("한예종","한국예술종합")
+                .replace("숙대","숙명여자대")
+                .replace("한국방통대","한국방송통신대")
+                .replace("방통대", "한국방송통신대")
+                .replace("성대", "성균관대")
+                .replace("동대", "동국대");
+    }
+
+    private boolean searchSggNm(String word, BooleanBuilder builder) {
+
+        Optional<String> optSggNm = findSggNm(word);
+
+        if(optSggNm.isPresent()){
+            //구 카페 필터링링
+            builder.and(store.address.sggNm.eq(optSggNm.get()+"구"));
+            return true;
+        }
+        return false;
+    }
+
+
+    private Optional<String> findSggNm(String word){
+
+        if(word != null && !word.isEmpty()){
+            for (String sgg : sggArr){
+                if (word.equals(sgg) || word.equals(sgg+"구")){
+                    return Optional.of(sgg);
+                }
+            }
+        }
+        return Optional.empty();
     }
 }

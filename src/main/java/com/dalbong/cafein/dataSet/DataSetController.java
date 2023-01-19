@@ -9,7 +9,10 @@ import com.dalbong.cafein.dataSet.store.naver.NaverCloudService;
 import com.dalbong.cafein.dataSet.store.naver.NaverSearchService;
 import com.dalbong.cafein.dataSet.subwayStation.SubwayStationRegDto;
 import com.dalbong.cafein.dataSet.subwayStation.SubwayStationService;
+import com.dalbong.cafein.dataSet.university.UniversityRegDto;
+import com.dalbong.cafein.dataSet.university.UniversityService;
 import com.dalbong.cafein.dataSet.util.json.JsonUtil;
+import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.CMRespDto;
@@ -42,6 +45,7 @@ public class DataSetController {
     private final NaverCloudService naverCloudService;
     private final StoreRepository storeRepository;
     private final SubwayStationService subwayStationService;
+    private final UniversityService universityService;
     private final ExcelReviewDataService excelReviewDataService;
     private final StoreDataService storeDataService;
     private final JsonUtil jsonUtil;
@@ -299,18 +303,34 @@ public class DataSetController {
     }
 
     @PostMapping("/data/nearStoreToSubwayStations")
-    public String saveDistance(){
+    public String saveNearStoreToSubwayStation(){
 
         subwayStationService.saveNearStoreToSubwayStation();
 
         return "역과 가까운 카페 데이터 저장 성공";
     }
 
+    @PostMapping("/data/universitys")
+    public String saveSubwayStation(@RequestBody UniversityRegDto universityRegDto) throws JsonProcessingException {
+
+        universityService.save(universityRegDto.getData());
+
+        return "대학교 데이터 저장 성공";
+    }
+
+    @PostMapping("/data/nearStoreToUniversitys")
+    public String saveNearStoreToUniversity(){
+
+        universityService.saveNearStoreToUniversity();
+
+        return "대학교와 가까운 카페 데이터 저장 성공";
+    }
+
     @PostMapping("/data/reviews")
     public String registerReview(MultipartFile excelFile,
                                  @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException, InterruptedException {
 
-        excelReviewDataService.register(excelFile, principalDetails.getMember());
+        excelReviewDataService.register(excelFile, Member.builder().memberId(1L).build());
 
         return "엑셀 리뷰 데이터 추가 성공";
     }

@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"member","store"})
+@ToString(exclude = {"member","store","reviewImageList"})
 @Entity
 public class Review extends BaseEntity {
 
@@ -43,6 +43,9 @@ public class Review extends BaseEntity {
     private DetailEvaluation detailEvaluation;
 
     @Builder.Default
+    private Boolean isPost = true;
+
+    @Builder.Default
     @OneToMany(mappedBy = "review",fetch = FetchType.LAZY)
     private List<ReviewImage> reviewImageList = new ArrayList<>();
 
@@ -63,4 +66,13 @@ public class Review extends BaseEntity {
     public void changeDetailEvaluation(DetailEvaluation detailEvaluation){
         this.detailEvaluation = detailEvaluation;
     }
+
+    public void post(){
+        this.isPost = true;
+    }
+
+    public void stopPosting(){
+        this.isPost = false;
+    }
+
 }

@@ -16,7 +16,7 @@ public class EventResDto {
     public EventResDto(Event event, ImageDto eventImageDto){
 
         this.eventId = event.getEventId();
-        this.boardId = event.getBoard().getBoardId();
+        this.boardId = event.getBoard() != null ? event.getBoard().getBoardId() : null;
         this.eventImageDto = eventImageDto;
 
     }

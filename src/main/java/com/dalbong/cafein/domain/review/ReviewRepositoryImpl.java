@@ -1,8 +1,5 @@
 package com.dalbong.cafein.domain.review;
 
-import com.dalbong.cafein.domain.memo.QMemo;
-import com.dalbong.cafein.domain.memo.QReviewMemo;
-import com.dalbong.cafein.domain.store.QStore;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
@@ -27,12 +24,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
-import static com.dalbong.cafein.domain.memo.QMemo.memo;
 import static com.dalbong.cafein.domain.memo.QReviewMemo.reviewMemo;
 import static com.dalbong.cafein.domain.review.QReview.review;
-import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
 
 public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
@@ -79,7 +73,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .from(review)
                 .leftJoin(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
-                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage))
+                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage),
+                        review.isPost.isTrue())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
@@ -97,7 +92,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .select(review)
                 .from(review)
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
-                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage));
+                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage), review.isPost.isTrue());
 
         List<Object[]> content = results.stream().map(t -> t.toArray()).collect(Collectors.toList());
 
@@ -129,7 +124,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .from(review)
                 .leftJoin(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
-                .where(review.store.storeId.eq(storeId))
+                .where(review.store.storeId.eq(storeId), review.isPost.isTrue())
                 .orderBy(review.reviewId.desc())
                 .limit(limit)
                 .fetch();

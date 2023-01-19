@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 public class LoginHistory {
 
+    //TODO 카멜 표기법으로 변경 필요
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long login_history_id;
 

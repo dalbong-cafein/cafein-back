@@ -26,6 +26,8 @@ public class MyReviewResDto {
 
     private DetailEvaluation detailEvaluation;
 
+    private Boolean isPost;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime regDateTime;
 
@@ -44,6 +46,7 @@ public class MyReviewResDto {
         this.visitCnt = visitCnt;
         this.recommendation = review.getRecommendation();
         this.detailEvaluation = review.getDetailEvaluation();
+        this.isPost = review.getIsPost();
         this.regDateTime = review.getRegDateTime();
         this.reviewImageDto = reviewImageDto;
         this.storeId = review.getStore().getStoreId();
