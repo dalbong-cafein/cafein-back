@@ -10,6 +10,7 @@ import java.util.Map;
 @Data
 public class BusinessHoursInfoDto {
 
+    //TODO 휴무, 정기휴무 상태 추가
     private Boolean isOpen;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")

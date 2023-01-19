@@ -6,6 +6,8 @@ import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.LocalTime;
 
 @ToString
@@ -21,13 +23,14 @@ public class Day {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
     private LocalTime closed;
 
-    private Boolean isHoliday;
+    @Enumerated(EnumType.STRING)
+    private HolidayType holidayType;
 
     protected Day(){}
 
-    public Day(LocalTime open, LocalTime closed, Boolean isHoliday) {
+    public Day(LocalTime open, LocalTime closed, HolidayType holidayType) {
         this.open = open;
         this.closed = closed;
-        this.isHoliday = isHoliday;
+        this.holidayType = holidayType;
     }
 }
