@@ -4,6 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
@@ -128,8 +129,6 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .orderBy(review.reviewId.desc())
                 .limit(limit)
                 .fetch();
-
-
 
         return results.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
@@ -265,8 +264,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
         if (searchType != null){ ;
             for(String t : searchType){
                 switch (t){
-                    case "c":
-                        builder.or(containContent(keyword));
+                    case "r":
+                        builder.or(containReviewId(keyword));
                         break;
                     case "w":
                         builder.or(containMemberId(keyword));
@@ -277,6 +276,19 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
             }
         }
         return builder;
+    }
+
+    private BooleanExpression containReviewId(String keyword) {
+
+        Long reviewId = null;
+
+        try{
+            reviewId = Long.parseLong(keyword);
+        }catch (NumberFormatException e){
+                e.getMessage();
+        }
+
+        return !isEmpty(keyword) && reviewId != null ? review.reviewId.eq(reviewId) : null;
     }
 
     private BooleanExpression containMemberId(String keyword) {
