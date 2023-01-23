@@ -32,14 +32,14 @@
 
 # 👨‍💻 Tech Stack
 back 
+- Java11
 - Springboot
 - SpringData JPA
 - Spring Security + JWT 토큰
 - Mysql
 - Querydsl
-- AOP
+- Redis
 - Gradle
-- coolsms 문자발송
 
 server 
 - AWS Elastic beanstalk
@@ -47,6 +47,33 @@ server
 - AWS S3
 - AWS ElastiCache
 - Git Actions
+
+# Dependencies
+```
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'mysql:mysql-connector-java'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation group: 'net.nurigo', name: 'javaSDK', version: '2.2'
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:3.0.3'
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws-secrets-manager-config:2.2.6.RELEASE'
+	implementation 'com.querydsl:querydsl-jpa'
+	implementation group: 'org.apache.poi', name: 'poi', version: '5.1.0'
+	implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.1.0'
+	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+}
+```
 
 # API 명세서(진행중)
 https://documenter.getpostman.com/view/15013144/UVkjuccy
