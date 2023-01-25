@@ -157,6 +157,7 @@ public class Store extends BaseEntity {
 
         Map<String,Object> businessHoursInfoMap = new HashMap<>();
         businessHoursInfoMap.put("isOpen", null);
+        businessHoursInfoMap.put("holidayType", null);
         businessHoursInfoMap.put("closed", null);
         businessHoursInfoMap.put("nextOpen", null);
 
@@ -226,6 +227,7 @@ public class Store extends BaseEntity {
             boolean isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
 
             businessHoursInfoMap.put("isOpen", isOpen);
+            businessHoursInfoMap.put("holidayType", today.getHolidayType());
             businessHoursInfoMap.put("closed", closedTime);
         }
 
@@ -239,30 +241,34 @@ public class Store extends BaseEntity {
         businessHoursInfoMap.put("nextOpen", nextOpenTime);
 
         //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen, closed 체크
-        if(yesterday != null){
-            checkBusinessAfterMidnight(businessHoursInfoMap, nowDateTime, yesterday.getOpen(), yesterday.getClosed());
+        if(yesterday.getClosed() != null){
+            checkBusinessAfterMidnight(businessHoursInfoMap, nowDateTime, yesterday);
         }
 
     }
 
     private LocalTime getNextOpenTime(LocalDateTime nowDateTime, LocalTime openTime, LocalTime tmrOpenTime) {
 
-            //금일 오픈 시간 데이터가 없을 경우 or 금일 오픈 시간 > 현재 시간일 경우
+            //금일 오픈 시간 데이터가 없을 경우 or 금일 오픈 시간 < 현재 시간일 경우
             if(openTime == null || nowDateTime.toLocalTime().isAfter(openTime)){
                 return  tmrOpenTime;
             }
-            //금일 오픈 시간 <= 현재 시간일 경우
+            //금일 오픈 시간 >= 현재 시간일 경우
             else{
                 return openTime;
         }
     }
 
-    private void checkBusinessAfterMidnight(Map<String, Object> businessHoursInfoMap, LocalDateTime nowDateTime,
-                                            LocalTime openTimeDayBefore, LocalTime closedTimeDayBefore) {
 
-        if(openTimeDayBefore.isAfter(closedTimeDayBefore) && closedTimeDayBefore.isAfter(nowDateTime.toLocalTime())){
+    private void checkBusinessAfterMidnight(Map<String, Object> businessHoursInfoMap, LocalDateTime nowDateTime, Day yesterday) {
+
+        //어제 오픈시간, 종료시간
+        LocalTime openTimeYesterday = yesterday.getOpen();
+        LocalTime closedTimeYesterday = yesterday.getClosed();
+
+        if(openTimeYesterday.isAfter(closedTimeYesterday) && closedTimeYesterday.isAfter(nowDateTime.toLocalTime())){
             businessHoursInfoMap.put("isOpen", true);
-            businessHoursInfoMap.put("closed", closedTimeDayBefore);
+            businessHoursInfoMap.put("closed", closedTimeYesterday);
         }
 
     }
