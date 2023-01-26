@@ -33,4 +33,8 @@ public class Day {
         this.closed = closed;
         this.holidayType = holidayType;
     }
+
+    public Day(LocalTime open, LocalTime closed){
+        this(open, closed, null);
+    }
 }
