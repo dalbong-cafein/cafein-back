@@ -20,49 +20,56 @@ public class BusinessHours {
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="open", column = @Column(name="mon_open")),
-            @AttributeOverride(name="closed", column = @Column(name="mon_closed"))
+            @AttributeOverride(name="closed", column = @Column(name="mon_closed")),
+            @AttributeOverride(name="holidayType", column = @Column(name="mon_holiday_type"))
     })
     private Day onMon;
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="open", column = @Column(name="tue_open")),
-            @AttributeOverride(name="closed", column = @Column(name="tue_closed"))
+            @AttributeOverride(name="closed", column = @Column(name="tue_closed")),
+            @AttributeOverride(name="holidayType", column = @Column(name="tue_holiday_type"))
     })
     private Day onTue;
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="open", column = @Column(name="wed_open")),
-            @AttributeOverride(name="closed", column = @Column(name="wed_closed"))
+            @AttributeOverride(name="closed", column = @Column(name="wed_closed")),
+            @AttributeOverride(name="holidayType", column = @Column(name="wed_holiday_type"))
     })
     private Day onWed;
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="open", column = @Column(name="thu_open")),
-            @AttributeOverride(name="closed", column = @Column(name="thu_closed"))
+            @AttributeOverride(name="closed", column = @Column(name="thu_closed")),
+            @AttributeOverride(name="holidayType", column = @Column(name="thu_holiday_type"))
     })
     private Day onThu;
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="open", column = @Column(name="fri_open")),
-            @AttributeOverride(name="closed", column = @Column(name="fri_closed"))
+            @AttributeOverride(name="closed", column = @Column(name="fri_closed")),
+            @AttributeOverride(name="holidayType", column = @Column(name="fri_holiday_type"))
     })
     private Day onFri;
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="open", column = @Column(name="sat_open")),
-            @AttributeOverride(name="closed", column = @Column(name="sat_closed"))
+            @AttributeOverride(name="closed", column = @Column(name="sat_closed")),
+            @AttributeOverride(name="holidayType", column = @Column(name="sat_holiday_type"))
     })
     private Day onSat;
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="open", column = @Column(name="sun_open")),
-            @AttributeOverride(name="closed", column = @Column(name="sun_closed"))
+            @AttributeOverride(name="closed", column = @Column(name="sun_closed")),
+            @AttributeOverride(name="holidayType", column = @Column(name="sun__holiday_type"))
     })
     private Day onSun;
 
