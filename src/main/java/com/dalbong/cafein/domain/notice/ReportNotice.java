@@ -1,17 +1,17 @@
 package com.dalbong.cafein.domain.notice;
 
 import com.dalbong.cafein.domain.member.Member;
-import com.dalbong.cafein.domain.report.Report;
-import com.dalbong.cafein.domain.sticker.Sticker;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.dalbong.cafein.domain.notice.detailReportNotice.DetailReportNotice;
+import com.dalbong.cafein.domain.report.report.Report;
+import lombok.*;
 
 import javax.persistence.*;
 
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"report"})
+@ToString(exclude = {"report","detailReportNotice"})
 @DiscriminatorValue("report")
 @Entity
 public class ReportNotice extends Notice{
@@ -20,9 +20,14 @@ public class ReportNotice extends Notice{
     @JoinColumn(name = "report_id")
     private Report report;
 
-    public ReportNotice(Report report, Member toMember, String content){
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinColumn(name = "detail_report_notice_id")
+    private DetailReportNotice detailReportNotice;
+
+    public ReportNotice(Report report, Member toMember, String content, DetailReportNotice detailReportNotice){
         super(toMember, content);
         this.report = report;
+        this.detailReportNotice = detailReportNotice;
     }
 
 }

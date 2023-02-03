@@ -1,8 +1,7 @@
 package com.dalbong.cafein.domain.memo;
 
 import com.dalbong.cafein.domain.member.Member;
-import com.dalbong.cafein.domain.report.Report;
-import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.domain.report.report.Report;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

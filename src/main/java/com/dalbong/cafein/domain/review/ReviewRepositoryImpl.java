@@ -1,12 +1,10 @@
 package com.dalbong.cafein.domain.review;
 
-import com.dalbong.cafein.domain.memo.QMemo;
-import com.dalbong.cafein.domain.memo.QReviewMemo;
-import com.dalbong.cafein.domain.store.QStore;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
@@ -27,12 +25,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.dalbong.cafein.domain.congestion.QCongestion.congestion;
 import static com.dalbong.cafein.domain.image.QMemberImage.memberImage;
-import static com.dalbong.cafein.domain.memo.QMemo.memo;
 import static com.dalbong.cafein.domain.memo.QReviewMemo.reviewMemo;
 import static com.dalbong.cafein.domain.review.QReview.review;
-import static com.dalbong.cafein.domain.store.QStore.store;
 import static org.aspectj.util.LangUtil.isEmpty;
 
 public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
@@ -79,7 +74,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .from(review)
                 .leftJoin(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
-                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage))
+                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage),
+                        review.isPost.isTrue())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
@@ -97,7 +93,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .select(review)
                 .from(review)
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
-                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage));
+                .where(review.store.storeId.eq(storeId), IsOnlyImage(isOnlyImage), review.isPost.isTrue());
 
         List<Object[]> content = results.stream().map(t -> t.toArray()).collect(Collectors.toList());
 
@@ -129,12 +125,10 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
                 .from(review)
                 .leftJoin(review.member).fetchJoin()
                 .leftJoin(memberImage).on(memberImage.member.eq(review.member))
-                .where(review.store.storeId.eq(storeId))
+                .where(review.store.storeId.eq(storeId), review.isPost.isTrue())
                 .orderBy(review.reviewId.desc())
                 .limit(limit)
                 .fetch();
-
-
 
         return results.stream().map(t -> t.toArray()).collect(Collectors.toList());
     }
@@ -270,8 +264,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
         if (searchType != null){ ;
             for(String t : searchType){
                 switch (t){
-                    case "c":
-                        builder.or(containContent(keyword));
+                    case "r":
+                        builder.or(containReviewId(keyword));
                         break;
                     case "w":
                         builder.or(containMemberId(keyword));
@@ -282,6 +276,19 @@ public class ReviewRepositoryImpl implements ReviewRepositoryQuerydsl{
             }
         }
         return builder;
+    }
+
+    private BooleanExpression containReviewId(String keyword) {
+
+        Long reviewId = null;
+
+        try{
+            reviewId = Long.parseLong(keyword);
+        }catch (NumberFormatException e){
+                e.getMessage();
+        }
+
+        return !isEmpty(keyword) && reviewId != null ? review.reviewId.eq(reviewId) : null;
     }
 
     private BooleanExpression containMemberId(String keyword) {
