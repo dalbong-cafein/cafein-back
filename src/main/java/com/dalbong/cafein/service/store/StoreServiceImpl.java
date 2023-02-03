@@ -344,14 +344,16 @@ public class StoreServiceImpl implements StoreService{
      */
     @Transactional(readOnly = true)
     @Override
-    public List<NearStoreResDto> getNearStoreList(Long storeId, Long principalId) {
+    public List<NearStoreResDto> getNearStoreListOfStore(Long storeId, Long principalId) {
 
         Store findStore = storeRepository.findById(storeId).orElseThrow(() ->
                 new CustomException("존재하지 않는 카페입니다."));
 
-        List<Store> storeList = storeRepository.recommendNearStore(storeId, findStore.getLatY(), findStore.getLngX());
+        List<Object[]> results = storeRepository.getNearStoreListOfStore(storeId, findStore.getLatY(), findStore.getLngX());
 
-        return storeList.stream().map(store -> {
+        return results.stream().map(arr -> {
+
+            Store store = (Store) arr[0];
 
             //리뷰 추천율
             Double recommendPercent = store.getRecommendPercent();
@@ -363,10 +365,7 @@ public class StoreServiceImpl implements StoreService{
             //최대 이미지 3개 불러오기
             List<ImageDto> imageDtoList = getCustomSizeImageList(store, 3);
 
-            //거리 계산
-            double distance = DistanceUtil.calculateDistance(store.getLatY(), store.getLngX(), findStore.getLatY(), findStore.getLngX(), "meter");
-
-            return new NearStoreResDto(store, recommendPercent, businessHoursInfoDto, imageDtoList, null, distance, principalId);
+            return new NearStoreResDto(store, recommendPercent, businessHoursInfoDto, imageDtoList, (double) arr[1], (Double) arr[2], principalId);
         }).collect(Collectors.toList());
 
     }

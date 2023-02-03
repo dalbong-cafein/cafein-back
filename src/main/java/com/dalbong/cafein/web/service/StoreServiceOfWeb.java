@@ -8,6 +8,7 @@ import com.dalbong.cafein.domain.store.Store;
 import com.dalbong.cafein.domain.store.StoreRepository;
 import com.dalbong.cafein.dto.businessHours.BusinessHoursInfoDto;
 import com.dalbong.cafein.dto.image.ImageDto;
+import com.dalbong.cafein.dto.store.NearStoreResDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.util.DistanceUtil;
 import com.dalbong.cafein.web.domain.recommend.Recommend;
@@ -77,14 +78,16 @@ public class StoreServiceOfWeb {
      * 근처 카공 카페 리스트 조회 - 조회중인 카페 기준
      */
     @Transactional(readOnly = true)
-    public List<NearStoreResDtoOfWeb> getNearStoreList(Long storeId){
+    public List<NearStoreResDtoOfWeb> getNearStoreListOfStore(Long storeId){
 
         Store findStore = storeRepository.findById(storeId).orElseThrow(() ->
                 new CustomException("존재하지 않는 카페입니다."));
 
-        List<Store> storeList = storeRepository.recommendNearStore(storeId, findStore.getLatY(), findStore.getLngX());
+        List<Object[]> storeList = storeRepository.getNearStoreListOfStore(storeId, findStore.getLatY(), findStore.getLngX());
 
-        return storeList.stream().map(store -> {
+        return storeList.stream().map(arr -> {
+
+            Store store = (Store) arr[0];
 
             List<Recommend> recommendList = store.getRecommendList();
 
@@ -113,9 +116,7 @@ public class StoreServiceOfWeb {
                 }
             }
 
-            double distance = DistanceUtil.calculateDistance(store.getLatY(), store.getLngX(), findStore.getLatY(), findStore.getLngX(), "meter");
-
-            return new NearStoreResDtoOfWeb(store, recommendPercent, businessHoursInfoDto, storeImageDtoList, null, distance);
+            return new NearStoreResDtoOfWeb(store, recommendPercent, businessHoursInfoDto, storeImageDtoList, (double) arr[1], (Double) arr[2]);
         }).collect(Collectors.toList());
     }
 
