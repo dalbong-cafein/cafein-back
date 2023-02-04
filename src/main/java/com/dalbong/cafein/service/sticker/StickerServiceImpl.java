@@ -39,6 +39,30 @@ public class StickerServiceImpl implements StickerService{
     private final NoticeService noticeService;
     private final StickerNoticeRepository stickerNoticeRepository;
 
+//    /**
+//     * 스티커 발급 가능 여부 체크
+//     */
+//    @Transactional(readOnly = true)
+//    @Override
+//    public PossibleIssueResDto checkPossibleIssue(Long principalId) {
+//
+//        //회원의 보유 스티커 개수 체크
+//        int stickerCnt = countStickerOfMember(principalId);
+//
+//        if(stickerCnt >= 20){
+//            return new PossibleIssueResDto(false, "보유 가능한 스티커 수량 초과");
+//        }
+//
+//        //하루동안 발급 받은 스티커 개수 체크
+//        long count = stickerRepository.getCountStickerToday(principalId);
+//
+//        if(count >= 3){
+//            return new PossibleIssueResDto(false, "하루 최대 스티커 발급 수량 초과");
+//        }
+//
+//        return new PossibleIssueResDto(true, null);
+//    }
+
     /**
      * 스티커 발급 가능 여부 체크
      */
@@ -46,21 +70,7 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public PossibleIssueResDto checkPossibleIssue(Long principalId) {
 
-        //회원의 보유 스티커 개수 체크
-        int stickerCnt = countStickerOfMember(principalId);
-
-        if(stickerCnt >= 20){
-            return new PossibleIssueResDto(false, "보유 가능한 스티커 수량 초과");
-        }
-
-        //하루동안 발급 받은 스티커 개수 체크
-        long count = stickerRepository.getCountStickerToday(principalId);
-
-        if(count >= 3){
-            return new PossibleIssueResDto(false, "하루 최대 스티커 발급 수량 초과");
-        }
-
-        return new PossibleIssueResDto(true, null);
+        return new PossibleIssueResDto(false, "스티커 기능이 중지되었습니다.");
     }
 
     /**
@@ -69,6 +79,11 @@ public class StickerServiceImpl implements StickerService{
     @Transactional
     @Override
     public Sticker issueStoreSticker(Long storeId, Long principalId) {
+
+        //스티커 기능 중지
+        if(principalId != null){
+            throw new StickerExcessException("스티커 기능이 중지되었습니다.");
+        }
 
         //회원의 스티커 개수 체크
         checkLimitNumberOfSticker(principalId);
@@ -99,6 +114,11 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public Sticker issueReviewSticker(Long reviewId, Long principalId) {
 
+        //스티커 기능 중지
+        if(principalId != null){
+            throw new StickerExcessException("스티커 기능이 중지되었습니다.");
+        }
+
         //회원의 스티커 개수 체크
         checkLimitNumberOfSticker(principalId);
 
@@ -127,6 +147,11 @@ public class StickerServiceImpl implements StickerService{
     @Transactional
     @Override
     public Sticker issueCongestionSticker(Long congestionId, Long principalId) {
+
+        //스티커 기능 중지
+        if(principalId != null){
+            throw new StickerExcessException("스티커 기능이 중지되었습니다.");
+        }
 
         //회원의 스티커 개수 체크
         checkLimitNumberOfSticker(principalId);
