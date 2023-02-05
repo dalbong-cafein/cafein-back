@@ -1,8 +1,6 @@
 package com.dalbong.cafein.domain.member;
 
 import com.dalbong.cafein.domain.BaseEntity;
-import com.dalbong.cafein.domain.report.Report;
-import com.dalbong.cafein.domain.review.Review;
 import lombok.*;
 
 import javax.persistence.*;
@@ -110,6 +108,10 @@ public class Member extends BaseEntity {
         this.isAgreeMarketingPush = isAgreeMarketingPush;
     }
 
+    public void changeReportExpiredDateTime(LocalDateTime reportExpiredDateTime){
+        this.reportExpiredDateTime = reportExpiredDateTime;
+    }
+
     public void suspend(int reportCnt){
 
         switch (reportCnt){
@@ -131,13 +133,13 @@ public class Member extends BaseEntity {
 
 
     public void leave(){
-        this.state = MemberState.LEAVE;
         this.leaveDateTime = LocalDateTime.now();
+        this.state = MemberState.LEAVE;
     }
 
     public void changeToNormal(){
+        this.reportExpiredDateTime = null;
         this.state = MemberState.NORMAL;
     }
-
 
 }

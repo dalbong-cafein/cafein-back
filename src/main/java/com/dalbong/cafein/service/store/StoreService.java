@@ -28,7 +28,7 @@ public interface StoreService {
 
     StoreListResDto<List<MyRegisterStoreResDto>> getMyRegisterStoreList(Long principalId);
 
-    List<NearStoreResDto> getNearStoreList(Long storeId, Long principalId);
+    List<NearStoreResDto> getNearStoreListOfStore(Long storeId, Long principalId);
 
     DetailStoreResDto getDetailStore(Long storeId, Long principalId);
 

@@ -4,11 +4,12 @@ import com.dalbong.cafein.domain.board.Board;
 import com.dalbong.cafein.domain.coupon.Coupon;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.notice.Notice;
-import com.dalbong.cafein.domain.report.Report;
+import com.dalbong.cafein.domain.notice.ReportNotice;
+import com.dalbong.cafein.domain.report.report.Report;
 import com.dalbong.cafein.domain.sticker.Sticker;
 import com.dalbong.cafein.dto.notice.NoticeResDto;
+import com.dalbong.cafein.dto.notice.detailReportNotice.DetailReportNoticeResDto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface NoticeService {
@@ -25,9 +26,13 @@ public interface NoticeService {
 
     void remove(Long noticeId);
 
+    void remove(Report report);
+
     void removeAll(Long principalId);
 
     List<NoticeResDto> getNoticeList(Long principalId);
+
+    DetailReportNoticeResDto getDetailReportNotice(Long noticeId);
 
 
 }

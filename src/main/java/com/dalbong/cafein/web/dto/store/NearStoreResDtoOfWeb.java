@@ -35,7 +35,7 @@ public class NearStoreResDtoOfWeb {
     private List<ImageDto> storeImageDtoList;
 
     public NearStoreResDtoOfWeb(Store store, Double recommendPercent, BusinessHoursInfoDto businessHoursInfoDto,
-                                List<ImageDto> storeImageDtoList, Double congestionScoreAvg, double distance){
+                                List<ImageDto> storeImageDtoList, double distance, Double congestionScoreAvg){
 
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();

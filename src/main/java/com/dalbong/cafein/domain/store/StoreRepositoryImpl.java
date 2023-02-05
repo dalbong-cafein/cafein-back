@@ -287,6 +287,35 @@ public class StoreRepositoryImpl implements StoreRepositoryQuerydsl{
     }
 
     /**
+     * 앱단 조회 카페 기준 근처 카페 리스트 조회
+     */
+    @Override
+    public List<Object[]> getNearStoreListOfStore(Long storeId, double latY, double lngX) {
+
+        QCongestion subCongestion = new QCongestion("sub");
+
+        //거리계산 함수
+        NumberExpression<Double> distance = SqlFunctionUtil.calculateDistance(store.latY, store.lngX, latY, lngX);
+
+        NumberPath<Double> distancePath = Expressions.numberPath(Double.class, "distance");
+
+        List<Tuple> result  = queryFactory.select(store, distance.as(distancePath), JPAExpressions
+                        .select(subCongestion.congestionScore.avg())
+                        .from(subCongestion)
+                        .where(subCongestion.regDateTime.between(LocalDateTime.now().minusHours(2), LocalDateTime.now()),
+                                subCongestion.store.storeId.eq(store.storeId))
+                        .groupBy(subCongestion.store.storeId)
+               )
+                .from(store)
+                .where(store.storeId.ne(storeId))
+                .orderBy(distancePath.asc())
+                .limit(10)
+                .fetch();
+
+        return result.stream().map(t -> t.toArray()).collect(Collectors.toList());
+    }
+
+    /**
      * 앱단 카페 상세 페이지 조회
      */
     @Override

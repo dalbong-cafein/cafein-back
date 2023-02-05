@@ -1,18 +1,23 @@
-package com.dalbong.cafein.domain.report;
+package com.dalbong.cafein.domain.report.report;
 
 import com.dalbong.cafein.domain.BaseEntity;
+import com.dalbong.cafein.domain.image.ReviewImage;
 import com.dalbong.cafein.domain.member.Member;
+import com.dalbong.cafein.domain.report.ReportStatus;
+import com.dalbong.cafein.domain.report.reportHistory.ReportHistory;
 import com.dalbong.cafein.domain.reportCategory.ReportCategory;
 import com.dalbong.cafein.domain.review.Review;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"review","toMember","fromMember","reportCategory"})
+@ToString(exclude = {"review","toMember","fromMember","reportCategory","reportHistoryList"})
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
@@ -51,9 +56,12 @@ public class Report extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ReportStatus reportStatus = ReportStatus.WAIT;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "report",fetch = FetchType.LAZY)
+    private List<ReportHistory> reportHistoryList = new ArrayList<>();
+
     public void approve(){
         this.reportStatus = ReportStatus.APPROVAL;
-
     }
 
     public void reject(){
