@@ -80,5 +80,6 @@ dependencies {
 # API 명세서(진행중)
 https://documenter.getpostman.com/view/15013144/UVkjuccy
 
-# ERD(2023.01.28)
-![20230128_cafein_erd](https://user-images.githubusercontent.com/77663506/215250496-6d8e46cd-53c6-4aba-8d30-27c83ee3ce6e.png)
+# ERD(2023.02.06)
+![20230206_cafein_erd](https://user-images.githubusercontent.com/77663506/216834032-341dca68-3e2d-4191-8dd2-938e08fe8d0c.png)
+
