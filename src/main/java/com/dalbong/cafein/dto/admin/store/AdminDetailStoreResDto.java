@@ -41,6 +41,8 @@ public class AdminDetailStoreResDto {
 
     private int reviewCnt;
 
+    private ImageDto presentImageDto;
+
     private List<ImageDto> reviewImageDtoList;
 
     private List<ImageDto> storeImageDtoList;
@@ -51,7 +53,7 @@ public class AdminDetailStoreResDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime modDateTime;
 
-    public AdminDetailStoreResDto(Store store, int heartCnt, long congestionCnt, int reviewCnt,
+    public AdminDetailStoreResDto(Store store, int heartCnt, long congestionCnt, int reviewCnt, ImageDto representImageDto,
                                   List<ImageDto> reviewImageDtoList, List<ImageDto> storeImageDtoList){
 
         this.storeId = store.getStoreId();
@@ -66,6 +68,7 @@ public class AdminDetailStoreResDto {
         this.heartCnt = heartCnt;
         this.congestionCnt = congestionCnt;
         this.reviewCnt = reviewCnt;
+        this.presentImageDto = representImageDto;
         this.reviewImageDtoList = reviewImageDtoList;
         this.storeImageDtoList = storeImageDtoList;
         this.regDateTime = store.getRegDateTime();

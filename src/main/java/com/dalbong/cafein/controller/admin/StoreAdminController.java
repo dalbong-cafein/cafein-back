@@ -3,10 +3,12 @@ package com.dalbong.cafein.controller.admin;
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.admin.store.AdminDetailStoreResDto;
+import com.dalbong.cafein.dto.admin.store.AdminRepresentImageSetUpDto;
 import com.dalbong.cafein.dto.admin.store.AdminStoreListDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.store.StoreRegDto;
 import com.dalbong.cafein.dto.store.StoreUpdateDto;
+import com.dalbong.cafein.service.image.ImageService;
 import com.dalbong.cafein.service.store.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -51,6 +53,19 @@ public class StoreAdminController {
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 카페 수정 성공", null), HttpStatus.OK);
 
     }
+
+    /**
+     * 관리자단 카페 대표 이미지 설정
+     */
+    @PatchMapping("/stores/{storeId}/representation-image")
+    public ResponseEntity<?> setUpRepresentativeImage(@Validated @RequestBody AdminRepresentImageSetUpDto adminRepresentImageSetUpDto, BindingResult bindingResult){
+
+        storeService.setUpRepresentImage(adminRepresentImageSetUpDto.getStoreId(),
+                adminRepresentImageSetUpDto.getRepresentImageId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 카페 대표 이미지 설정 성공",null), HttpStatus.OK);
+    }
+
 
     /**
      * 관리자단 카페 삭제
