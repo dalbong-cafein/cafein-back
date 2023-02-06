@@ -6,6 +6,7 @@ import com.dalbong.cafein.domain.image.*;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.domain.store.Store;
+import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.s3.S3Uploader;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Transactional
 @RequiredArgsConstructor
@@ -164,16 +164,94 @@ public class ImageServiceImpl implements ImageService{
     @Override
     public void remove(Long imageId){
 
-        System.out.println(imageId);
         //s3 이미지 파일 삭제
         s3Uploader.delete(imageId);
-
-        System.out.println("-------------");
 
         try{
             imageRepository.deleteById(imageId);
         }catch (EmptyResultDataAccessException e){
             throw new CustomException("존재하는 이미지가 없습니다.");
         }
+    }
+
+    /**
+     * 카페 대표 이미지 조회
+     */
+    @Transactional
+    @Override
+    public Image getRepresentImageOfStore(Long storeId) {
+
+        Long representImageId = imageRepository.getRepresentativeImageOfStore(storeId);
+
+        if (representImageId != null) {
+            return imageRepository.findById(representImageId).orElseThrow(() ->
+                    new CustomException("존재하지 않는 이미지입니다."));
+        }
+
+        return null;
+    }
+
+    /**
+     * 카페 대표 이미지 조회
+     */
+    //TODO 카페 리스트 조회 시 ImageDto 따로 설계 필요 - 케이스별 ImageDto 분리
+    @Transactional
+    @Override
+    public List<ImageDto> getCustomSizeImageList(Store store, int size) {
+
+        List<ImageDto> imageDtoList = new ArrayList<>();
+
+        //조회하는 사진 개수 카운트
+        int cnt = 0;
+
+        //storeImage 이미지 불러오기
+        List<StoreImage> storeImageList = store.getStoreImageList();
+
+        //최신순 조회
+        Collections.reverse(storeImageList);
+
+        for(StoreImage storeImage : storeImageList){
+            if(storeImage.getIsRepresent()){
+                //대표 이미지 index: 0
+                imageDtoList.add(0,new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
+                cnt += 1;
+
+            }else if(cnt<size){
+                imageDtoList.add(new ImageDto(storeImage.getImageId(), storeImage.getImageUrl(), storeImage.getIsCafein()));
+                cnt += 1;
+            }
+        }
+
+        //reviewImage 이미지 불러오기
+        List<Review> reviewList = store.getReviewList();
+
+        for(Review review : reviewList){
+
+            List<ReviewImage> reviewImageList = review.getReviewImageList();
+
+            //최신순 조회
+            Collections.reverse(reviewImageList);
+
+            if(!reviewImageList.isEmpty()){
+                for(ReviewImage reviewImage : reviewImageList){
+                    if(reviewImage.getIsRepresent()){
+                        //대표 이미지 index:0
+                        imageDtoList.add(0, new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                        cnt += 1;
+
+                    }else if(cnt<size){
+                        imageDtoList.add(new ImageDto(reviewImage.getImageId(), reviewImage.getImageUrl()));
+                        cnt += 1;
+                    }
+                }
+            }
+        }
+
+        //size 초과 시 대표 이미지가 삽입 됐을 수 있으니 size 체크 - 대표 이미지는 카페별 1개
+        if(imageDtoList.size() > size){
+            imageDtoList.remove(size);
+        }
+
+        return imageDtoList;
     }
 }

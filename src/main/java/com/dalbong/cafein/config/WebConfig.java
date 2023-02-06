@@ -28,12 +28,12 @@ public class WebConfig implements WebMvcConfigurer {
         return new RestTemplate(factory);
     }
 
-    //TODO 도메인 연결 필요
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("https://dalbong-cafein.github.io/cafein_admin/","http://localhost:3000",
-                        "https://admin.cafeinofficial.com","https://www.cafeinofficial.com", "http://121.128.119.102:3000")
+                        "https://admin.cafeinofficial.com","https://www.cafeinofficial.com")
+
                 .allowedMethods("GET", "POST", "DELETE", "PUT","PATCH","OPTIONS")
                 .allowedHeaders("*")
                 .exposedHeaders("Set-Cookie")

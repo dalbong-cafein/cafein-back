@@ -280,9 +280,10 @@ public class ReviewServiceImpl implements ReviewService{
                 //TODO storeImage 화면 존재 유무
                 ImageDto storeImageDto = null;
 
-                if (review.getStore().getStoreImageList() != null && !review.getStore().getStoreImageList().isEmpty()) {
-                    StoreImage storeImage = review.getStore().getStoreImageList().get(0);
-                    storeImageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+                List<ImageDto> storeImageDtoList = imageService.getCustomSizeImageList(review.getStore(), 1);
+
+                if(!storeImageDtoList.isEmpty()){
+                    storeImageDto = storeImageDtoList.get(0);
                 }
 
                 return new MyReviewResDto(review, (long) arr[1], reviewImageDtoList, storeImageDto);

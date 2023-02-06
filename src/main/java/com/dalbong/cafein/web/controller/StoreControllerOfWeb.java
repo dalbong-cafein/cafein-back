@@ -40,7 +40,7 @@ public class StoreControllerOfWeb {
     @GetMapping("/web/stores/{storeId}/near-stores")
     public ResponseEntity<?> getNearStoreList(@PathVariable("storeId") Long storeId){
 
-        List<NearStoreResDtoOfWeb> newStoreResDtoOfWebList = storeServiceOfWeb.getNearStoreList(storeId);
+        List<NearStoreResDtoOfWeb> newStoreResDtoOfWebList = storeServiceOfWeb.getNearStoreListOfStore(storeId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "근처 카공 카페 리스트 조회 성공", newStoreResDtoOfWebList), HttpStatus.OK);
     }
