@@ -91,13 +91,13 @@ public class GoogleStoreDto {
 
         if(daysOpening != null) {
             this.businessHours = BusinessHours.builder()
-                    .onMon(new Day(monOpen, monClosed))
-                    .onTue(new Day(tueOpen, tueClosed))
-                    .onWed(new Day(wedOpen, wedClosed))
-                    .onThu(new Day(thuOpen, thuClosed))
-                    .onFri(new Day(friOpen, friClosed))
-                    .onSat(new Day(satOpen, satClosed))
-                    .onSun(new Day(sunOpen, sunClosed))
+                    .onMon(new Day(monOpen, monClosed,null))
+                    .onTue(new Day(tueOpen, tueClosed,null))
+                    .onWed(new Day(wedOpen, wedClosed,null))
+                    .onThu(new Day(thuOpen, thuClosed,null))
+                    .onFri(new Day(friOpen, friClosed,null))
+                    .onSat(new Day(satOpen, satClosed,null))
+                    .onSun(new Day(sunOpen, sunClosed,null))
                     .build();
         }
         this.photoReferenceList = photoReferenceList;
