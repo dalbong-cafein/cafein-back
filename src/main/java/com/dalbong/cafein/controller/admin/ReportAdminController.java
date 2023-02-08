@@ -34,7 +34,9 @@ public class ReportAdminController {
     public ResponseEntity<?> checkPossibleReport(@PathVariable("reviewId") Long reviewId,
                                                  @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        PossibleRegistrationResDto possibleRegistrationResDto = reportService.checkPossibleReport(reviewId, principalDetails.getMember().getMemberId());
+        //PossibleRegistrationResDto possibleRegistrationResDto = reportService.checkPossibleReport(reviewId, principalDetails.getMember().getMemberId());
+        PossibleRegistrationResDto possibleRegistrationResDto = reportService.checkPossibleReport(reviewId, 1L);
+
 
         return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 신고 가능 여부 조회 성공", possibleRegistrationResDto), HttpStatus.OK);
     }
