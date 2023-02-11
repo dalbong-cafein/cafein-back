@@ -22,9 +22,19 @@ public abstract class Image extends BaseEntity {
     @Column(nullable = false, length = 400)
     private String imageUrl;
 
+    private Boolean isRepresent;
+
     public Image(String imageUrl){
         this.imageUrl = imageUrl;
+        this.isRepresent = false;
     }
 
+    public void setUpRepresentative(){
+        this.isRepresent = true;
+    }
+
+    public void cancelRepresentative(){
+        this.isRepresent = false;
+    }
 
 }

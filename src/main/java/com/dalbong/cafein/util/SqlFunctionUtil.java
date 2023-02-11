@@ -1,11 +1,8 @@
 package com.dalbong.cafein.util;
 
 import com.dalbong.cafein.handler.exception.CustomException;
-import com.querydsl.core.types.NullExpression;
-import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +35,6 @@ public class SqlFunctionUtil {
                 .add(sin(radians(lat1)).multiply(sin(radians(lat2)))))
                 .multiply(6371);
     }
-
     public static NumberExpression<Double> calculateDistance(String coordinate) {
 
             try {

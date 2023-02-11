@@ -9,7 +9,7 @@ import lombok.ToString;
 import javax.persistence.*;
 
 @Getter
-@ToString(exclude = {"store"})
+@ToString(exclude = {"store","regMember"})
 @DiscriminatorValue("store")
 @Entity
 public class StoreImage extends Image{
