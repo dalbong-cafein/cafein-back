@@ -216,15 +216,23 @@ public class Store extends BaseEntity {
                                                        Map<String, Object> businessHoursInfoMap) {
 
         LocalTime openTime = null;
+        LocalTime closedTime = null;
         LocalTime tmrOpenTime = null;
 
         //영업중 체크, 금일 영업 종료 시간
         if(today != null) {
+            boolean isOpen;
 
-            openTime = today.getOpen();
-            LocalTime closedTime = today.getClosed();
-
-            boolean isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
+            //휴무일 경우
+            if(today.getHolidayType() != null){
+                isOpen = false;
+            }
+            //영업 날일 경우
+            else{
+                openTime = today.getOpen();
+                closedTime = today.getClosed();
+                isOpen = checkIsOpen(nowDateTime, openTime, closedTime);
+            }
 
             businessHoursInfoMap.put("isOpen", isOpen);
             businessHoursInfoMap.put("holidayType", today.getHolidayType());
@@ -241,7 +249,7 @@ public class Store extends BaseEntity {
         businessHoursInfoMap.put("nextOpen", nextOpenTime);
 
         //전날 영업 종료 시간이 자정이 넘어갈 경우 - isOpen, closed 체크
-        if(yesterday.getClosed() != null){
+        if(yesterday != null && yesterday.getHolidayType() == null){
             checkBusinessAfterMidnight(businessHoursInfoMap, nowDateTime, yesterday);
         }
 
