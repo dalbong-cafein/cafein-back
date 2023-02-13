@@ -70,7 +70,7 @@ public class StickerServiceImpl implements StickerService{
     @Override
     public PossibleIssueResDto checkPossibleIssue(Long principalId) {
 
-        return new PossibleIssueResDto(false, "스티커 기능이 중지되었습니다.");
+        return new PossibleIssueResDto(false, "하루 최대 스티커 발급 수량 초과");
     }
 
     /**
