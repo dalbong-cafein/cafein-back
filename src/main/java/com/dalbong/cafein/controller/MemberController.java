@@ -81,9 +81,7 @@ public class MemberController {
 
         MemberInfoDto memberInfoDto = memberService.getMemberInfo(principalDetails.getMember().getMemberId());
 
-        throw new CustomException("서버 점검중");
-
-        //return new ResponseEntity<>(new CMRespDto<>(1, "회원 정보 조회 성공", memberInfoDto), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "회원 정보 조회 성공", memberInfoDto), HttpStatus.OK);
     }
 
     /**
