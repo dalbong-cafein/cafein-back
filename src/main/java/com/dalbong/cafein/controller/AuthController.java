@@ -7,6 +7,7 @@ import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.login.AccountUniteRegDto;
 import com.dalbong.cafein.dto.login.LoginDto;
 import com.dalbong.cafein.dto.member.MemberInfoDto;
+import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.oAuth.SocialLoginService;
 import com.dalbong.cafein.redis.RedisService;
 import com.dalbong.cafein.service.member.MemberService;
@@ -163,15 +164,16 @@ public class AuthController {
      */
     @GetMapping("/auth/send-sms")
     public ResponseEntity<?> sendSms(@RequestParam("toNumber") String toNumber){
-        System.out.println(toNumber);
+
+        throw new CustomException("서버 점검중");
 
         //랜덤 4자리 인증번호 생성
-        String certifyNum = smsService.createCertifyNum();
+        //String certifyNum = smsService.createCertifyNum();
 
         //sms 문자 메시지 전송
-        smsService.sendSms(toNumber, certifyNum);
+        //smsService.sendSms(toNumber, certifyNum);
 
-        return new ResponseEntity<>(new CMRespDto<>(1,"문자 메세지 전송 성공", certifyNum), HttpStatus.OK);
+        //return new ResponseEntity<>(new CMRespDto<>(1,"문자 메세지 전송 성공", certifyNum), HttpStatus.OK);
     }
 
     /**
