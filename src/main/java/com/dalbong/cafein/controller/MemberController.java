@@ -4,6 +4,7 @@ import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.dto.CMRespDto;
 import com.dalbong.cafein.dto.image.ImageDto;
 import com.dalbong.cafein.dto.member.*;
+import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.member.MemberService;
 import com.dalbong.cafein.service.review.ReviewService;
 import com.dalbong.cafein.service.store.StoreService;
@@ -80,7 +81,9 @@ public class MemberController {
 
         MemberInfoDto memberInfoDto = memberService.getMemberInfo(principalDetails.getMember().getMemberId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "회원 정보 조회 성공", memberInfoDto), HttpStatus.OK);
+        throw new CustomException("서버 점검중");
+
+        //return new ResponseEntity<>(new CMRespDto<>(1, "회원 정보 조회 성공", memberInfoDto), HttpStatus.OK);
     }
 
     /**
