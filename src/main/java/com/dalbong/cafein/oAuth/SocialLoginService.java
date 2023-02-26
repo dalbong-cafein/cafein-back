@@ -61,7 +61,9 @@ public class SocialLoginService {
 
             //로그인 기록 저장
             memberService.saveLoginHistory(member, loginDto.getAuthProvider(), clientIp);
-            return member;
+
+            throw new CustomException("서버 점검중");
+            //return member;
             // }
             //해당 email을 사용 중인 계정이 있는 경우
            // else{
@@ -77,7 +79,8 @@ public class SocialLoginService {
             Member findMember = memberResult.get();
             
             memberService.saveLoginHistory(findMember, loginDto.getAuthProvider(), clientIp);
-            return findMember;
+            throw new CustomException("서버 점검중");
+            //return findMember;
         }
     }
 
