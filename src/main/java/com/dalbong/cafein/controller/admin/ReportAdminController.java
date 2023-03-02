@@ -3,6 +3,7 @@ package com.dalbong.cafein.controller.admin;
 import com.dalbong.cafein.config.auth.PrincipalDetails;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.dto.CMRespDto;
+import com.dalbong.cafein.dto.PossibleRegistrationResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportListResDto;
 import com.dalbong.cafein.dto.admin.report.AdminReportResDto;
 import com.dalbong.cafein.dto.page.PageRequestDto;
@@ -25,6 +26,19 @@ import java.util.List;
 public class ReportAdminController {
 
     private final ReportService reportService;
+
+    /**
+     * 관리자단 신고 가능 여부 조회
+     */
+    @GetMapping("/reviews/{reviewId}/reports/check-possible-report")
+    public ResponseEntity<?> checkPossibleReport(@PathVariable("reviewId") Long reviewId,
+                                                 @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        PossibleRegistrationResDto possibleRegistrationResDto = reportService.checkPossibleReport(reviewId, principalDetails.getMember().getMemberId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "관리자단 신고 가능 여부 조회 성공", possibleRegistrationResDto), HttpStatus.OK);
+    }
+
 
     /**
      * 관리자단 리뷰 신고하기

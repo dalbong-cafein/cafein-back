@@ -1,9 +1,11 @@
 package com.dalbong.cafein.domain.store;
 
 import com.dalbong.cafein.domain.address.Address;
+import com.dalbong.cafein.domain.store.dto.StoreQueryDto;
 import com.dalbong.cafein.web.domain.contents.ContentsType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +25,7 @@ public interface StoreRepositoryQuerydsl {
     /**
      * 앱단 가게 리스트 조회
      */
-    List<Object[]> getStoreList(String keyword, String rect);
+    List<StoreQueryDto> getStoreList(String keyword, String centerCoordinates, String userCoordinates, String rect);
 
     /**
      * 앱단 내 카페 리스트 조회
@@ -39,6 +41,11 @@ public interface StoreRepositoryQuerydsl {
      * 앱단 본인이 등록한 가게 리스트 조회
      */
     List<Object[]> getMyRegisterStoreList(Long principalId);
+
+    /**
+     * 앱단 조회 카페 기준 근처 카페 리스트 조회
+     */
+    List<Object[]> getNearStoreListOfStore(@Param("storeId") Long storeId, @Param("latY") double latY, @Param("lngX") double lngX);
 
     /**
      * 앱단 카페 상세 페이지 조회

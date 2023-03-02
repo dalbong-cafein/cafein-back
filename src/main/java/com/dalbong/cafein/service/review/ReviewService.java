@@ -2,10 +2,7 @@ package com.dalbong.cafein.service.review;
 
 import com.dalbong.cafein.domain.review.Review;
 import com.dalbong.cafein.dto.PossibleRegistrationResDto;
-import com.dalbong.cafein.dto.admin.review.AdminDetailReviewResDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewEvaluationOfStoreResDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewListResDto;
-import com.dalbong.cafein.dto.admin.review.AdminReviewResDto;
+import com.dalbong.cafein.dto.admin.review.*;
 import com.dalbong.cafein.dto.page.PageRequestDto;
 import com.dalbong.cafein.dto.page.ScrollResultDto;
 import com.dalbong.cafein.dto.review.*;
@@ -21,6 +18,10 @@ public interface ReviewService {
 
     void modify(ReviewUpdateDto reviewUpdateDto) throws IOException;
 
+    void post(Long reviewId);
+
+    void stopPosting(Long reviewId);
+
     void remove(Long reviewId);
 
     ReviewListResDto<ScrollResultDto<ReviewResDto, Object[]>> getReviewListOfStore(PageRequestDto pageRequestDto, Long storeId);
@@ -30,6 +31,8 @@ public interface ReviewService {
     ReviewListResDto<List<ReviewResDto>> getCustomLimitReviewListOfStore(int limit, Long storeId);
 
     DetailReviewScoreResDto getDetailReviewScore(Long storeId);
+
+    void modifyOfAdmin(AdminReviewUpdateDto adminReviewUpdateDto) throws IOException;
 
     AdminReviewListResDto getReviewListOfAdmin(PageRequestDto pageRequestDto);
 

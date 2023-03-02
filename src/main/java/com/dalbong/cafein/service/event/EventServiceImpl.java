@@ -48,9 +48,12 @@ public class EventServiceImpl implements EventService{
     @Override
     public Event register(MultipartFile imageFile, Long boardId) throws IOException {
 
-        Board board = boardRepository.findById(boardId).orElseThrow(() ->
-                new CustomException("존재하지 않는 게시글입니다."));
+        Board board = null;
 
+        if(boardId != null){
+            board = boardRepository.findById(boardId).orElseThrow(() ->
+                    new CustomException("존재하지 않는 게시글입니다."));
+        }
 
         Event event = Event.builder().board(board).build();
 

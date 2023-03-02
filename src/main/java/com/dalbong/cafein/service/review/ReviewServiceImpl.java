@@ -6,11 +6,9 @@ import com.dalbong.cafein.domain.image.StoreImage;
 import com.dalbong.cafein.domain.member.Member;
 import com.dalbong.cafein.domain.member.MemberRepository;
 import com.dalbong.cafein.domain.member.MemberState;
-import com.dalbong.cafein.domain.memo.MemoRepository;
-import com.dalbong.cafein.domain.memo.ReviewMemo;
 import com.dalbong.cafein.domain.memo.ReviewMemoRepository;
-import com.dalbong.cafein.domain.report.Report;
-import com.dalbong.cafein.domain.report.ReportRepository;
+import com.dalbong.cafein.domain.report.report.Report;
+import com.dalbong.cafein.domain.report.report.ReportRepository;
 import com.dalbong.cafein.domain.review.DetailEvaluation;
 import com.dalbong.cafein.domain.review.Recommendation;
 import com.dalbong.cafein.domain.review.Review;
@@ -28,7 +26,6 @@ import com.dalbong.cafein.dto.page.ScrollResultDto;
 import com.dalbong.cafein.dto.review.*;
 import com.dalbong.cafein.handler.exception.CustomException;
 import com.dalbong.cafein.service.image.ImageService;
-import com.dalbong.cafein.service.sticker.StickerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -147,6 +144,32 @@ public class ReviewServiceImpl implements ReviewService{
 
     }
 
+    /**
+     * 리뷰 게시 상태로 변경
+     */
+    @Transactional
+    @Override
+    public void post(Long reviewId) {
+
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
+                new CustomException("존재하지 않는 리뷰입니다."));
+
+        review.post();
+    }
+
+    /**
+     * 리뷰 게시 중단 상태로 변경
+     */
+    @Transactional
+    @Override
+    public void stopPosting(Long reviewId) {
+
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
+                new CustomException("존재하지 않는 리뷰입니다."));
+
+        review.stopPosting();
+    }
+
     private void updateReviewImage(Review review, List<MultipartFile> updateImageFiles, List<Long> deleteImageIdList) throws IOException {
 
         //이미지 추가
@@ -254,9 +277,10 @@ public class ReviewServiceImpl implements ReviewService{
                 //store 이미지
                 ImageDto storeImageDto = null;
 
-                if (review.getStore().getStoreImageList() != null && !review.getStore().getStoreImageList().isEmpty()) {
-                    StoreImage storeImage = review.getStore().getStoreImageList().get(0);
-                    storeImageDto = new ImageDto(storeImage.getImageId(), storeImage.getImageUrl());
+                List<ImageDto> storeImageDtoList = imageService.getCustomSizeImageList(review.getStore(), 1);
+
+                if(!storeImageDtoList.isEmpty()){
+                    storeImageDto = storeImageDtoList.get(0);
                 }
 
                 return new MyReviewResDto(review, (long) arr[1], reviewImageDtoList, storeImageDto);
@@ -373,6 +397,20 @@ public class ReviewServiceImpl implements ReviewService{
 
         return new DetailReviewScoreResDto(reviewList.size(),recommendPercent,socketScoreOfMaxCnt, maxCntOfSocket,
                 wifiScoreOfMaxCnt, maxCntOfWifi, restroomScoreOfMaxCnt, maxCntOfRestroom, tableSizeScoreOfMaxCnt, maxCntOfTableSize);
+    }
+
+    /**
+     * 관리자단 리뷰 수정
+     */
+    @Transactional
+    @Override
+    public void modifyOfAdmin(AdminReviewUpdateDto adminReviewUpdateDto) throws IOException {
+
+        Review review = reviewRepository.findById(adminReviewUpdateDto.getReviewId()).orElseThrow(() ->
+                new CustomException("존재하는 리뷰가 없습니다."));
+
+        //리뷰 이미지 갱신
+        updateReviewImage(review, adminReviewUpdateDto.getUpdateImageFiles(), adminReviewUpdateDto.getDeleteImageIdList());
     }
 
     /**

@@ -16,5 +16,4 @@ public interface NoticeRepository extends JpaRepository<Notice,Long> {
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete from Notice n where n.toMember.memberId =:memberId")
     void deleteByMemberId(@Param("memberId") Long memberId);
-
 }

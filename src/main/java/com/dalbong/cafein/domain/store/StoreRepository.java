@@ -16,16 +16,6 @@ public interface StoreRepository extends JpaRepository<Store, Long>, StoreReposi
 
     List<Store> findByAddress_SggNm(String sggNm);
 
-
-    @Query(value = "select * , (6371*acos(cos(radians(:latY))*cos(radians(s.latY))*cos(radians(s.lngX) " +
-            "-radians(:lngX))+sin(radians(:latY))*sin(radians(s.latY)))) AS distance " +
-            "from store s " +
-            "where s.store_id <> :storeId " +
-            "having distance < 0.5 " +
-            "order by distance " +
-            "limit 10", nativeQuery = true)
-    List<Store> recommendNearStore(@Param("storeId") Long storeId, @Param("latY") double latY, @Param("lngX") double lngX);
-
     @Query("select count(s) from Store s where s.regMember.memberId =:memberId")
     int countByRegMemberId(@Param("memberId") Long regMemberId);
 

@@ -1,7 +1,6 @@
 package com.dalbong.cafein.dto.notice;
 
 import com.dalbong.cafein.domain.notice.*;
-import com.dalbong.cafein.domain.report.Report;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;

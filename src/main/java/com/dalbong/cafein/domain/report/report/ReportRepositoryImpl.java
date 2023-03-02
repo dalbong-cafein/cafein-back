@@ -1,12 +1,11 @@
-package com.dalbong.cafein.domain.report;
+package com.dalbong.cafein.domain.report.report;
 
-import com.dalbong.cafein.domain.coupon.Coupon;
-import com.dalbong.cafein.domain.review.Review;
+import com.dalbong.cafein.domain.memo.QReportMemo;
+import com.dalbong.cafein.domain.report.ReportStatus;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -24,10 +23,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.dalbong.cafein.domain.coupon.QCoupon.coupon;
 import static com.dalbong.cafein.domain.memo.QReportMemo.reportMemo;
-import static com.dalbong.cafein.domain.report.QReport.report;
-import static com.dalbong.cafein.domain.review.QReview.review;
+import static com.dalbong.cafein.domain.report.report.QReport.report;
 import static org.aspectj.util.LangUtil.isEmpty;
 
 public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
@@ -39,6 +36,21 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
     }
 
     /**
+     * 중복 신고 확인
+     */
+    @Override
+    public boolean existReport(Long reviewId, Long principalId) {
+
+        Integer fetchOne = queryFactory.selectOne()
+                .from(report)
+                .where(report.review.reviewId.eq(reviewId),
+                        report.fromMember.memberId.eq(principalId))
+                .fetchOne();
+
+        return fetchOne != null;
+    }
+
+    /**
      * 금일 신고 회원
      */
     @Override
@@ -47,7 +59,8 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
         return queryFactory.select(report)
                 .from(report)
                 .leftJoin(report.toMember).fetchJoin()
-                .where(report.regDateTime.between(LocalDateTime.now().minusDays(1).toLocalDate().atStartOfDay(), LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(23, 59, 59))))
+                .where(report.regDateTime.between(LocalDateTime.now().minusDays(1).toLocalDate().atStartOfDay(),
+                        LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(23, 59, 59))))
                 .fetch();
     }
 
@@ -67,6 +80,23 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
     }
 
     /**
+     * 가장 최근 승인 받은 신고 조회
+     */
+    @Override
+    public Optional<Report> getLatestApprovalStatusByMemberIdAndNeReportId(Long memberId, Long reportId) {
+
+        Report findReport = queryFactory.select(report)
+                .from(report)
+                .where(report.reportStatus.eq(ReportStatus.APPROVAL),
+                        report.toMember.memberId.eq(memberId), report.reportId.ne(reportId))
+                .orderBy(report.reportId.desc())
+                .limit(1)
+                .fetchOne();
+
+        return findReport != null ? Optional.of(findReport) : Optional.empty();
+    }
+
+    /**
      * 관리자단 신고 리스트 조회
      */
     @Override
@@ -74,6 +104,7 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
 
         JPAQuery<Tuple> query = queryFactory.select(report, reportMemo.memoId)
                 .from(report)
+                .leftJoin(report.review).fetchJoin()
                 .leftJoin(report.toMember).fetchJoin()
                 .leftJoin(report.fromMember).fetchJoin()
                 .join(report.reportCategory).fetchJoin()
@@ -110,6 +141,7 @@ public class ReportRepositoryImpl implements ReportRepositoryQuerydsl{
 
         return queryFactory.select(report)
                 .from(report)
+                .leftJoin(report.review).fetchJoin()
                 .leftJoin(report.toMember).fetchJoin()
                 .leftJoin(report.fromMember).fetchJoin()
                 .join(report.reportCategory).fetchJoin()
