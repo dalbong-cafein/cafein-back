@@ -3,24 +3,24 @@ package com.dalbong.cafein.dto.store;
 import com.dalbong.cafein.domain.address.Address;
 import com.dalbong.cafein.domain.store.Store;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class RecommendSearchStoreResDto {
+public class AutocompleteStoreSearchResDto {
 
     private Long storeId;
 
     private String storeName;
 
-    private Address address;
+    private String fullAddress;
 
-    public RecommendSearchStoreResDto(Store store){
+    public AutocompleteStoreSearchResDto(Store store){
+
         this.storeId = store.getStoreId();
         this.storeName = store.getStoreName();
-        this.address = store.getAddress();
+        this.fullAddress = store.getAddress().getFullAddress();
     }
 }

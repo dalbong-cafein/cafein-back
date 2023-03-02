@@ -232,6 +232,18 @@ public class StoreServiceImpl implements StoreService{
     }
 
     /**
+     * 카페 자동완성 검색어 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<AutocompleteStoreSearchResDto> getAutocompleteSearchWordList(String keyword) {
+
+        List<Store> storeList = storeRepository.getAutocompleteSearchWordList(keyword);
+
+        return storeList.stream().map(store -> new AutocompleteStoreSearchResDto(store)).collect(Collectors.toList());
+    }
+
+    /**
      * 앱단 카페 리스트 조회
      */
     @Transactional(readOnly = true)

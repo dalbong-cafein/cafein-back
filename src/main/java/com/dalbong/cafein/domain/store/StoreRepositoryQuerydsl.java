@@ -18,6 +18,11 @@ public interface StoreRepositoryQuerydsl {
     boolean existAddress(Address address);
 
     /**
+     * 카페 자동완성 검색어 리스트 조회
+     */
+    List<Store>  getAutocompleteSearchWordList(String keyword);
+
+    /**
      * 앱단 가게 리스트 조회
      */
     List<StoreQueryDto> getStoreList(String keyword, String centerCoordinates, String userCoordinates, String rect);
